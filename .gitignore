@@ -12,5 +12,8 @@ bin
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Interim test files
+examples/entangled.mid
+
 # MacOS
 .DS_Store
