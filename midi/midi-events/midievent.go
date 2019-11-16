@@ -49,5 +49,41 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event
 		}, nil
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %02x", status)
+	if status&0xf0 == 0xB0 {
+		controller, err := r.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+
+		value, err := r.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+
+		return &Controller{
+			delta:      delta,
+			status:     status,
+			channel:    status & 0x0f,
+			controller: controller,
+			value:      value,
+			bytes:      append(data, controller, value),
+		}, nil
+	}
+
+	if status&0xf0 == 0xC0 {
+		program, err := r.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+
+		return &ProgramChange{
+			delta:   delta,
+			status:  status,
+			channel: status & 0x0f,
+			program: program,
+			bytes:   append(data, program),
+		}, nil
+	}
+
+	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", status)
 }
