@@ -6,12 +6,9 @@ import (
 )
 
 type Controller struct {
-	delta      uint32
-	status     byte
-	channel    uint8
+	MidiEvent
 	controller byte
 	value      byte
-	bytes      []byte
 }
 
 func (e *Controller) Render(w io.Writer) {

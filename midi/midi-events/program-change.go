@@ -6,11 +6,8 @@ import (
 )
 
 type ProgramChange struct {
-	delta   uint32
-	status  byte
-	channel uint8
+	MidiEvent
 	program uint8
-	bytes   []byte
 }
 
 func (e *ProgramChange) Render(w io.Writer) {

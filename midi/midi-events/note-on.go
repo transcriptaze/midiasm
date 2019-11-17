@@ -6,12 +6,9 @@ import (
 )
 
 type NoteOn struct {
-	delta    uint32
-	status   byte
-	channel  uint8
+	MidiEvent
 	note     uint8
 	velocity uint8
-	bytes    []byte
 }
 
 func (e *NoteOn) Render(w io.Writer) {

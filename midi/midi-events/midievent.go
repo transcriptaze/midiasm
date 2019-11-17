@@ -6,6 +6,17 @@ import (
 	"github.com/twystd/midiasm/midi/event"
 )
 
+type MidiEvent struct {
+	delta   uint32
+	status  byte
+	channel byte
+	bytes   []byte
+}
+
+func (e *MidiEvent) DeltaTime() uint32 {
+	return e.delta
+}
+
 func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event, error) {
 	if status&0xf0 == 0x80 {
 		note, err := r.ReadByte()
@@ -19,12 +30,14 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event
 		}
 
 		return &NoteOff{
-			delta:    delta,
-			status:   status,
-			channel:  status & 0x0f,
+			MidiEvent: MidiEvent{
+				delta:   delta,
+				status:  status,
+				channel: status & 0x0f,
+				bytes:   append(data, note, velocity),
+			},
 			note:     note,
 			velocity: velocity,
-			bytes:    append(data, note, velocity),
 		}, nil
 	}
 
@@ -40,12 +53,14 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event
 		}
 
 		return &NoteOn{
-			delta:    delta,
-			status:   status,
-			channel:  status & 0x0f,
+			MidiEvent: MidiEvent{
+				delta:   delta,
+				status:  status,
+				channel: status & 0x0f,
+				bytes:   append(data, note, velocity),
+			},
 			note:     note,
 			velocity: velocity,
-			bytes:    append(data, note, velocity),
 		}, nil
 	}
 
@@ -61,12 +76,14 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event
 		}
 
 		return &Controller{
-			delta:      delta,
-			status:     status,
-			channel:    status & 0x0f,
+			MidiEvent: MidiEvent{
+				delta:   delta,
+				status:  status,
+				channel: status & 0x0f,
+				bytes:   append(data, controller, value),
+			},
 			controller: controller,
 			value:      value,
-			bytes:      append(data, controller, value),
 		}, nil
 	}
 
@@ -77,11 +94,13 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event
 		}
 
 		return &ProgramChange{
-			delta:   delta,
-			status:  status,
-			channel: status & 0x0f,
+			MidiEvent: MidiEvent{
+				delta:   delta,
+				status:  status,
+				channel: status & 0x0f,
+				bytes:   append(data, program),
+			},
 			program: program,
-			bytes:   append(data, program),
 		}, nil
 	}
 

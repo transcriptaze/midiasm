@@ -31,12 +31,12 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	events := make([]event.Event, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
 	err := error(nil)
-	event := Chunk(nil)
+	e := event.Event(nil)
 
 	for err == nil {
-		event, err = parse(r)
-		if err == nil && event != nil {
-			events = append(events, event)
+		e, err = parse(r)
+		if err == nil && e != nil {
+			events = append(events, e.(event.Event))
 		}
 	}
 
@@ -60,8 +60,35 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintf(w, "... ")
 	fmt.Fprintf(w, "              %12s length:%-8d\n", chunk.tag, chunk.length)
 
-	for _, event := range chunk.events {
-		event.Render(w)
+	for _, e := range chunk.events {
+		e.Render(w)
+	}
+
+	fmt.Fprintln(w)
+}
+
+func (chunk *MTrk) Notes(ppqn uint16,
+	tx []struct {
+		t     uint32
+		tempo uint32
+	}, w io.Writer) {
+
+	var t float64 = 0.0
+	var tick uint32 = 0
+	var tempo float64 = float64(tx[0].tempo) / 1000000.0
+
+	for _, e := range chunk.events {
+		dt := e.DeltaTime()
+		t += tempo * float64(dt) / float64(ppqn)
+		tick += dt
+		beat := float64(tick) / float64(ppqn)
+
+		switch e.(type) {
+		case *midievent.NoteOn:
+			fmt.Fprintf(w, "NOTE ON  %-6d %.5f  %.5f\n", tick, beat, t)
+		case *midievent.NoteOff:
+			fmt.Fprintf(w, "NOTE OFF %-6d %.5f  %.5f\n", tick, beat, t)
+		}
 	}
 
 	fmt.Fprintln(w)
@@ -104,7 +131,7 @@ func vlq(r *bufio.Reader) (uint32, []byte, error) {
 		}
 		bytes = append(bytes, b)
 
-		l <<= 8
+		l <<= 7
 		l += uint32(b & 0x7f)
 
 		if b&0x80 == 0 {

@@ -1,18 +1,24 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"io/ioutil"
 	"os"
 )
 
+var notes bool
+
 func main() {
 	fmt.Println()
 	fmt.Println("MIDIASM v0.00.0")
 	fmt.Println()
 
-	filename := os.Args[1]
+	flag.BoolVar(&notes, "notes", false, "Extract notes from MIDI sequence")
+	flag.Parse()
+
+	filename := flag.Arg(0)
 
 	f, err := os.Open(filename)
 	if err != nil {
@@ -38,5 +44,9 @@ func main() {
 		return
 	}
 
-	smf.Render()
+	if notes {
+		smf.Notes()
+	} else {
+		smf.Render()
+	}
 }

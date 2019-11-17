@@ -7,7 +7,7 @@ import (
 
 type Tempo struct {
 	MetaEvent
-	tempo uint32
+	Tempo uint32
 }
 
 func NewTempo(event MetaEvent, data []byte) (*Tempo, error) {
@@ -31,7 +31,7 @@ func NewTempo(event MetaEvent, data []byte) (*Tempo, error) {
 
 	return &Tempo{
 		MetaEvent: event,
-		tempo:     tempo,
+		Tempo:     tempo,
 	}, nil
 }
 
@@ -42,5 +42,5 @@ func (e *Tempo) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                               ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d tempo:%v\n", e.eventType, "Tempo", e.delta, e.tempo)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d tempo:%v\n", e.eventType, "Tempo", e.delta, e.Tempo)
 }

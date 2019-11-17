@@ -61,10 +61,22 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 }
 
 func (smf *SMF) Render() {
-	fmt.Fprintln(os.Stdout)
 	smf.header.Render(os.Stdout)
 	for _, track := range smf.tracks {
 		track.Render(os.Stdout)
+	}
+}
+
+func (smf *SMF) Notes() {
+	tempo := []struct {
+		t     uint32
+		tempo uint32
+	}{
+		{0, 500000},
+	}
+
+	for _, track := range smf.tracks {
+		track.Notes(smf.header.division, tempo, os.Stdout)
 	}
 }
 
