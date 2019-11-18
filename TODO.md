@@ -4,6 +4,9 @@
 
 *Disassembler*
 
+- [ ] Use microseconds as integer time base
+- [ ] Extract notes
+
 ### META events
 
 ### MIDI events

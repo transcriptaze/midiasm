@@ -38,5 +38,5 @@ func (e *Tempo) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                               ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d tempo:%v\n", e.eventType, "Tempo", e.Delta, e.Tempo)
+	fmt.Fprintf(w, "%02x/%-16s %s tempo:%v\n", e.eventType, "Tempo", e.MetaEvent.Event, e.Tempo)
 }

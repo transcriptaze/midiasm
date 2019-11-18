@@ -30,12 +30,14 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 
 	events := make([]event.IEvent, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
+	tick := uint32(0)
 	err := error(nil)
 	e := event.IEvent(nil)
 
 	for err == nil {
-		e, err = parse(r)
+		e, err = parse(r, tick)
 		if err == nil && e != nil {
+			tick += e.DeltaTime()
 			events = append(events, e.(event.IEvent))
 		}
 	}
@@ -94,7 +96,7 @@ func (chunk *MTrk) Notes(ppqn uint16,
 	fmt.Fprintln(w)
 }
 
-func parse(r *bufio.Reader) (event.IEvent, error) {
+func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
 	bytes := make([]byte, 0)
 
 	delta, m, err := vlq(r)
@@ -110,6 +112,7 @@ func parse(r *bufio.Reader) (event.IEvent, error) {
 	bytes = append(bytes, b)
 
 	e := event.Event{
+		Tick:   tick + delta,
 		Delta:  delta,
 		Status: b,
 	}
@@ -121,8 +124,6 @@ func parse(r *bufio.Reader) (event.IEvent, error) {
 	} else {
 		return midievent.Parse(e, bytes, r)
 	}
-
-	return nil, nil
 }
 
 func vlq(r *bufio.Reader) (uint32, []byte, error) {

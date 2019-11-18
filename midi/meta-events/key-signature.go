@@ -44,5 +44,5 @@ func (e *KeySignature) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                  ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d accidentals:%d key-type:%d\n", e.eventType, "KeySignature", e.Delta, e.accidentals, e.keyType)
+	fmt.Fprintf(w, "%02x/%-16s %s accidentals:%d key-type:%d\n", e.eventType, "KeySignature", e.MetaEvent.Event, e.accidentals, e.keyType)
 }

@@ -20,5 +20,5 @@ func (e *ProgramChange) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                     ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d channel:%d program:%d\n", e.Status, "ProgramChange", e.Delta, e.channel, e.program)
+	fmt.Fprintf(w, "%02x/%-16s %s channel:%d program:%d\n", e.Status, "ProgramChange", e.MidiEvent.Event, e.channel, e.program)
 }

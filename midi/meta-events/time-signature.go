@@ -43,5 +43,5 @@ func (e *TimeSignature) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                            ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d numerator:%d denominator:%d ticks/click:%d 1/32-per-quarter:%d\n", e.eventType, "TimeSignature", e.Delta, e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
+	fmt.Fprintf(w, "%02x/%-16s %s numerator:%d denominator:%d ticks/click:%d 1/32-per-quarter:%d\n", e.eventType, "TimeSignature", e.MetaEvent.Event, e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
 }

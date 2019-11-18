@@ -30,5 +30,5 @@ func (e *TrackName) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "             ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d name:%s\n", e.eventType, "TrackName", e.Delta, e.name)
+	fmt.Fprintf(w, "%02x/%-16s %s name:%s\n", e.eventType, "TrackName", e.MetaEvent.Event, e.name)
 }

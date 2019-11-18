@@ -21,5 +21,5 @@ func (e *NoteOff) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                     ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d channel:%d note:%d velocity:%d\n", e.Status, "NoteOff", e.Delta, e.channel, e.note, e.velocity)
+	fmt.Fprintf(w, "%02x/%-16s %s channel:%d note:%d velocity:%d\n", e.Status, "NoteOff", e.MidiEvent.Event, e.channel, e.note, e.velocity)
 }
