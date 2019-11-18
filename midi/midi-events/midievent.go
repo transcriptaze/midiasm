@@ -12,6 +12,10 @@ type MidiEvent struct {
 	bytes   []byte
 }
 
+func (e *MidiEvent) TickValue() uint64 {
+	return e.Tick
+}
+
 func (e *MidiEvent) DeltaTime() uint32 {
 	return e.Delta
 }

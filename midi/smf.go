@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/twystd/midiasm/midi/meta-events"
 	"io"
 	"os"
 )
@@ -67,17 +68,19 @@ func (smf *SMF) Render() {
 	}
 }
 
-func (smf *SMF) Notes() {
-	tempo := []struct {
-		t     uint32
-		tempo uint32
-	}{
-		{0, 500000},
+func (smf *SMF) Notes() error {
+	tempo := make([]*metaevent.Tempo, 0)
+	for _, e := range smf.tracks[0].Events {
+		if v, ok := e.(*metaevent.Tempo); ok {
+			tempo = append(tempo, v)
+		}
 	}
 
-	for _, track := range smf.tracks {
+	for _, track := range smf.tracks[1:] {
 		track.Notes(smf.header.division, tempo, os.Stdout)
 	}
+
+	return nil
 }
 
 func readChunk(r *bufio.Reader) (Chunk, error) {

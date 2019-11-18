@@ -6,12 +6,13 @@ import (
 )
 
 type IEvent interface {
+	TickValue() uint64
 	DeltaTime() uint32
 	Render(w io.Writer)
 }
 
 type Event struct {
-	Tick   uint32
+	Tick   uint64
 	Delta  uint32
 	Status byte
 }

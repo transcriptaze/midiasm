@@ -17,7 +17,7 @@ type MTrk struct {
 	data   []byte
 	bytes  []byte
 
-	events []event.IEvent
+	Events []event.IEvent
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
@@ -49,7 +49,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	chunk.tag = tag
 	chunk.length = length
 	chunk.data = data[8:]
-	chunk.events = events
+	chunk.Events = events
 	chunk.bytes = data
 
 	return nil
@@ -62,34 +62,31 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintf(w, "... ")
 	fmt.Fprintf(w, "              %12s length:%-8d\n", chunk.tag, chunk.length)
 
-	for _, e := range chunk.events {
+	for _, e := range chunk.Events {
 		e.Render(w)
 	}
 
 	fmt.Fprintln(w)
 }
 
-func (chunk *MTrk) Notes(ppqn uint16,
-	tx []struct {
-		t     uint32
-		tempo uint32
-	}, w io.Writer) {
+func (chunk *MTrk) Notes(ppqn uint16, tempoMap []*metaevent.Tempo, w io.Writer) {
+	var tempo uint64 = 500000
 
-	var t float64 = 0.0
-	var tick uint32 = 0
-	var tempo float64 = float64(tx[0].tempo) / 1000000.0
-
-	for _, e := range chunk.events {
-		dt := e.DeltaTime()
-		t += tempo * float64(dt) / float64(ppqn)
-		tick += dt
+	for _, e := range chunk.Events {
+		tick := e.TickValue()
 		beat := float64(tick) / float64(ppqn)
+		t := tick * tempo / uint64(ppqn)
+		tfloat := float64(t) / 1000000.0
+
+		if dt := uint64(tick) * tempo % uint64(ppqn); dt > 0 {
+			fmt.Printf(`Warning: %dµs loss of precision converting from tick time to physical time\n`, dt)
+		}
 
 		switch e.(type) {
 		case *midievent.NoteOn:
-			fmt.Fprintf(w, "NOTE ON  %-6d %.5f  %.5f\n", tick, beat, t)
+			fmt.Fprintf(w, "NOTE ON  %-6d %.5f  %-10d %.5f\n", tick, beat, t, tfloat)
 		case *midievent.NoteOff:
-			fmt.Fprintf(w, "NOTE OFF %-6d %.5f  %.5f\n", tick, beat, t)
+			fmt.Fprintf(w, "NOTE OFF %-6d %.5f  %-10d %.5f\n", tick, beat, t, tfloat)
 		}
 	}
 
@@ -112,7 +109,7 @@ func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
 	bytes = append(bytes, b)
 
 	e := event.Event{
-		Tick:   tick + delta,
+		Tick:   uint64(tick + delta),
 		Delta:  delta,
 		Status: b,
 	}

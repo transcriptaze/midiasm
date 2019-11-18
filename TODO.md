@@ -4,8 +4,9 @@
 
 *Disassembler*
 
-- [ ] Use microseconds as integer time base
 - [ ] Extract notes
+- [x] Use microseconds as integer time base
+- [ ] Ellipsize too long text
 
 ### META events
 

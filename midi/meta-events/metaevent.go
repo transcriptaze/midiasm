@@ -14,6 +14,10 @@ type MetaEvent struct {
 	bytes     []byte
 }
 
+func (e *MetaEvent) TickValue() uint64 {
+	return e.Tick
+}
+
 func (e *MetaEvent) DeltaTime() uint32 {
 	return e.Delta
 }
