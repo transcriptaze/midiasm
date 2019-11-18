@@ -17,7 +17,7 @@ type MTrk struct {
 	data   []byte
 	bytes  []byte
 
-	events []event.Event
+	events []event.IEvent
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
@@ -28,15 +28,15 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 
 	length := binary.BigEndian.Uint32(data[4:8])
 
-	events := make([]event.Event, 0)
+	events := make([]event.IEvent, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
 	err := error(nil)
-	e := event.Event(nil)
+	e := event.IEvent(nil)
 
 	for err == nil {
 		e, err = parse(r)
 		if err == nil && e != nil {
-			events = append(events, e.(event.Event))
+			events = append(events, e.(event.IEvent))
 		}
 	}
 
@@ -94,7 +94,7 @@ func (chunk *MTrk) Notes(ppqn uint16,
 	fmt.Fprintln(w)
 }
 
-func parse(r *bufio.Reader) (event.Event, error) {
+func parse(r *bufio.Reader) (event.IEvent, error) {
 	bytes := make([]byte, 0)
 
 	delta, m, err := vlq(r)

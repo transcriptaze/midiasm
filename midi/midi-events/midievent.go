@@ -17,7 +17,7 @@ func (e *MidiEvent) DeltaTime() uint32 {
 	return e.delta
 }
 
-func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.Event, error) {
+func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEvent, error) {
 	if status&0xf0 == 0x80 {
 		note, err := r.ReadByte()
 		if err != nil {

@@ -19,7 +19,7 @@ func (e *MetaEvent) DeltaTime() uint32 {
 	return e.delta
 }
 
-func Parse(delta uint32, status byte, x []byte, r *bufio.Reader) (event.Event, error) {
+func Parse(delta uint32, status byte, x []byte, r *bufio.Reader) (event.IEvent, error) {
 	if status != 0xff {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'ff'", status)
 	}

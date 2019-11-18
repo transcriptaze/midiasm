@@ -4,7 +4,7 @@ import (
 	"io"
 )
 
-type Event interface {
+type IEvent interface {
 	DeltaTime() uint32
 	Render(w io.Writer)
 }
