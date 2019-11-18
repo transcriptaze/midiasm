@@ -7,18 +7,20 @@ import (
 )
 
 type MidiEvent struct {
-	delta   uint32
-	status  byte
+	event.Event
 	channel byte
 	bytes   []byte
 }
 
 func (e *MidiEvent) DeltaTime() uint32 {
-	return e.delta
+	return e.Delta
 }
 
-func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEvent, error) {
-	if status&0xf0 == 0x80 {
+func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error) {
+	status := event.Status & 0xf0
+	channel := event.Status & 0x0f
+
+	if status == 0x80 {
 		note, err := r.ReadByte()
 		if err != nil {
 			return nil, err
@@ -31,9 +33,8 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 
 		return &NoteOff{
 			MidiEvent: MidiEvent{
-				delta:   delta,
-				status:  status,
-				channel: status & 0x0f,
+				Event:   event,
+				channel: channel,
 				bytes:   append(data, note, velocity),
 			},
 			note:     note,
@@ -41,7 +42,7 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 		}, nil
 	}
 
-	if status&0xf0 == 0x90 {
+	if status == 0x90 {
 		note, err := r.ReadByte()
 		if err != nil {
 			return nil, err
@@ -54,9 +55,8 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 
 		return &NoteOn{
 			MidiEvent: MidiEvent{
-				delta:   delta,
-				status:  status,
-				channel: status & 0x0f,
+				Event:   event,
+				channel: status,
 				bytes:   append(data, note, velocity),
 			},
 			note:     note,
@@ -64,7 +64,7 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 		}, nil
 	}
 
-	if status&0xf0 == 0xB0 {
+	if status == 0xB0 {
 		controller, err := r.ReadByte()
 		if err != nil {
 			return nil, err
@@ -77,9 +77,8 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 
 		return &Controller{
 			MidiEvent: MidiEvent{
-				delta:   delta,
-				status:  status,
-				channel: status & 0x0f,
+				Event:   event,
+				channel: channel,
 				bytes:   append(data, controller, value),
 			},
 			controller: controller,
@@ -87,7 +86,7 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 		}, nil
 	}
 
-	if status&0xf0 == 0xC0 {
+	if status == 0xC0 {
 		program, err := r.ReadByte()
 		if err != nil {
 			return nil, err
@@ -95,9 +94,8 @@ func Parse(delta uint32, status byte, data []byte, r *bufio.Reader) (event.IEven
 
 		return &ProgramChange{
 			MidiEvent: MidiEvent{
-				delta:   delta,
-				status:  status,
-				channel: status & 0x0f,
+				Event:   event,
+				channel: channel,
 				bytes:   append(data, program),
 			},
 			program: program,

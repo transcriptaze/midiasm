@@ -11,10 +11,6 @@ type Tempo struct {
 }
 
 func NewTempo(event MetaEvent, data []byte) (*Tempo, error) {
-	if event.status != 0xff {
-		return nil, fmt.Errorf("Invalid Tempo status (%02x): expected 'ff'", event.status)
-	}
-
 	if event.eventType != 0x51 {
 		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", event.eventType)
 	}
@@ -42,5 +38,5 @@ func (e *Tempo) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                               ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d tempo:%v\n", e.eventType, "Tempo", e.delta, e.Tempo)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d tempo:%v\n", e.eventType, "Tempo", e.Delta, e.Tempo)
 }

@@ -11,10 +11,6 @@ type TrackName struct {
 }
 
 func NewTrackName(event MetaEvent, data []byte) (*TrackName, error) {
-	if event.status != 0xff {
-		return nil, fmt.Errorf("Invalid TrackName status (%02x): expected 'ff'", event.status)
-	}
-
 	if event.eventType != 0x03 {
 		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", event.eventType)
 	}
@@ -34,5 +30,5 @@ func (e *TrackName) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "             ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d name:%s\n", e.eventType, "TrackName", e.delta, e.name)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d name:%s\n", e.eventType, "TrackName", e.Delta, e.name)
 }

@@ -12,10 +12,6 @@ type KeySignature struct {
 }
 
 func NewKeySignature(event MetaEvent, data []byte) (*KeySignature, error) {
-	if event.status != 0xff {
-		return nil, fmt.Errorf("Invalid KeySignature status (%02x): expected 'ff'", event.status)
-	}
-
 	if event.eventType != 0x59 {
 		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", event.eventType)
 	}
@@ -48,5 +44,5 @@ func (e *KeySignature) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                  ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d accidentals:%d key-type:%d\n", e.eventType, "KeySignature", e.delta, e.accidentals, e.keyType)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d accidentals:%d key-type:%d\n", e.eventType, "KeySignature", e.Delta, e.accidentals, e.keyType)
 }

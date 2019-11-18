@@ -10,10 +10,6 @@ type EndOfTrack struct {
 }
 
 func NewEndOfTrack(event MetaEvent, data []byte) (*EndOfTrack, error) {
-	if event.status != 0xff {
-		return nil, fmt.Errorf("Invalid EndOfTrack status (%02x): expected 'ff'", event.status)
-	}
-
 	if event.eventType != 0x2f {
 		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", event.eventType)
 	}
@@ -34,5 +30,5 @@ func (e *EndOfTrack) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                        ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d\n", e.eventType, "EndOfTrack", e.delta)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d\n", e.eventType, "EndOfTrack", e.Delta)
 }

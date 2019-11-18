@@ -14,10 +14,6 @@ type TimeSignature struct {
 }
 
 func NewTimeSignature(event MetaEvent, data []byte) (*TimeSignature, error) {
-	if event.status != 0xff {
-		return nil, fmt.Errorf("Invalid TimeSignature status (%02x): expected 'ff'", event.status)
-	}
-
 	if event.eventType != 0x58 {
 		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", event.eventType)
 	}
@@ -47,5 +43,5 @@ func (e *TimeSignature) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                            ")
 
-	fmt.Fprintf(w, "%02x/%-16s delta:%-10d numerator:%d denominator:%d ticks/click:%d 1/32-per-quarter:%d\n", e.eventType, "TimeSignature", e.delta, e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
+	fmt.Fprintf(w, "%02x/%-16s delta:%-10d numerator:%d denominator:%d ticks/click:%d 1/32-per-quarter:%d\n", e.eventType, "TimeSignature", e.Delta, e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
 }

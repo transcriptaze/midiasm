@@ -8,20 +8,19 @@ import (
 )
 
 type MetaEvent struct {
-	delta     uint32
-	status    byte
+	event.Event
 	eventType byte
 	length    uint32
 	bytes     []byte
 }
 
 func (e *MetaEvent) DeltaTime() uint32 {
-	return e.delta
+	return e.Delta
 }
 
-func Parse(delta uint32, status byte, x []byte, r *bufio.Reader) (event.IEvent, error) {
-	if status != 0xff {
-		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'ff'", status)
+func Parse(e event.Event, x []byte, r *bufio.Reader) (event.IEvent, error) {
+	if e.Status != 0xff {
+		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'ff'", e.Status)
 	}
 
 	bytes := make([]byte, 0)
@@ -48,8 +47,7 @@ func Parse(delta uint32, status byte, x []byte, r *bufio.Reader) (event.IEvent, 
 	bytes = append(bytes, d...)
 
 	event := MetaEvent{
-		delta:     delta,
-		status:    status,
+		Event:     e,
 		eventType: eventType,
 		length:    l,
 		bytes:     bytes,
