@@ -5,9 +5,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"github.com/twystd/midiasm/midi/meta-events"
+	"github.com/twystd/midiasm/midi/midi-events"
 	"io"
 	"os"
+	"sort"
+	"time"
 )
 
 type SMF struct {
@@ -69,15 +73,57 @@ func (smf *SMF) Render() {
 }
 
 func (smf *SMF) Notes() error {
-	tempo := make([]*metaevent.Tempo, 0)
+	w := os.Stdout
+	ppqn := uint64(smf.header.division)
+	tempoMap := make([]event.IEvent, 0)
+
 	for _, e := range smf.tracks[0].Events {
 		if v, ok := e.(*metaevent.Tempo); ok {
-			tempo = append(tempo, v)
+			tempoMap = append(tempoMap, v)
 		}
 	}
 
 	for _, track := range smf.tracks[1:] {
-		track.Notes(smf.header.division, tempo, os.Stdout)
+		var tempo uint64 = 50000
+		var tick uint64 = 0
+		var t time.Duration = 0
+		var beat float64 = 0.0
+
+		events := make([]event.IEvent, 0)
+		events = append(events, tempoMap...)
+		events = append(events, track.Events...)
+
+		sort.SliceStable(events, func(i, j int) bool {
+			return events[i].TickValue() < events[j].TickValue()
+		})
+
+		for _, e := range events {
+			// Non-obvious hack to ensure tempo changes only take place after the current tick
+			if e.TickValue() != tick {
+				tick = e.TickValue()
+				beat = float64(tick) / float64(ppqn)
+				t = time.Duration(1000 * tick * tempo / ppqn)
+
+				if dt := (tick * tempo) % ppqn; dt > 0 {
+					fmt.Printf("WARNING: %dµs loss of precision converting from tick time to physical time at tick %d\n", dt, tick)
+				}
+			}
+
+			switch e.(type) {
+			case *metaevent.Tempo:
+				if v, ok := e.(*metaevent.Tempo); ok {
+					tempo = uint64(v.Tempo)
+				}
+
+			case *midievent.NoteOn:
+				fmt.Fprintf(w, "NOTE ON  %-6d %.5f  %-10d %.5f\n", tick, beat, t.Microseconds(), t.Seconds())
+
+			case *midievent.NoteOff:
+				fmt.Fprintf(w, "NOTE OFF %-6d %.5f  %-10d %.5f\n", tick, beat, t.Microseconds(), t.Seconds())
+			}
+		}
+
+		fmt.Fprintln(w)
 	}
 
 	return nil

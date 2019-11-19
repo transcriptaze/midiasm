@@ -69,30 +69,6 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintln(w)
 }
 
-func (chunk *MTrk) Notes(ppqn uint16, tempoMap []*metaevent.Tempo, w io.Writer) {
-	var tempo uint64 = 500000
-
-	for _, e := range chunk.Events {
-		tick := e.TickValue()
-		beat := float64(tick) / float64(ppqn)
-		t := tick * tempo / uint64(ppqn)
-		tfloat := float64(t) / 1000000.0
-
-		if dt := uint64(tick) * tempo % uint64(ppqn); dt > 0 {
-			fmt.Printf(`Warning: %dµs loss of precision converting from tick time to physical time\n`, dt)
-		}
-
-		switch e.(type) {
-		case *midievent.NoteOn:
-			fmt.Fprintf(w, "NOTE ON  %-6d %.5f  %-10d %.5f\n", tick, beat, t, tfloat)
-		case *midievent.NoteOff:
-			fmt.Fprintf(w, "NOTE OFF %-6d %.5f  %-10d %.5f\n", tick, beat, t, tfloat)
-		}
-	}
-
-	fmt.Fprintln(w)
-}
-
 func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
 	bytes := make([]byte, 0)
 
