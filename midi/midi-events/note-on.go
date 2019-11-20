@@ -7,7 +7,7 @@ import (
 
 type NoteOn struct {
 	MidiEvent
-	note     uint8
+	Note     uint8
 	velocity uint8
 }
 
@@ -21,5 +21,5 @@ func (e *NoteOn) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                     ")
 
-	fmt.Fprintf(w, "%02x/%-16s %s channel:%d note:%d velocity:%d\n", e.Status, "NoteOn", e.MidiEvent.Event, e.channel, e.note, e.velocity)
+	fmt.Fprintf(w, "%02x/%-16s %s channel:%d note:%d velocity:%d\n", e.Status, "NoteOn", e.MidiEvent.Event, e.channel, e.Note, e.velocity)
 }

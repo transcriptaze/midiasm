@@ -41,7 +41,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 				channel: channel,
 				bytes:   append(data, note, velocity),
 			},
-			note:     note,
+			Note:     note,
 			velocity: velocity,
 		}, nil
 	}
@@ -63,7 +63,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 				channel: status,
 				bytes:   append(data, note, velocity),
 			},
-			note:     note,
+			Note:     note,
 			velocity: velocity,
 		}, nil
 	}
