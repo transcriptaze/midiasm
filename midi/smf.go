@@ -19,6 +19,15 @@ type SMF struct {
 	tracks []*MTrk
 }
 
+type Note struct {
+	Channel   byte
+	Note      byte
+	StartTick uint64
+	EndTick   uint64
+	Start     time.Duration
+	End       time.Duration
+}
+
 func (smf *SMF) UnmarshalBinary(data []byte) error {
 	r := bufio.NewReader(bytes.NewReader(data))
 	chunks := make([]Chunk, 0)
@@ -140,21 +149,22 @@ func (smf *SMF) Notes() error {
 		}
 
 		var ticks []uint64
-		for tickv, _ := range events {
-			ticks = append(ticks, tickv)
+		for tick, _ := range events {
+			ticks = append(ticks, tick)
 		}
 
 		sort.SliceStable(ticks, func(i, j int) bool {
 			return ticks[i] < ticks[j]
 		})
 
+		pending := make(map[uint16]*Note, 0)
+		notes := make([]*Note, 0)
+
 		var tempo uint64 = 50000
-		var tick uint64 = 0
 		var t time.Duration = 0
 		var beat float64 = 0.0
 
-		for _, tickv := range ticks {
-			tick = tickv
+		for _, tick := range ticks {
 			beat = float64(tick) / float64(ppqn)
 			t = time.Duration(1000 * tick * tempo / ppqn)
 
@@ -162,7 +172,7 @@ func (smf *SMF) Notes() error {
 				fmt.Printf("WARNING: %dµs loss of precision converting from tick time to physical time at tick %d\n", dt, tick)
 			}
 
-			list := events[tickv]
+			list := events[tick]
 			for _, e := range list {
 				if v, ok := e.(*metaevent.Tempo); ok {
 					tempo = uint64(v.Tempo)
@@ -171,18 +181,54 @@ func (smf *SMF) Notes() error {
 
 			for _, e := range list {
 				if v, ok := e.(*midievent.NoteOff); ok {
-					fmt.Fprintf(w, "NOTE OFF %02X  %-6d %.5f  %-10d %.5f\n", v.Note, tick, beat, t.Microseconds(), t.Seconds())
+					fmt.Printf("NOTE OFF %02X %02X  %-6d %.5f  %s\n", v.Channel, v.Note, tick, beat, t)
+
+					key := uint16(v.Channel)<<8 + uint16(v.Note)
+					if note := pending[key]; note == nil {
+						fmt.Printf("WARNING: NOTE OFF without preceding NOTE ON for %d:%02X\n", v.Channel, v.Note)
+					} else {
+						note.End = t
+						note.EndTick = tick
+						delete(pending, key)
+					}
 				}
 			}
 
 			for _, e := range list {
 				if v, ok := e.(*midievent.NoteOn); ok {
-					fmt.Fprintf(w, "NOTE ON  %02X  %-6d %.5f  %-10d %.5f\n", v.Note, tick, beat, t.Microseconds(), t.Seconds())
+					fmt.Printf("NOTE ON  %02X %02X  %-6d %.5f  %s\n", v.Channel, v.Note, tick, beat, t)
+
+					key := uint16(v.Channel)<<8 + uint16(v.Note)
+					note := Note{
+						Channel:   v.Channel,
+						Note:      v.Note,
+						Start:     t,
+						StartTick: tick,
+					}
+
+					if pending[key] != nil {
+						fmt.Printf("WARNING: NOTE ON without preceding NOTE OFF for %d:%02X\n", v.Channel, v.Note)
+					}
+
+					pending[key] = &note
+					notes = append(notes, &note)
 				}
 			}
 		}
 
 		fmt.Fprintln(w)
+
+		if len(pending) > 0 {
+			fmt.Printf("WARN: %d incomplete notes\n", len(pending))
+			for k, n := range pending {
+				fmt.Printf("PENDING: %04X %#v\n", k, n)
+			}
+			fmt.Println()
+		}
+
+		for _, n := range notes {
+			fmt.Fprintf(w, "NOTE channel:%d note:%02X start:%-6s end:%-6s\n", n.Channel, n.Note, n.Start, n.End)
+		}
 	}
 
 	return nil

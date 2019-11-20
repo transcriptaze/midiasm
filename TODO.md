@@ -4,10 +4,16 @@
 
 *Disassembler*
 
-- [ ] Extract notes
+- [x] Extract notes
 - [x] Use microseconds as integer time base
 - [ ] Ellipsize too long text
 - [ ] Allow format string
+- [ ] EventList: pretty print
+- [ ] NoteList: pretty print
+- [ ] Check loss of precision
+- [ ] Write to file, log errors/warning to console
+- [ ] --debug
+- [ ] Rework MIDI event parser
 
 ### MIDI events
 

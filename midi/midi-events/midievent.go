@@ -8,7 +8,7 @@ import (
 
 type MidiEvent struct {
 	event.Event
-	channel byte
+	Channel byte
 	bytes   []byte
 }
 
@@ -38,7 +38,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 		return &NoteOff{
 			MidiEvent: MidiEvent{
 				Event:   event,
-				channel: channel,
+				Channel: channel,
 				bytes:   append(data, note, velocity),
 			},
 			Note:     note,
@@ -60,7 +60,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 		return &NoteOn{
 			MidiEvent: MidiEvent{
 				Event:   event,
-				channel: status,
+				Channel: channel,
 				bytes:   append(data, note, velocity),
 			},
 			Note:     note,
@@ -82,7 +82,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 		return &Controller{
 			MidiEvent: MidiEvent{
 				Event:   event,
-				channel: channel,
+				Channel: channel,
 				bytes:   append(data, controller, value),
 			},
 			controller: controller,
@@ -99,7 +99,7 @@ func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error
 		return &ProgramChange{
 			MidiEvent: MidiEvent{
 				Event:   event,
-				channel: channel,
+				Channel: channel,
 				bytes:   append(data, program),
 			},
 			program: program,

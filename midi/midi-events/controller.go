@@ -21,5 +21,5 @@ func (e *Controller) Render(w io.Writer) {
 	}
 	fmt.Fprintf(w, "                                     ")
 
-	fmt.Fprintf(w, "%02x/%-16s %s channel:%d controller:%d value:%d\n", e.Status, "Controller", e.MidiEvent.Event, e.channel, e.controller, e.value)
+	fmt.Fprintf(w, "%02x/%-16s %s channel:%d controller:%d value:%d\n", e.Status, "Controller", e.MidiEvent.Event, e.Channel, e.controller, e.value)
 }
