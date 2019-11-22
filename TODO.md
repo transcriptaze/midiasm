@@ -4,6 +4,7 @@
 
 *Disassembler*
 
+- [ ] Rework MIDI event parser
 - [x] Extract notes
 - [x] Use microseconds as integer time base
 - [ ] Ellipsize too long text
@@ -11,19 +12,18 @@
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print
 - [ ] Check loss of precision
-- [ ] Write to file, log errors/warning to console
+- [ ] Write to file, log errors/warning to stderr
 - [ ] --debug
-- [ ] Rework MIDI event parser
 
 ### MIDI events
 
 - [x] 8n/Note Off
 - [x] 9n/Note On
-- [ ] An/Polyphonic Pressure
+- [x] An/Polyphonic Pressure
 - [x] Bn/Controller
-- [ ] Cn/Program Change
-- [ ] Dn/Channel Pressure
-- [ ] En/Pitch Bend
+- [x] Cn/Program Change
+- [x] Dn/Channel Pressure
+- [x] En/Pitch Bend
 
 ### META events
 
@@ -58,3 +58,5 @@
 1.  Assembler
 2.  Export to JSON
 3.  Export to S-expressions
+4.  VSCode plugin
+

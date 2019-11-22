@@ -12,99 +12,35 @@ type MidiEvent struct {
 	bytes   []byte
 }
 
-func (e *MidiEvent) TickValue() uint64 {
-	return e.Tick
-}
-
-func (e *MidiEvent) DeltaTime() uint32 {
-	return e.Delta
-}
-
 func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error) {
-	status := event.Status & 0xf0
-	channel := event.Status & 0x0f
-
-	if status == 0x80 {
-		note, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-
-		velocity, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-
-		return &NoteOff{
-			MidiEvent: MidiEvent{
-				Event:   event,
-				Channel: channel,
-				bytes:   append(data, note, velocity),
-			},
-			Note:     note,
-			velocity: velocity,
-		}, nil
+	midiEvent := MidiEvent{
+		Event:   event,
+		Channel: event.Status & 0x0F,
+		bytes:   data,
 	}
 
-	if status == 0x90 {
-		note, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
+	switch event.Status & 0xF0 {
+	case 0x80:
+		return NewNoteOff(midiEvent, r)
 
-		velocity, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
+	case 0x90:
+		return NewNoteOn(midiEvent, r)
 
-		return &NoteOn{
-			MidiEvent: MidiEvent{
-				Event:   event,
-				Channel: channel,
-				bytes:   append(data, note, velocity),
-			},
-			Note:     note,
-			velocity: velocity,
-		}, nil
+	case 0xA0:
+		return NewPolyphonicPressure(midiEvent, r)
+
+	case 0xB0:
+		return NewController(midiEvent, r)
+
+	case 0xC0:
+		return NewProgramChange(midiEvent, r)
+
+	case 0xD0:
+		return NewChannelPressure(midiEvent, r)
+
+	case 0xE0:
+		return NewPitchBend(midiEvent, r)
 	}
 
-	if status == 0xB0 {
-		controller, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-
-		value, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-
-		return &Controller{
-			MidiEvent: MidiEvent{
-				Event:   event,
-				Channel: channel,
-				bytes:   append(data, controller, value),
-			},
-			controller: controller,
-			value:      value,
-		}, nil
-	}
-
-	if status == 0xC0 {
-		program, err := r.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-
-		return &ProgramChange{
-			MidiEvent: MidiEvent{
-				Event:   event,
-				Channel: channel,
-				bytes:   append(data, program),
-			},
-			program: program,
-		}, nil
-	}
-
-	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", status)
+	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
 }

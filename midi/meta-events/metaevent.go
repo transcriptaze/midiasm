@@ -14,14 +14,6 @@ type MetaEvent struct {
 	bytes     []byte
 }
 
-func (e *MetaEvent) TickValue() uint64 {
-	return e.Tick
-}
-
-func (e *MetaEvent) DeltaTime() uint32 {
-	return e.Delta
-}
-
 func Parse(e event.Event, x []byte, r *bufio.Reader) (event.IEvent, error) {
 	if e.Status != 0xff {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'ff'", e.Status)
