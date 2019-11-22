@@ -37,14 +37,5 @@ func NewPitchBend(event MidiEvent, r *bufio.Reader) (*PitchBend, error) {
 }
 
 func (e *PitchBend) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for i := 5; i > len(e.bytes); i-- {
-		fmt.Fprintf(w, "   ")
-	}
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "                                     ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s channel:%d bend:%d\n", e.Status, "PitchBend", e.MidiEvent.Event, e.Channel, e.Bend)
+	fmt.Fprintf(w, "%s %-16s channel:%d bend:%d\n", e.MidiEvent, "PitchBend", e.Channel, e.Bend)
 }

@@ -30,14 +30,5 @@ func NewPolyphonicPressure(event MidiEvent, r *bufio.Reader) (*PolyphonicPressur
 }
 
 func (e *PolyphonicPressure) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for i := 5; i > len(e.bytes); i-- {
-		fmt.Fprintf(w, "   ")
-	}
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "                                     ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s channel:%d pressure:%d\n", e.Status, "PolyphonicPressure", e.MidiEvent.Event, e.Channel, e.Pressure)
+	fmt.Fprintf(w, "%s %-16s channel:%d pressure:%d\n", e.MidiEvent, "PolyphonicPressure", e.Channel, e.Pressure)
 }

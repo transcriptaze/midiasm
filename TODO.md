@@ -4,7 +4,7 @@
 
 *Disassembler*
 
-- [ ] Rework MIDI event parser
+- [x] Rework MIDI event parser
 - [x] Extract notes
 - [x] Use microseconds as integer time base
 - [ ] Ellipsize too long text
