@@ -1,10 +1,10 @@
 package midievent
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
+	"io"
 )
 
 type MidiEvent struct {
@@ -32,34 +32,50 @@ func (e MidiEvent) String() string {
 	return buffer.String()
 }
 
-func Parse(event event.Event, data []byte, r *bufio.Reader) (event.IEvent, error) {
+type reader struct {
+	rdr   io.ByteReader
+	event *MidiEvent
+}
+
+func (r reader) ReadByte() (byte, error) {
+	b, err := r.rdr.ReadByte()
+	if err == nil {
+		r.event.bytes = append(r.event.bytes, b)
+	}
+
+	return b, err
+}
+
+func Parse(event event.Event, data []byte, r io.ByteReader) (event.IEvent, error) {
 	midiEvent := MidiEvent{
 		Event:   event,
 		Channel: event.Status & 0x0F,
 		bytes:   data,
 	}
 
+	rr := reader{r, &midiEvent}
+
 	switch event.Status & 0xF0 {
 	case 0x80:
-		return NewNoteOff(midiEvent, r)
+		return NewNoteOff(&midiEvent, rr)
 
 	case 0x90:
-		return NewNoteOn(midiEvent, r)
+		return NewNoteOn(&midiEvent, rr)
 
 	case 0xA0:
-		return NewPolyphonicPressure(midiEvent, r)
+		return NewPolyphonicPressure(&midiEvent, rr)
 
 	case 0xB0:
-		return NewController(midiEvent, r)
+		return NewController(&midiEvent, rr)
 
 	case 0xC0:
-		return NewProgramChange(midiEvent, r)
+		return NewProgramChange(&midiEvent, rr)
 
 	case 0xD0:
-		return NewChannelPressure(midiEvent, r)
+		return NewChannelPressure(&midiEvent, rr)
 
 	case 0xE0:
-		return NewPitchBend(midiEvent, r)
+		return NewPitchBend(&midiEvent, rr)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)

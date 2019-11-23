@@ -11,7 +11,7 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func NewNoteOff(event MidiEvent, r io.ByteReader) (*NoteOff, error) {
+func NewNoteOff(event *MidiEvent, r io.ByteReader) (*NoteOff, error) {
 	if event.Status&0xF0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%02x): expected '80'", event.Status&0xF0)
 	}
@@ -26,10 +26,8 @@ func NewNoteOff(event MidiEvent, r io.ByteReader) (*NoteOff, error) {
 		return nil, err
 	}
 
-	event.bytes = append(event.bytes, note, velocity)
-
 	return &NoteOff{
-		MidiEvent: event,
+		MidiEvent: *event,
 		Note:      note,
 		Velocity:  velocity,
 	}, nil

@@ -10,7 +10,7 @@ type ChannelPressure struct {
 	Pressure byte
 }
 
-func NewChannelPressure(event MidiEvent, r io.ByteReader) (*ChannelPressure, error) {
+func NewChannelPressure(event *MidiEvent, r io.ByteReader) (*ChannelPressure, error) {
 	if event.Status&0xF0 != 0xD0 {
 		return nil, fmt.Errorf("Invalid ChannelPressure status (%02x): expected 'D0'", event.Status&0x80)
 	}
@@ -20,10 +20,8 @@ func NewChannelPressure(event MidiEvent, r io.ByteReader) (*ChannelPressure, err
 		return nil, err
 	}
 
-	event.bytes = append(event.bytes, pressure)
-
 	return &ChannelPressure{
-		MidiEvent: event,
+		MidiEvent: *event,
 		Pressure:  pressure,
 	}, nil
 }

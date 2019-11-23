@@ -10,27 +10,24 @@ type PitchBend struct {
 	Bend uint16
 }
 
-func NewPitchBend(event MidiEvent, r io.ByteReader) (*PitchBend, error) {
+func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
 	if event.Status&0xF0 != 0xE0 {
 		return nil, fmt.Errorf("Invalid PitchBend status (%02x): expected 'E0'", event.Status&0x80)
 	}
 
-	lsb, err := r.ReadByte()
-	if err != nil {
-		return nil, err
+	bend := uint16(0)
+
+	for i := 0; i < 2; i++ {
+		if b, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			bend <<= 7
+			bend |= uint16(b) & 0x7f
+		}
 	}
-
-	msb, err := r.ReadByte()
-	if err != nil {
-		return nil, err
-	}
-
-	event.bytes = append(event.bytes, lsb, msb)
-
-	bend := ((uint16(msb) & 0x7f) << 7) + (uint16(lsb) & 0x7f)
 
 	return &PitchBend{
-		MidiEvent: event,
+		MidiEvent: *event,
 		Bend:      bend,
 	}, nil
 }

@@ -10,7 +10,7 @@ type PolyphonicPressure struct {
 	Pressure byte
 }
 
-func NewPolyphonicPressure(event MidiEvent, r io.ByteReader) (*PolyphonicPressure, error) {
+func NewPolyphonicPressure(event *MidiEvent, r io.ByteReader) (*PolyphonicPressure, error) {
 	if event.Status&0xF0 != 0xA0 {
 		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%02x): expected 'A0'", event.Status&0x80)
 	}
@@ -20,10 +20,8 @@ func NewPolyphonicPressure(event MidiEvent, r io.ByteReader) (*PolyphonicPressur
 		return nil, err
 	}
 
-	event.bytes = append(event.bytes, pressure)
-
 	return &PolyphonicPressure{
-		MidiEvent: event,
+		MidiEvent: *event,
 		Pressure:  pressure,
 	}, nil
 }

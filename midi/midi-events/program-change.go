@@ -10,7 +10,7 @@ type ProgramChange struct {
 	Program byte
 }
 
-func NewProgramChange(event MidiEvent, r io.ByteReader) (*ProgramChange, error) {
+func NewProgramChange(event *MidiEvent, r io.ByteReader) (*ProgramChange, error) {
 	if event.Status&0xF0 != 0xc0 {
 		return nil, fmt.Errorf("Invalid ProgramChange status (%02x): expected 'C0'", event.Status&0x80)
 	}
@@ -20,10 +20,8 @@ func NewProgramChange(event MidiEvent, r io.ByteReader) (*ProgramChange, error) 
 		return nil, err
 	}
 
-	event.bytes = append(event.bytes, program)
-
 	return &ProgramChange{
-		MidiEvent: event,
+		MidiEvent: *event,
 		Program:   program,
 	}, nil
 }

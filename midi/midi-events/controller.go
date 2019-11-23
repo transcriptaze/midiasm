@@ -11,7 +11,7 @@ type Controller struct {
 	Value      byte
 }
 
-func NewController(event MidiEvent, r io.ByteReader) (*Controller, error) {
+func NewController(event *MidiEvent, r io.ByteReader) (*Controller, error) {
 	if event.Status&0xF0 != 0xB0 {
 		return nil, fmt.Errorf("Invalid Controller status (%02x): expected 'B0'", event.Status&0x80)
 	}
@@ -26,10 +26,8 @@ func NewController(event MidiEvent, r io.ByteReader) (*Controller, error) {
 		return nil, err
 	}
 
-	event.bytes = append(event.bytes, controller, value)
-
 	return &Controller{
-		MidiEvent:  event,
+		MidiEvent:  *event,
 		Controller: controller,
 		Value:      value,
 	}, nil
