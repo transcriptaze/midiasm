@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -11,7 +10,7 @@ type ProgramChange struct {
 	Program byte
 }
 
-func NewProgramChange(event MidiEvent, r *bufio.Reader) (*ProgramChange, error) {
+func NewProgramChange(event MidiEvent, r io.ByteReader) (*ProgramChange, error) {
 	if event.Status&0xF0 != 0xc0 {
 		return nil, fmt.Errorf("Invalid ProgramChange status (%02x): expected 'C0'", event.Status&0x80)
 	}

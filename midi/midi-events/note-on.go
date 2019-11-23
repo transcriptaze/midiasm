@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -12,7 +11,7 @@ type NoteOn struct {
 	Velocity byte
 }
 
-func NewNoteOn(event MidiEvent, r *bufio.Reader) (*NoteOn, error) {
+func NewNoteOn(event MidiEvent, r io.ByteReader) (*NoteOn, error) {
 	if event.Status&0xF0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%02x): expected '90'", event.Status&0x80)
 	}

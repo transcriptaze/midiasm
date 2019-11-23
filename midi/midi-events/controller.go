@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -12,7 +11,7 @@ type Controller struct {
 	Value      byte
 }
 
-func NewController(event MidiEvent, r *bufio.Reader) (*Controller, error) {
+func NewController(event MidiEvent, r io.ByteReader) (*Controller, error) {
 	if event.Status&0xF0 != 0xB0 {
 		return nil, fmt.Errorf("Invalid Controller status (%02x): expected 'B0'", event.Status&0x80)
 	}

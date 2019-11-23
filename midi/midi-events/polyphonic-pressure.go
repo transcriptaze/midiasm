@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -11,7 +10,7 @@ type PolyphonicPressure struct {
 	Pressure byte
 }
 
-func NewPolyphonicPressure(event MidiEvent, r *bufio.Reader) (*PolyphonicPressure, error) {
+func NewPolyphonicPressure(event MidiEvent, r io.ByteReader) (*PolyphonicPressure, error) {
 	if event.Status&0xF0 != 0xA0 {
 		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%02x): expected 'A0'", event.Status&0x80)
 	}

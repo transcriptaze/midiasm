@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -11,7 +10,7 @@ type ChannelPressure struct {
 	Pressure byte
 }
 
-func NewChannelPressure(event MidiEvent, r *bufio.Reader) (*ChannelPressure, error) {
+func NewChannelPressure(event MidiEvent, r io.ByteReader) (*ChannelPressure, error) {
 	if event.Status&0xF0 != 0xD0 {
 		return nil, fmt.Errorf("Invalid ChannelPressure status (%02x): expected 'D0'", event.Status&0x80)
 	}

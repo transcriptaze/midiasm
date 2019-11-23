@@ -1,7 +1,6 @@
 package midievent
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 )
@@ -11,7 +10,7 @@ type PitchBend struct {
 	Bend uint16
 }
 
-func NewPitchBend(event MidiEvent, r *bufio.Reader) (*PitchBend, error) {
+func NewPitchBend(event MidiEvent, r io.ByteReader) (*PitchBend, error) {
 	if event.Status&0xF0 != 0xE0 {
 		return nil, fmt.Errorf("Invalid PitchBend status (%02x): expected 'E0'", event.Status&0x80)
 	}
