@@ -34,5 +34,5 @@ func NewNoteOn(event *MidiEvent, r io.ByteReader) (*NoteOn, error) {
 }
 
 func (e *NoteOn) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d note:%d velocity:%d\n", e.MidiEvent, "NoteOn", e.Channel, e.Note, e.Velocity)
+	fmt.Fprintf(w, "%s %-16s channel:%d note:%d velocity:%d", e.MidiEvent, "NoteOn", e.Channel, e.Note, e.Velocity)
 }

@@ -27,5 +27,5 @@ func NewPolyphonicPressure(event *MidiEvent, r io.ByteReader) (*PolyphonicPressu
 }
 
 func (e *PolyphonicPressure) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d pressure:%d\n", e.MidiEvent, "PolyphonicPressure", e.Channel, e.Pressure)
+	fmt.Fprintf(w, "%s %-16s channel:%d pressure:%d", e.MidiEvent, "PolyphonicPressure", e.Channel, e.Pressure)
 }

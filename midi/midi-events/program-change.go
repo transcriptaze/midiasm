@@ -27,5 +27,5 @@ func NewProgramChange(event *MidiEvent, r io.ByteReader) (*ProgramChange, error)
 }
 
 func (e *ProgramChange) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d program:%d\n", e.MidiEvent, "ProgramChange", e.Channel, e.Program)
+	fmt.Fprintf(w, "%s %-16s channel:%d program:%d", e.MidiEvent, "ProgramChange", e.Channel, e.Program)
 }
