@@ -64,6 +64,7 @@ func (chunk *MTrk) Render(w io.Writer) {
 
 	for _, e := range chunk.Events {
 		e.Render(w)
+		fmt.Fprintln(w)
 	}
 
 	fmt.Fprintln(w)

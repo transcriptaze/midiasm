@@ -5,7 +5,6 @@ all: test      \
 format: 
 	go fmt ./...
 
-
 build: format
 	go build -o bin ./... 
 

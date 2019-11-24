@@ -35,5 +35,5 @@ func NewTempo(event *MetaEvent, r io.ByteReader) (*Tempo, error) {
 }
 
 func (e *Tempo) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s tempo:%v\n", e.MetaEvent, "Tempo", e.Tempo)
+	fmt.Fprintf(w, "%s %-16s tempo:%v", e.MetaEvent, "Tempo", e.Tempo)
 }

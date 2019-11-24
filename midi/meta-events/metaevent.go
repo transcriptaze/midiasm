@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
 	"io"
+	"strings"
 )
 
 type MetaEvent struct {
@@ -26,9 +27,9 @@ func (e MetaEvent) String() string {
 		fmt.Fprintf(buffer, "%02x ", b)
 	}
 
-	fmt.Fprintf(buffer, "                                     ")
+	fmt.Fprintf(buffer, "%s", strings.Repeat(" ", 60-buffer.Len()))
 
-	return fmt.Sprintf("%s %s %02X", buffer.String()[:54], e.Event, e.eventType)
+	return fmt.Sprintf("%s %s %02X", buffer.String()[:60], e.Event, e.eventType)
 }
 
 type reader struct {

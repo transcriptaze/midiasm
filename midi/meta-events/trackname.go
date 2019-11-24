@@ -27,5 +27,5 @@ func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
 }
 
 func (e *TrackName) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s name:%s\n", e.MetaEvent, "TrackName", e.Name)
+	fmt.Fprintf(w, "%s %-16s name:%s", e.MetaEvent, "TrackName", e.Name)
 }

@@ -1,18 +1,18 @@
 ## v0.0
 
-## IN PROGRESS
-
 *Disassembler*
 
 - [x] Rework MIDI event parser
+- [x] Rework META event parser
 - [x] Extract notes
 - [x] Use microseconds as integer time base
-- [ ] Ellipsize too long text
+- [ ] Ellipsize too long hex
 - [ ] Allow format string
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print
 - [ ] Check loss of precision
 - [ ] Write to file, log errors/warning to stderr
+- [ ] Split tracks to separate files
 - [ ] --debug
 - [ ] --verbose
 
