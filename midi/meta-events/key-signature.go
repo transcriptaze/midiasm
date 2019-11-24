@@ -11,13 +11,16 @@ type KeySignature struct {
 	keyType     uint8
 }
 
-func NewKeySignature(event MetaEvent, data []byte) (*KeySignature, error) {
+func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 	if event.eventType != 0x59 {
 		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", event.eventType)
 	}
 
-	if event.length != 2 {
-		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", event.length)
+	data, err := read(r)
+	if err != nil {
+		return nil, err
+	} else if len(data) != 2 {
+		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(data))
 	}
 
 	accidentals := int8(data[0])
@@ -31,7 +34,7 @@ func NewKeySignature(event MetaEvent, data []byte) (*KeySignature, error) {
 	}
 
 	return &KeySignature{
-		MetaEvent:   event,
+		MetaEvent:   *event,
 		accidentals: accidentals,
 		keyType:     keyType,
 	}, nil

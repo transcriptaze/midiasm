@@ -10,16 +10,19 @@ type TrackName struct {
 	name string
 }
 
-func NewTrackName(event MetaEvent, data []byte) (*TrackName, error) {
+func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
 	if event.eventType != 0x03 {
 		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", event.eventType)
 	}
 
-	name := string(data)
+	name, err := read(r)
+	if err != nil {
+		return nil, err
+	}
 
 	return &TrackName{
-		MetaEvent: event,
-		name:      name,
+		MetaEvent: *event,
+		name:      string(name),
 	}, nil
 }
 

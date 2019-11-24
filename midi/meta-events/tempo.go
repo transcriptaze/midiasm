@@ -10,23 +10,26 @@ type Tempo struct {
 	Tempo uint32
 }
 
-func NewTempo(event MetaEvent, data []byte) (*Tempo, error) {
+func NewTempo(event *MetaEvent, r io.ByteReader) (*Tempo, error) {
 	if event.eventType != 0x51 {
 		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", event.eventType)
 	}
 
-	if event.length != 3 {
-		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", event.length)
+	data, err := read(r)
+	if err != nil {
+		return nil, err
+	} else if len(data) != 3 {
+		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
 	}
 
 	tempo := uint32(0)
-	for i := 0; i < int(event.length); i++ {
+	for _, b := range data {
 		tempo <<= 8
-		tempo += uint32(data[i])
+		tempo += uint32(b)
 	}
 
 	return &Tempo{
-		MetaEvent: event,
+		MetaEvent: *event,
 		Tempo:     tempo,
 	}, nil
 }

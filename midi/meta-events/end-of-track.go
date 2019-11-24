@@ -9,17 +9,20 @@ type EndOfTrack struct {
 	MetaEvent
 }
 
-func NewEndOfTrack(event MetaEvent, data []byte) (*EndOfTrack, error) {
+func NewEndOfTrack(event *MetaEvent, r io.ByteReader) (*EndOfTrack, error) {
 	if event.eventType != 0x2f {
 		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", event.eventType)
 	}
 
-	if event.length != 0 {
-		return nil, fmt.Errorf("Invalid EndOfTrack length (%d): expected '0'", event.length)
+	data, err := read(r)
+	if err != nil {
+		return nil, err
+	} else if len(data) != 0 {
+		return nil, fmt.Errorf("Invalid EndOfTrack length (%d): expected '0'", len(data))
 	}
 
 	return &EndOfTrack{
-		MetaEvent: event,
+		MetaEvent: *event,
 	}, nil
 }
 

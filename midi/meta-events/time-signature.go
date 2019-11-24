@@ -13,13 +13,16 @@ type TimeSignature struct {
 	thirtySecondsPerQuarter uint8
 }
 
-func NewTimeSignature(event MetaEvent, data []byte) (*TimeSignature, error) {
+func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error) {
 	if event.eventType != 0x58 {
 		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", event.eventType)
 	}
 
-	if event.length != 4 {
-		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '3'", event.length)
+	data, err := read(r)
+	if err != nil {
+		return nil, err
+	} else if len(data) != 4 {
+		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '3'", len(data))
 	}
 
 	numerator := data[0]
@@ -28,7 +31,7 @@ func NewTimeSignature(event MetaEvent, data []byte) (*TimeSignature, error) {
 	thirtySecondsPerQuarter := data[3]
 
 	return &TimeSignature{
-		MetaEvent:               event,
+		MetaEvent:               *event,
 		numerator:               numerator,
 		denominator:             denominator,
 		ticksPerClick:           ticksPerClick,

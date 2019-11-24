@@ -9,7 +9,6 @@ import (
 type MetaEvent struct {
 	event.Event
 	eventType byte
-	length    uint32
 	bytes     []byte
 }
 
@@ -28,7 +27,7 @@ func (r reader) ReadByte() (byte, error) {
 }
 
 func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
-	if e.Status != 0xff {
+	if e.Status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", e.Status)
 	}
 
@@ -42,40 +41,46 @@ func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
 	if b, err := rr.ReadByte(); err != nil {
 		return nil, err
 	} else {
-		event.eventType = b & 0x7f
-	}
-
-	l, err := vlq(rr)
-	if err != nil {
-		return nil, err
-	}
-	event.length = l
-
-	ix := len(event.bytes)
-	for i := 0; i < int(l); i++ {
-		if _, err := rr.ReadByte(); err != nil {
-			return nil, err
-		}
+		event.eventType = b & 0x7F
 	}
 
 	switch event.eventType {
 	case 0x03:
-		return NewTrackName(event, event.bytes[ix:])
+		return NewTrackName(&event, rr)
 
 	case 0x2f:
-		return NewEndOfTrack(event, event.bytes[ix:])
+		return NewEndOfTrack(&event, rr)
 
 	case 0x51:
-		return NewTempo(event, event.bytes[ix:])
+		return NewTempo(&event, rr)
 
 	case 0x58:
-		return NewTimeSignature(event, event.bytes[ix:])
+		return NewTimeSignature(&event, rr)
 
 	case 0x59:
-		return NewKeySignature(event, event.bytes[ix:])
+		return NewKeySignature(&event, rr)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %02X", event.eventType)
+}
+
+func read(r io.ByteReader) ([]byte, error) {
+	N, err := vlq(r)
+	if err != nil {
+		return nil, err
+	}
+
+	bytes := make([]byte, N)
+
+	for i := 0; i < int(N); i++ {
+		if b, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			bytes[i] = b
+		}
+	}
+
+	return bytes, nil
 }
 
 func vlq(r io.ByteReader) (uint32, error) {
