@@ -40,11 +40,5 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 }
 
 func (e *TimeSignature) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "                            ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s numerator:%d denominator:%d ticks/click:%d 1/32-per-quarter:%d\n", e.eventType, "TimeSignature", e.MetaEvent.Event, e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
+	fmt.Fprintf(w, "%s %-16s numerator:%d denominator:%d ticks-per-click:%d 1/32-per-quarter:%d\n", e.MetaEvent, "TimeSignature", e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
 }

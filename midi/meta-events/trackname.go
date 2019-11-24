@@ -7,7 +7,7 @@ import (
 
 type TrackName struct {
 	MetaEvent
-	name string
+	Name string
 }
 
 func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
@@ -22,16 +22,10 @@ func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
 
 	return &TrackName{
 		MetaEvent: *event,
-		name:      string(name),
+		Name:      string(name),
 	}, nil
 }
 
 func (e *TrackName) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "             ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s name:%s\n", e.eventType, "TrackName", e.MetaEvent.Event, e.name)
+	fmt.Fprintf(w, "%s %-16s name:%s\n", e.MetaEvent, "TrackName", e.Name)
 }

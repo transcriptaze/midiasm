@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
 	"io"
@@ -10,6 +11,24 @@ type MetaEvent struct {
 	event.Event
 	eventType byte
 	bytes     []byte
+}
+
+func (e MetaEvent) String() string {
+	buffer := new(bytes.Buffer)
+
+	fmt.Fprintf(buffer, "   ")
+
+	for i := 5; i > len(e.bytes); i-- {
+		fmt.Fprintf(buffer, "   ")
+	}
+
+	for _, b := range e.bytes {
+		fmt.Fprintf(buffer, "%02x ", b)
+	}
+
+	fmt.Fprintf(buffer, "                                     ")
+
+	return fmt.Sprintf("%s %s %02X", buffer.String()[:54], e.Event, e.eventType)
 }
 
 type reader struct {

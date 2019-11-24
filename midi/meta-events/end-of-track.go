@@ -27,11 +27,5 @@ func NewEndOfTrack(event *MetaEvent, r io.ByteReader) (*EndOfTrack, error) {
 }
 
 func (e *EndOfTrack) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "                                        ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s\n", e.eventType, "EndOfTrack", e.MetaEvent.Event)
+	fmt.Fprintf(w, "%s %-16s\n", e.MetaEvent, "EndOfTrack")
 }

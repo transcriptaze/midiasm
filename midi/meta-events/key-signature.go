@@ -41,11 +41,5 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 }
 
 func (e *KeySignature) Render(w io.Writer) {
-	fmt.Fprintf(w, "   ")
-	for _, b := range e.bytes {
-		fmt.Fprintf(w, "%02x ", b)
-	}
-	fmt.Fprintf(w, "                                  ")
-
-	fmt.Fprintf(w, "%02x/%-16s %s accidentals:%d key-type:%d\n", e.eventType, "KeySignature", e.MetaEvent.Event, e.accidentals, e.keyType)
+	fmt.Fprintf(w, "%s %-16s accidentals:%d key-type:%d\n", e.MetaEvent, "KeySignature", e.accidentals, e.keyType)
 }

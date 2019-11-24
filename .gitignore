@@ -14,6 +14,8 @@ bin
 
 # Interim test files
 examples/entangled.mid
+examples/*.gp
+examples/*.xml
 
 # MacOS
 .DS_Store

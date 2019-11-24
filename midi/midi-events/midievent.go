@@ -23,7 +23,7 @@ func (e MidiEvent) String() string {
 	}
 
 	for _, b := range e.bytes {
-		fmt.Fprintf(buffer, "%02x ", b)
+		fmt.Fprintf(buffer, "%02X ", b)
 	}
 
 	fmt.Fprintf(buffer, "                                     ")
