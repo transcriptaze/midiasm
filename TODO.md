@@ -14,6 +14,7 @@
 - [ ] Check loss of precision
 - [ ] Write to file, log errors/warning to stderr
 - [ ] --debug
+- [ ] --verbose
 
 ### MIDI events
 

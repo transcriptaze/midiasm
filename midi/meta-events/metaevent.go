@@ -1,7 +1,6 @@
 package metaevent
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
 	"io"
@@ -14,7 +13,7 @@ type MetaEvent struct {
 	bytes     []byte
 }
 
-func Parse(e event.Event, x []byte, r *bufio.Reader) (event.IEvent, error) {
+func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
 	if e.Status != 0xff {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'ff'", e.Status)
 	}
@@ -36,9 +35,12 @@ func Parse(e event.Event, x []byte, r *bufio.Reader) (event.IEvent, error) {
 	bytes = append(bytes, m...)
 
 	d := make([]byte, l)
-	_, err = io.ReadFull(r, d)
-	if err != nil {
-		return nil, err
+	for i := uint32(0); i < l; i++ {
+		if b, err = r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			d[i] = b
+		}
 	}
 	bytes = append(bytes, d...)
 
@@ -69,7 +71,7 @@ func Parse(e event.Event, x []byte, r *bufio.Reader) (event.IEvent, error) {
 	return nil, fmt.Errorf("Unrecognised META event: %02x", eventType)
 }
 
-func vlq(r *bufio.Reader) (uint32, []byte, error) {
+func vlq(r io.ByteReader) (uint32, []byte, error) {
 	l := uint32(0)
 	bytes := make([]byte, 0)
 
