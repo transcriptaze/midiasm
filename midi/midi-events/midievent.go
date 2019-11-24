@@ -46,37 +46,37 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(event event.Event, data []byte, r io.ByteReader) (event.IEvent, error) {
-	midiEvent := MidiEvent{
-		Event:   event,
-		Channel: event.Status & 0x0F,
+func Parse(e event.Event, data []byte, r io.ByteReader) (event.IEvent, error) {
+	event := MidiEvent{
+		Event:   e,
+		Channel: e.Status & 0x0F,
 		bytes:   data,
 	}
 
-	rr := reader{r, &midiEvent}
+	rr := reader{r, &event}
 
-	switch event.Status & 0xF0 {
+	switch e.Status & 0xF0 {
 	case 0x80:
-		return NewNoteOff(&midiEvent, rr)
+		return NewNoteOff(&event, rr)
 
 	case 0x90:
-		return NewNoteOn(&midiEvent, rr)
+		return NewNoteOn(&event, rr)
 
 	case 0xA0:
-		return NewPolyphonicPressure(&midiEvent, rr)
+		return NewPolyphonicPressure(&event, rr)
 
 	case 0xB0:
-		return NewController(&midiEvent, rr)
+		return NewController(&event, rr)
 
 	case 0xC0:
-		return NewProgramChange(&midiEvent, rr)
+		return NewProgramChange(&event, rr)
 
 	case 0xD0:
-		return NewChannelPressure(&midiEvent, rr)
+		return NewChannelPressure(&event, rr)
 
 	case 0xE0:
-		return NewPitchBend(&midiEvent, rr)
+		return NewPitchBend(&event, rr)
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
+	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", e.Status&0xF0)
 }
