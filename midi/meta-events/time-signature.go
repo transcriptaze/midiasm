@@ -14,8 +14,8 @@ type TimeSignature struct {
 }
 
 func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error) {
-	if event.eventType != 0x58 {
-		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", event.eventType)
+	if event.Type != 0x58 {
+		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", event.Type)
 	}
 
 	data, err := read(r)

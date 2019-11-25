@@ -14,9 +14,8 @@ var events = []struct {
 	{"NoteOff",
 		&NoteOff{
 			MidiEvent{
-				event.Event{1920, 480, 0x80},
+				event.Event{1920, 480, 0x80, []byte{0x83, 0x60, 0x80, 0x35, 0x40}},
 				0,
-				[]byte{0x83, 0x60, 0x80, 0x35, 0x40},
 			},
 			53, 64,
 		},
@@ -26,9 +25,8 @@ var events = []struct {
 	{"NoteOn",
 		&NoteOn{
 			MidiEvent{
-				event.Event{1440, 0, 0x90},
+				event.Event{1440, 0, 0x90, []byte{0x00, 0x90, 0x35, 0x48}},
 				0,
-				[]byte{0x00, 0x90, 0x35, 0x48},
 			},
 			53, 72,
 		},
@@ -38,9 +36,8 @@ var events = []struct {
 	{"PolyphonicPressure",
 		&PolyphonicPressure{
 			MidiEvent{
-				event.Event{1440, 480, 0xa0},
+				event.Event{1440, 480, 0xa0, []byte{0x00, 0xa0, 0x07}},
 				0,
-				[]byte{0x00, 0xa0, 0x07},
 			},
 			7,
 		},
@@ -50,9 +47,8 @@ var events = []struct {
 	{"Controller",
 		&Controller{
 			MidiEvent{
-				event.Event{1440, 480, 0xb0},
+				event.Event{1440, 480, 0xb0, []byte{0x00, 0xb0, 0x06, 0x08}},
 				0,
-				[]byte{0x00, 0xb0, 0x06, 0x08},
 			},
 			6, 8,
 		},
@@ -62,9 +58,8 @@ var events = []struct {
 	{"ProgramChange",
 		&ProgramChange{
 			MidiEvent{
-				event.Event{0, 0, 0xc0},
+				event.Event{0, 0, 0xc0, []byte{0x00, 0xc0, 0x19}},
 				0,
-				[]byte{0x00, 0xc0, 0x19},
 			},
 			25,
 		},
@@ -74,9 +69,8 @@ var events = []struct {
 	{"ChannelPressure",
 		&ChannelPressure{
 			MidiEvent{
-				event.Event{0, 0, 0xd0},
+				event.Event{0, 0, 0xd0, []byte{0x00, 0xd0, 0x05}},
 				0,
-				[]byte{0x00, 0xd0, 0x05},
 			},
 			5,
 		},
@@ -86,9 +80,8 @@ var events = []struct {
 	{"PitchBend",
 		&PitchBend{
 			MidiEvent{
-				event.Event{0, 0, 0xe0},
+				event.Event{0, 0, 0xe0, []byte{0x00, 0xe0, 0x00, 0x08}},
 				0,
-				[]byte{0x00, 0xe0, 0x00, 0x08},
 			},
 			8,
 		},

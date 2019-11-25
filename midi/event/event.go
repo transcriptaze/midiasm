@@ -1,8 +1,10 @@
 package event
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"strings"
 )
 
 type IEvent interface {
@@ -15,6 +17,7 @@ type Event struct {
 	Tick   uint64
 	Delta  uint32
 	Status byte
+	Bytes  []byte
 }
 
 func (e *Event) TickValue() uint64 {
@@ -26,5 +29,19 @@ func (e *Event) DeltaTime() uint32 {
 }
 
 func (e Event) String() string {
-	return fmt.Sprintf("tick:%-10d delta:%-10d", e.Tick, e.Delta)
+	buffer := new(bytes.Buffer)
+
+	fmt.Fprintf(buffer, "   ")
+
+	for i := 5; i > len(e.Bytes); i-- {
+		fmt.Fprintf(buffer, "   ")
+	}
+
+	for _, b := range e.Bytes {
+		fmt.Fprintf(buffer, "%02X ", b)
+	}
+
+	fmt.Fprintf(buffer, "%s", strings.Repeat(" ", 60-buffer.Len()))
+
+	return fmt.Sprintf("%s tick:%-10d delta:%-10d", buffer.String()[:60], e.Tick, e.Delta)
 }

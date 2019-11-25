@@ -10,8 +10,8 @@ type EndOfTrack struct {
 }
 
 func NewEndOfTrack(event *MetaEvent, r io.ByteReader) (*EndOfTrack, error) {
-	if event.eventType != 0x2f {
-		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", event.eventType)
+	if event.Type != 0x2f {
+		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", event.Type)
 	}
 
 	data, err := read(r)

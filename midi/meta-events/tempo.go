@@ -11,8 +11,8 @@ type Tempo struct {
 }
 
 func NewTempo(event *MetaEvent, r io.ByteReader) (*Tempo, error) {
-	if event.eventType != 0x51 {
-		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", event.eventType)
+	if event.Type != 0x51 {
+		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", event.Type)
 	}
 
 	data, err := read(r)

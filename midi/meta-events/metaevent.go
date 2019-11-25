@@ -1,35 +1,18 @@
 package metaevent
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
 	"io"
-	"strings"
 )
 
 type MetaEvent struct {
 	event.Event
-	eventType byte
-	bytes     []byte
+	Type byte
 }
 
 func (e MetaEvent) String() string {
-	buffer := new(bytes.Buffer)
-
-	fmt.Fprintf(buffer, "   ")
-
-	for i := 5; i > len(e.bytes); i-- {
-		fmt.Fprintf(buffer, "   ")
-	}
-
-	for _, b := range e.bytes {
-		fmt.Fprintf(buffer, "%02x ", b)
-	}
-
-	fmt.Fprintf(buffer, "%s", strings.Repeat(" ", 60-buffer.Len()))
-
-	return fmt.Sprintf("%s %s %02X", buffer.String()[:60], e.Event, e.eventType)
+	return fmt.Sprintf("%s %02X", e.Event, e.Type)
 }
 
 type reader struct {
@@ -40,20 +23,19 @@ type reader struct {
 func (r reader) ReadByte() (byte, error) {
 	b, err := r.rdr.ReadByte()
 	if err == nil {
-		r.event.bytes = append(r.event.bytes, b)
+		r.event.Bytes = append(r.event.Bytes, b)
 	}
 
 	return b, err
 }
 
-func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
+func Parse(e event.Event, r io.ByteReader) (event.IEvent, error) {
 	if e.Status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", e.Status)
 	}
 
 	event := MetaEvent{
 		Event: e,
-		bytes: append(make([]byte, 0), x...),
 	}
 
 	rr := reader{r, &event}
@@ -61,10 +43,10 @@ func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
 	if b, err := rr.ReadByte(); err != nil {
 		return nil, err
 	} else {
-		event.eventType = b & 0x7F
+		event.Type = b & 0x7F
 	}
 
-	switch event.eventType {
+	switch event.Type {
 	case 0x03:
 		return NewTrackName(&event, rr)
 
@@ -81,7 +63,7 @@ func Parse(e event.Event, x []byte, r io.ByteReader) (event.IEvent, error) {
 		return NewKeySignature(&event, rr)
 	}
 
-	return nil, fmt.Errorf("Unrecognised META event: %02X", event.eventType)
+	return nil, fmt.Errorf("Unrecognised META event: %02X", event.Type)
 }
 
 func read(r io.ByteReader) ([]byte, error) {

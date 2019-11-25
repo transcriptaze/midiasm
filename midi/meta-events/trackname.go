@@ -11,8 +11,8 @@ type TrackName struct {
 }
 
 func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
-	if event.eventType != 0x03 {
-		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", event.eventType)
+	if event.Type != 0x03 {
+		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", event.Type)
 	}
 
 	name, err := read(r)

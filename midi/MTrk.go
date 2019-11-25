@@ -89,14 +89,15 @@ func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
 		Tick:   uint64(tick + delta),
 		Delta:  delta,
 		Status: b,
+		Bytes:  bytes,
 	}
 
 	if b == 0xff {
-		return metaevent.Parse(e, bytes, r)
+		return metaevent.Parse(e, r)
 	} else if b == 0xf0 || b == 0xf7 {
 		panic(fmt.Sprintf("NOT IMPLEMENTED: SYSEX EVENT @%d:  %02x\n", delta, b))
 	} else {
-		return midievent.Parse(e, bytes, r)
+		return midievent.Parse(e, r)
 	}
 }
 

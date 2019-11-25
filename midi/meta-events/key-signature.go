@@ -12,8 +12,8 @@ type KeySignature struct {
 }
 
 func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
-	if event.eventType != 0x59 {
-		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", event.eventType)
+	if event.Type != 0x59 {
+		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", event.Type)
 	}
 
 	data, err := read(r)
