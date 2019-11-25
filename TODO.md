@@ -6,7 +6,7 @@
 - [x] Rework META event parser
 - [x] Extract notes
 - [x] Use microseconds as integer time base
-- [ ] Ellipsize too long hex
+- [x] Ellipsize too long hex
 - [ ] Allow format string
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print

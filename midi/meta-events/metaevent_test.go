@@ -18,7 +18,7 @@ var events = []struct {
 				0x03,
 			},
 			"Acoustic Guitar"},
-		"   00 FF 03 0F 41 63 6F 75 73 74 69 63 20 47 75 69 74 61 72  tick:76         delta:12         03 TrackName        name:Acoustic Guitar",
+		"   00 FF 03 0F 41 63 6F 75 73 74 69 63 20\u2026  tick:76         delta:12         03 TrackName        name:Acoustic Guitar",
 	},
 
 	{"Tempo",
@@ -28,7 +28,7 @@ var events = []struct {
 				0x51,
 			},
 			512438},
-		"   00 FF 51 03 07 A1 20                                      tick:76         delta:12         51 Tempo            tempo:512438",
+		"   00 FF 51 03 07 A1 20                     tick:76         delta:12         51 Tempo            tempo:512438",
 	},
 
 	{"EndOfTrack",
@@ -38,7 +38,7 @@ var events = []struct {
 				0x2f,
 			},
 		},
-		"      00 FF 2F 00                                            tick:76         delta:12         2F EndOfTrack",
+		"      00 FF 2F 00                           tick:76         delta:12         2F EndOfTrack",
 	},
 
 	{"TimeSignature",
@@ -52,7 +52,7 @@ var events = []struct {
 			24,
 			8,
 		},
-		"   00 FF 58 04 04 02 18 08                                   tick:76         delta:12         58 TimeSignature    numerator:4 denominator:2 ticks-per-click:24 1/32-per-quarter:8",
+		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    numerator:4 denominator:2 ticks-per-click:24 1/32-per-quarter:8",
 	},
 
 	{"KeySignature",
@@ -66,7 +66,7 @@ var events = []struct {
 			1,
 			2,
 		},
-		"   00 FF 59 02 00 00                                         tick:76         delta:12         59 KeySignature     accidentals:1 key-type:2",
+		"   00 FF 59 02 00 00                        tick:76         delta:12         59 KeySignature     accidentals:1 key-type:2",
 	},
 }
 

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"strings"
 )
 
 type IEvent interface {
@@ -41,7 +40,9 @@ func (e Event) String() string {
 		fmt.Fprintf(buffer, "%02X ", b)
 	}
 
-	fmt.Fprintf(buffer, "%s", strings.Repeat(" ", 60-buffer.Len()))
-
-	return fmt.Sprintf("%s tick:%-10d delta:%-10d", buffer.String()[:60], e.Tick, e.Delta)
+	if buffer.Len() > 42 {
+		return fmt.Sprintf("%s\u2026  tick:%-10d delta:%-10d", buffer.String()[:41], e.Tick, e.Delta)
+	} else {
+		return fmt.Sprintf("%-42s  tick:%-10d delta:%-10d", buffer.String(), e.Tick, e.Delta)
+	}
 }
