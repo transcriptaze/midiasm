@@ -7,14 +7,14 @@
 - [x] Extract notes
 - [x] Use microseconds as integer time base
 - [x] Ellipsize too long hex
-- [ ] Allow format string
-- [ ] EventList: pretty print
-- [ ] NoteList: pretty print
-- [ ] Check loss of precision
 - [ ] Write to file, log errors/warning to stderr
 - [ ] Split tracks to separate files
 - [ ] --debug
 - [ ] --verbose
+- [ ] Allow format string
+- [ ] EventList: pretty print
+- [ ] NoteList: pretty print
+- [ ] Check loss of precision
 
 ### MIDI events
 
