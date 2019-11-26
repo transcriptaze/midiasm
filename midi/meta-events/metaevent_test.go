@@ -52,7 +52,7 @@ var events = []struct {
 			24,
 			8,
 		},
-		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    numerator:4 denominator:2 ticks-per-click:24 1/32-per-quarter:8",
+		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    4:4  24 ticks-per-click  8/32-per-quarter",
 	},
 
 	{"KeySignature",

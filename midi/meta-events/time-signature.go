@@ -7,10 +7,10 @@ import (
 
 type TimeSignature struct {
 	MetaEvent
-	numerator               uint8
-	denominator             uint8
-	ticksPerClick           uint8
-	thirtySecondsPerQuarter uint8
+	Numerator               uint8
+	Denominator             uint8
+	TicksPerClick           uint8
+	ThirtySecondsPerQuarter uint8
 }
 
 func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error) {
@@ -32,13 +32,18 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 
 	return &TimeSignature{
 		MetaEvent:               *event,
-		numerator:               numerator,
-		denominator:             denominator,
-		ticksPerClick:           ticksPerClick,
-		thirtySecondsPerQuarter: thirtySecondsPerQuarter,
+		Numerator:               numerator,
+		Denominator:             denominator,
+		TicksPerClick:           ticksPerClick,
+		ThirtySecondsPerQuarter: thirtySecondsPerQuarter,
 	}, nil
 }
 
 func (e *TimeSignature) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s numerator:%d denominator:%d ticks-per-click:%d 1/32-per-quarter:%d", e.MetaEvent, "TimeSignature", e.numerator, e.denominator, e.ticksPerClick, e.thirtySecondsPerQuarter)
+	base := 1
+	for i := uint8(0); i < e.Denominator; i++ {
+		base *= 2
+	}
+
+	fmt.Fprintf(w, "%s %-16s %d:%d  %d ticks-per-click  %d/32-per-quarter", e.MetaEvent, "TimeSignature", e.Numerator, base, e.TicksPerClick, e.ThirtySecondsPerQuarter)
 }
