@@ -11,7 +11,7 @@
 - [ ] Split tracks to separate files
 - [ ] --debug
 - [ ] --verbose
-- [ ] Allow format string
+- [ ] Configurable formats
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print
 - [ ] Check loss of precision
@@ -46,6 +46,9 @@
 - [x] 58/Time Signature
 - [x] 59/Key Signature
 - [ ] 7F/Sequencer Specific Event
+
+- [ ] TimeSignature: [Unicode fractions](http://unicodefractions.com)
+- [x] KeySignature:  [Unicode symbols](https://unicode-table.com/en/blocks/musical-symbols/)
 
 ### SysEx events
 

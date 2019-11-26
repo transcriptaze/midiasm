@@ -59,14 +59,14 @@ var events = []struct {
 		&KeySignature{
 			MetaEvent{
 				event.Event{76, 12, 0xff,
-					[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00},
+					[]byte{0x00, 0xff, 0x59, 0x02, 0x03, 0x01},
 				},
 				0x59,
 			},
+			3,
 			1,
-			2,
 		},
-		"   00 FF 59 02 00 00                        tick:76         delta:12         59 KeySignature     accidentals:1 key-type:2",
+		"   00 FF 59 02 03 01                        tick:76         delta:12         59 KeySignature     F\u266f minor",
 	},
 }
 
