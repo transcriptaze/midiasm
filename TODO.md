@@ -28,7 +28,7 @@
 
 ### META events
 
-- [ ] 00/Sequence Number
+- [x] 00/Sequence Number
 - [ ] 01/Text
 - [ ] 02/Copyright
 - [x] 03/Track Name

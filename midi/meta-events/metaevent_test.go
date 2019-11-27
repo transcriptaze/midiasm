@@ -11,6 +11,16 @@ var events = []struct {
 	event    event.IEvent
 	expected string
 }{
+	{"SequenceNumber",
+		&SequenceNumber{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x00, 0x02, 0x12, 0x34}},
+				0x00,
+			},
+			4660},
+		"   00 FF 00 02 12 34                        tick:76         delta:12         00 SequenceNumber   4660",
+	},
+
 	{"TrackName",
 		&TrackName{
 			MetaEvent{

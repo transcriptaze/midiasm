@@ -47,6 +47,9 @@ func Parse(e event.Event, r io.ByteReader) (event.IEvent, error) {
 	}
 
 	switch event.Type {
+	case 0x00:
+		return NewSequenceNumber(&event, rr)
+
 	case 0x03:
 		return NewTrackName(&event, rr)
 
