@@ -18,7 +18,7 @@ var events = []struct {
 				0x03,
 			},
 			"Acoustic Guitar"},
-		"   00 FF 03 0F 41 63 6F 75 73 74 69 63 20\u2026  tick:76         delta:12         03 TrackName        name:Acoustic Guitar",
+		"   00 FF 03 0F 41 63 6F 75 73 74 69 63 20\u2026  tick:76         delta:12         03 TrackName        Acoustic Guitar",
 	},
 
 	{"Tempo",
@@ -52,7 +52,7 @@ var events = []struct {
 			24,
 			8,
 		},
-		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    4:4  24 ticks-per-click  8/32-per-quarter",
+		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    4:4, 24 ticks-per-click, 8/32-per-quarter",
 	},
 
 	{"KeySignature",
