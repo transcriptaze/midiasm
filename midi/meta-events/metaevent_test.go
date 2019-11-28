@@ -21,6 +21,16 @@ var events = []struct {
 		"   00 FF 00 02 12 34                        tick:76         delta:12         00 SequenceNumber   4660",
 	},
 
+	{"Text",
+		&Text{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48}},
+				0x01,
+			},
+			"abcdefgh"},
+		"   00 FF 01 08 41 42 43 44 45 46 47 48      tick:76         delta:12         01 Text             abcdefgh",
+	},
+
 	{"TrackName",
 		&TrackName{
 			MetaEvent{
