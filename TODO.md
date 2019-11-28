@@ -30,7 +30,7 @@
 ### META events
 
 - [x] 00/Sequence Number
-- [ ] 01/Text
+- [x] 01/Text
 - [ ] 02/Copyright
 - [x] 03/Track Name
 - [ ] 04/Instrument Name
