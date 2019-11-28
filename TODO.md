@@ -7,7 +7,8 @@
 - [x] Extract notes
 - [x] Use microseconds as integer time base
 - [x] Ellipsize too long hex
-- [ ] Write to file, log errors/warning to stderr
+- [x] Log errors/warning to stderr
+- [ ] Write to file
 - [ ] Split tracks to separate files
 - [ ] --debug
 - [ ] --verbose

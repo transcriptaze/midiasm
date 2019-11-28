@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
+	"github.com/twystd/midiasm/midi/eventlog"
 	"github.com/twystd/midiasm/midi/meta-events"
 	"github.com/twystd/midiasm/midi/midi-events"
 	"io"
@@ -169,7 +170,7 @@ func (smf *SMF) Notes() error {
 			t = time.Duration(1000 * tick * tempo / ppqn)
 
 			if dt := (tick * tempo) % ppqn; dt > 0 {
-				fmt.Printf("WARNING: %dµs loss of precision converting from tick time to physical time at tick %d\n", dt, tick)
+				eventlog.Warn(fmt.Sprintf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick))
 			}
 
 			list := events[tick]
@@ -185,7 +186,7 @@ func (smf *SMF) Notes() error {
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note)
 					if note := pending[key]; note == nil {
-						fmt.Printf("WARNING: NOTE OFF without preceding NOTE ON for %d:%02X\n", v.Channel, v.Note)
+						eventlog.Warn(fmt.Sprintf("NOTE OFF without preceding NOTE ON for %d:%02X", v.Channel, v.Note))
 					} else {
 						note.End = t
 						note.EndTick = tick
@@ -207,7 +208,7 @@ func (smf *SMF) Notes() error {
 					}
 
 					if pending[key] != nil {
-						fmt.Printf("WARNING: NOTE ON without preceding NOTE OFF for %d:%02X\n", v.Channel, v.Note)
+						eventlog.Warn(fmt.Sprintf("NOTE ON without preceding NOTE OFF for %d:%02X", v.Channel, v.Note))
 					}
 
 					pending[key] = &note
@@ -219,11 +220,9 @@ func (smf *SMF) Notes() error {
 		fmt.Fprintln(w)
 
 		if len(pending) > 0 {
-			fmt.Printf("WARN: %d incomplete notes\n", len(pending))
 			for k, n := range pending {
-				fmt.Printf("PENDING: %04X %#v\n", k, n)
+				eventlog.Warn(fmt.Sprintf("Incomplete note: %04X %#v", k, n))
 			}
-			fmt.Println()
 		}
 
 		for _, n := range notes {

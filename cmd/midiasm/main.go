@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
+	"github.com/twystd/midiasm/midi/eventlog"
 	"io/ioutil"
 	"os"
 )
@@ -11,10 +12,6 @@ import (
 var notes bool
 
 func main() {
-	fmt.Println()
-	fmt.Println("MIDIASM v0.00.0")
-	fmt.Println()
-
 	flag.BoolVar(&notes, "notes", false, "Extract notes from MIDI sequence")
 	flag.Parse()
 
@@ -22,8 +19,7 @@ func main() {
 
 	f, err := os.Open(filename)
 	if err != nil {
-		fmt.Println()
-		fmt.Printf("   Error opening %s: %v", filename, err)
+		eventlog.Error(fmt.Sprintf("%v", err))
 		return
 	}
 
@@ -31,16 +27,14 @@ func main() {
 
 	bytes, err := ioutil.ReadAll(f)
 	if err != nil {
-		fmt.Printf("   Error reading %s: %v", filename, err)
-		fmt.Println()
+		eventlog.Error(fmt.Sprintf("%v", err))
 		return
 	}
 
 	var smf midi.SMF
 
 	if err = smf.UnmarshalBinary(bytes); err != nil {
-		fmt.Printf("   Error reading %s: %v", filename, err)
-		fmt.Println()
+		eventlog.Error(fmt.Sprintf("%v", err))
 		return
 	}
 
