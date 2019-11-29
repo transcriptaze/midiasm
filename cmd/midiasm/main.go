@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/eventlog"
 	"io/ioutil"
 	"os"
 )
@@ -13,16 +12,20 @@ var cli = map[string]*flag.FlagSet{
 	"notes": flag.NewFlagSet("notes", flag.ExitOnError),
 }
 
+var options = struct {
+	out string
+}{}
+
 func main() {
 	cmd, filename, err := parse(cli)
 	if err != nil {
-		fmt.Printf("Unable to parse command line: %v", err)
+		fmt.Printf("Error: unable to parse command line (%v)\n", err)
 		return
 	}
 
 	f, err := os.Open(filename)
 	if err != nil {
-		eventlog.Error(fmt.Sprintf("%v", err))
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
@@ -30,14 +33,14 @@ func main() {
 
 	bytes, err := ioutil.ReadAll(f)
 	if err != nil {
-		eventlog.Error(fmt.Sprintf("%v", err))
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
 	var smf midi.SMF
 
 	if err = smf.UnmarshalBinary(bytes); err != nil {
-		eventlog.Error(fmt.Sprintf("%v", err))
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
@@ -45,7 +48,7 @@ func main() {
 	case "notes":
 		smf.Notes()
 	default:
-		smf.Render()
+		render(&smf)
 	}
 }
 
@@ -62,7 +65,26 @@ func parse(cli map[string]*flag.FlagSet) (string, string, error) {
 		}
 	}
 
+	flag.StringVar(&options.out, "out", "", "Output file path")
+	flag.StringVar(&options.out, "o", "", "Output file path")
 	flag.Parse()
 
 	return "render", flag.Arg(0), nil
+}
+
+func render(smf *midi.SMF) {
+	w := os.Stdout
+	err := error(nil)
+
+	if options.out != "" {
+		w, err = os.Create(options.out)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+
+		defer w.Close()
+	}
+
+	smf.Render(w)
 }

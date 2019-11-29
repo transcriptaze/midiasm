@@ -75,10 +75,10 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (smf *SMF) Render() {
-	smf.header.Render(os.Stdout)
+func (smf *SMF) Render(w io.Writer) {
+	smf.header.Render(w)
 	for _, track := range smf.tracks {
-		track.Render(os.Stdout)
+		track.Render(w)
 	}
 }
 
