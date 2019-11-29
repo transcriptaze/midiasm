@@ -16,6 +16,7 @@ bin
 examples/entangled.mid
 examples/*.gp
 examples/*.xml
+tmp
 
 # MacOS
 .DS_Store

@@ -9,7 +9,7 @@ import (
 )
 
 var cli = map[string]*flag.FlagSet{
-	"notes": flag.NewFlagSet("notes", flag.ExitOnError),
+	"notes": notesFlagset(),
 }
 
 var options = struct {
@@ -46,7 +46,7 @@ func main() {
 
 	switch cmd {
 	case "notes":
-		smf.Notes()
+		notes(&smf)
 	default:
 		render(&smf)
 	}
@@ -87,4 +87,30 @@ func render(smf *midi.SMF) {
 	}
 
 	smf.Render(w)
+}
+
+func notes(smf *midi.SMF) {
+	w := os.Stdout
+	err := error(nil)
+
+	if options.out != "" {
+		w, err = os.Create(options.out)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+
+		defer w.Close()
+	}
+
+	smf.Notes(w)
+}
+
+func notesFlagset() *flag.FlagSet {
+	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
+
+	flagset.StringVar(&options.out, "out", "", "Output file path")
+	flagset.StringVar(&options.out, "o", "", "Output file path")
+
+	return flagset
 }

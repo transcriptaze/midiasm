@@ -10,7 +10,6 @@ import (
 	"github.com/twystd/midiasm/midi/meta-events"
 	"github.com/twystd/midiasm/midi/midi-events"
 	"io"
-	"os"
 	"sort"
 	"time"
 )
@@ -115,8 +114,7 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 	return nil, nil
 }
 
-func (smf *SMF) Notes() error {
-	w := os.Stdout
+func (smf *SMF) Notes(w io.Writer) error {
 	ppqn := uint64(smf.header.division)
 	tempoMap := make([]event.IEvent, 0)
 
@@ -182,7 +180,7 @@ func (smf *SMF) Notes() error {
 
 			for _, e := range list {
 				if v, ok := e.(*midievent.NoteOff); ok {
-					fmt.Printf("NOTE OFF %02X %02X  %-6d %.5f  %s\n", v.Channel, v.Note, tick, beat, t)
+					eventlog.Debug(fmt.Sprintf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note)
 					if note := pending[key]; note == nil {
@@ -197,7 +195,7 @@ func (smf *SMF) Notes() error {
 
 			for _, e := range list {
 				if v, ok := e.(*midievent.NoteOn); ok {
-					fmt.Printf("NOTE ON  %02X %02X  %-6d %.5f  %s\n", v.Channel, v.Note, tick, beat, t)
+					eventlog.Debug(fmt.Sprintf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note)
 					note := Note{
@@ -216,8 +214,6 @@ func (smf *SMF) Notes() error {
 				}
 			}
 		}
-
-		fmt.Fprintln(w)
 
 		if len(pending) > 0 {
 			for k, n := range pending {
