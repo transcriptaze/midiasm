@@ -8,10 +8,10 @@
 - [x] Use microseconds as integer time base
 - [x] Ellipsize too long hex
 - [x] Log errors/warning to stderr
-- [ ] Write to file
+- [x] Write to file
 - [ ] Split tracks to separate files
-- [ ] --debug
-- [ ] --verbose
+- [x] --debug
+- [x] --verbose
 - [ ] Configurable formats
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print

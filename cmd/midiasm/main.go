@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
+	"github.com/twystd/midiasm/midi/eventlog"
 	"io/ioutil"
 	"os"
 )
@@ -13,7 +14,9 @@ var cli = map[string]*flag.FlagSet{
 }
 
 var options = struct {
-	out string
+	out     string
+	verbose bool
+	debug   bool
 }{}
 
 func main() {
@@ -66,7 +69,8 @@ func parse(cli map[string]*flag.FlagSet) (string, string, error) {
 	}
 
 	flag.StringVar(&options.out, "out", "", "Output file path")
-	flag.StringVar(&options.out, "o", "", "Output file path")
+	flag.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
+	flag.BoolVar(&options.debug, "debug", false, "Enable debugging information")
 	flag.Parse()
 
 	return "render", flag.Arg(0), nil
@@ -86,6 +90,9 @@ func render(smf *midi.SMF) {
 		defer w.Close()
 	}
 
+	eventlog.EventLog.Verbose = options.verbose
+	eventlog.EventLog.Debug = options.debug
+
 	smf.Render(w)
 }
 
@@ -103,6 +110,9 @@ func notes(smf *midi.SMF) {
 		defer w.Close()
 	}
 
+	eventlog.EventLog.Verbose = options.verbose
+	eventlog.EventLog.Debug = options.debug
+
 	smf.Notes(w)
 }
 
@@ -110,7 +120,8 @@ func notesFlagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
 
 	flagset.StringVar(&options.out, "out", "", "Output file path")
-	flagset.StringVar(&options.out, "o", "", "Output file path")
+	flagset.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&options.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }
