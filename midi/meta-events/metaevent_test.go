@@ -31,6 +31,16 @@ var events = []struct {
 		"   00 FF 01 08 41 42 43 44 45 46 47 48      tick:76         delta:12         01 Text             abcdefgh",
 	},
 
+	{"Copyright",
+		&Copyright{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 0x48, 0x47, 0x46, 0x45, 0x44, 0x43, 0x42, 0x41}},
+				0x02,
+			},
+			"hgfedcba"},
+		"   00 FF 01 08 48 47 46 45 44 43 42 41      tick:76         delta:12         02 Copyright        hgfedcba",
+	},
+
 	{"TrackName",
 		&TrackName{
 			MetaEvent{
