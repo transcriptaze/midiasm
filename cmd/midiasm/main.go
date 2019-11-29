@@ -9,13 +9,16 @@ import (
 	"os"
 )
 
-var notes bool
+var cli = map[string]*flag.FlagSet{
+	"notes": flag.NewFlagSet("notes", flag.ExitOnError),
+}
 
 func main() {
-	flag.BoolVar(&notes, "notes", false, "Extract notes from MIDI sequence")
-	flag.Parse()
-
-	filename := flag.Arg(0)
+	cmd, filename, err := parse(cli)
+	if err != nil {
+		fmt.Printf("Unable to parse command line: %v", err)
+		return
+	}
 
 	f, err := os.Open(filename)
 	if err != nil {
@@ -38,9 +41,28 @@ func main() {
 		return
 	}
 
-	if notes {
+	switch cmd {
+	case "notes":
 		smf.Notes()
-	} else {
+	default:
 		smf.Render()
 	}
+}
+
+func parse(cli map[string]*flag.FlagSet) (string, string, error) {
+	if len(os.Args) > 1 {
+		cmd := os.Args[1]
+
+		if flagset, ok := cli[cmd]; ok {
+			if err := flagset.Parse(os.Args[2:]); err != nil {
+				return cmd, "", err
+			}
+
+			return cmd, flagset.Arg(0), nil
+		}
+	}
+
+	flag.Parse()
+
+	return "render", flag.Arg(0), nil
 }

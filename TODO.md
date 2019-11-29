@@ -31,7 +31,7 @@
 
 - [x] 00/Sequence Number
 - [x] 01/Text
-- [ ] 02/Copyright
+- [x] 02/Copyright
 - [x] 03/Track Name
 - [ ] 04/Instrument Name
 - [ ] 05/Lyric
