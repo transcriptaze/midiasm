@@ -34,7 +34,7 @@
 - [x] 01/Text
 - [x] 02/Copyright
 - [x] 03/Track Name
-- [ ] 04/Instrument Name
+- [x] 04/Instrument Name
 - [ ] 05/Lyric
 - [ ] 06/Marker
 - [ ] 07/Cue Point
