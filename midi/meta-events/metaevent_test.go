@@ -51,6 +51,16 @@ var events = []struct {
 		"   00 FF 03 0F 41 63 6F 75 73 74 69 63 20\u2026  tick:76         delta:12         03 TrackName        Acoustic Guitar",
 	},
 
+	{"InstrumentName",
+		&InstrumentName{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x04, 0x06, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72}},
+				0x04,
+			},
+			"Guitar"},
+		"   00 FF 04 06 47 75 69 74 61 72            tick:76         delta:12         04 InstrumentName   Guitar",
+	},
+
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
