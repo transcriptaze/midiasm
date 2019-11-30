@@ -12,7 +12,7 @@
 - [ ] Split tracks to separate files
 - [x] --debug
 - [x] --verbose
-- [ ] NoteList: print actual notes
+- [x] Print note name + octave
 - [ ] Configurable formats
 - [ ] EventList: pretty print
 - [ ] NoteList: pretty print
