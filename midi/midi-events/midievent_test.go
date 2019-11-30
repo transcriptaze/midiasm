@@ -19,7 +19,7 @@ var events = []struct {
 			},
 			53, 64,
 		},
-		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0 note:53 velocity:64",
+		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0 note:F2   velocity:64",
 	},
 
 	{"NoteOn",
@@ -30,7 +30,7 @@ var events = []struct {
 			},
 			53, 72,
 		},
-		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0 note:53 velocity:72",
+		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0 note:F2   velocity:72",
 	},
 
 	{"PolyphonicPressure",
@@ -90,10 +90,14 @@ var events = []struct {
 }
 
 func TestRender(t *testing.T) {
+	ctx := event.Context{
+		Scale: event.Sharps,
+	}
+
 	for _, v := range events {
 		w := new(bytes.Buffer)
 
-		v.event.Render(w)
+		v.event.Render(&ctx, w)
 
 		if w.String() != v.expected {
 			t.Errorf("%s rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.name, v.expected, w.String())

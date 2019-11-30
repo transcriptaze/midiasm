@@ -8,6 +8,10 @@ import (
 )
 
 func TestSequenceNumberRender(t *testing.T) {
+	ctx := event.Context{
+		Scale: event.Sharps,
+	}
+
 	metaevent := MetaEvent{
 		event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x00, 0x02, 0x12, 0x34}},
 		0x00,
@@ -23,7 +27,7 @@ func TestSequenceNumberRender(t *testing.T) {
 	for _, v := range events {
 		w := new(bytes.Buffer)
 
-		v.event.Render(w)
+		v.event.Render(&ctx, w)
 
 		if !strings.HasSuffix(w.String(), v.expected) {
 			t.Errorf("SequenceNumber rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.expected, w.String())

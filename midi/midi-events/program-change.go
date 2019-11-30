@@ -2,6 +2,7 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -26,6 +27,6 @@ func NewProgramChange(event *MidiEvent, r io.ByteReader) (*ProgramChange, error)
 	}, nil
 }
 
-func (e *ProgramChange) Render(w io.Writer) {
+func (e *ProgramChange) Render(ctx *event.Context, w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s channel:%d program:%d", e.MidiEvent, "ProgramChange", e.Channel, e.Program)
 }

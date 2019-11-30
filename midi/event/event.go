@@ -9,7 +9,7 @@ import (
 type IEvent interface {
 	TickValue() uint64
 	DeltaTime() uint32
-	Render(w io.Writer)
+	Render(*Context, io.Writer)
 }
 
 type Event struct {

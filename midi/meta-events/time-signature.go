@@ -2,6 +2,7 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -39,7 +40,7 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 	}, nil
 }
 
-func (e *TimeSignature) Render(w io.Writer) {
+func (e *TimeSignature) Render(ctx *event.Context, w io.Writer) {
 	base := 1
 	for i := uint8(0); i < e.Denominator; i++ {
 		base *= 2

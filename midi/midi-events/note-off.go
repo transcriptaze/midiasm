@@ -2,6 +2,7 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -33,6 +34,8 @@ func NewNoteOff(event *MidiEvent, r io.ByteReader) (*NoteOff, error) {
 	}, nil
 }
 
-func (e *NoteOff) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d note:%d velocity:%d", e.MidiEvent, "NoteOff", e.Channel, e.Note, e.Velocity)
+func (e *NoteOff) Render(ctx *event.Context, w io.Writer) {
+	note := ctx.Scale[e.Note%12]
+	octave := -2 + int(e.Note)/12
+	fmt.Fprintf(w, "%s %-16s channel:%d note:%-4s velocity:%d", e.MidiEvent, "NoteOff", e.Channel, fmt.Sprintf("%s%d", note, octave), e.Velocity)
 }

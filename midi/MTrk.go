@@ -56,6 +56,10 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 }
 
 func (chunk *MTrk) Render(w io.Writer) {
+	context := event.Context{
+		Scale: event.Sharps,
+	}
+
 	for _, b := range chunk.bytes[:8] {
 		fmt.Fprintf(w, "%02x ", b)
 	}
@@ -63,7 +67,7 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintf(w, "              %12s length:%-8d\n", chunk.tag, chunk.length)
 
 	for _, e := range chunk.Events {
-		e.Render(w)
+		e.Render(&context, w)
 		fmt.Fprintln(w)
 	}
 

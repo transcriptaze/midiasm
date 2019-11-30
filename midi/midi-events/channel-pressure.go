@@ -2,6 +2,7 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -26,6 +27,6 @@ func NewChannelPressure(event *MidiEvent, r io.ByteReader) (*ChannelPressure, er
 	}, nil
 }
 
-func (e *ChannelPressure) Render(w io.Writer) {
+func (e *ChannelPressure) Render(ctx *event.Context, w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s channel:%d pressure:%d", e.MidiEvent, "ChannelPressure", e.Channel, e.Pressure)
 }

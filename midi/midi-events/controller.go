@@ -2,6 +2,7 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -33,6 +34,6 @@ func NewController(event *MidiEvent, r io.ByteReader) (*Controller, error) {
 	}, nil
 }
 
-func (e *Controller) Render(w io.Writer) {
+func (e *Controller) Render(ctx *event.Context, w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s channel:%d controller:%d value:%d", e.MidiEvent, "Controller", e.Channel, e.Controller, e.Value)
 }

@@ -2,6 +2,7 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -68,7 +69,13 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 	}, nil
 }
 
-func (e *KeySignature) Render(w io.Writer) {
+func (e *KeySignature) Render(ctx *event.Context, w io.Writer) {
+	if e.Accidentals < 0 {
+		ctx.Scale = event.Flats
+	} else {
+		ctx.Scale = event.Sharps
+	}
+
 	switch e.KeyType {
 	case 0:
 		if signature, ok := major_keys[e.Accidentals]; ok {

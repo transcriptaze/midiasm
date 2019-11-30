@@ -111,10 +111,14 @@ var events = []struct {
 }
 
 func TestRender(t *testing.T) {
+	ctx := event.Context{
+		Scale: event.Sharps,
+	}
+
 	for _, v := range events {
 		w := new(bytes.Buffer)
 
-		v.event.Render(w)
+		v.event.Render(&ctx, w)
 
 		if w.String() != v.expected {
 			t.Errorf("%s rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.name, v.expected, w.String())

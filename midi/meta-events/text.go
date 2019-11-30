@@ -2,6 +2,7 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/event"
 	"io"
 )
 
@@ -26,6 +27,6 @@ func NewText(event *MetaEvent, r io.ByteReader) (*Text, error) {
 	}, nil
 }
 
-func (e *Text) Render(w io.Writer) {
+func (e *Text) Render(ctx *event.Context, w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "Text", e.Text)
 }
