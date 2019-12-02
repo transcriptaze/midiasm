@@ -35,9 +35,9 @@
 - [x] 02/Copyright
 - [x] 03/Track Name
 - [x] 04/Instrument Name
-- [ ] 05/Lyric
-- [ ] 06/Marker
-- [ ] 07/Cue Point
+- [x] 05/Lyric
+- [x] 06/Marker
+- [x] 07/Cue Point
 - [x] 08/Program Name
 - [ ] 09/Device Name
 - [ ] 20/MIDI Channel Prefix

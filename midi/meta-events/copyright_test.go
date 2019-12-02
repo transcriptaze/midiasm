@@ -13,7 +13,7 @@ func TestCopyrightRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x02, 0x48, 0x47, 0x46, 0x45, 0x44, 0x43, 0x42, 0x41}},
+		event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x0b, 'T', 'h', 'e', 'y', ' ', '&', ' ', 'T', 'h', 'e', 'm'}},
 		0x01,
 	}
 
@@ -21,7 +21,7 @@ func TestCopyrightRender(t *testing.T) {
 		event    event.IEvent
 		expected string
 	}{
-		{&Copyright{metaevent, "hgfedcba"}, "Copyright        hgfedcba"},
+		{&Copyright{metaevent, "They & Them"}, "Copyright        They & Them"},
 	}
 
 	for _, v := range events {

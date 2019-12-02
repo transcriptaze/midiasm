@@ -24,21 +24,21 @@ var events = []struct {
 	{"Text",
 		&Text{
 			MetaEvent{
-				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48}},
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
 				0x01,
 			},
 			"abcdefgh"},
-		"   00 FF 01 08 41 42 43 44 45 46 47 48      tick:76         delta:12         01 Text             abcdefgh",
+		"   00 FF 01 08 61 62 63 64 65 66 67 68      tick:76         delta:12         01 Text             abcdefgh",
 	},
 
 	{"Copyright",
 		&Copyright{
 			MetaEvent{
-				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 0x48, 0x47, 0x46, 0x45, 0x44, 0x43, 0x42, 0x41}},
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x0b, 'T', 'h', 'e', 'y', ' ', '&', ' ', 'T', 'h', 'e', 'm'}},
 				0x02,
 			},
-			"hgfedcba"},
-		"   00 FF 01 08 48 47 46 45 44 43 42 41      tick:76         delta:12         02 Copyright        hgfedcba",
+			"They & Them"},
+		"   00 FF 01 0B 54 68 65 79 20 26 20 54 68\u2026  tick:76         delta:12         02 Copyright        They & Them",
 	},
 
 	{"TrackName",
@@ -69,6 +69,26 @@ var events = []struct {
 			},
 			"Lah-la-la-lah"},
 		"   00 FF 05 0D 4C 61 68 2D 6C 61 2D 6C 61\u2026  tick:76         delta:12         05 Lyric            Lah-la-la-lah",
+	},
+
+	{"Marker",
+		&Marker{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x06, 0x0b, 'F', 'i', 'r', 's', 't', ' ', 'v', 'e', 'r', 's', 'e'}},
+				0x06,
+			},
+			"First verse"},
+		"   00 FF 06 0B 46 69 72 73 74 20 76 65 72\u2026  tick:76         delta:12         06 Marker           First verse",
+	},
+
+	{"CuePoint",
+		&CuePoint{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x07, 0x0d, 'T', 'h', 'i', 'n', 'g', 's', ' ', 'h', 'a', 'p', 'p', 'e', 'n'}},
+				0x07,
+			},
+			"Things happen"},
+		"   00 FF 07 0D 54 68 69 6E 67 73 20 68 61\u2026  tick:76         delta:12         07 CuePoint         Things happen",
 	},
 
 	{"Tempo",

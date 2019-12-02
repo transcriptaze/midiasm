@@ -7,21 +7,21 @@ import (
 	"testing"
 )
 
-func TestTextRender(t *testing.T) {
+func TestMarkerRender(t *testing.T) {
 	ctx := event.Context{
 		Scale: event.Sharps,
 	}
 
 	metaevent := MetaEvent{
-		event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
-		0x01,
+		event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x06, 0x0b, 'F', 'i', 'r', 's', 't', ' ', 'v', 'e', 'r', 's', 'e'}},
+		0x06,
 	}
 
 	var events = []struct {
 		event    event.IEvent
 		expected string
 	}{
-		{&Text{metaevent, "abcdefgh"}, "Text             abcdefgh"},
+		{&Marker{metaevent, "First verse"}, "Marker           First verse"},
 	}
 
 	for _, v := range events {
@@ -30,7 +30,7 @@ func TestTextRender(t *testing.T) {
 		v.event.Render(&ctx, w)
 
 		if !strings.HasSuffix(w.String(), v.expected) {
-			t.Errorf("Text rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.expected, w.String())
+			t.Errorf("Marker rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.expected, w.String())
 		}
 	}
 }
