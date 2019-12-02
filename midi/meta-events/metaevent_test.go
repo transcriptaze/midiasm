@@ -44,7 +44,7 @@ var events = []struct {
 	{"TrackName",
 		&TrackName{
 			MetaEvent{
-				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72}},
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x03, 0x0f, 'A', 'c', 'o', 'u', 's', 't', 'i', 'c', ' ', 'G', 'u', 'i', 't', 'a', 'r'}},
 				0x03,
 			},
 			"Acoustic Guitar"},
@@ -59,6 +59,16 @@ var events = []struct {
 			},
 			"Guitar"},
 		"   00 FF 04 06 47 75 69 74 61 72            tick:76         delta:12         04 InstrumentName   Guitar",
+	},
+
+	{"Lyric",
+		&Lyric{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x05, 0x0d, 'L', 'a', 'h', '-', 'l', 'a', '-', 'l', 'a', '-', 'l', 'a', 'h'}},
+				0x05,
+			},
+			"Lah-la-la-lah"},
+		"   00 FF 05 0D 4C 61 68 2D 6C 61 2D 6C 61\u2026  tick:76         delta:12         05 Lyric            Lah-la-la-lah",
 	},
 
 	{"Tempo",
