@@ -49,7 +49,7 @@
 - [x] 06/Marker
 - [x] 07/Cue Point
 - [x] 08/Program Name
-- [ ] 09/Device Name
+- [x] 09/Device Name
 - [ ] 20/MIDI Channel Prefix
 - [ ] 21/MIDI Port
 - [x] 2F/End of Track
@@ -76,4 +76,5 @@
 3.  Export to JSON
 4.  Export to S-expressions
 5.  VSCode plugin
+6.  Convert between formats 0, 1 and 2
 

@@ -59,7 +59,7 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 	accidentals := int8(data[0])
 	keyType := data[1]
 	if keyType != 0 && keyType != 1 {
-		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expectedi a value in the interval [0,1]", keyType)
+		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0,1]", keyType)
 	}
 
 	return &KeySignature{

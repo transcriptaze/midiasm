@@ -111,6 +111,16 @@ var events = []struct {
 		"   00 FF 09 08 44 45 56 2D 30 30 30 31      tick:76         delta:12         09 DeviceName       DEV-0001",
 	},
 
+	{"MIDIChannelPrefix",
+		&MIDIChannelPrefix{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x20, 0x01, 13}},
+				0x20,
+			},
+			13},
+		"   00 FF 20 01 0D                           tick:76         delta:12         20 MIDIChannelPrefix 13",
+	},
+
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
