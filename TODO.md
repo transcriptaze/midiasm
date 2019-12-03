@@ -10,6 +10,7 @@
 - [x] Log errors/warning to stderr
 - [x] Write to file
 - [ ] Split tracks to separate files
+- [ ] Validate (missing end of track, tempo events, etc)
 - [x] --debug
 - [x] --verbose
 - [x] Print note name + octave
@@ -50,7 +51,7 @@
 - [x] 07/Cue Point
 - [x] 08/Program Name
 - [x] 09/Device Name
-- [ ] 20/MIDI Channel Prefix
+- [x] 20/MIDI Channel Prefix
 - [ ] 21/MIDI Port
 - [x] 2F/End of Track
 - [x] 51/Tempo

@@ -121,6 +121,16 @@ var events = []struct {
 		"   00 FF 20 01 0D                           tick:76         delta:12         20 MIDIChannelPrefix 13",
 	},
 
+	{"MIDIPort",
+		&MIDIPort{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x21, 0x01, 57}},
+				0x21,
+			},
+			57},
+		"   00 FF 21 01 39                           tick:76         delta:12         21 MIDIPort         57",
+	},
+
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
