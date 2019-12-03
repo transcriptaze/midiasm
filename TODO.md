@@ -14,9 +14,15 @@
 - [x] --verbose
 - [x] Print note name + octave
 - [ ] Configurable formats
-- [ ] EventList: pretty print
-- [ ] NoteList: pretty print
+- [ ] Pretty print
+
+### Notes 
+
+- [x] Print note name + octave
+- [ ] Rework as SMF processor
 - [ ] Check loss of precision
+- [ ] Unit tests for tempo map to time conversion
+- [ ] Pretty print
 
 ### MIDI events
 

@@ -20,12 +20,14 @@ type SMF struct {
 }
 
 type Note struct {
-	Channel   byte
-	Note      byte
-	StartTick uint64
-	EndTick   uint64
-	Start     time.Duration
-	End       time.Duration
+	Channel       byte
+	Note          byte
+	FormattedNote string
+	Velocity      byte
+	StartTick     uint64
+	EndTick       uint64
+	Start         time.Duration
+	End           time.Duration
 }
 
 func (smf *SMF) UnmarshalBinary(data []byte) error {
@@ -116,6 +118,7 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 
 func (smf *SMF) Notes(w io.Writer) error {
 	ppqn := uint64(smf.header.division)
+	ctx := event.Context{Scale: event.Sharps}
 	tempoMap := make([]event.IEvent, 0)
 
 	for _, e := range smf.tracks[0].Events {
@@ -194,15 +197,25 @@ func (smf *SMF) Notes(w io.Writer) error {
 			}
 
 			for _, e := range list {
+				if v, ok := e.(*metaevent.KeySignature); ok {
+					if v.Accidentals < 0 {
+						ctx.Scale = event.Flats
+					} else {
+						ctx.Scale = event.Sharps
+					}
+				}
+
 				if v, ok := e.(*midievent.NoteOn); ok {
 					eventlog.Debug(fmt.Sprintf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note)
 					note := Note{
-						Channel:   v.Channel,
-						Note:      v.Note,
-						Start:     t,
-						StartTick: tick,
+						Channel:       v.Channel,
+						Note:          v.Note,
+						FormattedNote: ctx.FormatNote(v.Note),
+						Velocity:      v.Velocity,
+						Start:         t,
+						StartTick:     tick,
 					}
 
 					if pending[key] != nil {
@@ -222,7 +235,7 @@ func (smf *SMF) Notes(w io.Writer) error {
 		}
 
 		for _, n := range notes {
-			fmt.Fprintf(w, "NOTE channel:%d note:%02X start:%-6s end:%-6s\n", n.Channel, n.Note, n.Start, n.End)
+			fmt.Fprintf(w, "NOTE %-4s channel:%d note:%02X velocity:%-3d start:%-6s end:%-6s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, n.Start, n.End)
 		}
 	}
 

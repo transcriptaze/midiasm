@@ -1,5 +1,9 @@
 package event
 
+import (
+	"fmt"
+)
+
 var Sharps = map[byte]string{
 	0:  "C",
 	1:  "C\u266f",
@@ -32,4 +36,11 @@ var Flats = map[byte]string{
 
 type Context struct {
 	Scale map[byte]string
+}
+
+func (ctx *Context) FormatNote(n byte) string {
+	note := ctx.Scale[n%12]
+	octave := int(n/12) - 2
+
+	return fmt.Sprintf("%s%d", note, octave)
 }
