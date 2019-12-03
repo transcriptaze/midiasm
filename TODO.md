@@ -15,6 +15,8 @@
 - [x] Print note name + octave
 - [ ] Configurable formats
 - [ ] Pretty print
+- [ ] Format 0
+- [ ] Format 2
 
 ### Notes 
 
@@ -23,6 +25,8 @@
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
 - [ ] Pretty print
+- [ ] Format 0
+- [ ] Format 2
 
 ### MIDI events
 
@@ -68,7 +72,8 @@
 ## TODO
 
 1.  Assembler
-2.  Export to JSON
-3.  Export to S-expressions
-4.  VSCode plugin
+2.  TSV
+3.  Export to JSON
+4.  Export to S-expressions
+5.  VSCode plugin
 

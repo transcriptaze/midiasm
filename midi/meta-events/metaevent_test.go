@@ -91,6 +91,16 @@ var events = []struct {
 		"   00 FF 07 0D 54 68 69 6E 67 73 20 68 61\u2026  tick:76         delta:12         07 CuePoint         Things happen",
 	},
 
+	{"ProgramName",
+		&ProgramName{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x08, 0x08, 'P', 'R', 'O', 'G', '-', 'X', 'X', 'X'}},
+				0x08,
+			},
+			"PROG-XXX"},
+		"   00 FF 08 08 50 52 4F 47 2D 58 58 58      tick:76         delta:12         08 ProgramName      PROG-XXX",
+	},
+
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
