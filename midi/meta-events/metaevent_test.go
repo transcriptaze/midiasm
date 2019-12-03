@@ -101,6 +101,16 @@ var events = []struct {
 		"   00 FF 08 08 50 52 4F 47 2D 58 58 58      tick:76         delta:12         08 ProgramName      PROG-XXX",
 	},
 
+	{"DeviceName",
+		&DeviceName{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x09, 0x08, 'D', 'E', 'V', '-', '0', '0', '0', '1'}},
+				0x09,
+			},
+			"DEV-0001"},
+		"   00 FF 09 08 44 45 56 2D 30 30 30 31      tick:76         delta:12         09 DeviceName       DEV-0001",
+	},
+
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
