@@ -65,9 +65,10 @@
 
 ### SysEx events
 
-- [ ] Single messages
+- [x] Single messages
 - [ ] Continuation events
 - [ ] Escape sequences
+- [ ] Casio sequences
 
 
 ## TODO

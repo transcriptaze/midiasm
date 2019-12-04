@@ -9,6 +9,7 @@ import (
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/events/midi"
+	"github.com/twystd/midiasm/midi/events/sysex"
 	"io"
 )
 
@@ -111,7 +112,7 @@ func parse(r *bufio.Reader, tick uint32) (events.IEvent, error) {
 	if b == 0xff {
 		return metaevent.Parse(e, r)
 	} else if b == 0xf0 || b == 0xf7 {
-		panic(fmt.Sprintf("NOT IMPLEMENTED: SYSEX EVENT @%d:  %02x\n", delta, b))
+		return sysex.Parse(e, r)
 	} else {
 		return midievent.Parse(e, r)
 	}
