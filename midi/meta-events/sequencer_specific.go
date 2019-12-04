@@ -1,19 +1,21 @@
 package metaevent
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/event"
 	"io"
+	"strings"
 )
 
-type Text struct {
+type SequencerSpecificEvent struct {
 	MetaEvent
-	Text string
+	Data []byte
 }
 
-func NewText(event *MetaEvent, r io.ByteReader) (*Text, error) {
-	if event.Type != 0x01 {
-		return nil, fmt.Errorf("Invalid Text event type (%02x): expected '01'", event.Type)
+func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpecificEvent, error) {
+	if event.Type != 0x7f {
+		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", event.Type)
 	}
 
 	data, err := read(r)
@@ -21,12 +23,18 @@ func NewText(event *MetaEvent, r io.ByteReader) (*Text, error) {
 		return nil, err
 	}
 
-	return &Text{
+	return &SequencerSpecificEvent{
 		MetaEvent: *event,
-		Text:      string(data),
+		Data:      data,
 	}, nil
 }
 
-func (e *Text) Render(ctx *event.Context, w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "Text", e.Text)
+func (e *SequencerSpecificEvent) Render(ctx *event.Context, w io.Writer) {
+	data := new(bytes.Buffer)
+
+	for _, b := range e.Data {
+		fmt.Fprintf(data, "%02X ", b)
+	}
+
+	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "SequencerSpecificEvent", strings.TrimSpace(data.String()))
 }

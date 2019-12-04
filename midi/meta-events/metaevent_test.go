@@ -178,15 +178,24 @@ var events = []struct {
 	{"KeySignature",
 		&KeySignature{
 			MetaEvent{
-				event.Event{76, 12, 0xff,
-					[]byte{0x00, 0xff, 0x59, 0x02, 0x03, 0x01},
-				},
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x03, 0x01}},
 				0x59,
 			},
 			3,
 			1,
 		},
 		"   00 FF 59 02 03 01                        tick:76         delta:12         59 KeySignature     F\u266f minor",
+	},
+
+	{"SequencerSpecificEvent",
+		&SequencerSpecificEvent{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x7f, 0x06, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab}},
+				0x7f,
+			},
+			[]byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xab},
+		},
+		"   00 FF 7F 06 01 23 45 67 89 AB            tick:76         delta:12         7F SequencerSpecificEvent 01 23 45 67 89 AB",
 	},
 }
 
