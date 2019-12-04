@@ -5,10 +5,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/twystd/midiasm/midi/event"
+	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/meta-events"
-	"github.com/twystd/midiasm/midi/midi-events"
+	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/events/meta"
+	"github.com/twystd/midiasm/midi/events/midi"
 	"io"
 	"sort"
 	"time"
@@ -118,8 +119,8 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 
 func (smf *SMF) Notes(w io.Writer) error {
 	ppqn := uint64(smf.header.division)
-	ctx := event.Context{Scale: event.Sharps}
-	tempoMap := make([]event.IEvent, 0)
+	ctx := context.Context{Scale: context.Sharps}
+	tempoMap := make([]events.IEvent, 0)
 
 	for _, e := range smf.tracks[0].Events {
 		if v, ok := e.(*metaevent.Tempo); ok {
@@ -128,30 +129,30 @@ func (smf *SMF) Notes(w io.Writer) error {
 	}
 
 	for _, track := range smf.tracks[1:] {
-		events := make(map[uint64][]event.IEvent, 0)
+		eventlist := make(map[uint64][]events.IEvent, 0)
 
 		for _, e := range tempoMap {
 			tick := e.TickValue()
-			list := events[tick]
+			list := eventlist[tick]
 			if list == nil {
-				list = make([]event.IEvent, 0)
+				list = make([]events.IEvent, 0)
 			}
 
-			events[tick] = append(list, e)
+			eventlist[tick] = append(list, e)
 		}
 
 		for _, e := range track.Events {
 			tick := e.TickValue()
-			list := events[tick]
+			list := eventlist[tick]
 			if list == nil {
-				list = make([]event.IEvent, 0)
+				list = make([]events.IEvent, 0)
 			}
 
-			events[tick] = append(list, e)
+			eventlist[tick] = append(list, e)
 		}
 
 		var ticks []uint64
-		for tick, _ := range events {
+		for tick, _ := range eventlist {
 			ticks = append(ticks, tick)
 		}
 
@@ -174,7 +175,7 @@ func (smf *SMF) Notes(w io.Writer) error {
 				eventlog.Warn(fmt.Sprintf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick))
 			}
 
-			list := events[tick]
+			list := eventlist[tick]
 			for _, e := range list {
 				if v, ok := e.(*metaevent.Tempo); ok {
 					tempo = uint64(v.Tempo)
@@ -199,9 +200,9 @@ func (smf *SMF) Notes(w io.Writer) error {
 			for _, e := range list {
 				if v, ok := e.(*metaevent.KeySignature); ok {
 					if v.Accidentals < 0 {
-						ctx.Scale = event.Flats
+						ctx.Scale = context.Flats
 					} else {
-						ctx.Scale = event.Sharps
+						ctx.Scale = context.Sharps
 					}
 				}
 

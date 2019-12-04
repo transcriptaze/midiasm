@@ -5,9 +5,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/twystd/midiasm/midi/event"
-	"github.com/twystd/midiasm/midi/meta-events"
-	"github.com/twystd/midiasm/midi/midi-events"
+	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/events/meta"
+	"github.com/twystd/midiasm/midi/events/midi"
 	"io"
 )
 
@@ -17,7 +18,7 @@ type MTrk struct {
 	data   []byte
 	bytes  []byte
 
-	Events []event.IEvent
+	Events []events.IEvent
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
@@ -28,17 +29,17 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 
 	length := binary.BigEndian.Uint32(data[4:8])
 
-	events := make([]event.IEvent, 0)
+	eventlist := make([]events.IEvent, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
 	tick := uint32(0)
 	err := error(nil)
-	e := event.IEvent(nil)
+	e := events.IEvent(nil)
 
 	for err == nil {
 		e, err = parse(r, tick)
 		if err == nil && e != nil {
 			tick += e.DeltaTime()
-			events = append(events, e.(event.IEvent))
+			eventlist = append(eventlist, e.(events.IEvent))
 		}
 	}
 
@@ -49,15 +50,15 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	chunk.tag = tag
 	chunk.length = length
 	chunk.data = data[8:]
-	chunk.Events = events
+	chunk.Events = eventlist
 	chunk.bytes = data
 
 	return nil
 }
 
 func (chunk *MTrk) Render(w io.Writer) {
-	context := event.Context{
-		Scale: event.Sharps,
+	context := context.Context{
+		Scale: context.Sharps,
 	}
 
 	buffer := new(bytes.Buffer)
@@ -85,7 +86,7 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintln(w)
 }
 
-func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
+func parse(r *bufio.Reader, tick uint32) (events.IEvent, error) {
 	bytes := make([]byte, 0)
 
 	delta, m, err := vlq(r)
@@ -100,7 +101,7 @@ func parse(r *bufio.Reader, tick uint32) (event.IEvent, error) {
 	}
 	bytes = append(bytes, b)
 
-	e := event.Event{
+	e := events.Event{
 		Tick:   uint64(tick + delta),
 		Delta:  delta,
 		Status: b,
