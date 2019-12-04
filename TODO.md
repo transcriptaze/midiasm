@@ -55,7 +55,7 @@
 - [x] 21/MIDI Port
 - [x] 2F/End of Track
 - [x] 51/Tempo
-- [ ] 54/SMPTE Offset
+- [x] 54/SMPTE Offset
 - [x] 58/Time Signature
 - [x] 59/Key Signature
 - [ ] 7F/Sequencer Specific Event
