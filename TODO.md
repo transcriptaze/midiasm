@@ -58,7 +58,7 @@
 - [x] 54/SMPTE Offset
 - [x] 58/Time Signature
 - [x] 59/Key Signature
-- [ ] 7F/Sequencer Specific Event
+- [x] 7F/Sequencer Specific Event
 
 - [x] TimeSignature: [Unicode fractions](http://unicodefractions.com)
 - [x] KeySignature:  [Unicode symbols](https://unicode-table.com/en/blocks/musical-symbols/)
