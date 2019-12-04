@@ -18,6 +18,8 @@
 - [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2
+- [ ] MThd hex
+- [ ] MTrk hex
 
 ### Notes 
 
@@ -58,7 +60,7 @@
 - [x] 54/SMPTE Offset
 - [x] 58/Time Signature
 - [x] 59/Key Signature
-- [x] 7F/Sequencer Specific Event
+- [xq] 7F/Sequencer Specific Event
 
 - [x] TimeSignature: [Unicode fractions](http://unicodefractions.com)
 - [x] KeySignature:  [Unicode symbols](https://unicode-table.com/en/blocks/musical-symbols/)

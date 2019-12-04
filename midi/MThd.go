@@ -46,25 +46,25 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 
 func (chunk *MThd) Render(w io.Writer) {
 	for _, b := range chunk.bytes {
-		fmt.Fprintf(w, "%02x ", b)
+		fmt.Fprintf(w, "%02X ", b)
 	}
 
-	fmt.Fprintf(w, "%12s length:%d format:%d tracks:%d ", chunk.tag, chunk.length, chunk.format, chunk.tracks)
+	fmt.Fprintf(w, "  %s length:%d, format:%d, tracks:%d ", chunk.tag, chunk.length, chunk.format, chunk.tracks)
 	if chunk.division&0x8000 == 0x0000 {
-		fmt.Fprintf(w, "division:metrical time, %d ppqn", chunk.division&0x7fff)
+		fmt.Fprintf(w, ", metrical time, %d ppqn", chunk.division&0x7fff)
 	} else {
-		frameSubdivisions := chunk.division & 0x007f
-		framesPerSecond := chunk.division & 0x7f00 >> 8
+		fps := chunk.division & 0xff00 >> 8
+		subdivisions := chunk.division & 0x007f
 
-		switch framesPerSecond {
+		switch fps {
 		case 0xe8:
-			fmt.Fprintf(w, "division:timecode, %d ticks per SMPE frame, 24 frames per second", frameSubdivisions)
+			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 24 fps", subdivisions)
 		case 0xe7:
-			fmt.Fprintf(w, "division:timecode, %d ticks per SMPE frame, 25 frames per second", frameSubdivisions)
+			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 25 fps", subdivisions)
 		case 0xe6:
-			fmt.Fprintf(w, "division:timecode, %d ticks per SMPE frame, 30 frames per second, drop frame", frameSubdivisions)
+			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (drop frame)", subdivisions)
 		case 0xe5:
-			fmt.Fprintf(w, "division:timecode, %d ticks per SMPE frame, 30 frames per second, non-drop frame", frameSubdivisions)
+			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (non-drop frame)", subdivisions)
 		}
 	}
 

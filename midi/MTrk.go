@@ -60,11 +60,22 @@ func (chunk *MTrk) Render(w io.Writer) {
 		Scale: event.Sharps,
 	}
 
-	for _, b := range chunk.bytes[:8] {
-		fmt.Fprintf(w, "%02x ", b)
+	buffer := new(bytes.Buffer)
+	for i, b := range chunk.bytes[:8] {
+		if i == 0 {
+			fmt.Fprintf(buffer, "%02X", b)
+		} else {
+			fmt.Fprintf(buffer, " %02X", b)
+		}
 	}
-	fmt.Fprintf(w, "... ")
-	fmt.Fprintf(w, "              %12s length:%-8d\n", chunk.tag, chunk.length)
+
+	if len(chunk.bytes) > 8 {
+		fmt.Fprintf(buffer, "\u2026")
+	} else {
+		fmt.Fprintf(buffer, " ")
+	}
+
+	fmt.Fprintf(w, "%s            %12s length:%-8d\n", buffer.String(), chunk.tag, chunk.length)
 
 	for _, e := range chunk.Events {
 		e.Render(&context, w)
