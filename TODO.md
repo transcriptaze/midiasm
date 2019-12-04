@@ -52,7 +52,7 @@
 - [x] 08/Program Name
 - [x] 09/Device Name
 - [x] 20/MIDI Channel Prefix
-- [ ] 21/MIDI Port
+- [x] 21/MIDI Port
 - [x] 2F/End of Track
 - [x] 51/Tempo
 - [ ] 54/SMPTE Offset

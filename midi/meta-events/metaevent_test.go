@@ -131,16 +131,6 @@ var events = []struct {
 		"   00 FF 21 01 39                           tick:76         delta:12         21 MIDIPort         57",
 	},
 
-	{"Tempo",
-		&Tempo{
-			MetaEvent{
-				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}},
-				0x51,
-			},
-			512438},
-		"   00 FF 51 03 07 A1 20                     tick:76         delta:12         51 Tempo            tempo:512438",
-	},
-
 	{"EndOfTrack",
 		&EndOfTrack{
 			MetaEvent{
@@ -149,6 +139,26 @@ var events = []struct {
 			},
 		},
 		"      00 FF 2F 00                           tick:76         delta:12         2F EndOfTrack",
+	},
+
+	{"SMPTEOffset",
+		&SMPTEOffset{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 0x89, 8, 7, 28, 13}},
+				0x54,
+			},
+			0x10, 9, 8, 7, 28, 13},
+		"   00 FF 54 05 89 08 07 1C 0D               tick:76         delta:12         54 SMPTEOffset      30fps (drop frame), 09:08:07, 28 frames, 13 fractional frames",
+	},
+
+	{"Tempo",
+		&Tempo{
+			MetaEvent{
+				event.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}},
+				0x51,
+			},
+			512438},
+		"   00 FF 51 03 07 A1 20                     tick:76         delta:12         51 Tempo            tempo:512438",
 	},
 
 	{"TimeSignature",

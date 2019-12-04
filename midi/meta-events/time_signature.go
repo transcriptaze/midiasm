@@ -23,7 +23,7 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 	if err != nil {
 		return nil, err
 	} else if len(data) != 4 {
-		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '3'", len(data))
+		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '4'", len(data))
 	}
 
 	numerator := data[0]
