@@ -169,7 +169,7 @@ var eventlist = []struct {
 				0x58,
 			},
 			4,
-			2,
+			4,
 			24,
 			8,
 		},

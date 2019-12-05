@@ -27,9 +27,13 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 	}
 
 	numerator := data[0]
-	denominator := data[1]
 	ticksPerClick := data[2]
 	thirtySecondsPerQuarter := data[3]
+
+	denominator := uint8(1)
+	for i := uint8(0); i < data[1]; i++ {
+		denominator *= 2
+	}
 
 	return &TimeSignature{
 		MetaEvent:               *event,
@@ -41,10 +45,5 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 }
 
 func (e *TimeSignature) Render(ctx *context.Context, w io.Writer) {
-	base := 1
-	for i := uint8(0); i < e.Denominator; i++ {
-		base *= 2
-	}
-
-	fmt.Fprintf(w, "%s %-16s %d:%d, %d ticks-per-click, %d/32-per-quarter", e.MetaEvent, "TimeSignature", e.Numerator, base, e.TicksPerClick, e.ThirtySecondsPerQuarter)
+	fmt.Fprintf(w, "%s %-16s %d:%d, %d ticks-per-click, %d/32-per-quarter", e.MetaEvent, "TimeSignature", e.Numerator, e.Denominator, e.TicksPerClick, e.ThirtySecondsPerQuarter)
 }
