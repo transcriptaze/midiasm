@@ -2,6 +2,7 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"io"
 )
@@ -29,7 +30,7 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(e events.Event, r io.ByteReader) (events.IEvent, error) {
+func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	event := MidiEvent{
 		Event:   e,
 		Channel: e.Status & 0x0F,

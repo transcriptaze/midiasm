@@ -10,7 +10,7 @@
 - [x] Log errors/warning to stderr
 - [x] Write to file
 - [ ] Split tracks to separate files
-- [ ] Validate (missing end of track, tempo events, etc)
+- [ ] Validate (missing end of track, tempo events, sysex continuations)
 - [x] --debug
 - [x] --verbose
 - [x] Print note name + octave
@@ -66,9 +66,9 @@
 ### SysEx events
 
 - [x] Single messages
-- [ ] Continuation events
-- [ ] Escape sequences
-- [ ] Casio sequences
+- [x] Continuation events
+- [x] Escape sequences
+- [x] Casio sequences
 
 
 ## TODO

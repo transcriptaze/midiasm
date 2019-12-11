@@ -2,6 +2,7 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"io"
 )
@@ -29,7 +30,7 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(e events.Event, r io.ByteReader) (events.IEvent, error) {
+func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	if e.Status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", e.Status)
 	}

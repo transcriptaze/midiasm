@@ -2,6 +2,7 @@ package sysex
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"io"
 )
@@ -14,7 +15,7 @@ func (e SysExEvent) String() string {
 	return fmt.Sprintf("%s %02X", e.Event, e.Status)
 }
 
-func Parse(e events.Event, r io.ByteReader) (events.IEvent, error) {
+func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	if e.Status != 0xF0 && e.Status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", e.Status)
 	}
@@ -25,10 +26,18 @@ func Parse(e events.Event, r io.ByteReader) (events.IEvent, error) {
 
 	switch event.Status {
 	case 0xf0:
-		return NewSysExSingleMessage(&event, r)
+		if ctx.Casio {
+			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
+		} else {
+			return NewSysExSingleMessage(&event, r, ctx)
+		}
 
 	case 0xf7:
-		return NewSysExContinuationMessage(&event, r)
+		if ctx.Casio {
+			return NewSysExContinuationMessage(&event, r, ctx)
+		} else {
+			return NewSysExEscapeMessage(&event, r, ctx)
+		}
 	}
 
 	return nil, fmt.Errorf("Unrecognised SYSEX event: %02X", event.Status)

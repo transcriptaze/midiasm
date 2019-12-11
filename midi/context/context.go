@@ -36,6 +36,7 @@ var Flats = map[byte]string{
 
 type Context struct {
 	Scale map[byte]string
+	Casio bool
 }
 
 func (ctx *Context) FormatNote(n byte) string {

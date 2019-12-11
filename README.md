@@ -18,6 +18,12 @@ A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM, last se
 
 ## midiasm
 
+## References
+
+1. [MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)
+2. [Somascape - MIDI Files Specification](http://www.somascape.org/midi/tech/mfile.html)
+
+
 
 
 

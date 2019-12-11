@@ -13,7 +13,7 @@ type SysExSingleMessage struct {
 	Data []byte
 }
 
-func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader) (*SysExSingleMessage, error) {
+func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Context) (*SysExSingleMessage, error) {
 	if event.Status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", event.Status)
 	}
@@ -29,7 +29,7 @@ func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader) (*SysExSingleMess
 
 	terminator := data[len(data)-1]
 	if terminator != 0xf7 {
-		return nil, fmt.Errorf("Invalid SysExSingleMessage event data: terminating byte %02X should be F7", terminator)
+		ctx.Casio = true
 	}
 
 	return &SysExSingleMessage{

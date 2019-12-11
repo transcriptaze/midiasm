@@ -35,9 +35,13 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	tick := uint32(0)
 	err := error(nil)
 	e := events.IEvent(nil)
+	ctx := context.Context{
+		Scale: context.Sharps,
+		Casio: false,
+	}
 
 	for err == nil {
-		e, err = parse(r, tick)
+		e, err = parse(r, tick, &ctx)
 		if err == nil && e != nil {
 			tick += e.DeltaTime()
 			eventlist = append(eventlist, e.(events.IEvent))
@@ -58,8 +62,9 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 }
 
 func (chunk *MTrk) Render(w io.Writer) {
-	context := context.Context{
+	ctx := context.Context{
 		Scale: context.Sharps,
+		Casio: false,
 	}
 
 	buffer := new(bytes.Buffer)
@@ -80,14 +85,14 @@ func (chunk *MTrk) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s            %12s length:%-8d\n", buffer.String(), chunk.tag, chunk.length)
 
 	for _, e := range chunk.Events {
-		e.Render(&context, w)
+		e.Render(&ctx, w)
 		fmt.Fprintln(w)
 	}
 
 	fmt.Fprintln(w)
 }
 
-func parse(r *bufio.Reader, tick uint32) (events.IEvent, error) {
+func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, error) {
 	bytes := make([]byte, 0)
 
 	delta, m, err := vlq(r)
@@ -110,11 +115,11 @@ func parse(r *bufio.Reader, tick uint32) (events.IEvent, error) {
 	}
 
 	if b == 0xff {
-		return metaevent.Parse(e, r)
+		return metaevent.Parse(e, r, ctx)
 	} else if b == 0xf0 || b == 0xf7 {
-		return sysex.Parse(e, r)
+		return sysex.Parse(e, r, ctx)
 	} else {
-		return midievent.Parse(e, r)
+		return midievent.Parse(e, r, ctx)
 	}
 }
 
