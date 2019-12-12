@@ -16,8 +16,8 @@ import (
 )
 
 type SMF struct {
-	header *MThd
-	tracks []*MTrk
+	Header *MThd
+	Tracks []*MTrk
 }
 
 type Note struct {
@@ -71,20 +71,20 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 		}
 	}
 
-	smf.header = header
-	smf.tracks = tracks
+	smf.Header = header
+	smf.Tracks = tracks
 
 	return nil
 }
 
-func (smf *SMF) Render(w io.Writer) {
-	smf.header.Print(w)
-	fmt.Fprintln(w)
-	fmt.Fprintln(w)
-	for _, track := range smf.tracks {
-		track.Print(w)
-	}
-}
+//func (smf *SMF) Render(w io.Writer) {
+//	smf.header.Print(w)
+//	fmt.Fprintln(w)
+//	fmt.Fprintln(w)
+//	for _, track := range smf.tracks {
+//		track.Print(w)
+//	}
+//}
 
 func readChunk(r *bufio.Reader) (Chunk, error) {
 	peek, err := r.Peek(8)
@@ -120,17 +120,17 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 }
 
 func (smf *SMF) Notes(w io.Writer) error {
-	ppqn := uint64(smf.header.division)
+	ppqn := uint64(smf.Header.division)
 	ctx := context.Context{Scale: context.Sharps}
 	tempoMap := make([]events.IEvent, 0)
 
-	for _, e := range smf.tracks[0].Events {
+	for _, e := range smf.Tracks[0].Events {
 		if v, ok := e.(*metaevent.Tempo); ok {
 			tempoMap = append(tempoMap, v)
 		}
 	}
 
-	for _, track := range smf.tracks[1:] {
+	for _, track := range smf.Tracks[1:] {
 		eventlist := make(map[uint64][]events.IEvent, 0)
 
 		for _, e := range tempoMap {

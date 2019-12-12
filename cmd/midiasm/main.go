@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
+	"github.com/twystd/midiasm/midi/processors"
 	"io/ioutil"
 	"os"
 )
@@ -51,7 +52,7 @@ func main() {
 	case "notes":
 		notes(&smf)
 	default:
-		render(&smf)
+		print(&smf)
 	}
 }
 
@@ -76,7 +77,7 @@ func parse(cli map[string]*flag.FlagSet) (string, string, error) {
 	return "render", flag.Arg(0), nil
 }
 
-func render(smf *midi.SMF) {
+func print(smf *midi.SMF) {
 	w := os.Stdout
 	err := error(nil)
 
@@ -93,5 +94,6 @@ func render(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = options.verbose
 	eventlog.EventLog.Debug = options.debug
 
-	smf.Render(w)
+	p := processors.Print{w}
+	p.Execute(smf)
 }

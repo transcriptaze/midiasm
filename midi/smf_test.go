@@ -24,7 +24,7 @@ func TestUnmarshalSMF(t *testing.T) {
 		t.Fatalf("Unexpected error unmarshaling MThd: %v", err)
 	}
 
-	if !reflect.DeepEqual(*smf.header, mthd) {
-		t.Errorf("MThd incorrectly unmarshaled\n   expected:%v\n   got:     %v", mthd, *smf.header)
+	if !reflect.DeepEqual(*smf.Header, mthd) {
+		t.Errorf("MThd incorrectly unmarshaled\n   expected:%v\n   got:     %v", mthd, *smf.Header)
 	}
 }
