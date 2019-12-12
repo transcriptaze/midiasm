@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/processors"
 	"io/ioutil"
 	"os"
 )
@@ -75,28 +73,4 @@ func parse(cli map[string]*flag.FlagSet) (string, string, error) {
 	flag.Parse()
 
 	return "render", flag.Arg(0), nil
-}
-
-func print(smf *midi.SMF) {
-	w := os.Stdout
-	err := error(nil)
-
-	if options.out != "" {
-		w, err = os.Create(options.out)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
-		}
-
-		defer w.Close()
-	}
-
-	eventlog.EventLog.Verbose = options.verbose
-	eventlog.EventLog.Debug = options.debug
-
-	p := processors.Print{w}
-	err = p.Execute(smf)
-	if err != nil {
-		fmt.Printf("Error %v extracting notes\n", err)
-	}
 }
