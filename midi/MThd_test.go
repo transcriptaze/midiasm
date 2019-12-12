@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestUnmarshal(t *testing.T) {
+func TestUnmarshalMThd(t *testing.T) {
 	bytes := []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60}
 	expected := MThd{
 		tag:      "MThd",
@@ -27,7 +27,7 @@ func TestUnmarshal(t *testing.T) {
 	}
 }
 
-func TestUnmarshalInvalidBytes(t *testing.T) {
+func TestUnmarshalMThdInvalidBytes(t *testing.T) {
 	mthd := MThd{}
 	bytes := [][]byte{
 		[]byte{0x4D, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60},
@@ -43,7 +43,7 @@ func TestUnmarshalInvalidBytes(t *testing.T) {
 	}
 }
 
-func TestPrint(t *testing.T) {
+func TestMThdPrint(t *testing.T) {
 	expected := "4D 54 68 64 00 00 00 06 00 01 00 11 00 60   MThd length:6, format:1, tracks:1 , metrical time, 96 ppqn"
 
 	mthd := MThd{
