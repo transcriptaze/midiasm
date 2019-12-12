@@ -9,10 +9,10 @@ import (
 	"os"
 )
 
-type Notes struct {
+type Print struct {
 }
 
-func (n *Notes) Execute(smf *midi.SMF) {
+func (p *Print) Execute(smf *midi.SMF) {
 	w := os.Stdout
 	err := error(nil)
 
@@ -29,16 +29,15 @@ func (n *Notes) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = options.verbose
 	eventlog.EventLog.Debug = options.debug
 
-	p := processors.Notes{w}
-	err = p.Execute(smf)
+	x := processors.Print{w}
+	err = x.Execute(smf)
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)
 	}
-
 }
 
-func (n *Notes) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
+func (p *Print) flagset() *flag.FlagSet {
+	flagset := flag.NewFlagSet("print", flag.ExitOnError)
 
 	flagset.StringVar(&options.out, "out", "", "Output file path")
 	flagset.BoolVar(&options.verbose, "verbose", false, "Enable progress information")

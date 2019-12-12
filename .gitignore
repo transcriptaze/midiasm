@@ -18,5 +18,8 @@ examples/*.gp
 examples/*.xml
 tmp
 
+# Miscellaneous
+documentation/midi.org
+
 # MacOS
 .DS_Store

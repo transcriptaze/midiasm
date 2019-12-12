@@ -8,8 +8,14 @@ import (
 	"os"
 )
 
-var cli = map[string]*flag.FlagSet{
-	"notes": notesFlagset(),
+type command interface {
+	flagset() *flag.FlagSet
+	Execute(*midi.SMF)
+}
+
+var cli = map[string]command{
+	"print": &Print{},
+	"notes": &Notes{},
 }
 
 var options = struct {
@@ -19,7 +25,7 @@ var options = struct {
 }{}
 
 func main() {
-	cmd, filename, err := parse(cli)
+	cmd, filename, err := parse()
 	if err != nil {
 		fmt.Printf("Error: unable to parse command line (%v)\n", err)
 		return
@@ -46,31 +52,27 @@ func main() {
 		return
 	}
 
-	switch cmd {
-	case "notes":
-		notes(&smf)
-	default:
-		print(&smf)
-	}
+	cmd.Execute(&smf)
 }
 
-func parse(cli map[string]*flag.FlagSet) (string, string, error) {
+func parse() (command, string, error) {
+	cmd := &Print{}
 	if len(os.Args) > 1 {
-		cmd := os.Args[1]
-
-		if flagset, ok := cli[cmd]; ok {
+		c, ok := cli[os.Args[1]]
+		if ok {
+			flagset := c.flagset()
 			if err := flagset.Parse(os.Args[2:]); err != nil {
 				return cmd, "", err
 			}
 
-			return cmd, flagset.Arg(0), nil
+			return c, flagset.Arg(0), nil
 		}
 	}
 
-	flag.StringVar(&options.out, "out", "", "Output file path")
-	flag.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
-	flag.BoolVar(&options.debug, "debug", false, "Enable debugging information")
-	flag.Parse()
+	flagset := cmd.flagset()
+	if err := flagset.Parse(os.Args[2:]); err != nil {
+		return cmd, "", err
+	}
 
-	return "render", flag.Arg(0), nil
+	return cmd, flagset.Arg(0), nil
 }
