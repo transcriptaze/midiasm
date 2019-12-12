@@ -95,5 +95,8 @@ func print(smf *midi.SMF) {
 	eventlog.EventLog.Debug = options.debug
 
 	p := processors.Print{w}
-	p.Execute(smf)
+	err = p.Execute(smf)
+	if err != nil {
+		fmt.Printf("Error %v extracting notes\n", err)
+	}
 }

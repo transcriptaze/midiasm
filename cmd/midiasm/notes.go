@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
+	"github.com/twystd/midiasm/midi/processors"
 	"os"
 )
 
@@ -25,7 +26,12 @@ func notes(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = options.verbose
 	eventlog.EventLog.Debug = options.debug
 
-	smf.Notes(w)
+	p := processors.Notes{w}
+	err = p.Execute(smf)
+	if err != nil {
+		fmt.Printf("Error %v extracting notes\n", err)
+	}
+
 }
 
 func notesFlagset() *flag.FlagSet {

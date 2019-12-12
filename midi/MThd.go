@@ -11,7 +11,7 @@ type MThd struct {
 	length   uint32
 	format   uint16
 	tracks   uint16
-	division uint16
+	Division uint16
 	bytes    []byte
 }
 
@@ -42,7 +42,7 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 	chunk.length = length
 	chunk.format = format
 	chunk.tracks = tracks
-	chunk.division = division
+	chunk.Division = division
 	chunk.bytes = data
 
 	return nil
@@ -54,11 +54,11 @@ func (chunk *MThd) Print(w io.Writer) {
 	}
 
 	fmt.Fprintf(w, "  %s length:%d, format:%d, tracks:%d ", chunk.tag, chunk.length, chunk.format, chunk.tracks)
-	if chunk.division&0x8000 == 0x0000 {
-		fmt.Fprintf(w, ", metrical time, %d ppqn", chunk.division&0x7fff)
+	if chunk.Division&0x8000 == 0x0000 {
+		fmt.Fprintf(w, ", metrical time, %d ppqn", chunk.Division&0x7fff)
 	} else {
-		fps := chunk.division & 0xff00 >> 8
-		subdivisions := chunk.division & 0x007f
+		fps := chunk.Division & 0xff00 >> 8
+		subdivisions := chunk.Division & 0x007f
 
 		switch fps {
 		case 0xe8:

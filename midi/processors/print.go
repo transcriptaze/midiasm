@@ -10,13 +10,15 @@ type Print struct {
 	Writer io.Writer
 }
 
-func (p *Print) Execute(smf *midi.SMF) {
-	smf.Header.Print(p.Writer)
+func (x *Print) Execute(smf *midi.SMF) error {
+	smf.Header.Print(x.Writer)
 
-	fmt.Fprintln(p.Writer)
-	fmt.Fprintln(p.Writer)
+	fmt.Fprintln(x.Writer)
+	fmt.Fprintln(x.Writer)
 
 	for _, track := range smf.Tracks {
-		track.Print(p.Writer)
+		track.Print(x.Writer)
 	}
+
+	return nil
 }

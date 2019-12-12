@@ -23,7 +23,7 @@
 ### Notes 
 
 - [x] Print note name + octave
-- [ ] Rework as SMF annotation
+- [x] Rework as SMF processor
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
 - [ ] Pretty print
