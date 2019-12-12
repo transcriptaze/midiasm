@@ -5,5 +5,5 @@ import (
 )
 
 type Chunk interface {
-	Render(io.Writer)
+	Print(io.Writer)
 }

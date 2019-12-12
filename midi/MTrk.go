@@ -61,7 +61,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (chunk *MTrk) Render(w io.Writer) {
+func (chunk *MTrk) Print(w io.Writer) {
 	ctx := context.Context{
 		Scale: context.Sharps,
 		Casio: false,

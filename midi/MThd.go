@@ -21,6 +21,10 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 		return fmt.Errorf("Invalid MThd chunk type (%s): expected 'MThd'", tag)
 	}
 
+	if len(data) < 14 {
+		return fmt.Errorf("Insufficent bytes in  MThd (%v): expected 14", len(data))
+	}
+
 	length := binary.BigEndian.Uint32(data[4:8])
 	if length != 6 {
 		return fmt.Errorf("Invalid MThd chunk length (%v): expected 6", length)
@@ -44,7 +48,7 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (chunk *MThd) Render(w io.Writer) {
+func (chunk *MThd) Print(w io.Writer) {
 	for _, b := range chunk.bytes {
 		fmt.Fprintf(w, "%02X ", b)
 	}
@@ -67,7 +71,4 @@ func (chunk *MThd) Render(w io.Writer) {
 			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (non-drop frame)", subdivisions)
 		}
 	}
-
-	fmt.Fprintln(w)
-	fmt.Fprintln(w)
 }

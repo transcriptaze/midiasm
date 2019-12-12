@@ -78,9 +78,11 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 }
 
 func (smf *SMF) Render(w io.Writer) {
-	smf.header.Render(w)
+	smf.header.Print(w)
+	fmt.Fprintln(w)
+	fmt.Fprintln(w)
 	for _, track := range smf.tracks {
-		track.Render(w)
+		track.Print(w)
 	}
 }
 

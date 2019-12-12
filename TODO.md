@@ -18,11 +18,12 @@
 - [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2
+- [ ] MIDI 1.0 reference files
 
 ### Notes 
 
 - [x] Print note name + octave
-- [ ] Rework as SMF processor
+- [ ] Rework as SMF annotation
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
 - [ ] Pretty print
@@ -79,4 +80,5 @@
 4.  Export to S-expressions
 5.  VSCode plugin
 6.  Convert between formats 0, 1 and 2
+7.  [Manufacturer ID's](https://www.midi.org/specifications-old/category/reference-tables) (?)
 
