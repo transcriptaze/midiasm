@@ -14,10 +14,11 @@ import (
 )
 
 type MTrk struct {
-	tag    string
-	length uint32
-	data   []byte
-	bytes  []byte
+	TrackNumber uint
+	tag         string
+	length      uint32
+	data        []byte
+	bytes       []byte
 
 	Events []events.IEvent
 }
@@ -82,7 +83,7 @@ func (chunk *MTrk) Print(w io.Writer) {
 		fmt.Fprintf(buffer, " ")
 	}
 
-	fmt.Fprintf(w, "%s            %12s length:%-8d\n", buffer.String(), chunk.tag, chunk.length)
+	fmt.Fprintf(w, "%s            %12s %-2d length:%-8d\n", buffer.String(), chunk.tag, chunk.TrackNumber, chunk.length)
 
 	for _, e := range chunk.Events {
 		e.Render(&ctx, w)
