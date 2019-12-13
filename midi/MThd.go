@@ -9,7 +9,7 @@ import (
 type MThd struct {
 	tag      string
 	length   uint32
-	format   uint16
+	Format   uint16
 	tracks   uint16
 	Division uint16
 	bytes    []byte
@@ -38,9 +38,16 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 	tracks := binary.BigEndian.Uint16(data[10:12])
 	division := binary.BigEndian.Uint16(data[12:14])
 
+	if division&0x8000 == 0x8000 {
+		fps := division & 0xff00 >> 8
+		if fps != 0xe8 && fps != 0xe7 && fps != 0xe6 && fps != 0xe5 {
+			return fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected E8, E7, E6 or E5", fps)
+		}
+	}
+
 	chunk.tag = tag
 	chunk.length = length
-	chunk.format = format
+	chunk.Format = format
 	chunk.tracks = tracks
 	chunk.Division = division
 	chunk.bytes = data
@@ -53,7 +60,7 @@ func (chunk *MThd) Print(w io.Writer) {
 		fmt.Fprintf(w, "%02X ", b)
 	}
 
-	fmt.Fprintf(w, "  %s length:%d, format:%d, tracks:%d ", chunk.tag, chunk.length, chunk.format, chunk.tracks)
+	fmt.Fprintf(w, "  %s length:%d, format:%d, tracks:%d ", chunk.tag, chunk.length, chunk.Format, chunk.tracks)
 	if chunk.Division&0x8000 == 0x0000 {
 		fmt.Fprintf(w, ", metrical time, %d ppqn", chunk.Division&0x7fff)
 	} else {
@@ -71,6 +78,4 @@ func (chunk *MThd) Print(w io.Writer) {
 			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (non-drop frame)", subdivisions)
 		}
 	}
-
-	fmt.Fprintln(w)
 }

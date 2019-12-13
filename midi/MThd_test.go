@@ -11,7 +11,7 @@ func TestUnmarshalMThd(t *testing.T) {
 	expected := MThd{
 		tag:      "MThd",
 		length:   6,
-		format:   1,
+		Format:   1,
 		tracks:   17,
 		Division: 96,
 		bytes:    []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60},
@@ -49,7 +49,7 @@ func TestMThdPrint(t *testing.T) {
 	mthd := MThd{
 		tag:      "MThd",
 		length:   6,
-		format:   1,
+		Format:   1,
 		tracks:   1,
 		Division: 96,
 		bytes:    []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60},

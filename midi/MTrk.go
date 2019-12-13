@@ -83,11 +83,11 @@ func (chunk *MTrk) Print(w io.Writer) {
 		fmt.Fprintf(buffer, " ")
 	}
 
-	fmt.Fprintf(w, "%s            %12s %-2d length:%-8d\n", buffer.String(), chunk.tag, chunk.TrackNumber, chunk.length)
+	fmt.Fprintf(w, "%s            %12s %-2d length:%-8d", buffer.String(), chunk.tag, chunk.TrackNumber, chunk.length)
 
 	for _, e := range chunk.Events {
-		e.Render(&ctx, w)
 		fmt.Fprintln(w)
+		e.Render(&ctx, w)
 	}
 }
 

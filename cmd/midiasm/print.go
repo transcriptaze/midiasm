@@ -63,6 +63,7 @@ func (p *Print) write(smf *midi.SMF) {
 		if chunk != state.chunk {
 			if state.chunk != nil {
 				fmt.Fprintln(w)
+				fmt.Fprintln(w)
 			}
 
 			state.chunk = chunk
