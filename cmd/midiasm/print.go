@@ -77,6 +77,8 @@ func (p *Print) write(smf *midi.SMF) {
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)
 	}
+
+	fmt.Fprintln(w)
 }
 
 func (p *Print) separate(smf *midi.SMF) {
