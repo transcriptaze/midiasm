@@ -18,12 +18,6 @@ var cli = map[string]command{
 	"notes": &Notes{},
 }
 
-var options = struct {
-	out     string
-	verbose bool
-	debug   bool
-}{}
-
 func main() {
 	cmd, filename, err := parse()
 	if err != nil {
@@ -70,7 +64,7 @@ func parse() (command, string, error) {
 	}
 
 	flagset := cmd.flagset()
-	if err := flagset.Parse(os.Args[2:]); err != nil {
+	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, "", err
 	}
 

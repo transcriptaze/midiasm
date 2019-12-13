@@ -10,14 +10,18 @@ import (
 )
 
 type Print struct {
+	out     string
+	split   bool
+	verbose bool
+	debug   bool
 }
 
 func (p *Print) Execute(smf *midi.SMF) {
 	w := os.Stdout
 	err := error(nil)
 
-	if options.out != "" {
-		w, err = os.Create(options.out)
+	if p.out != "" {
+		w, err = os.Create(p.out)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
@@ -26,8 +30,8 @@ func (p *Print) Execute(smf *midi.SMF) {
 		defer w.Close()
 	}
 
-	eventlog.EventLog.Verbose = options.verbose
-	eventlog.EventLog.Debug = options.debug
+	eventlog.EventLog.Verbose = p.verbose
+	eventlog.EventLog.Debug = p.debug
 
 	x := processors.Print{w}
 	err = x.Execute(smf)
@@ -39,9 +43,10 @@ func (p *Print) Execute(smf *midi.SMF) {
 func (p *Print) flagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("print", flag.ExitOnError)
 
-	flagset.StringVar(&options.out, "out", "", "Output file path")
-	flagset.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&options.debug, "debug", false, "Enable debugging information")
+	flagset.StringVar(&p.out, "out", "", "Output file path")
+	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track")
+	flagset.BoolVar(&p.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&p.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }

@@ -10,14 +10,18 @@ import (
 )
 
 type Notes struct {
+	out     string
+	split   bool
+	verbose bool
+	debug   bool
 }
 
 func (n *Notes) Execute(smf *midi.SMF) {
 	w := os.Stdout
 	err := error(nil)
 
-	if options.out != "" {
-		w, err = os.Create(options.out)
+	if n.out != "" {
+		w, err = os.Create(n.out)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
@@ -26,23 +30,22 @@ func (n *Notes) Execute(smf *midi.SMF) {
 		defer w.Close()
 	}
 
-	eventlog.EventLog.Verbose = options.verbose
-	eventlog.EventLog.Debug = options.debug
+	eventlog.EventLog.Verbose = n.verbose
+	eventlog.EventLog.Debug = n.debug
 
 	p := processors.Notes{w}
 	err = p.Execute(smf)
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)
 	}
-
 }
 
 func (n *Notes) flagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
 
-	flagset.StringVar(&options.out, "out", "", "Output file path")
-	flagset.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&options.debug, "debug", false, "Enable debugging information")
+	flagset.StringVar(&n.out, "out", "", "Output file path")
+	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }
