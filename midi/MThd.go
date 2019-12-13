@@ -71,4 +71,6 @@ func (chunk *MThd) Print(w io.Writer) {
 			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (non-drop frame)", subdivisions)
 		}
 	}
+
+	fmt.Fprintln(w)
 }

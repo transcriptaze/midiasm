@@ -1,23 +1,27 @@
 package processors
 
 import (
-	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"io"
 )
 
 type Print struct {
-	Writer io.Writer
+	Writer func(midi.Chunk) (io.Writer, error)
 }
 
 func (p *Print) Execute(smf *midi.SMF) error {
-	smf.Header.Print(p.Writer)
-
-	fmt.Fprintln(p.Writer)
-	fmt.Fprintln(p.Writer)
+	if w, err := p.Writer(smf.Header); err != nil {
+		return err
+	} else {
+		smf.Header.Print(w)
+	}
 
 	for _, track := range smf.Tracks {
-		track.Print(p.Writer)
+		if w, err := p.Writer(track); err != nil {
+			return err
+		} else {
+			track.Print(w)
+		}
 	}
 
 	return nil

@@ -9,7 +9,7 @@
 - [x] Ellipsize too long hex
 - [x] Log errors/warning to stderr
 - [x] Write to file
-- [ ] Split tracks to separate files
+- [x] Split tracks to separate files
 - [ ] Validate (missing end of track, tempo events, sysex continuations)
 - [x] --debug
 - [x] --verbose
@@ -19,6 +19,7 @@
 - [ ] Format 0
 - [ ] Format 2
 - [ ] MIDI 1.0 reference files
+- [ ] Default to <MIDI filename>.asm (or somesuch)
 
 ### Notes 
 

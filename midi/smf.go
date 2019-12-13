@@ -10,6 +10,7 @@ import (
 )
 
 type SMF struct {
+	File   string
 	Header *MThd
 	Tracks []*MTrk
 }

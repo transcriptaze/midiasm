@@ -39,7 +39,9 @@ func main() {
 		return
 	}
 
-	var smf midi.SMF
+	smf := midi.SMF{
+		File: filename,
+	}
 
 	if err = smf.UnmarshalBinary(bytes); err != nil {
 		fmt.Printf("Error: %v\n", err)

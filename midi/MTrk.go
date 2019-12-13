@@ -89,8 +89,6 @@ func (chunk *MTrk) Print(w io.Writer) {
 		e.Render(&ctx, w)
 		fmt.Fprintln(w)
 	}
-
-	fmt.Fprintln(w)
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, error) {
