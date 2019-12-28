@@ -81,4 +81,5 @@
 5.  VSCode plugin
 6.  Convert between formats 0, 1 and 2
 7.  [Manufacturer ID's](https://www.midi.org/specifications-old/category/reference-tables) (?)
+8.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
 
