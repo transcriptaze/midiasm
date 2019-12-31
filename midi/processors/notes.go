@@ -147,9 +147,9 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 		}
 
 		for _, n := range notes {
-			start := n.Start.Truncate(time.Microsecond)
-			end := n.End.Truncate(time.Microsecond)
-			fmt.Fprintf(x.Writer, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-12s  end:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end)
+			start := n.Start.Truncate(time.Millisecond)
+			end := n.End.Truncate(time.Millisecond)
+			fmt.Fprintf(x.Writer, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end)
 		}
 	}
 
