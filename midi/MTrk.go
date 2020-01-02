@@ -62,7 +62,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (chunk *MTrk) Print(w io.Writer) {
+func (chunk *MTrk) Print(w io.Writer) error {
 	ctx := context.Context{
 		Scale: context.Sharps,
 		Casio: false,
@@ -89,6 +89,8 @@ func (chunk *MTrk) Print(w io.Writer) {
 		fmt.Fprintln(w)
 		e.Render(&ctx, w)
 	}
+
+	return nil
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, error) {

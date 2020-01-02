@@ -4,15 +4,33 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"strings"
+	"text/template"
 )
 
+type Hex []byte
+
+func (bytes Hex) String() string {
+	hex := ""
+	for _, b := range bytes {
+		hex += fmt.Sprintf("%02X ", b)
+	}
+
+	return strings.TrimSpace(hex)
+}
+
 type MThd struct {
-	tag      string
-	length   uint32
-	Format   uint16
-	tracks   uint16
-	Division uint16
-	bytes    []byte
+	Tag           string
+	Length        uint32
+	Format        uint16
+	Tracks        uint16
+	Division      uint16
+	PPQN          uint16
+	SMPTETimeCode bool
+	TicksPerFrame uint16
+	FPS           uint8
+	DropFrame     bool
+	Bytes         Hex
 }
 
 func (chunk *MThd) UnmarshalBinary(data []byte) error {
@@ -45,37 +63,49 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 		}
 	}
 
-	chunk.tag = tag
-	chunk.length = length
+	chunk.Tag = tag
+	chunk.Length = length
 	chunk.Format = format
-	chunk.tracks = tracks
+	chunk.Tracks = tracks
 	chunk.Division = division
-	chunk.bytes = data
+	chunk.Bytes = data
 
+	if division&0x8000 == 0x0000 {
+		chunk.SMPTETimeCode = false
+		chunk.PPQN = chunk.Division & 0x7fff
+	} else {
+		chunk.SMPTETimeCode = true
+		chunk.TicksPerFrame = division & 0x007f
+
+		fps := division & 0xff00 >> 8
+		switch fps {
+		case 0xe8:
+			chunk.FPS = 24
+			chunk.DropFrame = false
+		case 0xe7:
+			chunk.FPS = 25
+			chunk.DropFrame = false
+		case 0xe6:
+			chunk.FPS = 30
+			chunk.DropFrame = true
+		case 0xe5:
+			chunk.FPS = 30
+			chunk.DropFrame = false
+		}
+	}
 	return nil
 }
 
-func (chunk *MThd) Print(w io.Writer) {
-	for _, b := range chunk.bytes {
-		fmt.Fprintf(w, "%02X ", b)
+func (chunk *MThd) Print(w io.Writer) error {
+	format := "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, metrical time:{{.PPQN}} ppqn"
+	if chunk.SMPTETimeCode {
+		format = "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}},SMPTE timecode:{{.TicksPerFrame}} ticks per frame,{{.FPS}} fps"
 	}
 
-	fmt.Fprintf(w, "  %s length:%d, format:%d, tracks:%d ", chunk.tag, chunk.length, chunk.Format, chunk.tracks)
-	if chunk.Division&0x8000 == 0x0000 {
-		fmt.Fprintf(w, ", metrical time, %d ppqn", chunk.Division&0x7fff)
-	} else {
-		fps := chunk.Division & 0xff00 >> 8
-		subdivisions := chunk.Division & 0x007f
-
-		switch fps {
-		case 0xe8:
-			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 24 fps", subdivisions)
-		case 0xe7:
-			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 25 fps", subdivisions)
-		case 0xe6:
-			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (drop frame)", subdivisions)
-		case 0xe5:
-			fmt.Fprintf(w, ", SMPTE timecode, %d ticks per frame, 30 fps (non-drop frame)", subdivisions)
-		}
+	tmpl, err := template.New("MThd").Parse(format)
+	if err != nil {
+		return err
 	}
+
+	return tmpl.Execute(w, chunk)
 }

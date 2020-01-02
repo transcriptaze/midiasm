@@ -56,8 +56,8 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 		return fmt.Errorf("invalid MIDI file - expected MThd chunk, got %T", chunks[0])
 	}
 
-	if len(chunks[1:]) != int(header.tracks) {
-		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", header.tracks, len(chunks[1:]))
+	if len(chunks[1:]) != int(header.Tracks) {
+		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", header.Tracks, len(chunks[1:]))
 	}
 
 	tracks := make([]*MTrk, 0)
