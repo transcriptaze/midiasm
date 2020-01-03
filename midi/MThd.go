@@ -4,20 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"strings"
 	"text/template"
 )
-
-type Hex []byte
-
-func (bytes Hex) String() string {
-	hex := ""
-	for _, b := range bytes {
-		hex += fmt.Sprintf("%02X ", b)
-	}
-
-	return strings.TrimSpace(hex)
-}
 
 type MThd struct {
 	Tag           string

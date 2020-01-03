@@ -11,14 +11,15 @@ import (
 	"github.com/twystd/midiasm/midi/events/midi"
 	"github.com/twystd/midiasm/midi/events/sysex"
 	"io"
+	"text/template"
 )
 
 type MTrk struct {
-	TrackNumber uint
-	tag         string
-	length      uint32
+	Tag         string
+	TrackNumber TrackNumber
+	Length      uint32
 	data        []byte
-	bytes       []byte
+	Bytes       Hex
 
 	Events []events.IEvent
 }
@@ -53,37 +54,31 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 		return err
 	}
 
-	chunk.tag = tag
-	chunk.length = length
+	chunk.Tag = tag
+	chunk.Length = length
 	chunk.data = data[8:]
 	chunk.Events = eventlist
-	chunk.bytes = data
+	chunk.Bytes = data
 
 	return nil
 }
 
 func (chunk *MTrk) Print(w io.Writer) error {
+	format := "{{slice .Bytes 0 8}}…                    {{.Tag}} {{.TrackNumber}} length:{{.Length}}"
+	tmpl, err := template.New("MTrk").Parse(format)
+	if err != nil {
+		return err
+	}
+
+	err = tmpl.Execute(w, chunk)
+	if err != nil {
+		return err
+	}
+
 	ctx := context.Context{
 		Scale: context.Sharps,
 		Casio: false,
 	}
-
-	buffer := new(bytes.Buffer)
-	for i, b := range chunk.bytes[:8] {
-		if i == 0 {
-			fmt.Fprintf(buffer, "%02X", b)
-		} else {
-			fmt.Fprintf(buffer, " %02X", b)
-		}
-	}
-
-	if len(chunk.bytes) > 8 {
-		fmt.Fprintf(buffer, "\u2026")
-	} else {
-		fmt.Fprintf(buffer, " ")
-	}
-
-	fmt.Fprintf(w, "%s            %12s %-2d length:%-8d", buffer.String(), chunk.tag, chunk.TrackNumber, chunk.length)
 
 	for _, e := range chunk.Events {
 		fmt.Fprintln(w)

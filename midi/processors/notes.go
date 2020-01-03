@@ -29,7 +29,7 @@ type Note struct {
 }
 
 func (x *Notes) Execute(smf *midi.SMF) error {
-	ppqn := uint64(smf.Header.Division)
+	ppqn := uint64(smf.MThd.Division)
 	ctx := context.Context{Scale: context.Sharps}
 	tempoMap := make([]events.IEvent, 0)
 

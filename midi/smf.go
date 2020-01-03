@@ -14,7 +14,7 @@ import (
 
 type SMF struct {
 	File   string
-	Header *MThd
+	MThd   *MThd
 	Tracks []*MTrk
 }
 
@@ -51,13 +51,13 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 		return fmt.Errorf("contains no MIDI chunks")
 	}
 
-	header, ok := chunks[0].(*MThd)
+	mthd, ok := chunks[0].(*MThd)
 	if !ok {
 		return fmt.Errorf("invalid MIDI file - expected MThd chunk, got %T", chunks[0])
 	}
 
-	if len(chunks[1:]) != int(header.Tracks) {
-		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", header.Tracks, len(chunks[1:]))
+	if len(chunks[1:]) != int(mthd.Tracks) {
+		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", mthd.Tracks, len(chunks[1:]))
 	}
 
 	tracks := make([]*MTrk, 0)
@@ -67,11 +67,11 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 			return fmt.Errorf("invalid MIDI file - expected MTrk chunk, got %T", chunk)
 		}
 
-		track.TrackNumber = uint(i)
+		track.TrackNumber = TrackNumber(i)
 		tracks = append(tracks, track)
 	}
 
-	smf.Header = header
+	smf.MThd = mthd
 	smf.Tracks = tracks
 
 	return nil
@@ -90,11 +90,11 @@ func (smf *SMF) Validate() []ValidationError {
 		return t
 	}
 
-	if smf.Header.Format == 0 && len(smf.Tracks) != 1 {
+	if smf.MThd.Format == 0 && len(smf.Tracks) != 1 {
 		errors = append(errors, ValidationError(fmt.Errorf("File contains %d tracks (expected 1 track for FORMAT 0)", len(smf.Tracks))))
 	}
 
-	if smf.Header.Format == 1 {
+	if smf.MThd.Format == 1 {
 		if len(smf.Tracks) > 0 {
 			track := smf.Tracks[0]
 			for _, event := range track.Events {
