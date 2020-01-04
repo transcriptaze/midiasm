@@ -10,16 +10,17 @@ import (
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/events/midi"
 	"github.com/twystd/midiasm/midi/events/sysex"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"text/template"
 )
 
 type MTrk struct {
 	Tag         string
-	TrackNumber TrackNumber
+	TrackNumber types.TrackNumber
 	Length      uint32
 	data        []byte
-	Bytes       Hex
+	Bytes       types.Hex
 
 	Events []events.IEvent
 }

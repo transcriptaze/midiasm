@@ -1,4 +1,4 @@
-package midi
+package types
 
 import (
 	"fmt"

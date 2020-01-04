@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"strings"
 	"time"
@@ -67,7 +68,7 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 			return fmt.Errorf("invalid MIDI file - expected MTrk chunk, got %T", chunk)
 		}
 
-		track.TrackNumber = TrackNumber(i)
+		track.TrackNumber = types.TrackNumber(i)
 		tracks = append(tracks, track)
 	}
 

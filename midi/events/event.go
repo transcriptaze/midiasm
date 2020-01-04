@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
@@ -17,7 +18,7 @@ type Event struct {
 	Tick   uint64
 	Delta  uint32
 	Status byte
-	Bytes  []byte
+	Bytes  types.Hex
 }
 
 func (e *Event) TickValue() uint64 {

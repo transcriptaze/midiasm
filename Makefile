@@ -25,7 +25,7 @@ clean:
 
 debug: build
 	./bin/midiasm       examples/example-01.mid
-	./bin/midiasm notes examples/example-01.mid
+#	./bin/midiasm notes examples/example-01.mid
 
 example: build
 	mkdir -p tmp

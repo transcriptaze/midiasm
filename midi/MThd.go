@@ -3,6 +3,7 @@ package midi
 import (
 	"encoding/binary"
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"text/template"
 )
@@ -18,7 +19,7 @@ type MThd struct {
 	TicksPerFrame uint16
 	FPS           uint8
 	DropFrame     bool
-	Bytes         Hex
+	Bytes         types.Hex
 }
 
 func (chunk *MThd) UnmarshalBinary(data []byte) error {
