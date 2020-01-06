@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/processors"
+	"github.com/twystd/midiasm/midi/operations"
 	"io"
 	"os"
 	"path"
@@ -72,7 +72,7 @@ func (p *Print) write(smf *midi.SMF) {
 		return w, nil
 	}
 
-	q := processors.Print{f}
+	q := operations.Print{f}
 	err = q.Execute(smf)
 	fmt.Fprintln(w)
 
@@ -134,7 +134,7 @@ func (p *Print) separate(smf *midi.SMF) {
 		return state.w, nil
 	}
 
-	q := processors.Print{f}
+	q := operations.Print{f}
 	err := q.Execute(smf)
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)
