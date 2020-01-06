@@ -15,18 +15,18 @@ type IEvent interface {
 }
 
 type Event struct {
-	Tick   uint64
-	Delta  uint32
+	Tick   types.Tick
+	Delta  types.Delta
 	Status byte
 	Bytes  types.Hex
 }
 
 func (e *Event) TickValue() uint64 {
-	return e.Tick
+	return uint64(e.Tick)
 }
 
 func (e *Event) DeltaTime() uint32 {
-	return e.Delta
+	return uint32(e.Delta)
 }
 
 func (e Event) String() string {

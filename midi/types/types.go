@@ -6,6 +6,8 @@ import (
 )
 
 type Hex []byte
+type Tick uint64
+type Delta uint32
 type TrackNumber uint
 
 func (bytes Hex) String() string {
@@ -15,6 +17,14 @@ func (bytes Hex) String() string {
 	}
 
 	return strings.TrimSpace(hex)
+}
+
+func (t Tick) String() string {
+	return fmt.Sprintf("%d", t)
+}
+
+func (d Delta) String() string {
+	return fmt.Sprintf("%d", d)
 }
 
 func (t TrackNumber) String() string {

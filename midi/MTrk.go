@@ -105,8 +105,8 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, e
 	bytes = append(bytes, b)
 
 	e := events.Event{
-		Tick:   uint64(tick + delta),
-		Delta:  delta,
+		Tick:   types.Tick(tick + delta),
+		Delta:  types.Delta(delta),
 		Status: b,
 		Bytes:  bytes,
 	}
