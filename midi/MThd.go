@@ -16,7 +16,7 @@ type MThd struct {
 	Division      uint16
 	PPQN          uint16
 	SMPTETimeCode bool
-	TicksPerFrame uint16
+	SubFrames     uint16
 	FPS           uint8
 	DropFrame     bool
 	Bytes         types.Hex
@@ -64,7 +64,7 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 		chunk.PPQN = chunk.Division & 0x7fff
 	} else {
 		chunk.SMPTETimeCode = true
-		chunk.TicksPerFrame = division & 0x007f
+		chunk.SubFrames = division & 0x007f
 
 		fps := division & 0xff00 >> 8
 		switch fps {
@@ -86,11 +86,7 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 }
 
 func (chunk *MThd) Print(w io.Writer) error {
-	format := "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, metrical time:{{.PPQN}} ppqn"
-	if chunk.SMPTETimeCode {
-		format = "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}},SMPTE timecode:{{.TicksPerFrame}} ticks per frame,{{.FPS}} fps"
-	}
-
+	format := "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}"
 	tmpl, err := template.New("MThd").Parse(format)
 	if err != nil {
 		return err
