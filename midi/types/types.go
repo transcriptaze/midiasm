@@ -8,6 +8,7 @@ import (
 type Hex []byte
 type Tick uint64
 type Delta uint32
+type MetaEventType byte
 type TrackNumber uint
 
 func (bytes Hex) String() string {
@@ -25,6 +26,10 @@ func (t Tick) String() string {
 
 func (d Delta) String() string {
 	return fmt.Sprintf("%d", d)
+}
+
+func (t MetaEventType) String() string {
+	return fmt.Sprintf("%02X", byte(t))
 }
 
 func (t TrackNumber) String() string {

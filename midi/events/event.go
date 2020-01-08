@@ -15,6 +15,7 @@ type IEvent interface {
 }
 
 type Event struct {
+	Tag    string
 	Tick   types.Tick
 	Delta  types.Delta
 	Status byte

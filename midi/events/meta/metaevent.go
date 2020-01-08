@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type MetaEvent struct {
 	events.Event
-	Type byte
+	Type types.MetaEventType
 }
 
 func (e MetaEvent) String() string {
-	return fmt.Sprintf("%s %02X", e.Event, e.Type)
+	return fmt.Sprintf("%s %s", e.Event, e.Type)
 }
 
 type reader struct {
@@ -44,7 +45,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 	if b, err := rr.ReadByte(); err != nil {
 		return nil, err
 	} else {
-		event.Type = b & 0x7F
+		event.Type = types.MetaEventType(b & 0x7F)
 	}
 
 	switch event.Type {

@@ -21,6 +21,7 @@ func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
 		return nil, err
 	}
 
+	event.Tag = "TrackName"
 	return &TrackName{
 		MetaEvent: *event,
 		Name:      string(name),
