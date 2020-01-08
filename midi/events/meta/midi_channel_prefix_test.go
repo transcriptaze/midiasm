@@ -14,7 +14,7 @@ func TestMIDIChannelPrefixRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x20, 0x01, 13}},
+		events.Event{"MIDIChannelPrefix", 76, 12, 0xff, []byte{0x00, 0xff, 0x20, 0x01, 13}},
 		0x20,
 	}
 

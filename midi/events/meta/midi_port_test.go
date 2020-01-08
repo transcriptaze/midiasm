@@ -14,7 +14,7 @@ func TestMIDIPortRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x21, 0x01, 57}},
+		events.Event{"MIDIPort", 76, 12, 0xff, []byte{0x00, 0xff, 0x21, 0x01, 57}},
 		0x21,
 	}
 

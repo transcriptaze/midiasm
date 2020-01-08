@@ -14,7 +14,7 @@ func TestLyricRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x05, 0x0d, 'L', 'a', 'h', '-', 'l', 'a', '-', 'l', 'a', '-', 'l', 'a', 'h'}},
+		events.Event{"Lyric", 76, 12, 0xff, []byte{0x00, 0xff, 0x05, 0x0d, 'L', 'a', 'h', '-', 'l', 'a', '-', 'l', 'a', '-', 'l', 'a', 'h'}},
 		0x05,
 	}
 

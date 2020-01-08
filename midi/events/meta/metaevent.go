@@ -50,21 +50,27 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 
 	switch event.Type {
 	case 0x00:
+		event.Tag = "SequenceNumber"
 		return NewSequenceNumber(&event, rr)
 
 	case 0x03:
+		event.Tag = "TrackName"
 		return NewTrackName(&event, rr)
 
 	case 0x2f:
+		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
 
 	case 0x51:
+		event.Tag = "Tempo"
 		return NewTempo(&event, rr)
 
 	case 0x58:
+		event.Tag = "TimeSignature"
 		return NewTimeSignature(&event, rr)
 
 	case 0x59:
+		event.Tag = "KeySignature"
 		return NewKeySignature(&event, rr)
 	}
 

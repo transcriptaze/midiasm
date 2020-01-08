@@ -11,6 +11,7 @@ import (
 
 func TestParseTimeSignature(t *testing.T) {
 	e := events.Event{
+		Tag:    "TimeSignature",
 		Tick:   0,
 		Delta:  0,
 		Status: 0xff,
@@ -43,7 +44,7 @@ func TestTimeSignatureRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x18, 0x08}},
+		events.Event{"TimeSignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x18, 0x08}},
 		0x58,
 	}
 

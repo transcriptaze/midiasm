@@ -14,7 +14,7 @@ func TestTextRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
+		events.Event{"Text", 76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
 		0x01,
 	}
 

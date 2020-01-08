@@ -14,7 +14,7 @@ func TestSMPTEOffsetRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 9, 2, 5, 28, 13}},
+		events.Event{"SMPTEOffset", 76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 9, 2, 5, 28, 13}},
 		0x54,
 	}
 

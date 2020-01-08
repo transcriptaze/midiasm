@@ -9,21 +9,35 @@ import (
 	"text/template"
 )
 
-const fsmf string = `
+const document string = `
 >>>>>>>>>>>>>>>>>>>>>>>>>
 {{pad (ellipsize .MThd.Bytes 0 14) 42}}  {{template "MThd" .MThd}}
-{{range .Tracks}}
-{{pad (ellipsize      .Bytes 0 8)  42}}  {{template "MTrk" .}}{{range .Events}}
-{{pad (ellipsize      .Bytes 0 14) 42}}  {{template "event" .}}{{end}}
+
+{{range .Tracks}}{{pad (ellipsize      .Bytes 0 8)  42}}  {{template "MTrk" .}}
+{{range .Events}}{{pad (ellipsize      .Bytes 0 14) 42}}  {{template "event" .}}{{end}}
 {{end}}
 >>>>>>>>>>>>>>>>>>>>>>>>>
 
 `
-const fMThd string = `{{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`
-const fMTrk string = `{{.Tag}} {{.TrackNumber}} length:{{.Length}}`
-const fEvent string = `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}||`
-const fEvents string = `{{if eq .Tag "TrackName"}}{{template "TrackName" .}}{{else}}XX {{pad .Tag 17}}{{end}}`
-const fTrackName string = `{{ .Type }} {{pad .Tag 17}}{{ .Name }}`
+
+var templates = map[string]string{
+	"MThd": `{{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
+	"MTrk": `{{.Tag}} {{.TrackNumber}} length:{{.Length}}`,
+
+	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
+	"events": `{{if eq .Tag "TrackName"}}{{template "trackname" .}}
+{{else if eq .Tag "ProgramChange"}}{{template "programchange" .}}
+{{else if eq .Tag "Tempo"        }}{{template "tempo" .}}
+{{else if eq .Tag "EndOfTrack"   }}{{template "endoftrack" .}}
+{{else                           }}XX {{pad .Tag 16}} 
+{{end}}`,
+
+	"endoftrack": `{{.Type}} {{pad .Tag 16}}`,
+	"tempo":      `{{.Type}} {{pad .Tag 16}} tempo:{{ .Tempo }}`,
+	"trackname":  `{{.Type}} {{pad .Tag 16}} {{ .Name }}`,
+
+	"programchange": `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}} program:{{.Program }}`,
+}
 
 type Print struct {
 	Writer func(midi.Chunk) (io.Writer, error)
@@ -35,34 +49,15 @@ func (p *Print) Execute(smf *midi.SMF) error {
 		"pad":       pad,
 	}
 
-	tmpl, err := template.New("SMF").Funcs(functions).Parse(fsmf)
+	tmpl, err := template.New("SMF").Funcs(functions).Parse(document)
 	if err != nil {
 		return err
 	}
 
-	_, err = tmpl.New("MThd").Parse(fMThd)
-	if err != nil {
-		return err
-	}
-
-	_, err = tmpl.New("MTrk").Parse(fMTrk)
-	if err != nil {
-		return err
-	}
-
-	_, err = tmpl.New("event").Parse(fEvent)
-	if err != nil {
-		return err
-	}
-
-	_, err = tmpl.New("events").Parse(fEvents)
-	if err != nil {
-		return err
-	}
-
-	_, err = tmpl.New("TrackName").Parse(fTrackName)
-	if err != nil {
-		return err
+	for name, t := range templates {
+		if _, err = tmpl.New(name).Parse(t); err != nil {
+			return err
+		}
 	}
 
 	err = tmpl.Execute(os.Stdout, smf)

@@ -14,7 +14,7 @@ func TestCuePointRender(t *testing.T) {
 	}
 
 	metaevent := MetaEvent{
-		events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x07, 0x0d, 'T', 'h', 'i', 'n', 'g', 's', ' ', 'h', 'a', 'p', 'p', 'e', 'n'}},
+		events.Event{"CuePoint", 76, 12, 0xff, []byte{0x00, 0xff, 0x07, 0x0d, 'T', 'h', 'i', 'n', 'g', 's', ' ', 'h', 'a', 'p', 'p', 'e', 'n'}},
 		0x07,
 	}
 

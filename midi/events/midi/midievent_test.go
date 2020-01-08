@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
+	//	"github.com/twystd/midiasm/midi/types"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ var eventlist = []struct {
 	{"NoteOff",
 		&NoteOff{
 			MidiEvent{
-				events.Event{1920, 480, 0x80, []byte{0x83, 0x60, 0x80, 0x35, 0x40}},
+				events.Event{"NoteOff", 1920, 480, 0x80, []byte{0x83, 0x60, 0x80, 0x35, 0x40}},
 				0,
 			},
 			53, 64,
@@ -26,7 +27,7 @@ var eventlist = []struct {
 	{"NoteOn",
 		&NoteOn{
 			MidiEvent{
-				events.Event{1440, 0, 0x90, []byte{0x00, 0x90, 0x35, 0x48}},
+				events.Event{"NoteOn", 1440, 0, 0x90, []byte{0x00, 0x90, 0x35, 0x48}},
 				0,
 			},
 			53, 72,
@@ -37,7 +38,7 @@ var eventlist = []struct {
 	{"PolyphonicPressure",
 		&PolyphonicPressure{
 			MidiEvent{
-				events.Event{1440, 480, 0xa0, []byte{0x00, 0xa0, 0x07}},
+				events.Event{"PolyphonicPressure", 1440, 480, 0xa0, []byte{0x00, 0xa0, 0x07}},
 				0,
 			},
 			7,
@@ -48,7 +49,7 @@ var eventlist = []struct {
 	{"Controller",
 		&Controller{
 			MidiEvent{
-				events.Event{1440, 480, 0xb0, []byte{0x00, 0xb0, 0x06, 0x08}},
+				events.Event{"Controller", 1440, 480, 0xb0, []byte{0x00, 0xb0, 0x06, 0x08}},
 				0,
 			},
 			6, 8,
@@ -59,7 +60,7 @@ var eventlist = []struct {
 	{"ProgramChange",
 		&ProgramChange{
 			MidiEvent{
-				events.Event{0, 0, 0xc0, []byte{0x00, 0xc0, 0x19}},
+				events.Event{"ProgramChange", 0, 0, 0xc0, []byte{0x00, 0xc0, 0x19}},
 				0,
 			},
 			25,
@@ -70,7 +71,7 @@ var eventlist = []struct {
 	{"ChannelPressure",
 		&ChannelPressure{
 			MidiEvent{
-				events.Event{0, 0, 0xd0, []byte{0x00, 0xd0, 0x05}},
+				events.Event{"ChannelPressure", 0, 0, 0xd0, []byte{0x00, 0xd0, 0x05}},
 				0,
 			},
 			5,
@@ -81,7 +82,7 @@ var eventlist = []struct {
 	{"PitchBend",
 		&PitchBend{
 			MidiEvent{
-				events.Event{0, 0, 0xe0, []byte{0x00, 0xe0, 0x00, 0x08}},
+				events.Event{"PitchBend", 0, 0, 0xe0, []byte{0x00, 0xe0, 0x00, 0x08}},
 				0,
 			},
 			8,

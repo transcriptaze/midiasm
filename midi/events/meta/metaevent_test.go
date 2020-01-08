@@ -15,7 +15,7 @@ var eventlist = []struct {
 	{"SequenceNumber",
 		&SequenceNumber{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x00, 0x02, 0x12, 0x34}},
+				events.Event{"SequenceNumber", 76, 12, 0xff, []byte{0x00, 0xff, 0x00, 0x02, 0x12, 0x34}},
 				0x00,
 			},
 			4660},
@@ -25,7 +25,7 @@ var eventlist = []struct {
 	{"Text",
 		&Text{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
+				events.Event{"Text", 76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x08, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}},
 				0x01,
 			},
 			"abcdefgh"},
@@ -35,7 +35,7 @@ var eventlist = []struct {
 	{"Copyright",
 		&Copyright{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x0b, 'T', 'h', 'e', 'y', ' ', '&', ' ', 'T', 'h', 'e', 'm'}},
+				events.Event{"Copyright", 76, 12, 0xff, []byte{0x00, 0xff, 0x01, 0x0b, 'T', 'h', 'e', 'y', ' ', '&', ' ', 'T', 'h', 'e', 'm'}},
 				0x02,
 			},
 			"They & Them"},
@@ -45,7 +45,7 @@ var eventlist = []struct {
 	{"TrackName",
 		&TrackName{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x03, 0x0f, 'A', 'c', 'o', 'u', 's', 't', 'i', 'c', ' ', 'G', 'u', 'i', 't', 'a', 'r'}},
+				events.Event{"TrackName", 76, 12, 0xff, []byte{0x00, 0xff, 0x03, 0x0f, 'A', 'c', 'o', 'u', 's', 't', 'i', 'c', ' ', 'G', 'u', 'i', 't', 'a', 'r'}},
 				0x03,
 			},
 			"Acoustic Guitar"},
@@ -55,7 +55,7 @@ var eventlist = []struct {
 	{"InstrumentName",
 		&InstrumentName{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x04, 0x06, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72}},
+				events.Event{"InstrumentName", 76, 12, 0xff, []byte{0x00, 0xff, 0x04, 0x06, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72}},
 				0x04,
 			},
 			"Guitar"},
@@ -65,7 +65,7 @@ var eventlist = []struct {
 	{"Lyric",
 		&Lyric{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x05, 0x0d, 'L', 'a', 'h', '-', 'l', 'a', '-', 'l', 'a', '-', 'l', 'a', 'h'}},
+				events.Event{"Lyric", 76, 12, 0xff, []byte{0x00, 0xff, 0x05, 0x0d, 'L', 'a', 'h', '-', 'l', 'a', '-', 'l', 'a', '-', 'l', 'a', 'h'}},
 				0x05,
 			},
 			"Lah-la-la-lah"},
@@ -75,7 +75,7 @@ var eventlist = []struct {
 	{"Marker",
 		&Marker{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x06, 0x0b, 'F', 'i', 'r', 's', 't', ' ', 'v', 'e', 'r', 's', 'e'}},
+				events.Event{"Marker", 76, 12, 0xff, []byte{0x00, 0xff, 0x06, 0x0b, 'F', 'i', 'r', 's', 't', ' ', 'v', 'e', 'r', 's', 'e'}},
 				0x06,
 			},
 			"First verse"},
@@ -85,7 +85,7 @@ var eventlist = []struct {
 	{"CuePoint",
 		&CuePoint{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x07, 0x0d, 'T', 'h', 'i', 'n', 'g', 's', ' ', 'h', 'a', 'p', 'p', 'e', 'n'}},
+				events.Event{"CuePoint", 76, 12, 0xff, []byte{0x00, 0xff, 0x07, 0x0d, 'T', 'h', 'i', 'n', 'g', 's', ' ', 'h', 'a', 'p', 'p', 'e', 'n'}},
 				0x07,
 			},
 			"Things happen"},
@@ -95,7 +95,7 @@ var eventlist = []struct {
 	{"ProgramName",
 		&ProgramName{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x08, 0x08, 'P', 'R', 'O', 'G', '-', 'X', 'X', 'X'}},
+				events.Event{"ProgramName", 76, 12, 0xff, []byte{0x00, 0xff, 0x08, 0x08, 'P', 'R', 'O', 'G', '-', 'X', 'X', 'X'}},
 				0x08,
 			},
 			"PROG-XXX"},
@@ -105,7 +105,7 @@ var eventlist = []struct {
 	{"DeviceName",
 		&DeviceName{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x09, 0x08, 'D', 'E', 'V', '-', '0', '0', '0', '1'}},
+				events.Event{"DeviceName", 76, 12, 0xff, []byte{0x00, 0xff, 0x09, 0x08, 'D', 'E', 'V', '-', '0', '0', '0', '1'}},
 				0x09,
 			},
 			"DEV-0001"},
@@ -115,7 +115,7 @@ var eventlist = []struct {
 	{"MIDIChannelPrefix",
 		&MIDIChannelPrefix{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x20, 0x01, 13}},
+				events.Event{"MIDIChannelPrefix", 76, 12, 0xff, []byte{0x00, 0xff, 0x20, 0x01, 13}},
 				0x20,
 			},
 			13},
@@ -125,7 +125,7 @@ var eventlist = []struct {
 	{"MIDIPort",
 		&MIDIPort{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x21, 0x01, 57}},
+				events.Event{"MIDIPort", 76, 12, 0xff, []byte{0x00, 0xff, 0x21, 0x01, 57}},
 				0x21,
 			},
 			57},
@@ -135,7 +135,7 @@ var eventlist = []struct {
 	{"EndOfTrack",
 		&EndOfTrack{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x2f, 0x00}},
+				events.Event{"EndOfTrack", 76, 12, 0xff, []byte{0x00, 0xff, 0x2f, 0x00}},
 				0x2f,
 			},
 		},
@@ -145,7 +145,7 @@ var eventlist = []struct {
 	{"SMPTEOffset",
 		&SMPTEOffset{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 0x89, 8, 7, 28, 13}},
+				events.Event{"SMPTEOffset", 76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 0x89, 8, 7, 28, 13}},
 				0x54,
 			},
 			0x10, 9, 8, 7, 28, 13},
@@ -155,7 +155,7 @@ var eventlist = []struct {
 	{"Tempo",
 		&Tempo{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}},
+				events.Event{"Tempo", 76, 12, 0xff, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}},
 				0x51,
 			},
 			512438},
@@ -165,7 +165,7 @@ var eventlist = []struct {
 	{"TimeSignature",
 		&TimeSignature{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08}},
+				events.Event{"TieSignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08}},
 				0x58,
 			},
 			4,
@@ -179,7 +179,7 @@ var eventlist = []struct {
 	{"KeySignature",
 		&KeySignature{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x03, 0x01}},
+				events.Event{"KeySignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x03, 0x01}},
 				0x59,
 			},
 			3,
@@ -191,7 +191,7 @@ var eventlist = []struct {
 	{"SequencerSpecificEvent",
 		&SequencerSpecificEvent{
 			MetaEvent{
-				events.Event{76, 12, 0xff, []byte{0x00, 0xff, 0x7f, 0x06, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab}},
+				events.Event{"SequencerSpecificEvent", 76, 12, 0xff, []byte{0x00, 0xff, 0x7f, 0x06, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab}},
 				0x7f,
 			},
 			[]byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xab},

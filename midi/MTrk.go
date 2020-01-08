@@ -108,7 +108,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, e
 		Tag:    "qwerty",
 		Tick:   types.Tick(tick + delta),
 		Delta:  types.Delta(delta),
-		Status: b,
+		Status: types.Status(b),
 		Bytes:  bytes,
 	}
 

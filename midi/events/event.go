@@ -18,7 +18,7 @@ type Event struct {
 	Tag    string
 	Tick   types.Tick
 	Delta  types.Delta
-	Status byte
+	Status types.Status
 	Bytes  types.Hex
 }
 

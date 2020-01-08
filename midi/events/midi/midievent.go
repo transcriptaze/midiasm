@@ -13,7 +13,7 @@ type MidiEvent struct {
 }
 
 func (e MidiEvent) String() string {
-	return fmt.Sprintf("%s %02X", e.Event, e.Status)
+	return fmt.Sprintf("%s %v", e.Event, e.Status)
 }
 
 type reader struct {
@@ -33,7 +33,7 @@ func (r reader) ReadByte() (byte, error) {
 func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	event := MidiEvent{
 		Event:   e,
-		Channel: e.Status & 0x0F,
+		Channel: byte(e.Status) & 0x0F,
 	}
 
 	rr := reader{r, &event}
@@ -52,6 +52,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		return NewController(&event, rr)
 
 	case 0xC0:
+		event.Tag = "ProgramChange"
 		return NewProgramChange(&event, rr)
 
 	case 0xD0:

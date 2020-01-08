@@ -12,7 +12,7 @@ type SysExEvent struct {
 }
 
 func (e SysExEvent) String() string {
-	return fmt.Sprintf("%s %02X", e.Event, e.Status)
+	return fmt.Sprintf("%s %v", e.Event, e.Status)
 }
 
 func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
