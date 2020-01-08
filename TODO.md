@@ -15,7 +15,6 @@
 - [x] --verbose
 - [x] Print note name + octave
 - [ ] Configurable formats
-- [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files

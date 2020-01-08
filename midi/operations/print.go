@@ -11,16 +11,19 @@ import (
 
 const fsmf string = `
 >>>>>>>>>>>>>>>>>>>>>>>>>
-{{with .MThd}}{{pad (ellipsize .Bytes) 42}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}{{end}}
+{{pad (ellipsize .MThd.Bytes 0 14) 42}}  {{template "MThd" .MThd}}
 {{range .Tracks}}
-{{pad (ellipsize .Bytes 0 8)  42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}{{range .Events}}
-{{pad (ellipsize .Bytes 0 14) 42}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}||{{end}}
+{{pad (ellipsize      .Bytes 0 8)  42}}  {{template "MTrk" .}}{{range .Events}}
+{{pad (ellipsize      .Bytes 0 14) 42}}  {{template "event" .}}{{end}}
 {{end}}
 >>>>>>>>>>>>>>>>>>>>>>>>>
 
 `
-const fevents string = `{{if eq .Tag "TrackName"}}{{template "TrackName" .}}{{else}}   {{pad .Tag 17}}{{end}}`
-const ftrackname string = `{{ .Type }} {{pad .Tag 17}}{{ .Name }}`
+const fMThd string = `{{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`
+const fMTrk string = `{{.Tag}} {{.TrackNumber}} length:{{.Length}}`
+const fEvent string = `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}||`
+const fEvents string = `{{if eq .Tag "TrackName"}}{{template "TrackName" .}}{{else}}XX {{pad .Tag 17}}{{end}}`
+const fTrackName string = `{{ .Type }} {{pad .Tag 17}}{{ .Name }}`
 
 type Print struct {
 	Writer func(midi.Chunk) (io.Writer, error)
@@ -37,12 +40,27 @@ func (p *Print) Execute(smf *midi.SMF) error {
 		return err
 	}
 
-	_, err = tmpl.New("events").Parse(fevents)
+	_, err = tmpl.New("MThd").Parse(fMThd)
 	if err != nil {
 		return err
 	}
 
-	_, err = tmpl.New("TrackName").Parse(ftrackname)
+	_, err = tmpl.New("MTrk").Parse(fMTrk)
+	if err != nil {
+		return err
+	}
+
+	_, err = tmpl.New("event").Parse(fEvent)
+	if err != nil {
+		return err
+	}
+
+	_, err = tmpl.New("events").Parse(fEvents)
+	if err != nil {
+		return err
+	}
+
+	_, err = tmpl.New("TrackName").Parse(fTrackName)
 	if err != nil {
 		return err
 	}
