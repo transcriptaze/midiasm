@@ -32,7 +32,7 @@ var templates = map[string]string{
 {{else                           }}XX {{pad .Tag 16}} 
 {{end}}`,
 
-	"endoftrack": `{{.Type}} {{pad .Tag 16}}`,
+	"endoftrack": `{{.Type}} {{    .Tag   }}`,
 	"tempo":      `{{.Type}} {{pad .Tag 16}} tempo:{{ .Tempo }}`,
 	"trackname":  `{{.Type}} {{pad .Tag 16}} {{ .Name }}`,
 
@@ -44,23 +44,7 @@ type Print struct {
 }
 
 func (p *Print) Execute(smf *midi.SMF) error {
-	functions := template.FuncMap{
-		"ellipsize": ellipsize,
-		"pad":       pad,
-	}
-
-	tmpl, err := template.New("SMF").Funcs(functions).Parse(document)
-	if err != nil {
-		return err
-	}
-
-	for name, t := range templates {
-		if _, err = tmpl.New(name).Parse(t); err != nil {
-			return err
-		}
-	}
-
-	err = tmpl.Execute(os.Stdout, smf)
+	err := p.printWithTemplate(smf, os.Stdout)
 	if err != nil {
 		return err
 	}
@@ -80,6 +64,26 @@ func (p *Print) Execute(smf *midi.SMF) error {
 	}
 
 	return nil
+}
+
+func (p *Print) printWithTemplate(smf *midi.SMF, w io.Writer) error {
+	functions := template.FuncMap{
+		"ellipsize": ellipsize,
+		"pad":       pad,
+	}
+
+	tmpl, err := template.New("SMF").Funcs(functions).Parse(document)
+	if err != nil {
+		return err
+	}
+
+	for name, t := range templates {
+		if _, err = tmpl.New(name).Parse(t); err != nil {
+			return err
+		}
+	}
+
+	return tmpl.Execute(w, smf)
 }
 
 func ellipsize(bytes types.Hex, offsets ...int) string {
