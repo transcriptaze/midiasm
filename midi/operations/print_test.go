@@ -15,15 +15,14 @@ const expected string = `
 00 FF 51 03 07 A1 20                        tick:0          delta:0          51 Tempo            tempo:500000
 00 FF 2F 00                                 tick:0          delta:0          2F EndOfTrack
 
-4D 54 72 6B 00 00 00 34…                    MTrk 1  length:52
+4D 54 72 6B 00 00 00 31…                    MTrk 1  length:49
 00 FF 03 0F 41 63 6F 75 73 74 69 63 20 47…  tick:0          delta:0          03 TrackName        Acoustic Guitar
 00 C0 19                                    tick:0          delta:0          C0 ProgramChange    channel:0, program:25
 00 FF 58 04 04 02 18 08                     tick:0          delta:0          58 TimeSignature    4/4, 24 ticks per click, 8/32 per quarter
 00 FF 59 02 00 01                           tick:0          delta:0          59 KeySignature     A minor
 00 B0 65 00                                 tick:0          delta:0          B0 Controller       channel:0, controller:101, value:0
-00 B0 64 00                                 tick:0          delta:0          B0 Controller       channel:0, controller:100, value:0
-00 B0 06 06                                 tick:0          delta:0          B0 Controller       channel:0, controller:6, value:6
-00 FF 2F 00                                 tick:0          delta:0          2F EndOfTrack
+83 60 80 30 40                              tick:480        delta:480        80 NoteOff          channel:0, note:XX, velocity:64
+00 FF 2F 00                                 tick:480        delta:0          2F EndOfTrack
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>
@@ -37,14 +36,13 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xFF, 0x03, 0x09, 0x45, 0x78, 0x61, 0x6D, 0x70, 0x6C, 0x65, 0x20, 0x31,
 		0x00, 0xFF, 0x51, 0x03, 0x07, 0xA1, 0x20,
 		0x00, 0xFF, 0x2F, 0x00,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x34,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x31,
 		0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72,
 		0x00, 0xC0, 0x19,
 		0x00, 0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08,
 		0x00, 0xFF, 0x59, 0x02, 0x00, 0x01,
 		0x00, 0xB0, 0x65, 0x00,
-		0x00, 0xB0, 0x64, 0x00,
-		0x00, 0xB0, 0x06, 0x06,
+		0x83, 0x60, 0x80, 0x30, 0x40,
 		0x00, 0xFF, 0x2F, 0x00,
 	}
 

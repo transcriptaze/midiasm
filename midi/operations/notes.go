@@ -97,7 +97,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 				if v, ok := e.(*midievent.NoteOff); ok {
 					eventlog.Debug(fmt.Sprintf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
-					key := uint16(v.Channel)<<8 + uint16(v.Note)
+					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					if note := pending[key]; note == nil {
 						eventlog.Warn(fmt.Sprintf("NOTE OFF without preceding NOTE ON for %d:%02X", v.Channel, v.Note))
 					} else {

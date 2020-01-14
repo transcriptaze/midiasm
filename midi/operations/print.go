@@ -30,18 +30,20 @@ var templates = map[string]string{
 {{else if eq .Tag "Tempo"         }}{{template "tempo"         .}}
 {{else if eq .Tag "TimeSignature" }}{{template "timesignature" .}}
 {{else if eq .Tag "KeySignature"  }}{{template "keysignature"  .}}
+{{else if eq .Tag "NoteOff"       }}{{template "noteoff"       .}}
 {{else if eq .Tag "Controller"    }}{{template "controller"    .}}
 {{else if eq .Tag "ProgramChange" }}{{template "programchange" .}}
 {{else                            }}XX {{pad .Tag 16}} 
 {{end}}`,
 
-	"trackname":     `{{.Type}} {{pad .Tag 16}} {{ .Name }}`,
+	"trackname":     `{{.Type}} {{pad .Tag 16}} {{.Name}}`,
 	"endoftrack":    `{{.Type}} {{    .Tag   }}`,
-	"tempo":         `{{.Type}} {{pad .Tag 16}} tempo:{{ .Tempo }}`,
-	"timesignature": `{{.Type}} {{pad .Tag 16}} {{ .Numerator }}/{{ .Denominator}}, {{ .TicksPerClick }} ticks per click, {{ .ThirtySecondsPerQuarter }}/32 per quarter`,
-	"keysignature":  `{{.Type}} {{pad .Tag 16}} {{ .Key }}`,
+	"tempo":         `{{.Type}} {{pad .Tag 16}} tempo:{{.Tempo }}`,
+	"timesignature": `{{.Type}} {{pad .Tag 16}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
+	"keysignature":  `{{.Type}} {{pad .Tag 16}} {{.Key }}`,
 
-	"controller":    `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, controller:{{.Controller }}, value:{{ .Value }}`,
+	"noteoff":       `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"controller":    `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, controller:{{.Controller }}, value:{{.Value}}`,
 	"programchange": `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, program:{{.Program }}`,
 }
 

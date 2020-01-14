@@ -19,9 +19,12 @@ var eventlist = []struct {
 				events.Event{"NoteOff", 1920, 480, 0x80, []byte{0x83, 0x60, 0x80, 0x35, 0x40}},
 				0,
 			},
-			53, 64,
+			Note{
+				Value: 53,
+				Name:  "F2",
+			}, 64,
 		},
-		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0 note:F2   velocity:64",
+		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0, note:F2, velocity:64",
 	},
 
 	{"NoteOn",
