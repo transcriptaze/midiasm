@@ -54,7 +54,7 @@ var eventlist = []struct {
 			},
 			6, 8,
 		},
-		"      00 B0 06 08                           tick:1440       delta:480        B0 Controller       channel:0 controller:6 value:8",
+		"      00 B0 06 08                           tick:1440       delta:480        B0 Controller       channel:0, controller:6, value:8",
 	},
 
 	{"ProgramChange",
@@ -65,7 +65,7 @@ var eventlist = []struct {
 			},
 			25,
 		},
-		"         00 C0 19                           tick:0          delta:0          C0 ProgramChange    channel:0 program:25",
+		"         00 C0 19                           tick:0          delta:0          C0 ProgramChange    channel:0, program:25",
 	},
 
 	{"ChannelPressure",

@@ -35,5 +35,5 @@ func NewController(event *MidiEvent, r io.ByteReader) (*Controller, error) {
 }
 
 func (e *Controller) Render(ctx *context.Context, w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d controller:%d value:%d", e.MidiEvent, "Controller", e.Channel, e.Controller, e.Value)
+	fmt.Fprintf(w, "%s %-16s channel:%d, controller:%d, value:%d", e.MidiEvent, "Controller", e.Channel, e.Controller, e.Value)
 }

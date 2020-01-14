@@ -15,6 +15,7 @@
 - [x] --verbose
 - [x] Print note name + octave
 - [ ] Configurable formats
+- [ ] Decode note in context of current scale
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
@@ -84,6 +85,7 @@
 8.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
 9.  [How to use a field of struct or variable value as template name?](https://stackoverflow.com/questions/28830543/how-to-use-a-field-of-struct-or-variable-value-as-template-name)
 10. Online tool
+11. Rework decoder using tags/reflection
 
 ## NOTES
 

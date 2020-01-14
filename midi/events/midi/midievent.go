@@ -40,15 +40,19 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 
 	switch e.Status & 0xF0 {
 	case 0x80:
+		event.Tag = "NoteOff"
 		return NewNoteOff(&event, rr)
 
 	case 0x90:
+		event.Tag = "NoteOn"
 		return NewNoteOn(&event, rr)
 
 	case 0xA0:
+		event.Tag = "PolyphonicPressure"
 		return NewPolyphonicPressure(&event, rr)
 
 	case 0xB0:
+		event.Tag = "Controller"
 		return NewController(&event, rr)
 
 	case 0xC0:
@@ -56,9 +60,11 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		return NewProgramChange(&event, rr)
 
 	case 0xD0:
+		event.Tag = "ChannelPressure"
 		return NewChannelPressure(&event, rr)
 
 	case 0xE0:
+		event.Tag = "PitchBend"
 		return NewPitchBend(&event, rr)
 	}
 
