@@ -26,17 +26,19 @@ var templates = map[string]string{
 
 	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
 	"events": `{{if eq .Tag "TrackName"}}{{template "trackname" .}}
-{{else if eq .Tag "EndOfTrack"   }}{{template "endoftrack" .}}
-{{else if eq .Tag "Tempo"        }}{{template "tempo" .}}
-{{else if eq .Tag "TimeSignature"        }}{{template "timesignature" .}}
-{{else if eq .Tag "ProgramChange"}}{{template "programchange" .}}
-{{else                           }}XX {{pad .Tag 16}} 
+{{else if eq .Tag "EndOfTrack"    }}{{template "endoftrack" .}}
+{{else if eq .Tag "Tempo"         }}{{template "tempo" .}}
+{{else if eq .Tag "TimeSignature" }}{{template "timesignature" .}}
+{{else if eq .Tag "KeySignature"  }}{{template "keysignature" .}}
+{{else if eq .Tag "ProgramChange" }}{{template "programchange" .}}
+{{else                            }}XX {{pad .Tag 16}} 
 {{end}}`,
 
 	"trackname":     `{{.Type}} {{pad .Tag 16}} {{ .Name }}`,
 	"endoftrack":    `{{.Type}} {{    .Tag   }}`,
 	"tempo":         `{{.Type}} {{pad .Tag 16}} tempo:{{ .Tempo }}`,
 	"timesignature": `{{.Type}} {{pad .Tag 16}} {{ .Numerator }}/{{ .Denominator}}, {{ .TicksPerClick }} ticks per click, {{ .ThirtySecondsPerQuarter }}/32 per quarter`,
+	"keysignature":  `{{.Type}} {{pad .Tag 16}} {{ .Key }}`,
 
 	"programchange": `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}} program:{{.Program }}`,
 }

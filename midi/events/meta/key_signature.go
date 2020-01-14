@@ -6,10 +6,21 @@ import (
 	"io"
 )
 
+type KeyType uint8
+
+func (k KeyType) String() string {
+	if k == 1 {
+		return "minor"
+	}
+
+	return "major"
+}
+
 type KeySignature struct {
 	MetaEvent
 	Accidentals int8
-	KeyType     uint8
+	KeyType     KeyType
+	Key         string
 }
 
 var major_keys = map[int8]string{
@@ -62,10 +73,27 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0,1]", keyType)
 	}
 
+	key := ""
+	switch keyType {
+	case 0:
+		if signature, ok := major_keys[accidentals]; !ok {
+			return nil, fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
+		} else {
+			key = signature
+		}
+	case 1:
+		if signature, ok := minor_keys[accidentals]; !ok {
+			return nil, fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
+		} else {
+			key = signature
+		}
+	}
+
 	return &KeySignature{
 		MetaEvent:   *event,
 		Accidentals: accidentals,
-		KeyType:     keyType,
+		KeyType:     KeyType(keyType),
+		Key:         key,
 	}, nil
 }
 

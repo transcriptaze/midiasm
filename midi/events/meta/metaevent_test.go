@@ -184,6 +184,7 @@ var eventlist = []struct {
 			},
 			3,
 			1,
+			"F\u266f minor",
 		},
 		"   00 FF 59 02 03 01                        tick:76         delta:12         59 KeySignature     F\u266f minor",
 	},
