@@ -33,9 +33,12 @@ var eventlist = []struct {
 				events.Event{"NoteOn", 1440, 0, 0x90, []byte{0x00, 0x90, 0x35, 0x48}},
 				0,
 			},
-			53, 72,
+			Note{
+				Value: 53,
+				Name:  "F2",
+			}, 72,
 		},
-		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0 note:F2   velocity:72",
+		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0, note:F2, velocity:72",
 	},
 
 	{"PolyphonicPressure",

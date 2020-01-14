@@ -12,6 +12,11 @@ type MidiEvent struct {
 	Channel byte
 }
 
+type Note struct {
+	Value byte
+	Name  string
+}
+
 func (e MidiEvent) String() string {
 	return fmt.Sprintf("%s %v", e.Event, e.Status)
 }

@@ -6,11 +6,6 @@ import (
 	"io"
 )
 
-type Note struct {
-	Value byte
-	Name  string
-}
-
 type NoteOff struct {
 	MidiEvent
 	Note     Note

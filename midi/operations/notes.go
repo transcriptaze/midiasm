@@ -120,11 +120,11 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 				if v, ok := e.(*midievent.NoteOn); ok {
 					eventlog.Debug(fmt.Sprintf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
-					key := uint16(v.Channel)<<8 + uint16(v.Note)
+					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					note := Note{
 						Channel:       v.Channel,
-						Note:          v.Note,
-						FormattedNote: ctx.FormatNote(v.Note),
+						Note:          v.Note.Value,
+						FormattedNote: ctx.FormatNote(v.Note.Value),
 						Velocity:      v.Velocity,
 						Start:         t,
 						StartTick:     tick,
