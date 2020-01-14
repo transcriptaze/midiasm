@@ -165,7 +165,7 @@ var eventlist = []struct {
 	{"TimeSignature",
 		&TimeSignature{
 			MetaEvent{
-				events.Event{"TieSignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08}},
+				events.Event{"TimeSignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08}},
 				0x58,
 			},
 			4,
@@ -173,7 +173,7 @@ var eventlist = []struct {
 			24,
 			8,
 		},
-		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    4:4, 24 ticks-per-click, 8/32-per-quarter",
+		"   00 FF 58 04 04 02 18 08                  tick:76         delta:12         58 TimeSignature    4/4, 24 ticks per click, 8/32 per quarter",
 	},
 
 	{"KeySignature",

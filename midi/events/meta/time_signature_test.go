@@ -52,13 +52,13 @@ func TestTimeSignatureRender(t *testing.T) {
 		event    events.IEvent
 		expected string
 	}{
-		{&TimeSignature{metaevent, 1, 1, 24, 8}, "TimeSignature    1:1, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 1, 2, 24, 8}, "TimeSignature    1:2, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 2, 4, 24, 8}, "TimeSignature    2:4, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 3, 4, 24, 8}, "TimeSignature    3:4, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 4, 4, 24, 8}, "TimeSignature    4:4, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 5, 4, 24, 8}, "TimeSignature    5:4, 24 ticks-per-click, 8/32-per-quarter"},
-		{&TimeSignature{metaevent, 6, 8, 24, 8}, "TimeSignature    6:8, 24 ticks-per-click, 8/32-per-quarter"},
+		{&TimeSignature{metaevent, 1, 1, 24, 8}, "TimeSignature    1/1, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 1, 2, 24, 8}, "TimeSignature    1/2, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 2, 4, 24, 8}, "TimeSignature    2/4, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 3, 4, 24, 8}, "TimeSignature    3/4, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 4, 4, 24, 8}, "TimeSignature    4/4, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 5, 4, 24, 8}, "TimeSignature    5/4, 24 ticks per click, 8/32 per quarter"},
+		{&TimeSignature{metaevent, 6, 8, 24, 8}, "TimeSignature    6/8, 24 ticks per click, 8/32 per quarter"},
 	}
 
 	for _, v := range eventlist {
