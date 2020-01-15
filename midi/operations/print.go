@@ -37,6 +37,7 @@ var templates = map[string]string{
 {{else if eq .Tag "Controller"         }}{{template "controller"         .}}
 {{else if eq .Tag "ProgramChange"      }}{{template "programchange"      .}}
 {{else if eq .Tag "ChannelPressure"    }}{{template "channelpressure"    .}}
+{{else if eq .Tag "PitchBend"          }}{{template "pitchbend"          .}}
 {{else                                 }}XX {{pad .Tag 16}} 
 {{end}}`,
 
@@ -52,6 +53,7 @@ var templates = map[string]string{
 	"controller":         `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} controller:{{.Controller}}, value:{{.Value}}`,
 	"programchange":      `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} program:{{.Program }}`,
 	"channelpressure":    `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
+	"pitchbend":          `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
 }
 
 type Print struct {
