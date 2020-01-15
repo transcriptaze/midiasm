@@ -43,5 +43,5 @@ func (t TrackNumber) String() string {
 }
 
 func (c Channel) String() string {
-	return fmt.Sprintf("%-2d", c)
+	return fmt.Sprintf("%d", byte(c))
 }

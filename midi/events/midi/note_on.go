@@ -40,5 +40,5 @@ func NewNoteOn(event *MidiEvent, r io.ByteReader) (*NoteOn, error) {
 func (e *NoteOn) Render(ctx *context.Context, w io.Writer) {
 	note := ctx.Scale[e.Note.Value%12]
 	octave := -2 + int(e.Note.Value)/12
-	fmt.Fprintf(w, "%s %-16s channel:%d, note:%-s, velocity:%d", e.MidiEvent, "NoteOn", e.Channel, fmt.Sprintf("%s%d", note, octave), e.Velocity)
+	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%-s, velocity:%d", e.MidiEvent, "NoteOn", e.Channel, fmt.Sprintf("%s%d", note, octave), e.Velocity)
 }

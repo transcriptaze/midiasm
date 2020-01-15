@@ -24,7 +24,7 @@ var eventlist = []struct {
 				Name:  "F2",
 			}, 64,
 		},
-		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0, note:F2, velocity:64",
+		"   83 60 80 35 40                           tick:1920       delta:480        80 NoteOff          channel:0  note:F2, velocity:64",
 	},
 
 	{"NoteOn",
@@ -38,7 +38,7 @@ var eventlist = []struct {
 				Name:  "F2",
 			}, 72,
 		},
-		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0, note:F2, velocity:72",
+		"      00 90 35 48                           tick:1440       delta:0          90 NoteOn           channel:0  note:F2, velocity:72",
 	},
 
 	{"PolyphonicPressure",
@@ -60,7 +60,7 @@ var eventlist = []struct {
 			},
 			6, 8,
 		},
-		"      00 B0 06 08                           tick:1440       delta:480        B0 Controller       channel:0, controller:6, value:8",
+		"      00 B0 06 08                           tick:1440       delta:480        B0 Controller       channel:0  controller:6, value:8",
 	},
 
 	{"ProgramChange",
@@ -71,7 +71,7 @@ var eventlist = []struct {
 			},
 			25,
 		},
-		"         00 C0 19                           tick:0          delta:0          C0 ProgramChange    channel:0, program:25",
+		"         00 C0 19                           tick:0          delta:0          C0 ProgramChange    channel:0  program:25",
 	},
 
 	{"ChannelPressure",
@@ -82,7 +82,7 @@ var eventlist = []struct {
 			},
 			5,
 		},
-		"         00 D0 05                           tick:0          delta:0          D0 ChannelPressure  channel:0 pressure:5",
+		"         00 D0 05                           tick:0          delta:0          D0 ChannelPressure  channel:0  pressure:5",
 	},
 
 	{"PitchBend",
@@ -93,7 +93,7 @@ var eventlist = []struct {
 			},
 			8,
 		},
-		"      00 E0 00 08                           tick:0          delta:0          E0 PitchBend        channel:0 bend:8",
+		"      00 E0 00 08                           tick:0          delta:0          E0 PitchBend        channel:0  bend:8",
 	},
 }
 

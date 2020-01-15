@@ -28,5 +28,5 @@ func NewChannelPressure(event *MidiEvent, r io.ByteReader) (*ChannelPressure, er
 }
 
 func (e *ChannelPressure) Render(ctx *context.Context, w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%d pressure:%d", e.MidiEvent, "ChannelPressure", e.Channel, e.Pressure)
+	fmt.Fprintf(w, "%s %-16s channel:%-2v pressure:%d", e.MidiEvent, "ChannelPressure", e.Channel, e.Pressure)
 }

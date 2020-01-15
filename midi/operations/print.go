@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -35,6 +36,7 @@ var templates = map[string]string{
 {{else if eq .Tag "PolyphonicPressure" }}{{template "polyphonicpressure" .}}
 {{else if eq .Tag "Controller"         }}{{template "controller"         .}}
 {{else if eq .Tag "ProgramChange"      }}{{template "programchange"      .}}
+{{else if eq .Tag "ChannelPressure"    }}{{template "channelpressure"    .}}
 {{else                                 }}XX {{pad .Tag 16}} 
 {{end}}`,
 
@@ -44,11 +46,12 @@ var templates = map[string]string{
 	"timesignature": `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
 	"keysignature":  `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
 
-	"noteoff":            `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"noteon":             `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"polyphonicpressure": `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} pressure:{{.Pressure}}`,
-	"controller":         `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} controller:{{.Controller}}, value:{{.Value}}`,
-	"programchange":      `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} program:{{.Program }}`,
+	"noteoff":            `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"noteon":             `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"polyphonicpressure": `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
+	"controller":         `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} controller:{{.Controller}}, value:{{.Value}}`,
+	"programchange":      `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} program:{{.Program }}`,
+	"channelpressure":    `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 }
 
 type Print struct {
@@ -118,7 +121,8 @@ func ellipsize(bytes types.Hex, offsets ...int) string {
 	return hex
 }
 
-func pad(s string, width int) string {
+func pad(v interface{}, width int) string {
+	s := fmt.Sprintf("%v", v)
 	if width < len([]rune(s)) {
 		return s
 	}
