@@ -49,7 +49,7 @@ var eventlist = []struct {
 			},
 			7,
 		},
-		"         00 A0 07                           tick:1440       delta:480        A0 PolyphonicPressure channel:0 pressure:7",
+		"         00 A0 07                           tick:1440       delta:480        A0 PolyphonicPressure channel:0  pressure:7",
 	},
 
 	{"Controller",

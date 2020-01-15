@@ -8,6 +8,7 @@ import (
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/events/midi"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"sort"
 	"time"
@@ -18,7 +19,7 @@ type Notes struct {
 }
 
 type Note struct {
-	Channel       byte
+	Channel       types.Channel
 	Note          byte
 	FormattedNote string
 	Velocity      byte

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type MidiEvent struct {
 	events.Event
-	Channel byte
+	Channel types.Channel
 }
 
 type Note struct {
@@ -38,7 +39,7 @@ func (r reader) ReadByte() (byte, error) {
 func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	event := MidiEvent{
 		Event:   e,
-		Channel: byte(e.Status) & 0x0F,
+		Channel: types.Channel((e.Status) & 0x0F),
 	}
 
 	rr := reader{r, &event}

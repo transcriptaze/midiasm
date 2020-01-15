@@ -26,27 +26,29 @@ var templates = map[string]string{
 
 	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
 	"events": `{{if eq .Tag "TrackName"}}{{template "trackname" .}}
-{{else if eq .Tag "EndOfTrack"    }}{{template "endoftrack"    .}}
-{{else if eq .Tag "Tempo"         }}{{template "tempo"         .}}
-{{else if eq .Tag "TimeSignature" }}{{template "timesignature" .}}
-{{else if eq .Tag "KeySignature"  }}{{template "keysignature"  .}}
-{{else if eq .Tag "NoteOff"       }}{{template "noteoff"       .}}
-{{else if eq .Tag "NoteOn"        }}{{template "noteon"        .}}
-{{else if eq .Tag "Controller"    }}{{template "controller"    .}}
-{{else if eq .Tag "ProgramChange" }}{{template "programchange" .}}
-{{else                            }}XX {{pad .Tag 16}} 
+{{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
+{{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
+{{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
+{{else if eq .Tag "KeySignature"       }}{{template "keysignature"       .}}
+{{else if eq .Tag "NoteOff"            }}{{template "noteoff"            .}}
+{{else if eq .Tag "NoteOn"             }}{{template "noteon"             .}}
+{{else if eq .Tag "PolyphonicPressure" }}{{template "polyphonicpressure" .}}
+{{else if eq .Tag "Controller"         }}{{template "controller"         .}}
+{{else if eq .Tag "ProgramChange"      }}{{template "programchange"      .}}
+{{else                                 }}XX {{pad .Tag 16}} 
 {{end}}`,
 
-	"trackname":     `{{.Type}} {{pad .Tag 16}} {{.Name}}`,
+	"trackname":     `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
 	"endoftrack":    `{{.Type}} {{    .Tag   }}`,
-	"tempo":         `{{.Type}} {{pad .Tag 16}} tempo:{{.Tempo }}`,
-	"timesignature": `{{.Type}} {{pad .Tag 16}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
-	"keysignature":  `{{.Type}} {{pad .Tag 16}} {{.Key }}`,
+	"tempo":         `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
+	"timesignature": `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
+	"keysignature":  `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
 
-	"noteoff":       `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"noteon":        `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"controller":    `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, controller:{{.Controller }}, value:{{.Value}}`,
-	"programchange": `{{.Status}} {{pad .Tag 16}} channel:{{.Channel}}, program:{{.Program }}`,
+	"noteoff":            `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"noteon":             `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"polyphonicpressure": `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} pressure:{{.Pressure}}`,
+	"controller":         `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} controller:{{.Controller}}, value:{{.Value}}`,
+	"programchange":      `{{.Status}} {{pad .Tag 18}} channel:{{.Channel}} program:{{.Program }}`,
 }
 
 type Print struct {
@@ -117,12 +119,8 @@ func ellipsize(bytes types.Hex, offsets ...int) string {
 }
 
 func pad(s string, width int) string {
-	if width < 0 {
-		return s
-	}
-
 	if width < len([]rune(s)) {
-		return string([]rune(s)[0:width])
+		return s
 	}
 
 	return s + strings.Repeat(" ", width-len([]rune(s)))
