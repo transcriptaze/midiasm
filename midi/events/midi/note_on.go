@@ -12,7 +12,7 @@ type NoteOn struct {
 	Velocity byte
 }
 
-func NewNoteOn(event *MidiEvent, r io.ByteReader) (*NoteOn, error) {
+func NewNoteOn(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteOn, error) {
 	if event.Status&0xF0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%02x): expected '90'", event.Status&0x80)
 	}
@@ -31,14 +31,12 @@ func NewNoteOn(event *MidiEvent, r io.ByteReader) (*NoteOn, error) {
 		MidiEvent: *event,
 		Note: Note{
 			Value: note,
-			Name:  "XX",
+			Name:  ctx.FormatNote(note),
 		},
 		Velocity: velocity,
 	}, nil
 }
 
 func (e *NoteOn) Render(ctx *context.Context, w io.Writer) {
-	note := ctx.Scale[e.Note.Value%12]
-	octave := -2 + int(e.Note.Value)/12
-	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%-s, velocity:%d", e.MidiEvent, "NoteOn", e.Channel, fmt.Sprintf("%s%d", note, octave), e.Velocity)
+	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%-s, velocity:%d", e.MidiEvent, "NoteOn", e.Channel, e.Note.Name, e.Velocity)
 }

@@ -12,7 +12,7 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func NewNoteOff(event *MidiEvent, r io.ByteReader) (*NoteOff, error) {
+func NewNoteOff(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteOff, error) {
 	if event.Status&0xF0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%02x): expected '80'", event.Status&0xF0)
 	}
@@ -31,12 +31,12 @@ func NewNoteOff(event *MidiEvent, r io.ByteReader) (*NoteOff, error) {
 		MidiEvent: *event,
 		Note: Note{
 			Value: note,
-			Name:  "XX",
+			Name:  ctx.FormatNote(note),
 		},
 		Velocity: velocity,
 	}, nil
 }
 
 func (e *NoteOff) Render(ctx *context.Context, w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%s, velocity:%d", e.MidiEvent, "NoteOff", e.Channel, ctx.FormatNote(e.Note.Value), e.Velocity)
+	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%s, velocity:%d", e.MidiEvent, "NoteOff", e.Channel, e.Note.Name, e.Velocity)
 }

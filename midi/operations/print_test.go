@@ -23,9 +23,9 @@ const expected string = `
 00 B0 65 00                                 tick:0          delta:0          B0 Controller         channel:0  controller:101, value:0
 00 A0 64                                    tick:0          delta:0          A0 PolyphonicPressure channel:0  pressure:100
 00 D0 07                                    tick:0          delta:0          D0 ChannelPressure    channel:0  pressure:7
-00 90 30 48                                 tick:0          delta:0          90 NoteOn             channel:0  note:XX, velocity:72
+00 90 30 48                                 tick:0          delta:0          90 NoteOn             channel:0  note:C2, velocity:72
 81 70 E0 00 08                              tick:240        delta:240        E0 PitchBend          channel:0  bend:8
-83 60 80 30 40                              tick:720        delta:480        80 NoteOff            channel:0  note:XX, velocity:64
+83 60 80 30 40                              tick:720        delta:480        80 NoteOff            channel:0  note:C2, velocity:64
 00 FF 2F 00                                 tick:720        delta:0          2F EndOfTrack
 
 

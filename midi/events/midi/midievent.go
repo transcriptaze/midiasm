@@ -47,11 +47,11 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 	switch e.Status & 0xF0 {
 	case 0x80:
 		event.Tag = "NoteOff"
-		return NewNoteOff(&event, rr)
+		return NewNoteOff(ctx, &event, rr)
 
 	case 0x90:
 		event.Tag = "NoteOn"
-		return NewNoteOn(&event, rr)
+		return NewNoteOn(ctx, &event, rr)
 
 	case 0xA0:
 		event.Tag = "PolyphonicPressure"
