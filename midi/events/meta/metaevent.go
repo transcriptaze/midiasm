@@ -53,6 +53,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "SequenceNumber"
 		return NewSequenceNumber(&event, rr)
 
+	case 0x01:
+		event.Tag = "Text"
+		return NewText(&event, rr)
+
 	case 0x03:
 		event.Tag = "TrackName"
 		return NewTrackName(&event, rr)
@@ -74,7 +78,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		return NewKeySignature(ctx, &event, rr)
 	}
 
-	return nil, fmt.Errorf("Unrecognised META event: %02X", event.Type)
+	return nil, fmt.Errorf("Unrecognised META event: %02X", byte(event.Type))
 }
 
 func read(r io.ByteReader) ([]byte, error) {

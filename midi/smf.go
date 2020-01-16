@@ -145,6 +145,7 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 
 	bytes := make([]byte, length+8)
 	if _, err := io.ReadFull(r, bytes); err != nil {
+		fmt.Printf("OOOPS/2 %X  %v\n", peek, err)
 		return nil, err
 	}
 
@@ -158,7 +159,8 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 
 	case "MTrk":
 		var mtrk MTrk
-		if err := mtrk.UnmarshalBinary(bytes); err != nil {
+		err := mtrk.UnmarshalBinary(bytes)
+		if err != nil {
 			return nil, err
 		}
 		return &mtrk, nil
