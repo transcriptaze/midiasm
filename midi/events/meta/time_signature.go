@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -44,6 +43,6 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 	}, nil
 }
 
-func (e *TimeSignature) Render(ctx *context.Context, w io.Writer) {
+func (e *TimeSignature) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %d/%d, %d ticks per click, %d/32 per quarter", e.MetaEvent, "TimeSignature", e.Numerator, e.Denominator, e.TicksPerClick, e.ThirtySecondsPerQuarter)
 }

@@ -3,7 +3,6 @@ package events
 import (
 	"bytes"
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
@@ -11,7 +10,7 @@ import (
 type IEvent interface {
 	TickValue() uint64
 	DeltaTime() uint32
-	Render(*context.Context, io.Writer)
+	Render(io.Writer)
 }
 
 type Event struct {

@@ -36,7 +36,7 @@ func NewSysExContinuationMessage(event *SysExEvent, r io.ByteReader, ctx *contex
 	}, nil
 }
 
-func (e *SysExContinuationMessage) Render(ctx *context.Context, w io.Writer) {
+func (e *SysExContinuationMessage) Render(w io.Writer) {
 	data := new(bytes.Buffer)
 
 	for _, b := range e.Data {

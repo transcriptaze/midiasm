@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -27,6 +26,6 @@ func NewLyric(event *MetaEvent, r io.ByteReader) (*Lyric, error) {
 	}, nil
 }
 
-func (e *Lyric) Render(ctx *context.Context, w io.Writer) {
+func (e *Lyric) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "Lyric", e.Lyric)
 }

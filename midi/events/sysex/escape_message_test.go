@@ -45,11 +45,6 @@ func TestParseEscapeMessage(t *testing.T) {
 }
 
 func TestRenderEscapeMessage(t *testing.T) {
-	ctx := context.Context{
-		Scale: context.Sharps,
-		Casio: false,
-	}
-
 	event := events.Event{
 		Tick:   960,
 		Delta:  480,
@@ -64,7 +59,7 @@ func TestRenderEscapeMessage(t *testing.T) {
 
 	w := new(bytes.Buffer)
 
-	message.Render(&ctx, w)
+	message.Render(w)
 
 	expected := "   83 60 F7 02 F3 01                        tick:960        delta:480        F7 EscapeMessage    F3 01"
 	if w.String() != expected {

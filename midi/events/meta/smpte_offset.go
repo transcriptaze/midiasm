@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -66,7 +65,7 @@ func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
 	}, nil
 }
 
-func (e *SMPTEOffset) Render(ctx *context.Context, w io.Writer) {
+func (e *SMPTEOffset) Render(w io.Writer) {
 	framerate := "24 fps"
 	switch e.FrameRate {
 	case 0x00:

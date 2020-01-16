@@ -33,7 +33,7 @@ func NewSysExEscapeMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 	}, nil
 }
 
-func (e *SysExEscapeMessage) Render(ctx *context.Context, w io.Writer) {
+func (e *SysExEscapeMessage) Render(w io.Writer) {
 	data := new(bytes.Buffer)
 
 	for _, b := range e.Data {

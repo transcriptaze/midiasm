@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -27,6 +26,6 @@ func NewMarker(event *MetaEvent, r io.ByteReader) (*Marker, error) {
 	}, nil
 }
 
-func (e *Marker) Render(ctx *context.Context, w io.Writer) {
+func (e *Marker) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "Marker", e.Marker)
 }

@@ -49,10 +49,6 @@ func TestParseContinuationMessage(t *testing.T) {
 }
 
 func TestRenderContinuationMessage(t *testing.T) {
-	ctx := context.Context{
-		Scale: context.Sharps,
-	}
-
 	event := events.Event{
 		Tick:   960,
 		Delta:  480,
@@ -67,7 +63,7 @@ func TestRenderContinuationMessage(t *testing.T) {
 
 	w := new(bytes.Buffer)
 
-	message.Render(&ctx, w)
+	message.Render(w)
 
 	expected := "   83 60 F7 7E 00 09 01 F7                  tick:960        delta:480        F7 ContinuationMessage 7E 00 09 01 F7"
 	if w.String() != expected {

@@ -2,9 +2,7 @@ package midievent
 
 import (
 	"bytes"
-	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
-	//	"github.com/twystd/midiasm/midi/types"
 	"testing"
 )
 
@@ -98,14 +96,10 @@ var eventlist = []struct {
 }
 
 func TestRender(t *testing.T) {
-	ctx := context.Context{
-		Scale: context.Sharps,
-	}
-
 	for _, v := range eventlist {
 		w := new(bytes.Buffer)
 
-		v.event.Render(&ctx, w)
+		v.event.Render(w)
 
 		if w.String() != v.expected {
 			t.Errorf("%s rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.name, v.expected, w.String())

@@ -2,7 +2,6 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -33,6 +32,6 @@ func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
 	}, nil
 }
 
-func (e *PitchBend) Render(ctx *context.Context, w io.Writer) {
+func (e *PitchBend) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s channel:%-2v bend:%d", e.MidiEvent, "PitchBend", e.Channel, e.Bend)
 }

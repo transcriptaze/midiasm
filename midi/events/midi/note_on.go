@@ -37,6 +37,6 @@ func NewNoteOn(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteOn
 	}, nil
 }
 
-func (e *NoteOn) Render(ctx *context.Context, w io.Writer) {
+func (e *NoteOn) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s channel:%-2v note:%-s, velocity:%d", e.MidiEvent, "NoteOn", e.Channel, e.Note.Name, e.Velocity)
 }

@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -27,6 +26,6 @@ func NewEndOfTrack(event *MetaEvent, r io.ByteReader) (*EndOfTrack, error) {
 	}, nil
 }
 
-func (e *EndOfTrack) Render(ctx *context.Context, w io.Writer) {
+func (e *EndOfTrack) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %s", e.MetaEvent, "EndOfTrack")
 }

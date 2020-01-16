@@ -14,7 +14,7 @@
 - [x] --debug
 - [x] --verbose
 - [x] Print note name + octave
-- [ ] Decode note in context of current scale
+- [x] Decode note in context of current scale
 - [ ] Configurable formats
 - [ ] Format 0
 - [ ] Format 2

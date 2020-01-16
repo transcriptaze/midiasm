@@ -55,7 +55,7 @@ var minor_keys = map[int8]string{
 	-6: "E\u266d minor",
 }
 
-func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
+func NewKeySignature(ctx *context.Context, event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 	if event.Type != 0x59 {
 		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", event.Type)
 	}
@@ -89,6 +89,12 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 		}
 	}
 
+	if accidentals < 0 {
+		ctx.Scale = context.Flats
+	} else {
+		ctx.Scale = context.Sharps
+	}
+
 	return &KeySignature{
 		MetaEvent:   *event,
 		Accidentals: accidentals,
@@ -97,13 +103,7 @@ func NewKeySignature(event *MetaEvent, r io.ByteReader) (*KeySignature, error) {
 	}, nil
 }
 
-func (e *KeySignature) Render(ctx *context.Context, w io.Writer) {
-	if e.Accidentals < 0 {
-		ctx.Scale = context.Flats
-	} else {
-		ctx.Scale = context.Sharps
-	}
-
+func (e *KeySignature) Render(w io.Writer) {
 	switch e.KeyType {
 	case 0:
 		if signature, ok := major_keys[e.Accidentals]; ok {

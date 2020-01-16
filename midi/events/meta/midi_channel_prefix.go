@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -34,6 +33,6 @@ func NewMIDIChannelPrefix(event *MetaEvent, r io.ByteReader) (*MIDIChannelPrefix
 	}, nil
 }
 
-func (e *MIDIChannelPrefix) Render(ctx *context.Context, w io.Writer) {
+func (e *MIDIChannelPrefix) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %d", e.MetaEvent, "MIDIChannelPrefix", e.Channel)
 }

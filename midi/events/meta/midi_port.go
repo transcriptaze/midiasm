@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -34,6 +33,6 @@ func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
 	}, nil
 }
 
-func (e *MIDIPort) Render(ctx *context.Context, w io.Writer) {
+func (e *MIDIPort) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %d", e.MetaEvent, "MIDIPort", e.Port)
 }

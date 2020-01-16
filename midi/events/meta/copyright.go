@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -27,6 +26,6 @@ func NewCopyright(event *MetaEvent, r io.ByteReader) (*Copyright, error) {
 	}, nil
 }
 
-func (e *Copyright) Render(ctx *context.Context, w io.Writer) {
+func (e *Copyright) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "Copyright", e.Copyright)
 }

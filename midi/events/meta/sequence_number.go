@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -35,6 +34,6 @@ func NewSequenceNumber(event *MetaEvent, r io.ByteReader) (*SequenceNumber, erro
 	}, nil
 }
 
-func (e *SequenceNumber) Render(ctx *context.Context, w io.Writer) {
+func (e *SequenceNumber) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "SequenceNumber", e.SequenceNumber)
 }

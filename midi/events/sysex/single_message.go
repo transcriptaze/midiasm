@@ -38,7 +38,7 @@ func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 	}, nil
 }
 
-func (e *SysExSingleMessage) Render(ctx *context.Context, w io.Writer) {
+func (e *SysExSingleMessage) Render(w io.Writer) {
 	data := new(bytes.Buffer)
 
 	for _, b := range e.Data {

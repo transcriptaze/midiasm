@@ -3,7 +3,6 @@ package metaevent
 import (
 	"bytes"
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 	"strings"
 )
@@ -29,7 +28,7 @@ func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpe
 	}, nil
 }
 
-func (e *SequencerSpecificEvent) Render(ctx *context.Context, w io.Writer) {
+func (e *SequencerSpecificEvent) Render(w io.Writer) {
 	data := new(bytes.Buffer)
 
 	for _, b := range e.Data {

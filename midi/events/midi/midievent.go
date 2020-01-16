@@ -36,6 +36,10 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
+func (e *MidiEvent) Render(ctx *context.Context, w io.Writer) {
+	fmt.Fprintf(w, "%s %-16s channel:%-2v", e.String(), e.Tag, e.Channel)
+}
+
 func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
 	event := MidiEvent{
 		Event:   e,

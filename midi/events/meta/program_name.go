@@ -2,7 +2,6 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"io"
 )
 
@@ -27,6 +26,6 @@ func NewProgramName(event *MetaEvent, r io.ByteReader) (*ProgramName, error) {
 	}, nil
 }
 
-func (e *ProgramName) Render(ctx *context.Context, w io.Writer) {
+func (e *ProgramName) Render(w io.Writer) {
 	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "ProgramName", e.Name)
 }

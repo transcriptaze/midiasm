@@ -3,7 +3,6 @@ package metaevent
 import (
 	"bufio"
 	"bytes"
-	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"strings"
 	"testing"
@@ -39,10 +38,6 @@ func TestParseTimeSignature(t *testing.T) {
 }
 
 func TestTimeSignatureRender(t *testing.T) {
-	ctx := context.Context{
-		Scale: context.Sharps,
-	}
-
 	metaevent := MetaEvent{
 		events.Event{"TimeSignature", 76, 12, 0xff, []byte{0x00, 0xff, 0x58, 0x04, 0x18, 0x08}},
 		0x58,
@@ -64,7 +59,7 @@ func TestTimeSignatureRender(t *testing.T) {
 	for _, v := range eventlist {
 		w := new(bytes.Buffer)
 
-		v.event.Render(&ctx, w)
+		v.event.Render(w)
 
 		if !strings.HasSuffix(w.String(), v.expected) {
 			t.Errorf("TimeSignature rendered incorrectly\nExpected: '%s'\ngot:      '%s'", v.expected, w.String())

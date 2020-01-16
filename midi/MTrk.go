@@ -76,14 +76,9 @@ func (chunk *MTrk) Print(w io.Writer) error {
 		return err
 	}
 
-	ctx := context.Context{
-		Scale: context.Sharps,
-		Casio: false,
-	}
-
 	for _, e := range chunk.Events {
 		fmt.Fprintln(w)
-		e.Render(&ctx, w)
+		e.Render(w)
 	}
 
 	return nil
