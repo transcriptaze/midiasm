@@ -19,6 +19,7 @@
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
+- [ ] Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
 
 ### Notes 
 
