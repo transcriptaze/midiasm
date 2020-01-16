@@ -100,7 +100,6 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, e
 	bytes = append(bytes, b)
 
 	e := events.Event{
-		Tag:    "qwerty",
 		Tick:   types.Tick(tick + delta),
 		Delta:  types.Delta(delta),
 		Status: types.Status(b),

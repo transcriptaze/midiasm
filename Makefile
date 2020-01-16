@@ -11,7 +11,9 @@ build: format
 test: build
 #	go clean -testcache
 #	go test ./...
-	go test midi/operations/*.go
+#	go test midi/operations/*.go
+	go test -v ./midi/events/meta -run TestParseCMajorKeySignature
+	go test -v ./midi/events/meta -run TestParseCMinorKeySignature
 
 benchmark: build
 	go test -bench ./...
