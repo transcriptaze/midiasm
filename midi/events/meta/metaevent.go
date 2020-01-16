@@ -57,6 +57,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "Text"
 		return NewText(&event, rr)
 
+	case 0x02:
+		event.Tag = "Copyright"
+		return NewCopyright(&event, rr)
+
 	case 0x03:
 		event.Tag = "TrackName"
 		return NewTrackName(&event, rr)
