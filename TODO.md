@@ -72,7 +72,6 @@
 - [x] Escape sequences
 - [x] Casio sequences
 
-
 ## TODO
 
 1.  Assembler
@@ -85,10 +84,6 @@
 7.  [Manufacturer ID's](https://www.midi.org/specifications-old/category/reference-tables) (?)
 8.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
 9.  [How to use a field of struct or variable value as template name?](https://stackoverflow.com/questions/28830543/how-to-use-a-field-of-struct-or-variable-value-as-template-name)
-10. Online tool
+10. Online/Javascript version
 11. Rework decoder using tags/reflection
-
-## NOTES
-
-1. [Had it with Ableton Live](https://sound.stackexchange.com/questions/46795/had-it-with-ableton-live)
 

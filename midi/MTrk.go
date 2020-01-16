@@ -19,7 +19,6 @@ type MTrk struct {
 	Tag         string
 	TrackNumber types.TrackNumber
 	Length      uint32
-	data        []byte
 	Bytes       types.Hex
 
 	Events []events.IEvent
@@ -57,7 +56,6 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 
 	chunk.Tag = tag
 	chunk.Length = length
-	chunk.data = data[8:]
 	chunk.Events = eventlist
 	chunk.Bytes = data
 
