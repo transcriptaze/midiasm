@@ -26,7 +26,8 @@ var templates = map[string]string{
 	"MTrk": `{{.Tag}} {{.TrackNumber}} length:{{.Length}}`,
 
 	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
-	"events": `{{if eq .Tag "TrackName"}}{{template "trackname" .}}
+	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
+{{else if eq .Tag "TrackName"          }}{{template "trackname"          .}}
 {{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
 {{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
 {{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
@@ -41,6 +42,7 @@ var templates = map[string]string{
 {{else                                 }}XX {{pad .Tag 16}} 
 {{end}}`,
 
+	"sequenceno":    `{{.Type}} {{pad .Tag 18}} {{.SequenceNumber}}`,
 	"trackname":     `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
 	"endoftrack":    `{{.Type}} {{    .Tag   }}`,
 	"tempo":         `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
