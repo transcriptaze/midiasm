@@ -73,6 +73,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "Lyric"
 		return NewLyric(&event, rr)
 
+	case 0x06:
+		event.Tag = "Marker"
+		return NewMarker(&event, rr)
+
 	case 0x2f:
 		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
