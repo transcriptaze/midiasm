@@ -85,6 +85,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "ProgramName"
 		return NewProgramName(&event, rr)
 
+	case 0x09:
+		event.Tag = "DeviceName"
+		return NewDeviceName(&event, rr)
+
 	case 0x2f:
 		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)

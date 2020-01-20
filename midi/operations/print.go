@@ -34,6 +34,7 @@ var templates = map[string]string{
 {{else if eq .Tag "Marker"             }}{{template "marker"             .}}
 {{else if eq .Tag "CuePoint"           }}{{template "cuepoint"           .}}
 {{else if eq .Tag "ProgramName"        }}{{template "programname"        .}}
+{{else if eq .Tag "DeviceName"         }}{{template "devicename"         .}}
 {{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
 {{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
 {{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
@@ -57,6 +58,7 @@ var templates = map[string]string{
 	"marker":         `{{.Type}} {{pad .Tag 18}} {{.Marker}}`,
 	"cuepoint":       `{{.Type}} {{pad .Tag 18}} {{.CuePoint}}`,
 	"programname":    `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
+	"devicename":     `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
 	"endoftrack":     `{{.Type}} {{    .Tag   }}`,
 	"tempo":          `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
 	"timesignature":  `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
