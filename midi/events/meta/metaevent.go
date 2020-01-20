@@ -77,6 +77,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "Marker"
 		return NewMarker(&event, rr)
 
+	case 0x07:
+		event.Tag = "CuePoint"
+		return NewCuePoint(&event, rr)
+
 	case 0x2f:
 		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
