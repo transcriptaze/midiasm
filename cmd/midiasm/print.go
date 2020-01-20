@@ -77,7 +77,11 @@ func (p *Print) write(smf *midi.SMF) {
 	fmt.Fprintln(w)
 
 	if err != nil {
-		fmt.Printf("Error %v extracting notes\n", err)
+		fmt.Printf("Error %v extracting MIDI information\n", err)
+	}
+
+	if p.debug {
+		err = q.PrintWithTemplate(smf, os.Stdout)
 	}
 }
 
