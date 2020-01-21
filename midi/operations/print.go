@@ -35,6 +35,7 @@ var templates = map[string]string{
 {{else if eq .Tag "CuePoint"           }}{{template "cuepoint"           .}}
 {{else if eq .Tag "ProgramName"        }}{{template "programname"        .}}
 {{else if eq .Tag "DeviceName"         }}{{template "devicename"         .}}
+{{else if eq .Tag "MIDIChannelPrefix"  }}{{template "midichannelprefix"  .}}
 {{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
 {{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
 {{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
@@ -49,20 +50,21 @@ var templates = map[string]string{
 {{else                                 }}XX {{pad .Tag 16}} 
 {{end}}`,
 
-	"sequenceno":     `{{.Type}} {{pad .Tag 18}} {{.SequenceNumber}}`,
-	"text":           `{{.Type}} {{pad .Tag 18}} {{.Text}}`,
-	"copyright":      `{{.Type}} {{pad .Tag 18}} {{.Copyright}}`,
-	"trackname":      `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"instrumentname": `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"lyric":          `{{.Type}} {{pad .Tag 18}} {{.Lyric}}`,
-	"marker":         `{{.Type}} {{pad .Tag 18}} {{.Marker}}`,
-	"cuepoint":       `{{.Type}} {{pad .Tag 18}} {{.CuePoint}}`,
-	"programname":    `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"devicename":     `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"endoftrack":     `{{.Type}} {{    .Tag   }}`,
-	"tempo":          `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
-	"timesignature":  `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
-	"keysignature":   `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
+	"sequenceno":        `{{.Type}} {{pad .Tag 18}} {{.SequenceNumber}}`,
+	"text":              `{{.Type}} {{pad .Tag 18}} {{.Text}}`,
+	"copyright":         `{{.Type}} {{pad .Tag 18}} {{.Copyright}}`,
+	"trackname":         `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
+	"instrumentname":    `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
+	"lyric":             `{{.Type}} {{pad .Tag 18}} {{.Lyric}}`,
+	"marker":            `{{.Type}} {{pad .Tag 18}} {{.Marker}}`,
+	"cuepoint":          `{{.Type}} {{pad .Tag 18}} {{.CuePoint}}`,
+	"programname":       `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
+	"devicename":        `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
+	"midichannelprefix": `{{.Type}} {{pad .Tag 18}} {{.Channel}}`,
+	"endoftrack":        `{{.Type}} {{    .Tag   }}`,
+	"tempo":             `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
+	"timesignature":     `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
+	"keysignature":      `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
 
 	"noteoff":            `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
 	"noteon":             `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,

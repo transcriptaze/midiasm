@@ -89,6 +89,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "DeviceName"
 		return NewDeviceName(&event, rr)
 
+	case 0x20:
+		event.Tag = "MIDIChannelPrefix"
+		return NewMIDIChannelPrefix(&event, rr)
+
 	case 0x2f:
 		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
