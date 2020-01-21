@@ -82,7 +82,7 @@ func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
 }
 
 func (e *SMPTEOffset) Render(w io.Writer) {
-	framerate := "24 fps"
+	framerate := "??"
 	switch e.FrameRate {
 	case 24:
 		framerate = "24fps"
