@@ -145,7 +145,6 @@ func readChunk(r *bufio.Reader) (Chunk, error) {
 
 	bytes := make([]byte, length+8)
 	if _, err := io.ReadFull(r, bytes); err != nil {
-		fmt.Printf("OOOPS/2 %X  %v\n", peek, err)
 		return nil, err
 	}
 

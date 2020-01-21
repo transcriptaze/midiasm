@@ -105,6 +105,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "Tempo"
 		return NewTempo(&event, rr)
 
+	case 0x54:
+		event.Tag = "SMPTEOffset"
+		return NewSMPTEOffset(&event, rr)
+
 	case 0x58:
 		event.Tag = "TimeSignature"
 		return NewTimeSignature(&event, rr)

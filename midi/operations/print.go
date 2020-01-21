@@ -39,6 +39,7 @@ var templates = map[string]string{
 {{else if eq .Tag "MIDIPort"           }}{{template "midiport"           .}}
 {{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
 {{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
+{{else if eq .Tag "SMPTEOffset"        }}{{template "smpteoffset"        .}}
 {{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
 {{else if eq .Tag "KeySignature"       }}{{template "keysignature"       .}}
 {{else if eq .Tag "NoteOff"            }}{{template "noteoff"            .}}
@@ -65,6 +66,7 @@ var templates = map[string]string{
 	"midiport":          `{{.Type}} {{pad .Tag 18}} {{.Port}}`,
 	"endoftrack":        `{{.Type}} {{    .Tag   }}`,
 	"tempo":             `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
+	"smpteoffset":       `{{.Type}} {{pad .Tag 18}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
 	"timesignature":     `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
 	"keysignature":      `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
 
