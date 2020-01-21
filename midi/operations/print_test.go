@@ -15,7 +15,7 @@ const expected string = `
 00 FF 51 03 07 A1 20                        tick:0          delta:0          51 Tempo              tempo:500000
 00 FF 2F 00                                 tick:0          delta:0          2F EndOfTrack
 
-4D 54 72 6B 00 00 00 B7…                    MTrk 1  length:183
+4D 54 72 6B 00 00 00 BC…                    MTrk 1  length:188
 00 FF 00 02 00 17                           tick:0          delta:0          00 SequenceNumber     23
 00 FF 01 0D 54 68 69 73 20 61 6E 64 20 54…  tick:0          delta:0          01 Text               This and That
 00 FF 02 04 54 68 65 6D                     tick:0          delta:0          02 Copyright          Them
@@ -27,6 +27,7 @@ const expected string = `
 00 FF 08 06 45 73 63 61 70 65               tick:0          delta:0          08 ProgramName        Escape
 00 FF 09 08 54 68 65 54 68 69 6E 67         tick:0          delta:0          09 DeviceName         TheThing
 00 FF 20 01 0D                              tick:0          delta:0          20 MIDIChannelPrefix  13
+00 FF 21 01 70                              tick:0          delta:0          21 MIDIPort           112
 00 FF 58 04 04 02 18 08                     tick:0          delta:0          58 TimeSignature      4/4, 24 ticks per click, 8/32 per quarter
 00 FF 59 02 00 01                           tick:0          delta:0          59 KeySignature       A minor
 00 C0 19                                    tick:0          delta:0          C0 ProgramChange      channel:0  program:25
@@ -50,7 +51,7 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x03, 0x09, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31,
 		0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20,
 		0x00, 0xff, 0x2f, 0x00,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xb7,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xbc,
 		0x00, 0xff, 0x00, 0x02, 0x00, 0x17,
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
@@ -62,6 +63,7 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65,
 		0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67,
 		0x00, 0xff, 0x20, 0x01, 0x0d,
+		0x00, 0xff, 0x21, 0x01, 0x70,
 		0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08,
 		0x00, 0xff, 0x59, 0x02, 0x00, 0x01,
 		0x00, 0xc0, 0x19,

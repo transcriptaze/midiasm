@@ -36,6 +36,7 @@ var templates = map[string]string{
 {{else if eq .Tag "ProgramName"        }}{{template "programname"        .}}
 {{else if eq .Tag "DeviceName"         }}{{template "devicename"         .}}
 {{else if eq .Tag "MIDIChannelPrefix"  }}{{template "midichannelprefix"  .}}
+{{else if eq .Tag "MIDIPort"           }}{{template "midiport"           .}}
 {{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
 {{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
 {{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
@@ -61,6 +62,7 @@ var templates = map[string]string{
 	"programname":       `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
 	"devicename":        `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
 	"midichannelprefix": `{{.Type}} {{pad .Tag 18}} {{.Channel}}`,
+	"midiport":          `{{.Type}} {{pad .Tag 18}} {{.Port}}`,
 	"endoftrack":        `{{.Type}} {{    .Tag   }}`,
 	"tempo":             `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
 	"timesignature":     `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,

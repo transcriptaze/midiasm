@@ -18,18 +18,20 @@ func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
 	data, err := read(r)
 	if err != nil {
 		return nil, err
-	} else if len(data) != 1 {
+	}
+
+	if len(data) != 1 {
 		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
 	}
 
 	port := data[0]
-	if port < 0 || port > 127 {
+	if port > 127 {
 		return nil, fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
 	}
 
 	return &MIDIPort{
 		MetaEvent: *event,
-		Port:      port,
+		Port:      port & 0x7f,
 	}, nil
 }
 

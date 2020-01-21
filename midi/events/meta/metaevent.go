@@ -93,6 +93,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		event.Tag = "MIDIChannelPrefix"
 		return NewMIDIChannelPrefix(&event, rr)
 
+	case 0x21:
+		event.Tag = "MIDIPort"
+		return NewMIDIPort(&event, rr)
+
 	case 0x2f:
 		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
