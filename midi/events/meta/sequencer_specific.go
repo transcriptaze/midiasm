@@ -3,13 +3,14 @@ package metaevent
 import (
 	"bytes"
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"strings"
 )
 
 type SequencerSpecificEvent struct {
 	MetaEvent
-	Data []byte
+	Data types.Hex
 }
 
 func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpecificEvent, error) {

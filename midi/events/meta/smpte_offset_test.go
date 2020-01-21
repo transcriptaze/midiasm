@@ -17,7 +17,7 @@ func TestSMPTEOffsetRender(t *testing.T) {
 		event    events.IEvent
 		expected string
 	}{
-		{&SMPTEOffset{metaevent, 0x10, 9, 2, 5, 28, 13}, "SMPTEOffset      30fps (drop frame), 09:02:05, 28 frames, 13 fractional frames"},
+		{&SMPTEOffset{metaevent, 9, 2, 5, 29, 28, 13}, "SMPTEOffset      30fps (drop frame), 09:02:05, 28 frames, 13 fractional frames"},
 	}
 
 	for _, v := range eventlist {

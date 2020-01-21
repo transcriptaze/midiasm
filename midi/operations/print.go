@@ -26,57 +26,61 @@ var templates = map[string]string{
 
 	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
 	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
-{{else if eq .Tag "Text"               }}{{template "text"               .}}
-{{else if eq .Tag "Copyright"          }}{{template "copyright"          .}}
-{{else if eq .Tag "TrackName"          }}{{template "trackname"          .}}
-{{else if eq .Tag "InstrumentName"     }}{{template "instrumentname"     .}}
-{{else if eq .Tag "Lyric"              }}{{template "lyric"              .}}
-{{else if eq .Tag "Marker"             }}{{template "marker"             .}}
-{{else if eq .Tag "CuePoint"           }}{{template "cuepoint"           .}}
-{{else if eq .Tag "ProgramName"        }}{{template "programname"        .}}
-{{else if eq .Tag "DeviceName"         }}{{template "devicename"         .}}
-{{else if eq .Tag "MIDIChannelPrefix"  }}{{template "midichannelprefix"  .}}
-{{else if eq .Tag "MIDIPort"           }}{{template "midiport"           .}}
-{{else if eq .Tag "EndOfTrack"         }}{{template "endoftrack"         .}}
-{{else if eq .Tag "Tempo"              }}{{template "tempo"              .}}
-{{else if eq .Tag "SMPTEOffset"        }}{{template "smpteoffset"        .}}
-{{else if eq .Tag "TimeSignature"      }}{{template "timesignature"      .}}
-{{else if eq .Tag "KeySignature"       }}{{template "keysignature"       .}}
-{{else if eq .Tag "NoteOff"            }}{{template "noteoff"            .}}
-{{else if eq .Tag "NoteOn"             }}{{template "noteon"             .}}
-{{else if eq .Tag "PolyphonicPressure" }}{{template "polyphonicpressure" .}}
-{{else if eq .Tag "Controller"         }}{{template "controller"         .}}
-{{else if eq .Tag "ProgramChange"      }}{{template "programchange"      .}}
-{{else if eq .Tag "ChannelPressure"    }}{{template "channelpressure"    .}}
-{{else if eq .Tag "PitchBend"          }}{{template "pitchbend"          .}}
-{{else                                 }}XX {{pad .Tag 16}} 
+{{else if eq .Tag "Text"                   }}{{template "text"                   .}}
+{{else if eq .Tag "Copyright"              }}{{template "copyright"              .}}
+{{else if eq .Tag "TrackName"              }}{{template "trackname"              .}}
+{{else if eq .Tag "InstrumentName"         }}{{template "instrumentname"         .}}
+{{else if eq .Tag "Lyric"                  }}{{template "lyric"                  .}}
+{{else if eq .Tag "Marker"                 }}{{template "marker"                 .}}
+{{else if eq .Tag "CuePoint"               }}{{template "cuepoint"               .}}
+{{else if eq .Tag "ProgramName"            }}{{template "programname"            .}}
+{{else if eq .Tag "DeviceName"             }}{{template "devicename"             .}}
+{{else if eq .Tag "MIDIChannelPrefix"      }}{{template "midichannelprefix"      .}}
+{{else if eq .Tag "MIDIPort"               }}{{template "midiport"               .}}
+{{else if eq .Tag "EndOfTrack"             }}{{template "endoftrack"             .}}
+{{else if eq .Tag "Tempo"                  }}{{template "tempo"                  .}}
+{{else if eq .Tag "SMPTEOffset"            }}{{template "smpteoffset"            .}}
+{{else if eq .Tag "TimeSignature"          }}{{template "timesignature"          .}}
+{{else if eq .Tag "KeySignature"           }}{{template "keysignature"           .}}
+{{else if eq .Tag "SequencerSpecificEvent" }}{{template "sequencerspecificevent" .}}
+{{else if eq .Tag "NoteOff"                }}{{template "noteoff"                .}}
+{{else if eq .Tag "NoteOn"                 }}{{template "noteon"                 .}}
+{{else if eq .Tag "PolyphonicPressure"     }}{{template "polyphonicpressure"     .}}
+{{else if eq .Tag "Controller"             }}{{template "controller"             .}}
+{{else if eq .Tag "ProgramChange"          }}{{template "programchange"          .}}
+{{else if eq .Tag "ChannelPressure"        }}{{template "channelpressure"        .}}
+{{else if eq .Tag "PitchBend"              }}{{template "pitchbend"              .}}
+{{else                                     }}{{template "unknown"                .}}
 {{end}}`,
 
-	"sequenceno":        `{{.Type}} {{pad .Tag 18}} {{.SequenceNumber}}`,
-	"text":              `{{.Type}} {{pad .Tag 18}} {{.Text}}`,
-	"copyright":         `{{.Type}} {{pad .Tag 18}} {{.Copyright}}`,
-	"trackname":         `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"instrumentname":    `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"lyric":             `{{.Type}} {{pad .Tag 18}} {{.Lyric}}`,
-	"marker":            `{{.Type}} {{pad .Tag 18}} {{.Marker}}`,
-	"cuepoint":          `{{.Type}} {{pad .Tag 18}} {{.CuePoint}}`,
-	"programname":       `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"devicename":        `{{.Type}} {{pad .Tag 18}} {{.Name}}`,
-	"midichannelprefix": `{{.Type}} {{pad .Tag 18}} {{.Channel}}`,
-	"midiport":          `{{.Type}} {{pad .Tag 18}} {{.Port}}`,
-	"endoftrack":        `{{.Type}} {{    .Tag   }}`,
-	"tempo":             `{{.Type}} {{pad .Tag 18}} tempo:{{.Tempo }}`,
-	"smpteoffset":       `{{.Type}} {{pad .Tag 18}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
-	"timesignature":     `{{.Type}} {{pad .Tag 18}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
-	"keysignature":      `{{.Type}} {{pad .Tag 18}} {{.Key }}`,
+	"sequenceno":             `{{.Type}} {{pad .Tag 22}} {{.SequenceNumber}}`,
+	"text":                   `{{.Type}} {{pad .Tag 22}} {{.Text}}`,
+	"copyright":              `{{.Type}} {{pad .Tag 22}} {{.Copyright}}`,
+	"trackname":              `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
+	"instrumentname":         `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
+	"lyric":                  `{{.Type}} {{pad .Tag 22}} {{.Lyric}}`,
+	"marker":                 `{{.Type}} {{pad .Tag 22}} {{.Marker}}`,
+	"cuepoint":               `{{.Type}} {{pad .Tag 22}} {{.CuePoint}}`,
+	"programname":            `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
+	"devicename":             `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
+	"midichannelprefix":      `{{.Type}} {{pad .Tag 22}} {{.Channel}}`,
+	"midiport":               `{{.Type}} {{pad .Tag 22}} {{.Port}}`,
+	"endoftrack":             `{{.Type}} {{    .Tag   }}`,
+	"tempo":                  `{{.Type}} {{pad .Tag 22}} tempo:{{.Tempo}}`,
+	"smpteoffset":            `{{.Type}} {{pad .Tag 22}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
+	"timesignature":          `{{.Type}} {{pad .Tag 22}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
+	"keysignature":           `{{.Type}} {{pad .Tag 22}} {{.Key}}`,
+	"sequencerspecificevent": `{{.Type}} {{pad .Tag 22}} {{.Data}}`,
 
-	"noteoff":            `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"noteon":             `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"polyphonicpressure": `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
-	"controller":         `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} controller:{{.Controller}}, value:{{.Value}}`,
-	"programchange":      `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} program:{{.Program }}`,
-	"channelpressure":    `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
-	"pitchbend":          `{{.Status}} {{pad .Tag 18}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
+	"noteoff":            `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"noteon":             `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"polyphonicpressure": `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
+	"controller":         `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} controller:{{.Controller}}, value:{{.Value}}`,
+	"programchange":      `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} program:{{.Program }}`,
+	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
+	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
+
+	"unknown": `?? {{.Tag}}`,
 }
 
 type Print struct {

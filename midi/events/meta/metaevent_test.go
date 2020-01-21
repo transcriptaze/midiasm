@@ -147,7 +147,7 @@ var eventlist = []struct {
 				events.Event{"SMPTEOffset", 76, 12, 0xff, []byte{0x00, 0xff, 0x54, 0x05, 0x89, 8, 7, 28, 13}},
 				0x54,
 			},
-			0x10, 9, 8, 7, 28, 13},
+			9, 8, 7, 29, 28, 13},
 		"   00 FF 54 05 89 08 07 1C 0D               tick:76         delta:12         54 SMPTEOffset      30fps (drop frame), 09:08:07, 28 frames, 13 fractional frames",
 	},
 

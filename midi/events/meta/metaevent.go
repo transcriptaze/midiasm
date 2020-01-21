@@ -116,6 +116,10 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 	case 0x59:
 		event.Tag = "KeySignature"
 		return NewKeySignature(ctx, &event, rr)
+
+	case 0x7f:
+		event.Tag = "SequencerSpecificEvent"
+		return NewSequencerSpecificEvent(&event, rr)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %02X", byte(event.Type))
