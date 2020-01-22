@@ -5,7 +5,8 @@ import (
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
-	"reflect"
+	"github.com/twystd/midiasm/midi/types"
+		"reflect"
 	"testing"
 )
 
@@ -38,7 +39,7 @@ func TestParseSingleMessage(t *testing.T) {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
 
-	expected := []byte{0x7e, 0x00, 0x09, 0x01, 0xf7}
+	expected := types.Hex([]byte{0x7e, 0x00, 0x09, 0x01, 0xf7})
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", expected, message.Data)
 	}
@@ -77,7 +78,7 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
 
-	expected := []byte{0x7e, 0x00, 0x09, 0x01, 0x43}
+	expected := types.Hex([]byte{0x7e, 0x00, 0x09, 0x01, 0x43})
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", expected, message.Data)
 	}

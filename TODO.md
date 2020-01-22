@@ -16,11 +16,13 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
+  - SysEx
+  - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
+  - Align event bytes on delta time
+  - Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
-- [ ] Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
-- [ ] Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [ ] Check SMTPEOffset only in track 0 for format 1
 
 ### Notes 

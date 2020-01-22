@@ -11,6 +11,20 @@ type SysExEvent struct {
 	events.Event
 }
 
+type reader struct {
+	rdr   io.ByteReader
+	event *SysExEvent
+}
+
+func (r reader) ReadByte() (byte, error) {
+	b, err := r.rdr.ReadByte()
+	if err == nil {
+		r.event.Bytes = append(r.event.Bytes, b)
+	}
+
+	return b, err
+}
+
 func (e SysExEvent) String() string {
 	return fmt.Sprintf("%s %v", e.Event, e.Status)
 }
@@ -24,19 +38,22 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		Event: e,
 	}
 
+	rr := reader{r, &event}
+
 	switch event.Status {
 	case 0xf0:
 		if ctx.Casio {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
-			return NewSysExSingleMessage(&event, r, ctx)
+			event.Tag = "SysExMessage"
+			return NewSysExSingleMessage(&event, rr, ctx)
 		}
 
 	case 0xf7:
 		if ctx.Casio {
-			return NewSysExContinuationMessage(&event, r, ctx)
+			return NewSysExContinuationMessage(&event, rr, ctx)
 		} else {
-			return NewSysExEscapeMessage(&event, r, ctx)
+			return NewSysExEscapeMessage(&event, rr, ctx)
 		}
 	}
 

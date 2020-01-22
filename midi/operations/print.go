@@ -50,6 +50,7 @@ var templates = map[string]string{
 {{else if eq .Tag "ProgramChange"          }}{{template "programchange"          .}}
 {{else if eq .Tag "ChannelPressure"        }}{{template "channelpressure"        .}}
 {{else if eq .Tag "PitchBend"              }}{{template "pitchbend"              .}}
+{{else if eq .Tag "SysExMessage"           }}{{template "sysexmessage"           .}}
 {{else                                     }}{{template "unknown"                .}}
 {{end}}`,
 
@@ -79,6 +80,8 @@ var templates = map[string]string{
 	"programchange":      `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} program:{{.Program }}`,
 	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
+
+	"sysexmessage": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
 }

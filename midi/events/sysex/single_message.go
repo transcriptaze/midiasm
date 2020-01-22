@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"strings"
 )
 
 type SysExSingleMessage struct {
 	SysExEvent
-	Data []byte
+	Data types.Hex
 }
 
 func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Context) (*SysExSingleMessage, error) {
