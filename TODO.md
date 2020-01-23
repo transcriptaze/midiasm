@@ -16,7 +16,8 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
-  - SysEx
+  - Remove old 'Render' implementation
+  - Load format from file
   - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
   - Align event bytes on delta time
   - Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)

@@ -16,7 +16,7 @@ const expected string = `
 00 FF 54 05 4D 2D 3B 07 27                  tick:0          delta:0          54 SMPTEOffset            13 45 59 25 7 39
 00 FF 2F 00                                 tick:0          delta:0          2F EndOfTrack
 
-4D 54 72 6B 00 00 00 E5…                    MTrk 1  length:229
+4D 54 72 6B 00 00 00 EA…                    MTrk 1  length:234
 00 FF 00 02 00 17                           tick:0          delta:0          00 SequenceNumber         23
 00 FF 01 0D 54 68 69 73 20 61 6E 64 20 54…  tick:0          delta:0          01 Text                   This and That
 00 FF 02 04 54 68 65 6D                     tick:0          delta:0          02 Copyright              Them
@@ -43,6 +43,7 @@ const expected string = `
 00 F0 03 43 12 00                           tick:720        delta:0          F0 SysExMessage           43 12 00
 81 48 F7 06 43 12 00 43 12 00               tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00
 64 F7 04 43 12 00 F7                        tick:1020       delta:100        F7 SysExContinuation      43 12 00 F7
+00 F7 02 F3 01                              tick:1020       delta:0          F7 SysExEscape            F3 01
 00 FF 2F 00                                 tick:1020       delta:0          2F EndOfTrack
 
 
@@ -58,7 +59,7 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20,
 		0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27,
 		0x00, 0xff, 0x2f, 0x00,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xe5,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xea,
 		0x00, 0xff, 0x00, 0x02, 0x00, 0x17,
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
@@ -85,6 +86,7 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xf0, 0x03, 0x43, 0x12, 0x00,
 		0x81, 0x48, 0xF7, 0x06, 0x43, 0x12, 0x00, 0x43, 0x12, 0x00,
 		0x64, 0xF7, 0x04, 0x43, 0x12, 0x00, 0xF7,
+		0x00, 0xF7, 0x02, 0xF3, 0x01,
 		0x00, 0xff, 0x2f, 0x00,
 	}
 
@@ -101,7 +103,7 @@ func TestPrintSMF(t *testing.T) {
 
 	if s.String() != expected {
 		l, ls, p, q := diff(expected, s.String())
-		t.Errorf("Output does not match expected (line %d):\n%s\n-----\n%s\n%s\n\n-----\n>> %s\n", l, s.String(), p, q, ls)
+		t.Errorf("Output does not match expected:\n%s\n>> line %d:\n>> %s\n--------\n   %s\n   %s\n--------\n", s.String(), l, ls, p, q)
 		diff(expected, s.String())
 	}
 }

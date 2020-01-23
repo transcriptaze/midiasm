@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
 )
@@ -38,7 +39,7 @@ func TestParseEscapeMessage(t *testing.T) {
 		t.Fatalf("SysEx escape message parse error - returned %T", event)
 	}
 
-	expected := []byte{0xf3, 0x01}
+	expected := types.Hex{0xf3, 0x01}
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx escape message data - expected:%v, got: %v", expected, message.Data)
 	}

@@ -52,6 +52,7 @@ var templates = map[string]string{
 {{else if eq .Tag "PitchBend"              }}{{template "pitchbend"              .}}
 {{else if eq .Tag "SysExMessage"           }}{{template "sysexmessage"           .}}
 {{else if eq .Tag "SysExContinuation"      }}{{template "sysexcontinuation"      .}}
+{{else if eq .Tag "SysExEscape"            }}{{template "sysexescape"            .}}
 {{else                                     }}{{template "unknown"                .}}
 {{end}}`,
 
@@ -84,6 +85,7 @@ var templates = map[string]string{
 
 	"sysexmessage":      `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 	"sysexcontinuation": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
+	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
 }

@@ -54,6 +54,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 			event.Tag = "SysExContinuation"
 			return NewSysExContinuationMessage(&event, rr, ctx)
 		} else {
+			event.Tag = "SysExEscape"
 			return NewSysExEscapeMessage(&event, rr, ctx)
 		}
 	}
