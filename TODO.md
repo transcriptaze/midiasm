@@ -17,6 +17,7 @@
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
   - Remove old 'Render' implementation
+  - Reimplement 'split' using templates
   - Load format from file
   - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
   - Align event bytes on delta time
@@ -26,6 +27,7 @@
 - [ ] Reference files
 - [ ] Check SMTPEOffset only in track 0 for format 1
 - [ ] Running status (?)
+- [ ] Add outstanding events to TestUnmarshalSMF
 
 ### Notes 
 

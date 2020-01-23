@@ -94,7 +94,7 @@ func TestPrintSMF(t *testing.T) {
 
 	printer := Print{}
 
-	printer.PrintWithTemplate(&smf, &s)
+	printer.Execute(&smf, &s)
 
 	if s.String() != expected {
 		l, ls, p, q := diff(expected, s.String())

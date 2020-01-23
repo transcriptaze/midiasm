@@ -86,28 +86,9 @@ var templates = map[string]string{
 }
 
 type Print struct {
-	Writer func(midi.Chunk) (io.Writer, error)
 }
 
-func (p *Print) Execute(smf *midi.SMF) error {
-	if w, err := p.Writer(smf.MThd); err != nil {
-		return err
-	} else {
-		smf.MThd.Print(w)
-	}
-
-	for _, track := range smf.Tracks {
-		if w, err := p.Writer(track); err != nil {
-			return err
-		} else {
-			track.Print(w)
-		}
-	}
-
-	return nil
-}
-
-func (p *Print) PrintWithTemplate(smf *midi.SMF, w io.Writer) error {
+func (p *Print) Execute(smf *midi.SMF, w io.Writer) error {
 	functions := template.FuncMap{
 		"ellipsize": ellipsize,
 		"pad":       pad,
