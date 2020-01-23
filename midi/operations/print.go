@@ -9,16 +9,11 @@ import (
 	"text/template"
 )
 
-const document string = `
->>>>>>>>>>>>>>>>>>>>>>>>>
-{{pad (ellipsize .MThd.Bytes 0 14) 42}}  {{template "MThd" .MThd}}
+const document string = `{{pad (ellipsize .MThd.Bytes 0 14) 42}}  {{template "MThd" .MThd}}
 
 {{range .Tracks}}{{pad (ellipsize      .Bytes 0 8)  42}}  {{template "MTrk" .}}
 {{range .Events}}{{pad (ellipsize      .Bytes 0 14) 42}}  {{template "event" .}}{{end}}
-{{end}}
->>>>>>>>>>>>>>>>>>>>>>>>>
-
-`
+{{end}}`
 
 var templates = map[string]string{
 	"MThd": `{{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,

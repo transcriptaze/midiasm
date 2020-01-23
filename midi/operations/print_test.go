@@ -6,9 +6,7 @@ import (
 	"testing"
 )
 
-const expected string = `
->>>>>>>>>>>>>>>>>>>>>>>>>
-4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length:6, format:1, tracks:2, metrical time:480 ppqn
+const expected string = `4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length:6, format:1, tracks:2, metrical time:480 ppqn
 
 4D 54 72 6B 00 00 00 21…                    MTrk 0  length:33
 00 FF 03 09 45 78 61 6D 70 6C 65 20 31      tick:0          delta:0          03 TrackName              Example 1
@@ -45,9 +43,6 @@ const expected string = `
 64 F7 04 43 12 00 F7                        tick:1020       delta:100        F7 SysExContinuation      43 12 00 F7
 00 F7 02 F3 01                              tick:1020       delta:0          F7 SysExEscape            F3 01
 00 FF 2F 00                                 tick:1020       delta:0          2F EndOfTrack
-
-
->>>>>>>>>>>>>>>>>>>>>>>>>
 
 `
 
