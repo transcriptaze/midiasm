@@ -80,19 +80,3 @@ func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
 		FractionalFrames: fractions,
 	}, nil
 }
-
-func (e *SMPTEOffset) Render(w io.Writer) {
-	framerate := "??"
-	switch e.FrameRate {
-	case 24:
-		framerate = "24fps"
-	case 25:
-		framerate = "25fps"
-	case 29:
-		framerate = "30fps (drop frame)"
-	case 30:
-		framerate = "30fps (non-drop frame)"
-	}
-
-	fmt.Fprintf(w, "%s %-16s %s, %02d:%02d:%02d, %d frames, %d fractional frames", e.MetaEvent, "SMPTEOffset", framerate, e.Hour, e.Minute, e.Second, e.Frames, e.FractionalFrames)
-}

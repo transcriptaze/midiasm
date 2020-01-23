@@ -25,7 +25,3 @@ func NewInstrumentName(event *MetaEvent, r io.ByteReader) (*InstrumentName, erro
 		Name:      string(name),
 	}, nil
 }
-
-func (e *InstrumentName) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "InstrumentName", e.Name)
-}

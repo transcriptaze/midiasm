@@ -87,26 +87,3 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 		t.Errorf("context Casio flag should be set")
 	}
 }
-
-func TestRenderSingleMessage(t *testing.T) {
-	event := events.Event{
-		Tick:   960,
-		Delta:  480,
-		Status: 0xf0,
-		Bytes:  []byte{0x83, 0x60, 0xf0, 0x7e, 0x00, 0x09, 0x01, 0xf7},
-	}
-
-	message := SysExSingleMessage{
-		SysExEvent: SysExEvent{event},
-		Data:       []byte{0x7e, 0x00, 0x09, 0x01, 0xf7},
-	}
-
-	w := new(bytes.Buffer)
-
-	message.Render(w)
-
-	expected := "   83 60 F0 7E 00 09 01 F7                  tick:960        delta:480        F0 SingleMessage    7E 00 09 01 F7"
-	if w.String() != expected {
-		t.Errorf("%s rendered incorrectly\nExpected: '%s'\ngot:      '%s'", "SysExSingleMessage", expected, w.String())
-	}
-}

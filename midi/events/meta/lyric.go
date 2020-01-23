@@ -25,7 +25,3 @@ func NewLyric(event *MetaEvent, r io.ByteReader) (*Lyric, error) {
 		Lyric:     string(lyric),
 	}, nil
 }
-
-func (e *Lyric) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "Lyric", e.Lyric)
-}

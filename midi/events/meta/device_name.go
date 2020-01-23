@@ -25,7 +25,3 @@ func NewDeviceName(event *MetaEvent, r io.ByteReader) (*DeviceName, error) {
 		Name:      string(name),
 	}, nil
 }
-
-func (e *DeviceName) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "DeviceName", e.Name)
-}

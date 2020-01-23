@@ -16,7 +16,6 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
-  - Remove old 'Render' implementation
   - Reimplement 'split' using templates
   - Load format from file
   - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)

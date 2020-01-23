@@ -12,7 +12,6 @@ import (
 	"github.com/twystd/midiasm/midi/events/sysex"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
-	"text/template"
 )
 
 type MTrk struct {
@@ -58,26 +57,6 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	chunk.Length = length
 	chunk.Events = eventlist
 	chunk.Bytes = data
-
-	return nil
-}
-
-func (chunk *MTrk) Print(w io.Writer) error {
-	format := "{{slice .Bytes 0 8}}…                    {{.Tag}} {{.TrackNumber}} length:{{.Length}}"
-	tmpl, err := template.New("MTrk").Parse(format)
-	if err != nil {
-		return err
-	}
-
-	err = tmpl.Execute(w, chunk)
-	if err != nil {
-		return err
-	}
-
-	for _, e := range chunk.Events {
-		fmt.Fprintln(w)
-		e.Render(w)
-	}
 
 	return nil
 }

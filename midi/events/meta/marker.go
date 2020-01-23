@@ -25,7 +25,3 @@ func NewMarker(event *MetaEvent, r io.ByteReader) (*Marker, error) {
 		Marker:    string(marker),
 	}, nil
 }
-
-func (e *Marker) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "Marker", e.Marker)
-}

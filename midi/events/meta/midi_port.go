@@ -34,7 +34,3 @@ func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
 		Port:      port & 0x7f,
 	}, nil
 }
-
-func (e *MIDIPort) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %d", e.MetaEvent, "MIDIPort", e.Port)
-}

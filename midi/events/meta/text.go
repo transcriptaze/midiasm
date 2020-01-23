@@ -25,7 +25,3 @@ func NewText(event *MetaEvent, r io.ByteReader) (*Text, error) {
 		Text:      string(data),
 	}, nil
 }
-
-func (e *Text) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "Text", e.Text)
-}

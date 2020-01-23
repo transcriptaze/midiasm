@@ -1,11 +1,9 @@
 package metaevent
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
-	"strings"
 )
 
 type SequencerSpecificEvent struct {
@@ -27,14 +25,4 @@ func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpe
 		MetaEvent: *event,
 		Data:      data,
 	}, nil
-}
-
-func (e *SequencerSpecificEvent) Render(w io.Writer) {
-	data := new(bytes.Buffer)
-
-	for _, b := range e.Data {
-		fmt.Fprintf(data, "%02X ", b)
-	}
-
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "SequencerSpecificEvent", strings.TrimSpace(data.String()))
 }

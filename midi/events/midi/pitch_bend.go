@@ -31,7 +31,3 @@ func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
 		Bend:      bend,
 	}, nil
 }
-
-func (e *PitchBend) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s channel:%-2v bend:%d", e.MidiEvent, "PitchBend", e.Channel, e.Bend)
-}

@@ -1,12 +1,10 @@
 package sysex
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
-	"strings"
 )
 
 type SysExContinuationMessage struct {
@@ -35,14 +33,4 @@ func NewSysExContinuationMessage(event *SysExEvent, r io.ByteReader, ctx *contex
 		SysExEvent: *event,
 		Data:       data,
 	}, nil
-}
-
-func (e *SysExContinuationMessage) Render(w io.Writer) {
-	data := new(bytes.Buffer)
-
-	for _, b := range e.Data {
-		fmt.Fprintf(data, "%02X ", b)
-	}
-
-	fmt.Fprintf(w, "%s %-16s %s", e.SysExEvent, "ContinuationMessage", strings.TrimSpace(data.String()))
 }

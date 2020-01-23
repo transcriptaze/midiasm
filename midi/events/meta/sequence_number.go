@@ -33,7 +33,3 @@ func NewSequenceNumber(event *MetaEvent, r io.ByteReader) (*SequenceNumber, erro
 		SequenceNumber: sequence,
 	}, nil
 }
-
-func (e *SequenceNumber) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %v", e.MetaEvent, "SequenceNumber", e.SequenceNumber)
-}

@@ -25,7 +25,3 @@ func NewCuePoint(event *MetaEvent, r io.ByteReader) (*CuePoint, error) {
 		CuePoint:  string(cuepoint),
 	}, nil
 }
-
-func (e *CuePoint) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "CuePoint", e.CuePoint)
-}

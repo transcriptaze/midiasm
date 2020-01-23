@@ -25,7 +25,3 @@ func NewProgramName(event *MetaEvent, r io.ByteReader) (*ProgramName, error) {
 		Name:      string(name),
 	}, nil
 }
-
-func (e *ProgramName) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "ProgramName", e.Name)
-}

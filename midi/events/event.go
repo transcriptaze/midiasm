@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type IEvent interface {
 	TickValue() uint64
 	DeltaTime() uint32
-	Render(io.Writer)
 }
 
 type Event struct {

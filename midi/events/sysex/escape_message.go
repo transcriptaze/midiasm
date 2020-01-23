@@ -1,12 +1,10 @@
 package sysex
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
-	"strings"
 )
 
 type SysExEscapeMessage struct {
@@ -32,14 +30,4 @@ func NewSysExEscapeMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 		SysExEvent: *event,
 		Data:       data,
 	}, nil
-}
-
-func (e *SysExEscapeMessage) Render(w io.Writer) {
-	data := new(bytes.Buffer)
-
-	for _, b := range e.Data {
-		fmt.Fprintf(data, "%02X ", b)
-	}
-
-	fmt.Fprintf(w, "%s %-16s %s", e.SysExEvent, "EscapeMessage", strings.TrimSpace(data.String()))
 }

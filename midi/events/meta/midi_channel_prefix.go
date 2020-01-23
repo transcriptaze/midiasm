@@ -32,7 +32,3 @@ func NewMIDIChannelPrefix(event *MetaEvent, r io.ByteReader) (*MIDIChannelPrefix
 		Channel:   channel,
 	}, nil
 }
-
-func (e *MIDIChannelPrefix) Render(w io.Writer) {
-	fmt.Fprintf(w, "%s %-16s %d", e.MetaEvent, "MIDIChannelPrefix", e.Channel)
-}

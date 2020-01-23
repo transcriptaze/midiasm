@@ -102,20 +102,3 @@ func NewKeySignature(ctx *context.Context, event *MetaEvent, r io.ByteReader) (*
 		Key:         key,
 	}, nil
 }
-
-func (e *KeySignature) Render(w io.Writer) {
-	switch e.KeyType {
-	case 0:
-		if signature, ok := major_keys[e.Accidentals]; ok {
-			fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "KeySignature", signature)
-			return
-		}
-	case 1:
-		if signature, ok := minor_keys[e.Accidentals]; ok {
-			fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "KeySignature", signature)
-			return
-		}
-	}
-
-	fmt.Fprintf(w, "%s %-16s %s", e.MetaEvent, "KeySignature", "???")
-}

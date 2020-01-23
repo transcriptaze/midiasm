@@ -4,8 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
-	"text/template"
 )
 
 type MThd struct {
@@ -83,14 +81,4 @@ func (chunk *MThd) UnmarshalBinary(data []byte) error {
 		}
 	}
 	return nil
-}
-
-func (chunk *MThd) Print(w io.Writer) error {
-	format := "{{.Bytes}}   {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}"
-	tmpl, err := template.New("MThd").Parse(format)
-	if err != nil {
-		return err
-	}
-
-	return tmpl.Execute(w, chunk)
 }

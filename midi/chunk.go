@@ -1,9 +1,6 @@
 package midi
 
-import (
-	"io"
-)
+import ()
 
 type Chunk interface {
-	Print(io.Writer) error
 }
