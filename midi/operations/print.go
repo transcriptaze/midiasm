@@ -51,6 +51,7 @@ var templates = map[string]string{
 {{else if eq .Tag "ChannelPressure"        }}{{template "channelpressure"        .}}
 {{else if eq .Tag "PitchBend"              }}{{template "pitchbend"              .}}
 {{else if eq .Tag "SysExMessage"           }}{{template "sysexmessage"           .}}
+{{else if eq .Tag "SysExContinuation"      }}{{template "sysexcontinuation"      .}}
 {{else                                     }}{{template "unknown"                .}}
 {{end}}`,
 
@@ -81,7 +82,8 @@ var templates = map[string]string{
 	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
 
-	"sysexmessage": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
+	"sysexmessage":      `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
+	"sysexcontinuation": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
 }

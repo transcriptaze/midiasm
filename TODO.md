@@ -24,6 +24,7 @@
 - [ ] Format 2
 - [ ] Reference files
 - [ ] Check SMTPEOffset only in track 0 for format 1
+- [ ] Running status (?)
 
 ### Notes 
 

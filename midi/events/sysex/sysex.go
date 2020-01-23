@@ -51,6 +51,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 
 	case 0xf7:
 		if ctx.Casio {
+			event.Tag = "SysExContinuation"
 			return NewSysExContinuationMessage(&event, rr, ctx)
 		} else {
 			return NewSysExEscapeMessage(&event, rr, ctx)
