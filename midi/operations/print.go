@@ -15,12 +15,12 @@ var templates = map[string]string{
 {{range .Tracks}}
 {{template "MTrk" .}}{{end}}`,
 
-	"MThd": `{{pad (ellipsize .Bytes 0 14) 42}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
+	"MThd": `{{template "hex" .Bytes}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
 
-	"MTrk": `{{pad (ellipsize .Bytes 0 8)  42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
+	"MTrk": `{{template "hexx" .Bytes}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
 {{range .Events}}{{template "event" .}}{{end}}`,
 
-	"event": `{{pad (ellipsize      .Bytes 0 14) 42}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
+	"event": `{{template "hex" .Bytes}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
 	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
 {{else if eq .Tag "Text"                   }}{{template "text"                   .}}
 {{else if eq .Tag "Copyright"              }}{{template "copyright"              .}}
@@ -84,6 +84,8 @@ var templates = map[string]string{
 	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
+	"hex":     `{{pad (ellipsize . 0 14) 42}}`,
+	"hexx":    `{{pad (ellipsize . 0 8)  42}}`,
 }
 
 type Print struct {
