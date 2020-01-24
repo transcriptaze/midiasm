@@ -91,7 +91,10 @@ func TestPrintSMF(t *testing.T) {
 
 	var s strings.Builder
 
-	printer := Print{}
+	printer, err := NewPrint()
+	if err != nil {
+		t.Fatalf("Unexpected error initialising 'print' operation (%v)", err)
+	}
 
 	printer.Print(&smf, "document", &s)
 

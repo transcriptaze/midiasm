@@ -12,10 +12,11 @@ import (
 )
 
 type Print struct {
-	out     string
-	split   bool
-	verbose bool
-	debug   bool
+	out       string
+	split     bool
+	templates string
+	verbose   bool
+	debug     bool
 }
 
 func (p *Print) flagset() *flag.FlagSet {
@@ -23,6 +24,7 @@ func (p *Print) flagset() *flag.FlagSet {
 
 	flagset.StringVar(&p.out, "out", "", "Output file path (or directory for split files)")
 	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
+	flagset.StringVar(&p.templates, "templates", "", "Loads the formatting templates from a file")
 	flagset.BoolVar(&p.verbose, "verbose", false, "Enable progress information")
 	flagset.BoolVar(&p.debug, "debug", false, "Enable debugging information")
 
@@ -33,14 +35,33 @@ func (p *Print) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
+	op, err := operations.NewPrint()
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	if p.templates != "" {
+		f, err := os.Open(p.templates)
+		if err == nil {
+			err = op.LoadTemplates(f)
+			f.Close()
+		}
+
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+	}
+
 	if p.split {
-		p.separate(smf)
+		p.separate(op, smf)
 	} else {
-		p.write(smf)
+		p.write(op, smf)
 	}
 }
 
-func (p *Print) write(smf *midi.SMF) {
+func (p *Print) write(op *operations.Print, smf *midi.SMF) {
 	out := os.Stdout
 
 	if p.out != "" {
@@ -55,16 +76,14 @@ func (p *Print) write(smf *midi.SMF) {
 		out = w
 	}
 
-	op := operations.Print{}
 	err := op.Print(smf, "document", out)
 	if err != nil {
 		fmt.Printf("Error %v extracting MIDI information\n", err)
 	}
 }
 
-func (p *Print) separate(smf *midi.SMF) {
+func (p *Print) separate(op *operations.Print, smf *midi.SMF) {
 	// Get base filename and Create out directory
-	op := operations.Print{}
 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
 	dir := path.Dir(smf.File)
 

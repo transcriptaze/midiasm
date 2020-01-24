@@ -26,8 +26,7 @@ clean:
 	rm -rf bin/*
 
 debug: build
-	./bin/midiasm --debug examples/example-01.mid
-#	./bin/midiasm notes examples/example-01.mid
+	./bin/midiasm --debug --templates examples/example-01.templates examples/example-01.mid
 
 example: build
 	mkdir -p tmp

@@ -1,9 +1,11 @@
 package operations
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
+	"io/ioutil"
 	"strings"
 	"text/template"
 )
@@ -89,9 +91,10 @@ var templates = map[string]string{
 }
 
 type Print struct {
+	root *template.Template
 }
 
-func (p *Print) Print(object interface{}, tid string, w io.Writer) error {
+func NewPrint() (*Print, error) {
 	functions := template.FuncMap{
 		"ellipsize": ellipsize,
 		"pad":       pad,
@@ -99,21 +102,53 @@ func (p *Print) Print(object interface{}, tid string, w io.Writer) error {
 
 	tmpl, err := template.New("document").Funcs(functions).Parse(document)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for name, t := range templates {
 		if _, err = tmpl.New(name).Parse(t); err != nil {
+			return nil, err
+		}
+	}
+
+	return &Print{
+		root: tmpl,
+	}, nil
+}
+
+func (p *Print) LoadTemplates(r io.Reader) error {
+	templates := struct {
+		Templates map[string]string `json:"templates"`
+	}{
+		Templates: make(map[string]string, 0),
+	}
+
+	bytes, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(bytes, &templates)
+	if err != nil {
+		return err
+	}
+
+	for name, t := range templates.Templates {
+		if _, err = p.root.New(name).Parse(t); err != nil {
 			return err
 		}
 	}
 
-	t := tmpl.Lookup(tid)
-	if t == nil {
-		return fmt.Errorf("'%s' does not match any defined template", tid)
+	return nil
+}
+
+func (p *Print) Print(object interface{}, template string, w io.Writer) error {
+	tmpl := p.root.Lookup(template)
+	if tmpl == nil {
+		return fmt.Errorf("'%s' does not match any defined template", template)
 	}
 
-	return t.Execute(w, object)
+	return tmpl.Execute(w, object)
 }
 
 func ellipsize(bytes types.Hex, offsets ...int) string {
