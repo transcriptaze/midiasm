@@ -7,6 +7,8 @@ import (
 	"github.com/twystd/midiasm/midi/eventlog"
 	"github.com/twystd/midiasm/midi/operations"
 	"os"
+	"path"
+	"strings"
 )
 
 type Print struct {
@@ -31,13 +33,11 @@ func (p *Print) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
-	// if p.split {
-	// 	p.separate(smf)
-	// } else {
-	// 	p.write(smf)
-	// }
-
-	p.write(smf)
+	if p.split {
+		p.separate(smf)
+	} else {
+		p.write(smf)
+	}
 }
 
 func (p *Print) write(smf *midi.SMF) {
@@ -56,68 +56,54 @@ func (p *Print) write(smf *midi.SMF) {
 	}
 
 	op := operations.Print{}
-	err := op.Execute(smf, out)
+	err := op.Print(smf, "document", out)
 	if err != nil {
 		fmt.Printf("Error %v extracting MIDI information\n", err)
 	}
 }
 
-// func (p *Print) separate(smf *midi.SMF) {
-// 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
-// 	dir := path.Dir(smf.File)
-//
-// 	if p.out != "" {
-// 		dir = p.out
-// 		err := os.MkdirAll(dir, os.ModeDir)
-// 		if err != nil {
-// 			fmt.Printf("Error: %v", err)
-// 			return
-// 		}
-// 	}
-//
-// 	state := struct {
-// 		chunk midi.Chunk
-// 		w     io.Writer
-// 		files []*os.File
-// 	}{
-// 		files: make([]*os.File, 0),
-// 	}
-//
-// 	defer func() {
-// 		for _, f := range state.files {
-// 			f.Close()
-// 		}
-// 	}()
-//
-// 	f := func(chunk midi.Chunk) (io.Writer, error) {
-// 		if chunk != state.chunk {
-// 			if _, ok := chunk.(*midi.MThd); ok {
-// 				filename := fmt.Sprintf("%s.MThd", base)
-// 				if w, err := os.Create(path.Join(dir, filename)); err != nil {
-// 					return nil, err
-// 				} else {
-// 					state.w = w
-// 				}
-// 			}
-//
-// 			if mtrk, ok := chunk.(*midi.MTrk); ok {
-// 				filename := fmt.Sprintf("%s-%d.MTrk", base, mtrk.TrackNumber)
-// 				if w, err := os.Create(path.Join(dir, filename)); err != nil {
-// 					return nil, err
-// 				} else {
-// 					state.w = w
-// 				}
-// 			}
-//
-// 			state.chunk = chunk
-// 		}
-//
-// 		return state.w, nil
-// 	}
-//
-// 	q := operations.Print{f}
-// 	err := q.Execute(smf)
-// 	if err != nil {
-// 		fmt.Printf("Error %v extracting notes\n", err)
-// 	}
-// }
+func (p *Print) separate(smf *midi.SMF) {
+	// Get base filename and Create out directory
+	op := operations.Print{}
+	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
+	dir := path.Dir(smf.File)
+
+	if p.out != "" {
+		dir = p.out
+		err := os.MkdirAll(dir, os.ModeDir)
+		if err != nil {
+			fmt.Printf("Error: %v", err)
+			return
+		}
+	}
+
+	// Print MThd
+	filename := fmt.Sprintf("%s.MThd", base)
+	w, err := os.Create(path.Join(dir, filename))
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+		return
+	}
+
+	if err = op.Print(smf.MThd, "MThd", w); err != nil {
+		fmt.Printf("Error %v extracting MThd information\n", err)
+	}
+
+	w.Close()
+
+	// Print tracks
+	for _, mtrk := range smf.Tracks {
+		filename := fmt.Sprintf("%s-%d.MTrk", base, mtrk.TrackNumber)
+		w, err := os.Create(path.Join(dir, filename))
+		if err != nil {
+			fmt.Printf("Error: %v", err)
+			return
+		}
+
+		if err = op.Print(mtrk, "MTrk", w); err != nil {
+			fmt.Printf("Error %v extracting MTrk%d information\n", mtrk.TrackNumber, err)
+		}
+
+		w.Close()
+	}
+}

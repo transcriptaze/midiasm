@@ -2,24 +2,25 @@ package operations
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"strings"
 	"text/template"
 )
 
-const document string = `{{pad (ellipsize .MThd.Bytes 0 14) 42}}  {{template "MThd" .MThd}}
-
-{{range .Tracks}}{{pad (ellipsize      .Bytes 0 8)  42}}  {{template "MTrk" .}}
-{{range .Events}}{{pad (ellipsize      .Bytes 0 14) 42}}  {{template "event" .}}{{end}}
-{{end}}`
+const document string = `{{template "SMF" .}}`
 
 var templates = map[string]string{
-	"MThd": `{{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
-	"MTrk": `{{.Tag}} {{.TrackNumber}} length:{{.Length}}`,
+	"SMF": `{{template "MThd" .MThd}}
+{{range .Tracks}}
+{{template "MTrk" .}}{{end}}`,
 
-	"event": `tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
+	"MThd": `{{pad (ellipsize .Bytes 0 14) 42}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
+
+	"MTrk": `{{pad (ellipsize .Bytes 0 8)  42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
+{{range .Events}}{{template "event" .}}{{end}}`,
+
+	"event": `{{pad (ellipsize      .Bytes 0 14) 42}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
 	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
 {{else if eq .Tag "Text"                   }}{{template "text"                   .}}
 {{else if eq .Tag "Copyright"              }}{{template "copyright"              .}}
@@ -88,13 +89,13 @@ var templates = map[string]string{
 type Print struct {
 }
 
-func (p *Print) Execute(smf *midi.SMF, w io.Writer) error {
+func (p *Print) Print(object interface{}, tid string, w io.Writer) error {
 	functions := template.FuncMap{
 		"ellipsize": ellipsize,
 		"pad":       pad,
 	}
 
-	tmpl, err := template.New("SMF").Funcs(functions).Parse(document)
+	tmpl, err := template.New("document").Funcs(functions).Parse(document)
 	if err != nil {
 		return err
 	}
@@ -105,7 +106,12 @@ func (p *Print) Execute(smf *midi.SMF, w io.Writer) error {
 		}
 	}
 
-	return tmpl.Execute(w, smf)
+	t := tmpl.Lookup(tid)
+	if t == nil {
+		return fmt.Errorf("'%s' does not match any defined template", tid)
+	}
+
+	return t.Execute(w, object)
 }
 
 func ellipsize(bytes types.Hex, offsets ...int) string {

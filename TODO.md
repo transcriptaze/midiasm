@@ -16,7 +16,6 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
-  - Reimplement 'split' using templates
   - Load format from file
   - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
   - Align event bytes on delta time
@@ -27,6 +26,7 @@
 - [ ] Check SMTPEOffset only in track 0 for format 1
 - [ ] Running status (?)
 - [ ] Add outstanding events to TestUnmarshalSMF
+- [ ] Rework decoder using tags/reflection
 
 ### Notes 
 
@@ -92,7 +92,6 @@
 8.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
 9.  [How to use a field of struct or variable value as template name?](https://stackoverflow.com/questions/28830543/how-to-use-a-field-of-struct-or-variable-value-as-template-name)
 10. Online/Javascript version
-11. Rework decoder using tags/reflection
 12. https://github.com/go-interpreter/chezgo
 13. SDK (?)
 

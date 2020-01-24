@@ -43,7 +43,6 @@ const expected string = `4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length
 64 F7 04 43 12 00 F7                        tick:1020       delta:100        F7 SysExContinuation      43 12 00 F7
 00 F7 02 F3 01                              tick:1020       delta:0          F7 SysExEscape            F3 01
 00 FF 2F 00                                 tick:1020       delta:0          2F EndOfTrack
-
 `
 
 func TestPrintSMF(t *testing.T) {
@@ -94,7 +93,7 @@ func TestPrintSMF(t *testing.T) {
 
 	printer := Print{}
 
-	printer.Execute(&smf, &s)
+	printer.Print(&smf, "document", &s)
 
 	if s.String() != expected {
 		l, ls, p, q := diff(expected, s.String())
