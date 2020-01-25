@@ -8,7 +8,8 @@ import (
 
 type SequencerSpecificEvent struct {
 	MetaEvent
-	Data types.Hex
+	Manufacturer types.Manufacturer
+	Data         types.Hex
 }
 
 func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpecificEvent, error) {
@@ -16,13 +17,21 @@ func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpe
 		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", event.Type)
 	}
 
-	data, err := read(r)
+	bytes, err := read(r)
 	if err != nil {
 		return nil, err
 	}
 
+	id := bytes[0:0]
+	data := bytes[1:]
+	if data[0] == 0x00 {
+		id = bytes[0:3]
+		data = bytes[3:]
+	}
+
 	return &SequencerSpecificEvent{
-		MetaEvent: *event,
-		Data:      data,
+		MetaEvent:    *event,
+		Manufacturer: types.LookupManufacturer(id),
+		Data:         data,
 	}, nil
 }

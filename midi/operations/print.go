@@ -71,7 +71,7 @@ var templates = map[string]string{
 	"smpteoffset":            `{{.Type}} {{pad .Tag 22}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
 	"timesignature":          `{{.Type}} {{pad .Tag 22}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
 	"keysignature":           `{{.Type}} {{pad .Tag 22}} {{.Key}}`,
-	"sequencerspecificevent": `{{.Type}} {{pad .Tag 22}} {{.Data}}`,
+	"sequencerspecificevent": `{{.Type}} {{pad .Tag 22}} {{.Manufacturer.Name}}, {{.Data}}`,
 
 	"noteoff":            `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
 	"noteon":             `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,

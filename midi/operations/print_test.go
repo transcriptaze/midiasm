@@ -30,7 +30,7 @@ func TestPrintSMF(t *testing.T) {
 00 FF 21 01 70                              tick:0          delta:0          21 MIDIPort               112
 00 FF 58 04 04 02 18 08                     tick:0          delta:0          58 TimeSignature          4/4, 24 ticks per click, 8/32 per quarter
 00 FF 59 02 00 01                           tick:0          delta:0          59 KeySignature           A minor
-00 FF 7F 06 00 00 3B 3A 4C 5E               tick:0          delta:0          7F SequencerSpecificEvent 00 00 3B 3A 4C 5E
+00 FF 7F 06 00 00 3B 3A 4C 5E               tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
 00 C0 19                                    tick:0          delta:0          C0 ProgramChange          channel:0  program:25
 00 B0 65 00                                 tick:0          delta:0          B0 Controller             channel:0  controller:101, value:0
 00 A0 64                                    tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
@@ -129,7 +129,7 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
 00 FF 21 01 70                              tick:0          delta:0          21 MIDIPort               112
 00 FF 58 04 04 02 18 08                     tick:0          delta:0          58 TimeSignature          4/4, 24 ticks per click, 8/32 per quarter
 00 FF 59 02 00 01                           tick:0          delta:0          59 KeySignature           A minor
-00 FF 7F 06 00 00 3B 3A 4C 5E               tick:0          delta:0          7F SequencerSpecificEvent 00 00 3B 3A 4C 5E
+00 FF 7F 06 00 00 3B 3A 4C 5E               tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
 00 C0 19                                    tick:0          delta:0          C0 ProgramChange          channel:0  program:25
 00 B0 65 00                                 tick:0          delta:0          B0 Controller             channel:0  controller:101, value:0
 00 A0 64                                    tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
