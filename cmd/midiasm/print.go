@@ -12,6 +12,7 @@ import (
 )
 
 type Print struct {
+	conf      string
 	out       string
 	split     bool
 	templates string
@@ -29,6 +30,10 @@ func (p *Print) flagset() *flag.FlagSet {
 	flagset.BoolVar(&p.debug, "debug", false, "Enable debugging information")
 
 	return flagset
+}
+
+func (p *Print) config() string {
+	return p.conf
 }
 
 func (p *Print) Execute(smf *midi.SMF) {

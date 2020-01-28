@@ -10,10 +10,25 @@ import (
 )
 
 type Notes struct {
+	conf    string
 	out     string
 	split   bool
 	verbose bool
 	debug   bool
+}
+
+func (n *Notes) flagset() *flag.FlagSet {
+	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
+
+	flagset.StringVar(&n.out, "out", "", "Output file path")
+	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
+
+	return flagset
+}
+
+func (n *Notes) config() string {
+	return n.conf
 }
 
 func (n *Notes) Execute(smf *midi.SMF) {
@@ -38,14 +53,4 @@ func (n *Notes) Execute(smf *midi.SMF) {
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)
 	}
-}
-
-func (n *Notes) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
-
-	flagset.StringVar(&n.out, "out", "", "Output file path")
-	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
-
-	return flagset
 }

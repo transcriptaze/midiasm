@@ -4,11 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
+	"io/ioutil"
 	"strings"
 	"time"
 )
@@ -74,6 +76,32 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 
 	smf.MThd = mthd
 	smf.Tracks = tracks
+
+	return nil
+}
+
+func (smf *SMF) LoadConfiguration(r io.Reader) error {
+	conf := struct {
+		Manufacturers []types.Manufacturer `json:"manufacturers"`
+	}{
+		Manufacturers: make([]types.Manufacturer, 0),
+	}
+
+	bytes, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(bytes, &conf)
+	if err != nil {
+		return err
+	}
+
+	for _, m := range conf.Manufacturers {
+		if err := types.AddManufacturer(m); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

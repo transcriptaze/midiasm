@@ -10,6 +10,7 @@ import (
 
 type command interface {
 	flagset() *flag.FlagSet
+	config() string
 	Execute(*midi.SMF)
 }
 
@@ -41,6 +42,19 @@ func main() {
 
 	smf := midi.SMF{
 		File: filename,
+	}
+
+	if conf := cmd.config(); conf != "" {
+		f, err := os.Open(conf)
+		if err == nil {
+			err = smf.LoadConfiguration(f)
+			f.Close()
+		}
+
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
 	}
 
 	if err = smf.UnmarshalBinary(bytes); err != nil {

@@ -2,12 +2,40 @@ package types
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Manufacturer struct {
-	ID     []byte
-	Region string
-	Name   string
+	ID     []byte `json:"id"`
+	Region string `json:"region"`
+	Name   string `json:"name"`
+}
+
+func AddManufacturer(m Manufacturer) error {
+	if len(m.ID) != 1 && len(m.ID) != 3 {
+		return fmt.Errorf("Invalid manufacturer ID: %v", m.ID)
+	}
+
+	if strings.Trim(m.Name, " ") == "" {
+		return fmt.Errorf("Invalid manufacturer Name: %s", m.Name)
+	}
+
+	key := fmt.Sprintf("%02X", m.ID[0])
+	if len(m.ID) == 3 {
+		key = fmt.Sprintf("%02X%02X", m.ID[1], m.ID[2])
+	}
+
+	v := Manufacturer{
+		ID:     make([]byte, len(m.ID)),
+		Region: strings.Trim(m.Region, " "),
+		Name:   strings.Trim(m.Name, " "),
+	}
+
+	copy(v.ID, m.ID)
+
+	manufacturers[key] = v
+
+	return nil
 }
 
 func LookupManufacturer(id []byte) Manufacturer {
@@ -19,14 +47,14 @@ func LookupManufacturer(id []byte) Manufacturer {
 
 	switch len(id) {
 	case 1:
-		idx := fmt.Sprintf("%02X", id[0])
-		if m, ok := manufacturers[idx]; ok {
+		key := fmt.Sprintf("%02X", id[0])
+		if m, ok := manufacturers[key]; ok {
 			return m
 		}
 
 	case 3:
-		idx := fmt.Sprintf("%02X%02X", id[1], id[2])
-		if m, ok := manufacturers[idx]; ok {
+		key := fmt.Sprintf("%02X%02X", id[1], id[2])
+		if m, ok := manufacturers[key]; ok {
 			return m
 		}
 	}
