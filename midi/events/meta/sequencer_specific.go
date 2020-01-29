@@ -22,9 +22,9 @@ func NewSequencerSpecificEvent(event *MetaEvent, r io.ByteReader) (*SequencerSpe
 		return nil, err
 	}
 
-	id := bytes[0:0]
+	id := bytes[0:1]
 	data := bytes[1:]
-	if data[0] == 0x00 {
+	if bytes[0] == 0x00 {
 		id = bytes[0:3]
 		data = bytes[3:]
 	}

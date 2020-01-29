@@ -63,6 +63,12 @@ func LookupManufacturer(id []byte) Manufacturer {
 }
 
 var manufacturers = map[string]Manufacturer{
+	// special purpose
+
+	"7D": Manufacturer{ID: []byte{0x7d}, Region: "Special Purpose", Name: "Non-Commercial"},
+	"7E": Manufacturer{ID: []byte{0x7e}, Region: "Special Purpose", Name: "Non-RealTime Extensions"},
+	"7F": Manufacturer{ID: []byte{0x7e}, Region: "Special Purpose", Name: "RealTime Extensions"},
+
 	// American
 	"01": Manufacturer{ID: []byte{0x01}, Region: "American", Name: "Sequential Circuits"},
 	"04": Manufacturer{ID: []byte{0x04}, Region: "American", Name: "Moog"},

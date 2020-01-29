@@ -16,16 +16,18 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
-  - Identify manufacturer for SysEx and SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
   - Align event bytes on delta time
   - Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
+- [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
+- [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
+- [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
+- [ ] Running status
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
 - [ ] Check SMTPEOffset only in track 0 for format 1
-- [ ] Running status (?)
 - [ ] Add outstanding events to TestUnmarshalSMF
-- [ ] Rework decoder using tags/reflection
+- [ ] Rework decoder using tags/reflection/grammar+packrat-parser
 
 ### Notes 
 

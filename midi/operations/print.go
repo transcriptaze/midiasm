@@ -81,7 +81,7 @@ var templates = map[string]string{
 	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
 
-	"sysexmessage":      `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
+	"sysexmessage":      `{{.Status}} {{pad .Tag 22}} {{.Manufacturer.Name}}, {{.Data}}`,
 	"sysexcontinuation": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 

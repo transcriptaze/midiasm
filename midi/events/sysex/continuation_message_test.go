@@ -39,7 +39,7 @@ func TestParseContinuationMessage(t *testing.T) {
 		t.Fatalf("SysEx continuation message parse error - returned %T", event)
 	}
 
-	expected := types.Hex{0x7e, 0x00, 0x09, 0x01, 0xf7}
+	expected := types.Hex{0x7e, 0x00, 0x09, 0x01}
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx continuation message data - expected:%v, got: %v", expected, message.Data)
 	}

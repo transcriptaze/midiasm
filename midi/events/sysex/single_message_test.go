@@ -39,9 +39,18 @@ func TestParseSingleMessage(t *testing.T) {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
 
-	expected := types.Hex{0x7e, 0x00, 0x09, 0x01, 0xf7}
-	if !reflect.DeepEqual(message.Data, expected) {
-		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", expected, message.Data)
+	manufacturer := types.Manufacturer{
+		ID: []byte{0x7e}, 
+		Region: "Special Purpose", 
+		Name: "Non-RealTime Extensions",
+	}
+	if !reflect.DeepEqual(message.Manufacturer, manufacturer) {
+		t.Errorf("Invalid SysEx single message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)
+	}
+
+	data := types.Hex{0x00, 0x09, 0x01}
+	if !reflect.DeepEqual(message.Data, data) {
+		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", data, message.Data)
 	}
 
 	if ctx.Casio {
@@ -78,9 +87,18 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
 
-	expected := types.Hex([]byte{0x7e, 0x00, 0x09, 0x01, 0x43})
-	if !reflect.DeepEqual(message.Data, expected) {
-		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", expected, message.Data)
+	manufacturer := types.Manufacturer{
+		ID: []byte{0x7e}, 
+		Region: "Special Purpose", 
+		Name: "Non-RealTime Extensions",
+	}
+	if !reflect.DeepEqual(message.Manufacturer, manufacturer) {
+		t.Errorf("Invalid SysEx single message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)
+	}
+
+	data := types.Hex([]byte{0x00, 0x09, 0x01, 0x43})
+	if !reflect.DeepEqual(message.Data, data) {
+		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", data, message.Data)
 	}
 
 	if !ctx.Casio {
