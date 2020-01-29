@@ -40,9 +40,9 @@ func TestParseSingleMessage(t *testing.T) {
 	}
 
 	manufacturer := types.Manufacturer{
-		ID: []byte{0x7e}, 
-		Region: "Special Purpose", 
-		Name: "Non-RealTime Extensions",
+		ID:     []byte{0x7e},
+		Region: "Special Purpose",
+		Name:   "Non-RealTime Extensions",
 	}
 	if !reflect.DeepEqual(message.Manufacturer, manufacturer) {
 		t.Errorf("Invalid SysEx single message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)
@@ -88,9 +88,9 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	}
 
 	manufacturer := types.Manufacturer{
-		ID: []byte{0x7e}, 
-		Region: "Special Purpose", 
-		Name: "Non-RealTime Extensions",
+		ID:     []byte{0x7e},
+		Region: "Special Purpose",
+		Name:   "Non-RealTime Extensions",
 	}
 	if !reflect.DeepEqual(message.Manufacturer, manufacturer) {
 		t.Errorf("Invalid SysEx single message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)

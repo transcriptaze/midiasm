@@ -16,8 +16,8 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [ ] Configurable formats
-  - Align event bytes on delta time
   - Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
+  - Align event bytes on delta time
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
