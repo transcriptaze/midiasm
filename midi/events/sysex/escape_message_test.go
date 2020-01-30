@@ -11,11 +11,7 @@ import (
 )
 
 func TestParseEscapeMessage(t *testing.T) {
-	ctx := context.Context{
-		Scale: context.Sharps,
-		Casio: false,
-	}
-
+	ctx := context.NewContext()
 	e := events.Event{
 		Tick:   0,
 		Delta:  0,
@@ -25,7 +21,7 @@ func TestParseEscapeMessage(t *testing.T) {
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x02, 0xf3, 0x01}))
 
-	event, err := Parse(e, r, &ctx)
+	event, err := Parse(e, r, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx escape message parse error: %v", err)
 	}

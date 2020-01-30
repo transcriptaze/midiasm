@@ -15,12 +15,13 @@
 - [x] --verbose
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
+- [x] Keep NoteOff name to be NoteOn name if note is tied across KeySignature
 - [ ] Configurable formats
-  - Keep NoteOff name to be NoteOn name if KeySignature changes during duration of note (?)
   - Align event bytes on delta time
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
+- [ ] Unglobalise manufacturer list (e.g. see UnmarshalSMF unit tests which keep the last value loaded from 'conf')
 - [ ] Running status
 - [ ] Format 0
 - [ ] Format 2

@@ -27,11 +27,14 @@ func NewNoteOn(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteOn
 		return nil, err
 	}
 
+	ctx.PutNoteOn(event.Channel, note)
+
 	return &NoteOn{
 		MidiEvent: *event,
 		Note: Note{
 			Value: note,
 			Name:  ctx.FormatNote(note),
+			Alias: ctx.FormatNote(note),
 		},
 		Velocity: velocity,
 	}, nil

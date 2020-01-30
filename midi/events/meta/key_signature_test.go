@@ -17,8 +17,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 			0x59,
 		}, 0, 0, "C major"}
 
-	ctx := context.Context{}
-
+	ctx := context.NewContext()
 	e := events.Event{
 		Tick:   types.Tick(0),
 		Delta:  types.Delta(0),
@@ -28,7 +27,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0x00, 0x00}))
 
-	event, err := Parse(e, r, &ctx)
+	event, err := Parse(e, r, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
@@ -46,7 +45,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
 	}
 
-	if !reflect.DeepEqual(ctx.Scale, context.Sharps) {
+	if !reflect.DeepEqual(ctx.Scale(), context.Sharps) {
 		t.Errorf("Context scale not set to 'sharps':%v", ctx)
 	}
 }
@@ -87,7 +86,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
 	}
 
-	if !reflect.DeepEqual(ctx.Scale, context.Flats) {
+	if !reflect.DeepEqual(ctx.Scale(), context.Flats) {
 		t.Errorf("Context scale not set to 'flats':%v", ctx)
 	}
 }

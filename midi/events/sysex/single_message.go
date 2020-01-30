@@ -39,7 +39,7 @@ func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 	if terminator == 0xf7 {
 		data = data[:len(data)-1]
 	} else {
-		ctx.Casio = true
+		ctx.CasioOn()
 	}
 
 	return &SysExSingleMessage{

@@ -31,7 +31,9 @@ func NewNoteOff(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteO
 		MidiEvent: *event,
 		Note: Note{
 			Value: note,
-			Name:  ctx.FormatNote(note),
+			Name:  ctx.GetNoteOff(event.Channel, note)
+			,
+			Alias: ctx.FormatNote(note),
 		},
 		Velocity: velocity,
 	}, nil

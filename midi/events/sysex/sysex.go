@@ -42,7 +42,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 
 	switch event.Status {
 	case 0xf0:
-		if ctx.Casio {
+		if ctx.Casio() {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
 			event.Tag = "SysExMessage"
@@ -50,7 +50,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		}
 
 	case 0xf7:
-		if ctx.Casio {
+		if ctx.Casio() {
 			event.Tag = "SysExContinuation"
 			return NewSysExContinuationMessage(&event, rr, ctx)
 		} else {

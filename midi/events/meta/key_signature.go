@@ -90,9 +90,9 @@ func NewKeySignature(ctx *context.Context, event *MetaEvent, r io.ByteReader) (*
 	}
 
 	if accidentals < 0 {
-		ctx.Scale = context.Flats
+		ctx.UseFlats()
 	} else {
-		ctx.Scale = context.Sharps
+		ctx.UseSharps()
 	}
 
 	return &KeySignature{

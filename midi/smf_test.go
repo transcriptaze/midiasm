@@ -20,7 +20,7 @@ func TestUnmarshalSMF(t *testing.T) {
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
 		0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72,
-		0x00, 0xFF, 0x59, 0x02, 0x00, 0x01,
+		0x00, 0xff, 0x59, 0x02, 0x00, 0x01,
 		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
 		0x00, 0x91, 0x31, 0x48,
 		0x00, 0x81, 0x31, 0x64,
@@ -154,6 +154,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					Note: midievent.Note{
 						Value: 49,
 						Name:  "C♯2",
+						Alias: "C♯2",
 					},
 					Velocity: 72,
 				},
@@ -170,6 +171,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					Note: midievent.Note{
 						Value: 49,
 						Name:  "C♯2",
+						Alias: "C♯2",
 					},
 					Velocity: 100,
 				},
@@ -267,5 +269,97 @@ func TestUnmarshalSMFWithConf(t *testing.T) {
 	e := smf.Tracks[0].Events[0]
 	if !reflect.DeepEqual(e, &expected) {
 		t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", &expected, e)
+	}
+}
+
+func TestUnmarshalSMFNoteAlias(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x00, 0x60,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x14,
+		0x00, 0xff, 0x59, 0x02, 0x06, 0x00,
+		0x00, 0x91, 0x31, 0x48,
+		0x00, 0xff, 0x59, 0x02, 0xfa, 0x01,
+		0x00, 0x81, 0x31, 0x64,
+	}
+
+	mtrk := MTrk{
+		Tag:         "MTrk",
+		TrackNumber: 1,
+		Length:      74,
+		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4a},
+		Events: []events.IEvent{
+			&metaevent.KeySignature{
+				MetaEvent: metaevent.MetaEvent{
+					Event: events.Event{
+						Tag:    "KeySignature",
+						Status: 0xff,
+						Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0x06, 0x00},
+					},
+					Type: types.MetaEventType(0x59),
+				},
+				Accidentals: 6,
+				KeyType:     0,
+				Key:         "F♯ major",
+			},
+
+			&midievent.NoteOn{
+				MidiEvent: midievent.MidiEvent{
+					Event: events.Event{
+						Tag:    "NoteOn",
+						Status: 0x91,
+						Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
+					},
+					Channel: types.Channel(0x01),
+				},
+				Note: midievent.Note{
+					Value: 49,
+					Name:  "C♯2",
+					Alias: "C♯2",
+				},
+				Velocity: 72,
+			},
+
+			&metaevent.KeySignature{
+				MetaEvent: metaevent.MetaEvent{
+					Event: events.Event{
+						Tag:    "KeySignature",
+						Status: 0xff,
+						Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01},
+					},
+					Type: types.MetaEventType(0x59),
+				},
+				Accidentals: -6,
+				KeyType:     1,
+				Key:         "E♭ minor",
+			},
+
+			&midievent.NoteOff{
+				MidiEvent: midievent.MidiEvent{
+					Event: events.Event{
+						Tag:    "NoteOff",
+						Status: 0x81,
+						Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
+					},
+					Channel: types.Channel(0x01),
+				},
+				Note: midievent.Note{
+					Value: 49,
+					Name:  "D♭2",
+					Alias: "C♯2",
+				},
+				Velocity: 100,
+			},
+		},
+	}
+
+	smf := SMF{}
+	if err := smf.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("Unexpected error unmarshaling SMF: %v", err)
+	}
+
+	for i, e := range mtrk.Events {
+		if !reflect.DeepEqual(e, smf.Tracks[0].Events[i]) {
+			t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", e, smf.Tracks[0].Events[i])
+		}
 	}
 }

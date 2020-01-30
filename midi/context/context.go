@@ -2,6 +2,7 @@ package context
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 )
 
 var Sharps = map[byte]string{
@@ -35,13 +36,74 @@ var Flats = map[byte]string{
 }
 
 type Context struct {
-	Scale map[byte]string
-	Casio bool
+	scale map[byte]string
+	casio bool
+	notes map[uint16]string
+}
+
+func NewContext() *Context {
+	return &Context{
+		scale: Sharps,
+		casio: false,
+		notes: make(map[uint16]string),
+	}
+}
+
+func (ctx *Context) Scale() map[byte]string {
+	return ctx.scale
+}
+
+func (ctx *Context) UseSharps() *Context {
+	ctx.scale = Sharps
+
+	return ctx
+}
+
+func (ctx *Context) UseFlats() *Context {
+	ctx.scale = Flats
+
+	return ctx
+}
+
+func (ctx *Context) Casio() bool {
+	return ctx.casio
+}
+
+func (ctx *Context) CasioOn() *Context {
+	ctx.casio = true
+
+	return ctx
+}
+
+func (ctx *Context) CasioOff() *Context {
+	ctx.casio = false
+
+	return ctx
 }
 
 func (ctx *Context) FormatNote(n byte) string {
-	note := ctx.Scale[n%12]
+	note := ctx.scale[n%12]
 	octave := int(n/12) - 2
 
 	return fmt.Sprintf("%s%d", note, octave)
+}
+
+func (ctx *Context) GetNoteOff(ch types.Channel, n byte) string {
+	key := uint16(ch)
+	key <<= 8
+	key |= uint16(n)
+
+	if note, ok := ctx.notes[key]; ok {
+		return note
+	}
+
+	return ctx.FormatNote(n)
+}
+
+func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
+	key := uint16(ch)
+	key <<= 8
+	key |= uint16(n)
+
+	ctx.notes[key] = ctx.FormatNote(n)
 }

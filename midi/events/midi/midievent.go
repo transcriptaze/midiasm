@@ -16,6 +16,7 @@ type MidiEvent struct {
 type Note struct {
 	Value byte
 	Name  string
+	Alias string
 }
 
 func (e MidiEvent) String() string {

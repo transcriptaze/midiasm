@@ -36,13 +36,10 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	tick := uint32(0)
 	err := error(nil)
 	e := events.IEvent(nil)
-	ctx := context.Context{
-		Scale: context.Sharps,
-		Casio: false,
-	}
+	ctx := context.NewContext()
 
 	for err == nil {
-		e, err = parse(r, tick, &ctx)
+		e, err = parse(r, tick, ctx)
 		if err == nil && e != nil {
 			tick += e.DeltaTime()
 			eventlist = append(eventlist, e.(events.IEvent))

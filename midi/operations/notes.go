@@ -31,7 +31,7 @@ type Note struct {
 
 func (x *Notes) Execute(smf *midi.SMF) error {
 	ppqn := uint64(smf.MThd.Division)
-	ctx := context.Context{Scale: context.Sharps}
+	ctx := context.NewContext()
 	tempoMap := make([]events.IEvent, 0)
 
 	for _, e := range smf.Tracks[0].Events {
@@ -112,9 +112,9 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			for _, e := range list {
 				if v, ok := e.(*metaevent.KeySignature); ok {
 					if v.Accidentals < 0 {
-						ctx.Scale = context.Flats
+						ctx.UseFlats()
 					} else {
-						ctx.Scale = context.Sharps
+						ctx.UseSharps()
 					}
 				}
 
