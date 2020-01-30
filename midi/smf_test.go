@@ -344,8 +344,8 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 				},
 				Note: midievent.Note{
 					Value: 49,
-					Name:  "D♭2",
-					Alias: "C♯2",
+					Name:  "C♯2",
+					Alias: "D♭2",
 				},
 				Velocity: 100,
 			},
