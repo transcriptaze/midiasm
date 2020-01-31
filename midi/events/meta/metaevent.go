@@ -36,6 +36,8 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", e.Status)
 	}
 
+	ctx.ClearRunningStatus()
+
 	event := MetaEvent{
 		Event: e,
 	}

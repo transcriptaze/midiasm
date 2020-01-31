@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
@@ -24,11 +25,20 @@ func (e MidiEvent) String() string {
 }
 
 type reader struct {
-	rdr   io.ByteReader
-	event *MidiEvent
+	pushed io.ByteReader
+	rdr    io.ByteReader
+	event  *MidiEvent
 }
 
 func (r reader) ReadByte() (byte, error) {
+	if r.pushed != nil {
+		if b, err := r.pushed.ReadByte(); err == nil {
+			return b, nil
+		} else if err != io.EOF {
+			return b, err
+		}
+	}
+
 	b, err := r.rdr.ReadByte()
 	if err == nil {
 		r.event.Bytes = append(r.event.Bytes, b)
@@ -43,7 +53,21 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		Channel: types.Channel((e.Status) & 0x0F),
 	}
 
-	rr := reader{r, &event}
+	rr := reader{nil, r, &event}
+
+	//FIXME Ewwwwww :-(
+	if e.Status < 0x80 && !ctx.HasRunningStatus() {
+		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", e.Status&0xF0)
+	} else if e.Status < 0x80 {
+		rr.pushed = bytes.NewReader([]byte{byte(e.Status)})
+		e.Status = types.Status(ctx.GetRunningStatus())
+		event = MidiEvent{
+			Event:   e,
+			Channel: types.Channel((e.Status) & 0x0F),
+		}
+	}
+
+	ctx.PutRunningStatus(byte(e.Status))
 
 	switch e.Status & 0xF0 {
 	case 0x80:

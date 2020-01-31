@@ -34,6 +34,8 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent
 		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", e.Status)
 	}
 
+	ctx.ClearRunningStatus()
+
 	event := SysExEvent{
 		Event: e,
 	}

@@ -17,6 +17,7 @@
 - [x] Decode note in context of current scale
 - [x] Keep NoteOff name to be NoteOn name if note is tied across KeySignature
 - [ ] Running status
+  - FIXME: Ewwwwww :-(
 - [ ] Configurable formats
   - Align event bytes on delta time
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
@@ -28,7 +29,7 @@
 - [ ] Reference files
 - [ ] Check SMTPEOffset only in track 0 for format 1
 - [ ] Add outstanding events to TestUnmarshalSMF
-- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai
+- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac
 
 ### Notes 
 

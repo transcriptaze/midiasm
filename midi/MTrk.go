@@ -83,6 +83,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, e
 	if b == 0xff {
 		return metaevent.Parse(e, r, ctx)
 	} else if b == 0xf0 || b == 0xf7 {
+		ctx.ClearRunningStatus()
 		return sysex.Parse(e, r, ctx)
 	} else {
 		return midievent.Parse(e, r, ctx)

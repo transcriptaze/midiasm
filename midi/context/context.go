@@ -36,16 +36,18 @@ var Flats = map[byte]string{
 }
 
 type Context struct {
-	scale map[byte]string
-	casio bool
-	notes map[uint16]string
+	scale         map[byte]string
+	runningStatus byte
+	casio         bool
+	notes         map[uint16]string
 }
 
 func NewContext() *Context {
 	return &Context{
-		scale: Sharps,
-		casio: false,
-		notes: make(map[uint16]string),
+		scale:         Sharps,
+		runningStatus: 0x00,
+		casio:         false,
+		notes:         make(map[uint16]string),
 	}
 }
 
@@ -106,4 +108,19 @@ func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
 	key |= uint16(n)
 
 	ctx.notes[key] = ctx.FormatNote(n)
+}
+
+func (ctx *Context) GetRunningStatus() byte {
+	return ctx.runningStatus
+}
+
+func (ctx *Context) PutRunningStatus(b byte) {
+	ctx.runningStatus = b
+}
+
+func (ctx *Context) HasRunningStatus() bool {
+	return ctx.runningStatus != 0x00
+}
+func (ctx *Context) ClearRunningStatus() {
+	ctx.runningStatus = 0x00
 }
