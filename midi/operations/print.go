@@ -16,7 +16,7 @@ var templates = map[string]string{
 {{range .Tracks}}
 {{template "MTrk" .}}{{end}}`,
 
-	"MThd": `{{template "hex" .Bytes}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
+	"MThd": `{{pad (ellipsize .Bytes 42) 42}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
 
 	"MTrk": `{{pad (ellipsize .Bytes 24) 42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
 {{range .Events}}{{template "event" .}}{{end}}`,
@@ -86,7 +86,6 @@ var templates = map[string]string{
 
 	"unknown": `?? {{.Tag}}`,
 	"hex":     `{{pad (ellipsize . 42) 42}}`,
-	"hexx":    `{{pad (ellipsize . 24) 42}}`,
 }
 
 type Print struct {
