@@ -86,7 +86,7 @@ var templates = map[string]string{
 	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
-	"hex":     `{{pad (ellipsize (valign .) 42) 42}}`,
+	"hex":     `{{pad (ellipsize (valign . 3) 42) 42}}`,
 }
 
 type Print struct {
@@ -173,7 +173,7 @@ func pad(v interface{}, width int) string {
 	return s + strings.Repeat(" ", width-len([]rune(s)))
 }
 
-func valign(bytes types.Hex) string {
+func valign(bytes types.Hex, w ...int) string {
 	ix := 0
 
 	for {
@@ -185,5 +185,10 @@ func valign(bytes types.Hex) string {
 		}
 	}
 
-	return fmt.Sprintf("%s%v", strings.Repeat("   ", 4-ix), bytes)
+	width := 4
+	if len(w) > 0 {
+		width = w[0]
+	}
+
+	return fmt.Sprintf("%s%v", strings.Repeat("   ", width-ix), bytes)
 }
