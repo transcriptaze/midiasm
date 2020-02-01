@@ -3,7 +3,6 @@ package operations
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -86,8 +85,8 @@ var templates = map[string]string{
 	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
-	"hex":     `{{pad (ellipsize . 0 14) 42}}`,
-	"hexx":    `{{pad (ellipsize . 0 8)  42}}`,
+	"hex":     `{{pad (ellipsize . 42) 42}}`,
+	"hexx":    `{{pad (ellipsize . 24) 42}}`,
 }
 
 type Print struct {
@@ -151,24 +150,17 @@ func (p *Print) Print(object interface{}, template string, w io.Writer) error {
 	return tmpl.Execute(w, object)
 }
 
-func ellipsize(bytes types.Hex, offsets ...int) string {
-	start := 0
-	end := len(bytes)
-
-	if len(offsets) > 0 && offsets[0] > 0 {
-		start = offsets[0]
+func ellipsize(v interface{}, length int) string {
+	if length <= 0 {
+		return ""
 	}
 
-	if len(offsets) > 1 && offsets[1] > start && offsets[1] < end {
-		end = offsets[1]
+	s := []rune(fmt.Sprintf("%v", v))
+	if len(s) <= length {
+		return string(s)
 	}
 
-	hex := bytes[start:end].String()
-	if end-start < len(bytes) {
-		hex += `…`
-	}
-
-	return hex
+	return string(s[0:length-1]) + `…`
 }
 
 func pad(v interface{}, width int) string {

@@ -216,6 +216,34 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
 	}
 }
 
+func TestEllipsize(t *testing.T) {
+	list := map[int]string{
+		0:  "",
+		1:  `…`,
+		2:  `1…`,
+		7:  `12 34 …`,
+		8:  `12 34 56`,
+		16: `12 34 56`,
+	}
+
+	for l, expected := range list {
+		if s := ellipsize("12 34 56", l); s != expected {
+			t.Errorf("Ellipsized output incorrect - expected: <%s>, got: <%s>", expected, s)
+		}
+	}
+
+	list = map[int]string{
+		7: `1… 34 …`,
+		8: `1… 34 56`,
+	}
+
+	for l, expected := range list {
+		if s := ellipsize("1… 34 56", l); s != expected {
+			t.Errorf("Ellipsized output incorrect - expected: <%s>, got: <%s>", expected, s)
+		}
+	}
+}
+
 func diff(p, q string) (int, string, string, string) {
 	line := 0
 	s := strings.Split(p, "\n")
