@@ -190,5 +190,10 @@ func valign(bytes types.Hex, w ...int) string {
 		width = w[0]
 	}
 
-	return fmt.Sprintf("%s%v", strings.Repeat("   ", width-ix), bytes)
+	pad := ""
+	if width > ix {
+		pad = strings.Repeat("   ", width-ix)
+	}
+
+	return fmt.Sprintf("%s%v", pad, bytes)
 }
