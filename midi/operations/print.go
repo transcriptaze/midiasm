@@ -3,6 +3,7 @@ package operations
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -85,7 +86,7 @@ var templates = map[string]string{
 	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
-	"hex":     `{{pad (ellipsize . 42) 42}}`,
+	"hex":     `{{pad (ellipsize (valign .) 42) 42}}`,
 }
 
 type Print struct {
@@ -96,6 +97,7 @@ func NewPrint() (*Print, error) {
 	functions := template.FuncMap{
 		"ellipsize": ellipsize,
 		"pad":       pad,
+		"valign":    valign,
 	}
 
 	tmpl, err := template.New("document").Funcs(functions).Parse(document)
@@ -169,4 +171,19 @@ func pad(v interface{}, width int) string {
 	}
 
 	return s + strings.Repeat(" ", width-len([]rune(s)))
+}
+
+func valign(bytes types.Hex) string {
+	ix := 0
+
+	for {
+		b := bytes[ix]
+		ix += 1
+
+		if b&0x80 == 0 {
+			break
+		}
+	}
+
+	return fmt.Sprintf("%s%v", strings.Repeat("   ", 4-ix), bytes)
 }
