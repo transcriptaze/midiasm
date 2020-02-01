@@ -18,7 +18,7 @@ var templates = map[string]string{
 
 	"MThd": `{{template "hex" .Bytes}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
 
-	"MTrk": `{{template "hexx" .Bytes}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
+	"MTrk": `{{pad (ellipsize .Bytes 24) 42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
 {{range .Events}}{{template "event" .}}{{end}}`,
 
 	"event": `{{template "hex" .Bytes}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,

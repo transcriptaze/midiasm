@@ -112,17 +112,17 @@ func TestPrintSMF(t *testing.T) {
 func TestPrintWithLoadedTemplate(t *testing.T) {
 	const expected string = `4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length:6, format:1, tracks:2, metrical time:480 ppqn
 
-<<< WOOOOT >>>  MTrk 0  length:33
-00 FF 03 09 45 78 61 6D 70 6C 65 20 31      tick:0          delta:0          03 TrackName              Example 1
+4D 54 72 6B 00 00 00 21…                    MTrk 0  length:33
+00 FF 03 09 45 78 61 6D 70 6C 65 20 31      tick:0          delta:0          03 TrackName              >>> Example 1
 00 FF 51 03 07 A1 20                        tick:0          delta:0          51 Tempo                  tempo:500000
 00 FF 54 05 4D 2D 3B 07 27                  tick:0          delta:0          54 SMPTEOffset            13 45 59 25 7 39
 00 FF 2F 00                                 tick:0          delta:0          2F EndOfTrack
 
-<<< WOOOOT >>>  MTrk 1  length:234
+4D 54 72 6B 00 00 00 EA…                    MTrk 1  length:234
 00 FF 00 02 00 17                           tick:0          delta:0          00 SequenceNumber         23
 00 FF 01 0D 54 68 69 73 20 61 6E 64 20 54…  tick:0          delta:0          01 Text                   This and That
 00 FF 02 04 54 68 65 6D                     tick:0          delta:0          02 Copyright              Them
-00 FF 03 0F 41 63 6F 75 73 74 69 63 20 47…  tick:0          delta:0          03 TrackName              Acoustic Guitar
+00 FF 03 0F 41 63 6F 75 73 74 69 63 20 47…  tick:0          delta:0          03 TrackName              >>> Acoustic Guitar
 00 FF 04 0A 44 69 64 67 65 72 69 64 6F 6F   tick:0          delta:0          04 InstrumentName         Didgeridoo
 00 FF 05 08 4C 61 2D 6C 61 2D 6C 61         tick:0          delta:0          05 Lyric                  La-la-la
 00 FF 06 0F 48 65 72 65 20 42 65 20 44 72…  tick:0          delta:0          06 Marker                 Here Be Dragons
@@ -187,7 +187,11 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
 		0x00, 0xff, 0x2f, 0x00,
 	}
 
-	template := `{ "templates": { "hexx": "<<< WOOOOT >>>" } }`
+	template := `{
+  "templates": {
+    "trackname": "{{.Type}} {{pad .Tag 22}} >>> {{.Name}}"
+  }
+}`
 
 	smf := midi.SMF{}
 	if err := smf.UnmarshalBinary(bytes); err != nil {
