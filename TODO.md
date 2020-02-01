@@ -18,8 +18,7 @@
 - [x] Keep NoteOff name to be NoteOn name if note is tied across KeySignature
 - [ ] Running status
   - FIXME: Ewwwwww :-(
-- [ ] Configurable formats
-  - Align event bytes on delta time
+- [x] Configurable formats
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
