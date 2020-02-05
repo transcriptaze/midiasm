@@ -41,7 +41,8 @@ func main() {
 	}
 
 	smf := midi.SMF{
-		File: filename,
+		File:   filename,
+		Tracks: make([]*midi.MTrk, 0),
 	}
 
 	if conf := cmd.config(); conf != "" {

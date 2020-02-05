@@ -11,7 +11,7 @@ build: format
 test: build
 	go clean -testcache
 #	go test ./...
-#	go test -v ./midi -run TestUnmarshalSMF
+	go test -v ./midi -run TestUnmarshalSMF
 	go test -v midi/operations/*.go
 
 benchmark: build

@@ -34,15 +34,29 @@ type Note struct {
 
 func (smf *SMF) UnmarshalBinary(data []byte) error {
 	r := bufio.NewReader(bytes.NewReader(data))
-	chunks := make([]Chunk, 0)
 
-	chunk := Chunk(nil)
-	err := error(nil)
+	// Extract header
+	chunk, err := readChunk(r)
+	if err == nil && chunk != nil {
+		var mthd MThd
+		if err := mthd.UnmarshalBinary(chunk); err == nil {
+			smf.MThd = &mthd
+		}
+	}
 
+	// Extract tracks
 	for err == nil {
 		chunk, err = readChunk(r)
 		if err == nil && chunk != nil {
-			chunks = append(chunks, chunk)
+			if string(chunk[0:4]) == "MTrk" {
+				mtrk := MTrk{
+					TrackNumber: types.TrackNumber(len(smf.Tracks)),
+				}
+
+				if err := mtrk.UnmarshalBinary(chunk); err == nil {
+					smf.Tracks = append(smf.Tracks, &mtrk)
+				}
+			}
 		}
 	}
 
@@ -50,32 +64,9 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 		return err
 	}
 
-	if len(chunks) == 0 {
-		return fmt.Errorf("contains no MIDI chunks")
+	if len(smf.Tracks) != int(smf.MThd.Tracks) {
+		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", smf.MThd.Tracks, len(smf.Tracks))
 	}
-
-	mthd, ok := chunks[0].(*MThd)
-	if !ok {
-		return fmt.Errorf("invalid MIDI file - expected MThd chunk, got %T", chunks[0])
-	}
-
-	if len(chunks[1:]) != int(mthd.Tracks) {
-		return fmt.Errorf("number of tracks in file does not match MThd - expected %d, got %d", mthd.Tracks, len(chunks[1:]))
-	}
-
-	tracks := make([]*MTrk, 0)
-	for i, chunk := range chunks[1:] {
-		track, ok := chunk.(*MTrk)
-		if !ok {
-			return fmt.Errorf("invalid MIDI file - expected MTrk chunk, got %T", chunk)
-		}
-
-		track.TrackNumber = types.TrackNumber(i)
-		tracks = append(tracks, track)
-	}
-
-	smf.MThd = mthd
-	smf.Tracks = tracks
 
 	return nil
 }
@@ -162,36 +153,17 @@ func (smf *SMF) Validate() []ValidationError {
 	return errors
 }
 
-func readChunk(r *bufio.Reader) (Chunk, error) {
+func readChunk(r *bufio.Reader) ([]byte, error) {
 	peek, err := r.Peek(8)
 	if err != nil {
 		return nil, err
 	}
 
-	tag := string(peek[0:4])
 	length := binary.BigEndian.Uint32(peek[4:8])
-
 	bytes := make([]byte, length+8)
 	if _, err := io.ReadFull(r, bytes); err != nil {
 		return nil, err
 	}
 
-	switch tag {
-	case "MThd":
-		var mthd MThd
-		if err := mthd.UnmarshalBinary(bytes); err != nil {
-			return nil, err
-		}
-		return &mthd, nil
-
-	case "MTrk":
-		var mtrk MTrk
-		err := mtrk.UnmarshalBinary(bytes)
-		if err != nil {
-			return nil, err
-		}
-		return &mtrk, nil
-	}
-
-	return nil, nil
+	return bytes, nil
 }
