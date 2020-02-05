@@ -121,6 +121,7 @@ func (smf *SMF) Validate() []ValidationError {
 				switch event.(type) {
 				case *metaevent.Tempo,
 					*metaevent.TrackName,
+					*metaevent.SMPTEOffset,
 					*metaevent.EndOfTrack:
 					continue
 				default:
@@ -133,6 +134,9 @@ func (smf *SMF) Validate() []ValidationError {
 			for _, event := range track.Events {
 				switch event.(type) {
 				case *metaevent.Tempo:
+					errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
+
+				case *metaevent.SMPTEOffset:
 					errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
 				}
 			}

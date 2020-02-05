@@ -1,6 +1,7 @@
 package midi
 
 import (
+	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/events/midi"
@@ -13,9 +14,14 @@ import (
 func TestUnmarshalSMF(t *testing.T) {
 	bytes := []byte{
 		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x60,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x0d,
+
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21,
 		0x00, 0xff, 0x03, 0x09, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4d,
+		0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20,
+		0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27,
+		0x00, 0xff, 0x2f, 0x00,
+
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x51,
 		0x00, 0xff, 0x00, 0x02, 0x00, 0x17,
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
@@ -25,6 +31,7 @@ func TestUnmarshalSMF(t *testing.T) {
 		0x00, 0x91, 0x31, 0x48,
 		0x00, 0x3c, 0x4c,
 		0x00, 0x81, 0x31, 0x64,
+		0x00, 0xff, 0x2f, 0x00,
 	}
 
 	mthd := MThd{
@@ -41,8 +48,8 @@ func TestUnmarshalSMF(t *testing.T) {
 		MTrk{
 			Tag:         "MTrk",
 			TrackNumber: 0,
-			Length:      13,
-			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x0d},
+			Length:      33,
+			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21},
 			Events: []events.IEvent{
 				&metaevent.TrackName{
 					MetaEvent: metaevent.MetaEvent{
@@ -55,14 +62,54 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 					Name: "Example 1",
 				},
+
+				&metaevent.Tempo{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "Tempo",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+						},
+						Type: types.MetaEventType(0x51),
+					},
+					Tempo: 500000,
+				},
+
+				&metaevent.SMPTEOffset{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "SMPTEOffset",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
+						},
+						Type: types.MetaEventType(0x54),
+					},
+					Hour:             13,
+					Minute:           45,
+					Second:           59,
+					FrameRate:        25,
+					Frames:           7,
+					FractionalFrames: 39,
+				},
+
+				&metaevent.EndOfTrack{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "EndOfTrack",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+						},
+						Type: types.MetaEventType(0x2f),
+					},
+				},
 			},
 		},
 
 		MTrk{
 			Tag:         "MTrk",
 			TrackNumber: 1,
-			Length:      77,
-			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4d},
+			Length:      81,
+			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x51},
 			Events: []events.IEvent{
 				&metaevent.SequenceNumber{
 					MetaEvent: metaevent.MetaEvent{
@@ -192,6 +239,17 @@ func TestUnmarshalSMF(t *testing.T) {
 						Alias: "C♯2",
 					},
 					Velocity: 100,
+				},
+
+				&metaevent.EndOfTrack{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "EndOfTrack",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+						},
+						Type: types.MetaEventType(0x2f),
+					},
 				},
 			},
 		},
@@ -379,5 +437,54 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 		if !reflect.DeepEqual(e, smf.Tracks[0].Events[i]) {
 			t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", e, smf.Tracks[0].Events[i])
 		}
+	}
+}
+
+func TestValidateSMF(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x60,
+
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x04,
+		0x00, 0xff, 0x2f, 0x00,
+
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x14,
+		0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20,
+		0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27,
+		0x00, 0xff, 0x2f, 0x00,
+	}
+
+	smf := SMF{}
+	if err := smf.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("Unexpected error unmarshaling SMF: %v", err)
+	}
+
+	expected := []ValidationError{
+		ValidationError(fmt.Errorf("Track 1: unexpected event (Tempo)")),
+		ValidationError(fmt.Errorf("Track 1: unexpected event (SMPTEOffset)")),
+	}
+
+	errors := smf.Validate()
+	if len(errors) != len(expected) {
+		t.Errorf("Validation returned %d errors, expected: %v", len(errors), len(expected))
+	}
+
+loop:
+	for _, e := range expected {
+		for _, err := range errors {
+			if reflect.DeepEqual(err, e) {
+				continue loop
+			}
+		}
+		t.Errorf("Missing expected error: %v", e)
+	}
+
+loop2:
+	for _, e := range errors {
+		for _, err := range expected {
+			if reflect.DeepEqual(err, e) {
+				continue loop2
+			}
+		}
+		t.Errorf("Unexpected error: %v", e)
 	}
 }
