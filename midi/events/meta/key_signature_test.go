@@ -13,14 +13,12 @@ import (
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		MetaEvent{
-			events.Event{"KeySignature", 0, 0, 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}},
+			events.Event{"KeySignature", 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}},
 			0x59,
 		}, 0, 0, "C major"}
 
 	ctx := context.NewContext()
 	e := events.Event{
-		Tick:   types.Tick(0),
-		Delta:  types.Delta(0),
 		Status: types.Status(0xff),
 		Bytes:  []byte{0x00, 0xff},
 	}
@@ -53,15 +51,13 @@ func TestParseCMajorKeySignature(t *testing.T) {
 func TestParseCMinorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		MetaEvent{
-			events.Event{"KeySignature", 0, 0, 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}},
+			events.Event{"KeySignature", 0xff, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}},
 			0x59,
 		}, -3, 1, "C minor"}
 
 	ctx := context.Context{}
 
 	e := events.Event{
-		Tick:   types.Tick(0),
-		Delta:  types.Delta(0),
 		Status: types.Status(0xff),
 		Bytes:  []byte{0x00, 0xff},
 	}

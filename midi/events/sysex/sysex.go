@@ -29,7 +29,7 @@ func (e SysExEvent) String() string {
 	return fmt.Sprintf("%s %v", e.Event, e.Status)
 }
 
-func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
+func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	if e.Status != 0xF0 && e.Status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", e.Status)
 	}

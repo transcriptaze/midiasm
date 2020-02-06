@@ -13,8 +13,6 @@ import (
 func TestParseContinuationMessage(t *testing.T) {
 	ctx := context.NewContext().CasioOn()
 	e := events.Event{
-		Tick:   0,
-		Delta:  0,
 		Status: 0xf7,
 		Bytes:  []byte{0x00, 0xf7},
 	}

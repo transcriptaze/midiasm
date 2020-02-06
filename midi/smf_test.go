@@ -50,56 +50,64 @@ func TestUnmarshalSMF(t *testing.T) {
 			TrackNumber: 0,
 			Length:      33,
 			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21},
-			Events: []events.IEvent{
-				&metaevent.TrackName{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "TrackName",
-							Status: 0xff,
-							Bytes:  types.Hex{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31},
+			Events: []*events.EventW{
+				&events.EventW{
+					Event: &metaevent.TrackName{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "TrackName",
+								Status: 0xff,
+								Bytes:  types.Hex{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31},
+							},
+							Type: types.MetaEventType(0x03),
 						},
-						Type: types.MetaEventType(0x03),
+						Name: "Example 1",
 					},
-					Name: "Example 1",
 				},
 
-				&metaevent.Tempo{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "Tempo",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+				&events.EventW{
+					Event: &metaevent.Tempo{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "Tempo",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+							},
+							Type: types.MetaEventType(0x51),
 						},
-						Type: types.MetaEventType(0x51),
+						Tempo: 500000,
 					},
-					Tempo: 500000,
 				},
 
-				&metaevent.SMPTEOffset{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "SMPTEOffset",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
+				&events.EventW{
+					Event: &metaevent.SMPTEOffset{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "SMPTEOffset",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
+							},
+							Type: types.MetaEventType(0x54),
 						},
-						Type: types.MetaEventType(0x54),
+						Hour:             13,
+						Minute:           45,
+						Second:           59,
+						FrameRate:        25,
+						Frames:           7,
+						FractionalFrames: 39,
 					},
-					Hour:             13,
-					Minute:           45,
-					Second:           59,
-					FrameRate:        25,
-					Frames:           7,
-					FractionalFrames: 39,
 				},
 
-				&metaevent.EndOfTrack{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "EndOfTrack",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+				&events.EventW{
+					Event: &metaevent.EndOfTrack{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "EndOfTrack",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+							},
+							Type: types.MetaEventType(0x2f),
 						},
-						Type: types.MetaEventType(0x2f),
 					},
 				},
 			},
@@ -110,145 +118,165 @@ func TestUnmarshalSMF(t *testing.T) {
 			TrackNumber: 1,
 			Length:      81,
 			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x51},
-			Events: []events.IEvent{
-				&metaevent.SequenceNumber{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "SequenceNumber",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x00, 0x02, 0x00, 0x17},
+			Events: []*events.EventW{
+				&events.EventW{
+					Event: &metaevent.SequenceNumber{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "SequenceNumber",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x00, 0x02, 0x00, 0x17},
+							},
+							Type: types.MetaEventType(0x00),
 						},
-						Type: types.MetaEventType(0x00),
+						SequenceNumber: 23,
 					},
-					SequenceNumber: 23,
 				},
 
-				&metaevent.Text{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "Text",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
+				&events.EventW{
+					Event: &metaevent.Text{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "Text",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
+							},
+							Type: types.MetaEventType(0x01),
 						},
-						Type: types.MetaEventType(0x01),
+						Text: "This and That",
 					},
-					Text: "This and That",
 				},
 
-				&metaevent.Copyright{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "Copyright",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
+				&events.EventW{
+					Event: &metaevent.Copyright{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "Copyright",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
+							},
+							Type: types.MetaEventType(0x02),
 						},
-						Type: types.MetaEventType(0x02),
+						Copyright: "Them",
 					},
-					Copyright: "Them",
 				},
 
-				&metaevent.TrackName{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "TrackName",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72},
+				&events.EventW{
+					Event: &metaevent.TrackName{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "TrackName",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72},
+							},
+							Type: types.MetaEventType(0x03),
 						},
-						Type: types.MetaEventType(0x03),
+						Name: "Acoustic Guitar",
 					},
-					Name: "Acoustic Guitar",
 				},
 
-				&metaevent.KeySignature{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "KeySignature",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0x00, 0x01},
+				&events.EventW{
+					Event: &metaevent.KeySignature{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "KeySignature",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0x00, 0x01},
+							},
+							Type: types.MetaEventType(0x59),
 						},
-						Type: types.MetaEventType(0x59),
+						Accidentals: 0,
+						KeyType:     1,
+						Key:         "A minor",
 					},
-					Accidentals: 0,
-					KeyType:     1,
-					Key:         "A minor",
 				},
 
-				&metaevent.SequencerSpecificEvent{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "SequencerSpecificEvent",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+				&events.EventW{
+					Event: &metaevent.SequencerSpecificEvent{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "SequencerSpecificEvent",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+							},
+							Type: types.MetaEventType(0x7f),
 						},
-						Type: types.MetaEventType(0x7f),
+						Manufacturer: types.Manufacturer{
+							ID:     []byte{0x00, 0x00, 0x3b},
+							Region: "American",
+							Name:   "Mark Of The Unicorn (MOTU)",
+						},
+						Data: []byte{0x3a, 0x4c, 0x5e},
 					},
-					Manufacturer: types.Manufacturer{
-						ID:     []byte{0x00, 0x00, 0x3b},
-						Region: "American",
-						Name:   "Mark Of The Unicorn (MOTU)",
-					},
-					Data: []byte{0x3a, 0x4c, 0x5e},
 				},
 
-				&midievent.NoteOn{
-					MidiEvent: midievent.MidiEvent{
-						Event: events.Event{
-							Tag:    "NoteOn",
-							Status: 0x91,
-							Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
+				&events.EventW{
+					Event: &midievent.NoteOn{
+						MidiEvent: midievent.MidiEvent{
+							Event: events.Event{
+								Tag:    "NoteOn",
+								Status: 0x91,
+								Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
+							},
+							Channel: types.Channel(0x01),
 						},
-						Channel: types.Channel(0x01),
+						Note: midievent.Note{
+							Value: 49,
+							Name:  "C♯2",
+							Alias: "C♯2",
+						},
+						Velocity: 72,
 					},
-					Note: midievent.Note{
-						Value: 49,
-						Name:  "C♯2",
-						Alias: "C♯2",
-					},
-					Velocity: 72,
 				},
 
-				&midievent.NoteOn{
-					MidiEvent: midievent.MidiEvent{
-						Event: events.Event{
-							Tag:    "NoteOn",
-							Status: 0x91,
-							Bytes:  types.Hex{0x00, 0x3c, 0x4c},
+				&events.EventW{
+					Event: &midievent.NoteOn{
+						MidiEvent: midievent.MidiEvent{
+							Event: events.Event{
+								Tag:    "NoteOn",
+								Status: 0x91,
+								Bytes:  types.Hex{0x00, 0x3c, 0x4c},
+							},
+							Channel: types.Channel(0x01),
 						},
-						Channel: types.Channel(0x01),
+						Note: midievent.Note{
+							Value: 60,
+							Name:  "C3",
+							Alias: "C3",
+						},
+						Velocity: 76,
 					},
-					Note: midievent.Note{
-						Value: 60,
-						Name:  "C3",
-						Alias: "C3",
-					},
-					Velocity: 76,
 				},
 
-				&midievent.NoteOff{
-					MidiEvent: midievent.MidiEvent{
-						Event: events.Event{
-							Tag:    "NoteOff",
-							Status: 0x81,
-							Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
+				&events.EventW{
+					Event: &midievent.NoteOff{
+						MidiEvent: midievent.MidiEvent{
+							Event: events.Event{
+								Tag:    "NoteOff",
+								Status: 0x81,
+								Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
+							},
+							Channel: types.Channel(0x01),
 						},
-						Channel: types.Channel(0x01),
+						Note: midievent.Note{
+							Value: 49,
+							Name:  "C♯2",
+							Alias: "C♯2",
+						},
+						Velocity: 100,
 					},
-					Note: midievent.Note{
-						Value: 49,
-						Name:  "C♯2",
-						Alias: "C♯2",
-					},
-					Velocity: 100,
 				},
 
-				&metaevent.EndOfTrack{
-					MetaEvent: metaevent.MetaEvent{
-						Event: events.Event{
-							Tag:    "EndOfTrack",
-							Status: 0xff,
-							Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+				&events.EventW{
+					Event: &metaevent.EndOfTrack{
+						MetaEvent: metaevent.MetaEvent{
+							Event: events.Event{
+								Tag:    "EndOfTrack",
+								Status: 0xff,
+								Bytes:  types.Hex{0x00, 0xff, 0x2f, 0x00},
+							},
+							Type: types.MetaEventType(0x2f),
 						},
-						Type: types.MetaEventType(0x2f),
 					},
 				},
 			},
@@ -304,22 +332,23 @@ func TestUnmarshalSMFWithConf(t *testing.T) {
 		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
 	}
 
-	expected := metaevent.SequencerSpecificEvent{
-		MetaEvent: metaevent.MetaEvent{
-			Event: events.Event{
-				Tag:    "SequencerSpecificEvent",
-				Status: 0xff,
-				Bytes:  types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+	expected := events.EventW{
+		Event: &metaevent.SequencerSpecificEvent{
+			MetaEvent: metaevent.MetaEvent{
+				Event: events.Event{
+					Tag:    "SequencerSpecificEvent",
+					Status: 0xff,
+					Bytes:  types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+				},
+				Type: types.MetaEventType(0x7f),
 			},
-			Type: types.MetaEventType(0x7f),
-		},
-		Manufacturer: types.Manufacturer{
-			ID:     []byte{0x00, 0x00, 0x3b},
-			Region: "Borneo",
-			Name:   "MOTU",
-		},
-		Data: []byte{0x3a, 0x4c, 0x5e},
-	}
+			Manufacturer: types.Manufacturer{
+				ID:     []byte{0x00, 0x00, 0x3b},
+				Region: "Borneo",
+				Name:   "MOTU",
+			},
+			Data: []byte{0x3a, 0x4c, 0x5e},
+		}}
 
 	conf := `{
   "manufacturers": [
@@ -363,67 +392,75 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 		TrackNumber: 1,
 		Length:      74,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4a},
-		Events: []events.IEvent{
-			&metaevent.KeySignature{
-				MetaEvent: metaevent.MetaEvent{
-					Event: events.Event{
-						Tag:    "KeySignature",
-						Status: 0xff,
-						Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0x06, 0x00},
+		Events: []*events.EventW{
+			&events.EventW{
+				Event: &metaevent.KeySignature{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "KeySignature",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0x06, 0x00},
+						},
+						Type: types.MetaEventType(0x59),
 					},
-					Type: types.MetaEventType(0x59),
+					Accidentals: 6,
+					KeyType:     0,
+					Key:         "F♯ major",
 				},
-				Accidentals: 6,
-				KeyType:     0,
-				Key:         "F♯ major",
 			},
 
-			&midievent.NoteOn{
-				MidiEvent: midievent.MidiEvent{
-					Event: events.Event{
-						Tag:    "NoteOn",
-						Status: 0x91,
-						Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
+			&events.EventW{
+				Event: &midievent.NoteOn{
+					MidiEvent: midievent.MidiEvent{
+						Event: events.Event{
+							Tag:    "NoteOn",
+							Status: 0x91,
+							Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
+						},
+						Channel: types.Channel(0x01),
 					},
-					Channel: types.Channel(0x01),
+					Note: midievent.Note{
+						Value: 49,
+						Name:  "C♯2",
+						Alias: "C♯2",
+					},
+					Velocity: 72,
 				},
-				Note: midievent.Note{
-					Value: 49,
-					Name:  "C♯2",
-					Alias: "C♯2",
-				},
-				Velocity: 72,
 			},
 
-			&metaevent.KeySignature{
-				MetaEvent: metaevent.MetaEvent{
-					Event: events.Event{
-						Tag:    "KeySignature",
-						Status: 0xff,
-						Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01},
+			&events.EventW{
+				Event: &metaevent.KeySignature{
+					MetaEvent: metaevent.MetaEvent{
+						Event: events.Event{
+							Tag:    "KeySignature",
+							Status: 0xff,
+							Bytes:  types.Hex{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01},
+						},
+						Type: types.MetaEventType(0x59),
 					},
-					Type: types.MetaEventType(0x59),
+					Accidentals: -6,
+					KeyType:     1,
+					Key:         "E♭ minor",
 				},
-				Accidentals: -6,
-				KeyType:     1,
-				Key:         "E♭ minor",
 			},
 
-			&midievent.NoteOff{
-				MidiEvent: midievent.MidiEvent{
-					Event: events.Event{
-						Tag:    "NoteOff",
-						Status: 0x81,
-						Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
+			&events.EventW{
+				Event: &midievent.NoteOff{
+					MidiEvent: midievent.MidiEvent{
+						Event: events.Event{
+							Tag:    "NoteOff",
+							Status: 0x81,
+							Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
+						},
+						Channel: types.Channel(0x01),
 					},
-					Channel: types.Channel(0x01),
+					Note: midievent.Note{
+						Value: 49,
+						Name:  "C♯2",
+						Alias: "D♭2",
+					},
+					Velocity: 100,
 				},
-				Note: midievent.Note{
-					Value: 49,
-					Name:  "C♯2",
-					Alias: "D♭2",
-				},
-				Velocity: 100,
 			},
 		},
 	}

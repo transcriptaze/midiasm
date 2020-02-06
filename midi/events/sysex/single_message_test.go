@@ -13,8 +13,6 @@ import (
 func TestParseSingleMessage(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
-		Tick:   0,
-		Delta:  0,
 		Status: 0xf0,
 		Bytes:  []byte{0x00, 0xf0},
 	}
@@ -57,8 +55,6 @@ func TestParseSingleMessage(t *testing.T) {
 func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
-		Tick:   0,
-		Delta:  0,
 		Status: 0xf0,
 		Bytes:  []byte{0x00, 0xf0},
 	}

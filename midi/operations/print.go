@@ -22,7 +22,7 @@ var templates = map[string]string{
 	"MTrk": `{{pad (ellipsize .Bytes 24) 42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
 {{range .Events}}{{template "event" .}}{{end}}`,
 
-	"event": `{{template "hex" .Bytes}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .}}`,
+	"event": `{{template "hex" .Event.Bytes}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .Event}}`,
 	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
 {{else if eq .Tag "Text"                   }}{{template "text"                   .}}
 {{else if eq .Tag "Copyright"              }}{{template "copyright"              .}}

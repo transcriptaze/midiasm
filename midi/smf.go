@@ -6,7 +6,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -100,7 +99,7 @@ func (smf *SMF) LoadConfiguration(r io.Reader) error {
 func (smf *SMF) Validate() []ValidationError {
 	errors := []ValidationError{}
 
-	clean := func(e events.IEvent) string {
+	clean := func(e interface{}) string {
 		t := fmt.Sprintf("%T", e)
 		t = strings.TrimPrefix(t, "*")
 		t = strings.TrimPrefix(t, "metaevent.")
@@ -117,7 +116,8 @@ func (smf *SMF) Validate() []ValidationError {
 	if smf.MThd.Format == 1 {
 		if len(smf.Tracks) > 0 {
 			track := smf.Tracks[0]
-			for _, event := range track.Events {
+			for _, e := range track.Events {
+				event := e.Event
 				switch event.(type) {
 				case *metaevent.Tempo,
 					*metaevent.TrackName,
@@ -131,7 +131,8 @@ func (smf *SMF) Validate() []ValidationError {
 		}
 
 		for _, track := range smf.Tracks[1:] {
-			for _, event := range track.Events {
+			for _, e := range track.Events {
+				event := e.Event
 				switch event.(type) {
 				case *metaevent.Tempo:
 					errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
@@ -147,7 +148,8 @@ func (smf *SMF) Validate() []ValidationError {
 		if len(track.Events) == 0 {
 			errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event", track.TrackNumber)))
 		} else {
-			event := track.Events[len(track.Events)-1]
+			e := track.Events[len(track.Events)-1]
+			event := e.Event
 			if _, ok := event.(*metaevent.EndOfTrack); !ok {
 				errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event (%s)", track.TrackNumber, clean(event))))
 			}

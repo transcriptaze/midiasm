@@ -32,32 +32,32 @@ type Note struct {
 func (x *Notes) Execute(smf *midi.SMF) error {
 	ppqn := uint64(smf.MThd.Division)
 	ctx := context.NewContext()
-	tempoMap := make([]events.IEvent, 0)
+	tempoMap := make([]*events.EventW, 0)
 
 	for _, e := range smf.Tracks[0].Events {
-		if v, ok := e.(*metaevent.Tempo); ok {
-			tempoMap = append(tempoMap, v)
+		if _, ok := e.Event.(*metaevent.Tempo); ok {
+			tempoMap = append(tempoMap, e)
 		}
 	}
 
 	for _, track := range smf.Tracks[1:] {
-		eventlist := make(map[uint64][]events.IEvent, 0)
+		eventlist := make(map[uint64][]*events.EventW, 0)
 
 		for _, e := range tempoMap {
-			tick := e.TickValue()
+			tick := uint64(e.Tick)
 			list := eventlist[tick]
 			if list == nil {
-				list = make([]events.IEvent, 0)
+				list = make([]*events.EventW, 0)
 			}
 
 			eventlist[tick] = append(list, e)
 		}
 
 		for _, e := range track.Events {
-			tick := e.TickValue()
+			tick := uint64(e.Tick)
 			list := eventlist[tick]
 			if list == nil {
-				list = make([]events.IEvent, 0)
+				list = make([]*events.EventW, 0)
 			}
 
 			eventlist[tick] = append(list, e)
@@ -89,13 +89,15 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 
 			list := eventlist[tick]
 			for _, e := range list {
-				if v, ok := e.(*metaevent.Tempo); ok {
+				event := e.Event
+				if v, ok := event.(*metaevent.Tempo); ok {
 					tempo = uint64(v.Tempo)
 				}
 			}
 
 			for _, e := range list {
-				if v, ok := e.(*midievent.NoteOff); ok {
+				event := e.Event
+				if v, ok := event.(*midievent.NoteOff); ok {
 					eventlog.Debug(fmt.Sprintf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
@@ -110,7 +112,8 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			}
 
 			for _, e := range list {
-				if v, ok := e.(*metaevent.KeySignature); ok {
+				event := e.Event
+				if v, ok := event.(*metaevent.KeySignature); ok {
 					if v.Accidentals < 0 {
 						ctx.UseFlats()
 					} else {
@@ -118,7 +121,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					}
 				}
 
-				if v, ok := e.(*midievent.NoteOn); ok {
+				if v, ok := event.(*midievent.NoteOn); ok {
 					eventlog.Debug(fmt.Sprintf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)

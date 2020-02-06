@@ -19,6 +19,7 @@
 - [ ] NB: Unglobalize manufacturer list (e.g. see UnmarshalSMF unit tests which keep the last value loaded from 'conf')
 - [ ] Running status
   - FIXME: Ewwwwww :-(
+  - Unit test for running status at beginning of track (seems to cause 'missing track')
 - [x] Configurable formats
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
@@ -29,7 +30,6 @@
 - [x] Check SMTPEOffset only in track 0 for format 1
 - [ ] Add outstanding events to TestUnmarshalSMF
 - [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac
-- [ ] Unit test for running status at beginning of track (seems to cause 'missing track')
 
 ### Notes 
 

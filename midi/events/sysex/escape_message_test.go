@@ -13,8 +13,6 @@ import (
 func TestParseEscapeMessage(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
-		Tick:   0,
-		Delta:  0,
 		Status: 0xf7,
 		Bytes:  []byte{0x00, 0xf7},
 	}

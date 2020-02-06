@@ -10,8 +10,6 @@ import (
 func TestParseTimeSignature(t *testing.T) {
 	e := events.Event{
 		Tag:    "TimeSignature",
-		Tick:   0,
-		Delta:  0,
 		Status: 0xff,
 		Bytes:  []byte{0x00, 0xff},
 	}

@@ -47,7 +47,7 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (events.IEvent, error) {
+func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	event := MidiEvent{
 		Event:   e,
 		Channel: types.Channel((e.Status) & 0x0F),

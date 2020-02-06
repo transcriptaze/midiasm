@@ -20,7 +20,7 @@ type MTrk struct {
 	Length      uint32
 	Bytes       types.Hex
 
-	Events []events.IEvent
+	Events []*events.EventW
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
@@ -31,18 +31,18 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 
 	length := binary.BigEndian.Uint32(data[4:8])
 
-	eventlist := make([]events.IEvent, 0)
+	eventlist := make([]*events.EventW, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
 	tick := uint32(0)
 	err := error(nil)
-	e := events.IEvent(nil)
+	var e *events.EventW = nil
 	ctx := context.NewContext()
 
 	for err == nil {
 		e, err = parse(r, tick, ctx)
 		if err == nil && e != nil {
-			tick += e.DeltaTime()
-			eventlist = append(eventlist, e.(events.IEvent))
+			tick += uint32(e.Delta)
+			eventlist = append(eventlist, e)
 		}
 	}
 
@@ -58,7 +58,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, error) {
+func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, error) {
 	bytes := make([]byte, 0)
 
 	delta, m, err := vlq(r)
@@ -74,19 +74,32 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (events.IEvent, e
 	bytes = append(bytes, b)
 
 	e := events.Event{
-		Tick:   types.Tick(tick + delta),
-		Delta:  types.Delta(delta),
 		Status: types.Status(b),
 		Bytes:  bytes,
 	}
 
 	if b == 0xff {
-		return metaevent.Parse(e, r, ctx)
+		x, err := metaevent.Parse(e, r, ctx)
+		return &events.EventW{
+			Tick:  types.Tick(tick + delta),
+			Delta: types.Delta(delta),
+			Event: x,
+		}, err
 	} else if b == 0xf0 || b == 0xf7 {
 		ctx.ClearRunningStatus()
-		return sysex.Parse(e, r, ctx)
+		x, err := sysex.Parse(e, r, ctx)
+		return &events.EventW{
+			Tick:  types.Tick(tick + delta),
+			Delta: types.Delta(delta),
+			Event: x,
+		}, err
 	} else {
-		return midievent.Parse(e, r, ctx)
+		x, err := midievent.Parse(e, r, ctx)
+		return &events.EventW{
+			Tick:  types.Tick(tick + delta),
+			Delta: types.Delta(delta),
+			Event: x,
+		}, err
 	}
 }
 
