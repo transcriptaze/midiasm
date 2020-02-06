@@ -11,34 +11,32 @@ type Manufacturer struct {
 	Name   string `json:"name"`
 }
 
-func AddManufacturer(m Manufacturer) error {
-	if len(m.ID) != 1 && len(m.ID) != 3 {
-		return fmt.Errorf("Invalid manufacturer ID: %v", m.ID)
+func MakeManufacturer(ID []byte, region string, name string) (string, *Manufacturer, error) {
+	if len(ID) != 1 && len(ID) != 3 {
+		return "", nil, fmt.Errorf("Invalid manufacturer ID: %v", ID)
 	}
 
-	if strings.Trim(m.Name, " ") == "" {
-		return fmt.Errorf("Invalid manufacturer Name: %s", m.Name)
+	if strings.Trim(name, " ") == "" {
+		return "", nil, fmt.Errorf("Invalid manufacturer Name: %s", name)
 	}
 
-	key := fmt.Sprintf("%02X", m.ID[0])
-	if len(m.ID) == 3 {
-		key = fmt.Sprintf("%02X%02X", m.ID[1], m.ID[2])
+	key := fmt.Sprintf("%02X", ID[0])
+	if len(ID) == 3 {
+		key = fmt.Sprintf("%02X%02X", ID[1], ID[2])
 	}
 
-	v := Manufacturer{
-		ID:     make([]byte, len(m.ID)),
-		Region: strings.Trim(m.Region, " "),
-		Name:   strings.Trim(m.Name, " "),
+	m := Manufacturer{
+		ID:     make([]byte, len(ID)),
+		Region: strings.Trim(region, " "),
+		Name:   strings.Trim(name, " "),
 	}
 
-	copy(v.ID, m.ID)
+	copy(m.ID, ID)
 
-	manufacturers[key] = v
-
-	return nil
+	return key, &m, nil
 }
 
-func LookupManufacturer(id []byte) Manufacturer {
+func LookupManufacturer(id []byte, additional map[string]Manufacturer) Manufacturer {
 	manufacturer := Manufacturer{
 		ID:     id,
 		Region: "<unknown>",
@@ -48,12 +46,22 @@ func LookupManufacturer(id []byte) Manufacturer {
 	switch len(id) {
 	case 1:
 		key := fmt.Sprintf("%02X", id[0])
+		if additional != nil {
+			if m, ok := additional[key]; ok {
+				return m
+			}
+		}
 		if m, ok := manufacturers[key]; ok {
 			return m
 		}
 
 	case 3:
 		key := fmt.Sprintf("%02X%02X", id[1], id[2])
+		if additional != nil {
+			if m, ok := additional[key]; ok {
+				return m
+			}
+		}
 		if m, ok := manufacturers[key]; ok {
 			return m
 		}

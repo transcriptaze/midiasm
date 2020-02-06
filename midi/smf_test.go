@@ -377,6 +377,55 @@ func TestUnmarshalSMFWithConf(t *testing.T) {
 	}
 }
 
+func TestUnmarshalSMFUnglobalizedConf(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x00, 0x60,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x0a,
+		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
+	}
+
+	conf := `{ "manufacturers": [ { "id": [ 0, 0, 59 ], "region": "Borneo", "name": "MOTU" } ] }`
+
+	expected := types.Manufacturer{
+		ID:     []byte{0x00, 0x00, 0x3b},
+		Region: "Borneo",
+		Name:   "MOTU",
+	}
+
+	reverted := types.Manufacturer{
+		ID:     []byte{0x00, 0x00, 0x3b},
+		Region: "American",
+		Name:   "Mark Of The Unicorn (MOTU)",
+	}
+
+	smf := SMF{}
+
+	r := strings.NewReader(conf)
+	if err := smf.LoadConfiguration(r); err != nil {
+		t.Fatalf("Unexpected error loading configuration (%v)", err)
+	}
+
+	if err := smf.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("Unexpected error unmarshaling SMF: %v", err)
+	}
+
+	e := smf.Tracks[0].Events[0].Event.(*metaevent.SequencerSpecificEvent).Manufacturer
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", expected, e)
+	}
+
+	smf = SMF{}
+
+	if err := smf.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("Unexpected error unmarshaling SMF: %v", err)
+	}
+
+	e = smf.Tracks[0].Events[0].Event.(*metaevent.SequencerSpecificEvent).Manufacturer
+	if !reflect.DeepEqual(e, reverted) {
+		t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", reverted, e)
+	}
+}
+
 func TestUnmarshalSMFNoteAlias(t *testing.T) {
 	bytes := []byte{
 		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x00, 0x60,

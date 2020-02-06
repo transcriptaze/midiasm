@@ -121,7 +121,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, 
 
 	case 0x7f:
 		event.Tag = "SequencerSpecificEvent"
-		return NewSequencerSpecificEvent(&event, rr)
+		return NewSequencerSpecificEvent(ctx, &event, rr)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %02X", byte(event.Type))

@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -18,6 +19,8 @@ type SMF struct {
 	File   string
 	MThd   *MThd
 	Tracks []*MTrk
+
+	manufacturers map[string]types.Manufacturer
 }
 
 type Note struct {
@@ -52,7 +55,10 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 					TrackNumber: types.TrackNumber(len(smf.Tracks)),
 				}
 
-				if err := mtrk.UnmarshalBinary(chunk); err == nil {
+				ctx := context.NewContext()
+				ctx.Manufacturers = smf.manufacturers
+
+				if err := mtrk.UnmarshalBinary(ctx, chunk); err == nil {
 					smf.Tracks = append(smf.Tracks, &mtrk)
 				}
 			}
@@ -72,9 +78,17 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 
 func (smf *SMF) LoadConfiguration(r io.Reader) error {
 	conf := struct {
-		Manufacturers []types.Manufacturer `json:"manufacturers"`
+		Manufacturers []struct {
+			ID     []byte `json:"id"`
+			Region string `json:"region"`
+			Name   string `json:"name"`
+		} `json:"manufacturers"`
 	}{
-		Manufacturers: make([]types.Manufacturer, 0),
+		Manufacturers: []struct {
+			ID     []byte `json:"id"`
+			Region string `json:"region"`
+			Name   string `json:"name"`
+		}{},
 	}
 
 	bytes, err := ioutil.ReadAll(r)
@@ -87,11 +101,19 @@ func (smf *SMF) LoadConfiguration(r io.Reader) error {
 		return err
 	}
 
+	manufacturers := map[string]types.Manufacturer{}
 	for _, m := range conf.Manufacturers {
-		if err := types.AddManufacturer(m); err != nil {
+		k, v, err := types.MakeManufacturer(m.ID, m.Region, m.Name)
+		if err != nil {
 			return err
 		}
+
+		if v != nil {
+			manufacturers[k] = *v
+		}
 	}
+
+	smf.manufacturers = manufacturers
 
 	return nil
 }

@@ -13,7 +13,7 @@ type SysExSingleMessage struct {
 	Data         types.Hex
 }
 
-func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Context) (*SysExSingleMessage, error) {
+func NewSysExSingleMessage(ctx *context.Context, event *SysExEvent, r io.ByteReader) (*SysExSingleMessage, error) {
 	if event.Status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", event.Status)
 	}
@@ -44,7 +44,7 @@ func NewSysExSingleMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 
 	return &SysExSingleMessage{
 		SysExEvent:   *event,
-		Manufacturer: types.LookupManufacturer(id),
+		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,
 	}, nil
 }

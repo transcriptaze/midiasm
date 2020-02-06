@@ -40,6 +40,7 @@ type Context struct {
 	runningStatus byte
 	casio         bool
 	notes         map[uint16]string
+	Manufacturers map[string]types.Manufacturer
 }
 
 func NewContext() *Context {
@@ -48,6 +49,7 @@ func NewContext() *Context {
 		runningStatus: 0x00,
 		casio:         false,
 		notes:         make(map[uint16]string),
+		Manufacturers: make(map[string]types.Manufacturer),
 	}
 }
 
@@ -121,6 +123,11 @@ func (ctx *Context) PutRunningStatus(b byte) {
 func (ctx *Context) HasRunningStatus() bool {
 	return ctx.runningStatus != 0x00
 }
+
 func (ctx *Context) ClearRunningStatus() {
 	ctx.runningStatus = 0x00
+}
+
+func (ctx *Context) LookupManufacturer(id []byte) types.Manufacturer {
+	return types.LookupManufacturer(id, ctx.Manufacturers)
 }

@@ -48,7 +48,7 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, 
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
 			event.Tag = "SysExMessage"
-			return NewSysExSingleMessage(&event, rr, ctx)
+			return NewSysExSingleMessage(ctx, &event, rr)
 		}
 
 	case 0xf7:

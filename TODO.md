@@ -16,7 +16,7 @@
 - [x] Print note name + octave
 - [x] Decode note in context of current scale
 - [x] Keep NoteOff name to be NoteOn name if note is tied across KeySignature
-- [ ] NB: Unglobalize manufacturer list (e.g. see UnmarshalSMF unit tests which keep the last value loaded from 'conf')
+- [x] Unglobalize manufacturer list (e.g. see UnmarshalSMF unit tests which keep the last value loaded from 'conf')
 - [ ] Running status
   - FIXME: Ewwwwww :-(
   - Unit test for running status at beginning of track (seems to cause 'missing track')
@@ -37,6 +37,7 @@
 - [x] Rework as SMF processor
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
+- [ ] Configurable formats
 - [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2
