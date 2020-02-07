@@ -6,6 +6,7 @@ import (
 )
 
 type MIDIPort struct {
+	Tag string
 	MetaEvent
 	Port uint8
 }
@@ -30,6 +31,7 @@ func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
 	}
 
 	return &MIDIPort{
+		Tag:       "MIDIPort",
 		MetaEvent: *event,
 		Port:      port & 0x7f,
 	}, nil

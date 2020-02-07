@@ -8,6 +8,7 @@ import (
 )
 
 type SequencerSpecificEvent struct {
+	Tag string
 	MetaEvent
 	Manufacturer types.Manufacturer
 	Data         types.Hex
@@ -31,6 +32,7 @@ func NewSequencerSpecificEvent(ctx *context.Context, event *MetaEvent, r io.Byte
 	}
 
 	return &SequencerSpecificEvent{
+		Tag:          "SequencerSpecificEvent",
 		MetaEvent:    *event,
 		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,

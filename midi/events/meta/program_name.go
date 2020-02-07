@@ -6,6 +6,7 @@ import (
 )
 
 type ProgramName struct {
+	Tag string
 	MetaEvent
 	Name string
 }
@@ -21,6 +22,7 @@ func NewProgramName(event *MetaEvent, r io.ByteReader) (*ProgramName, error) {
 	}
 
 	return &ProgramName{
+		Tag:       "ProgramName",
 		MetaEvent: *event,
 		Name:      string(name),
 	}, nil

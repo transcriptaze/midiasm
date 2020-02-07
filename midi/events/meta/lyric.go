@@ -6,6 +6,7 @@ import (
 )
 
 type Lyric struct {
+	Tag string
 	MetaEvent
 	Lyric string
 }
@@ -21,6 +22,7 @@ func NewLyric(event *MetaEvent, r io.ByteReader) (*Lyric, error) {
 	}
 
 	return &Lyric{
+		Tag:       "Lyric",
 		MetaEvent: *event,
 		Lyric:     string(lyric),
 	}, nil

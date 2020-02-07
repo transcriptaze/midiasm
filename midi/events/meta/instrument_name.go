@@ -6,6 +6,7 @@ import (
 )
 
 type InstrumentName struct {
+	Tag string
 	MetaEvent
 	Name string
 }
@@ -21,6 +22,7 @@ func NewInstrumentName(event *MetaEvent, r io.ByteReader) (*InstrumentName, erro
 	}
 
 	return &InstrumentName{
+		Tag:       "InstrumentName",
 		MetaEvent: *event,
 		Name:      string(name),
 	}, nil

@@ -6,6 +6,7 @@ import (
 )
 
 type CuePoint struct {
+	Tag string
 	MetaEvent
 	CuePoint string
 }
@@ -21,6 +22,7 @@ func NewCuePoint(event *MetaEvent, r io.ByteReader) (*CuePoint, error) {
 	}
 
 	return &CuePoint{
+		Tag:       "CuePoint",
 		MetaEvent: *event,
 		CuePoint:  string(cuepoint),
 	}, nil

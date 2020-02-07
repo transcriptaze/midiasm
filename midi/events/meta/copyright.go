@@ -6,6 +6,7 @@ import (
 )
 
 type Copyright struct {
+	Tag string
 	MetaEvent
 	Copyright string
 }
@@ -21,6 +22,7 @@ func NewCopyright(event *MetaEvent, r io.ByteReader) (*Copyright, error) {
 	}
 
 	return &Copyright{
+		Tag:       "Copyright",
 		MetaEvent: *event,
 		Copyright: string(data),
 	}, nil

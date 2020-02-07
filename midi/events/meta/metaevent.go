@@ -9,7 +9,6 @@ import (
 )
 
 type MetaEvent struct {
-	Tag string
 	events.Event
 	Type types.MetaEventType
 }
@@ -53,75 +52,57 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, 
 
 	switch event.Type {
 	case 0x00:
-		event.Tag = "SequenceNumber"
 		return NewSequenceNumber(&event, rr)
 
 	case 0x01:
-		event.Tag = "Text"
 		return NewText(&event, rr)
 
 	case 0x02:
-		event.Tag = "Copyright"
 		return NewCopyright(&event, rr)
 
 	case 0x03:
-		event.Tag = "TrackName"
 		return NewTrackName(&event, rr)
 
 	case 0x04:
-		event.Tag = "InstrumentName"
 		return NewInstrumentName(&event, rr)
 
 	case 0x05:
-		event.Tag = "Lyric"
 		return NewLyric(&event, rr)
 
 	case 0x06:
-		event.Tag = "Marker"
 		return NewMarker(&event, rr)
 
 	case 0x07:
-		event.Tag = "CuePoint"
 		return NewCuePoint(&event, rr)
 
 	case 0x08:
-		event.Tag = "ProgramName"
 		return NewProgramName(&event, rr)
 
 	case 0x09:
-		event.Tag = "DeviceName"
 		return NewDeviceName(&event, rr)
 
 	case 0x20:
-		event.Tag = "MIDIChannelPrefix"
 		return NewMIDIChannelPrefix(&event, rr)
 
 	case 0x21:
-		event.Tag = "MIDIPort"
 		return NewMIDIPort(&event, rr)
 
 	case 0x2f:
-		event.Tag = "EndOfTrack"
 		return NewEndOfTrack(&event, rr)
 
 	case 0x51:
-		event.Tag = "Tempo"
 		return NewTempo(&event, rr)
 
 	case 0x54:
-		event.Tag = "SMPTEOffset"
 		return NewSMPTEOffset(&event, rr)
 
 	case 0x58:
-		event.Tag = "TimeSignature"
 		return NewTimeSignature(&event, rr)
 
 	case 0x59:
-		event.Tag = "KeySignature"
 		return NewKeySignature(ctx, &event, rr)
 
 	case 0x7f:
-		event.Tag = "SequencerSpecificEvent"
 		return NewSequencerSpecificEvent(ctx, &event, rr)
 	}
 

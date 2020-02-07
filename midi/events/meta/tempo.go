@@ -6,6 +6,7 @@ import (
 )
 
 type Tempo struct {
+	Tag string
 	MetaEvent
 	Tempo uint32
 }
@@ -29,6 +30,7 @@ func NewTempo(event *MetaEvent, r io.ByteReader) (*Tempo, error) {
 	}
 
 	return &Tempo{
+		Tag:       "Tempo",
 		MetaEvent: *event,
 		Tempo:     tempo,
 	}, nil

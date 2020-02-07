@@ -6,6 +6,7 @@ import (
 )
 
 type MIDIChannelPrefix struct {
+	Tag string
 	MetaEvent
 	Channel int8
 }
@@ -28,6 +29,7 @@ func NewMIDIChannelPrefix(event *MetaEvent, r io.ByteReader) (*MIDIChannelPrefix
 	}
 
 	return &MIDIChannelPrefix{
+		Tag:       "MIDIChannelPrefix",
 		MetaEvent: *event,
 		Channel:   channel,
 	}, nil

@@ -6,6 +6,7 @@ import (
 )
 
 type TrackName struct {
+	Tag string
 	MetaEvent
 	Name string
 }
@@ -21,6 +22,7 @@ func NewTrackName(event *MetaEvent, r io.ByteReader) (*TrackName, error) {
 	}
 
 	return &TrackName{
+		Tag:       "TrackName",
 		MetaEvent: *event,
 		Name:      string(name),
 	}, nil

@@ -6,6 +6,7 @@ import (
 )
 
 type TimeSignature struct {
+	Tag string
 	MetaEvent
 	Numerator               uint8
 	Denominator             uint8
@@ -35,6 +36,7 @@ func NewTimeSignature(event *MetaEvent, r io.ByteReader) (*TimeSignature, error)
 	}
 
 	return &TimeSignature{
+		Tag:                     "TimeSignature",
 		MetaEvent:               *event,
 		Numerator:               numerator,
 		Denominator:             denominator,

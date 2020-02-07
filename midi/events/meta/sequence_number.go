@@ -6,6 +6,7 @@ import (
 )
 
 type SequenceNumber struct {
+	Tag string
 	MetaEvent
 	SequenceNumber uint16
 }
@@ -29,6 +30,7 @@ func NewSequenceNumber(event *MetaEvent, r io.ByteReader) (*SequenceNumber, erro
 	}
 
 	return &SequenceNumber{
+		Tag:            "SequenceNumber",
 		MetaEvent:      *event,
 		SequenceNumber: sequence,
 	}, nil

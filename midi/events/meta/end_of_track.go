@@ -6,6 +6,7 @@ import (
 )
 
 type EndOfTrack struct {
+	Tag string
 	MetaEvent
 }
 
@@ -22,6 +23,7 @@ func NewEndOfTrack(event *MetaEvent, r io.ByteReader) (*EndOfTrack, error) {
 	}
 
 	return &EndOfTrack{
+		Tag:       "EndOfTrack",
 		MetaEvent: *event,
 	}, nil
 }

@@ -6,6 +6,7 @@ import (
 )
 
 type Marker struct {
+	Tag string
 	MetaEvent
 	Marker string
 }
@@ -21,6 +22,7 @@ func NewMarker(event *MetaEvent, r io.ByteReader) (*Marker, error) {
 	}
 
 	return &Marker{
+		Tag:       "Marker",
 		MetaEvent: *event,
 		Marker:    string(marker),
 	}, nil

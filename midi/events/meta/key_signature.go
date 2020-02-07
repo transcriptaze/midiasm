@@ -17,6 +17,7 @@ func (k KeyType) String() string {
 }
 
 type KeySignature struct {
+	Tag string
 	MetaEvent
 	Accidentals int8
 	KeyType     KeyType
@@ -96,6 +97,7 @@ func NewKeySignature(ctx *context.Context, event *MetaEvent, r io.ByteReader) (*
 	}
 
 	return &KeySignature{
+		Tag:         "KeySignature",
 		MetaEvent:   *event,
 		Accidentals: accidentals,
 		KeyType:     KeyType(keyType),

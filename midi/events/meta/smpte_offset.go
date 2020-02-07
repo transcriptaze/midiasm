@@ -6,6 +6,7 @@ import (
 )
 
 type SMPTEOffset struct {
+	Tag string
 	MetaEvent
 	Hour             uint8
 	Minute           uint8
@@ -71,6 +72,7 @@ func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
 	}
 
 	return &SMPTEOffset{
+		Tag:              "SMPTEOffset",
 		MetaEvent:        *event,
 		Hour:             hour,
 		Minute:           minute,

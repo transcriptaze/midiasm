@@ -6,6 +6,7 @@ import (
 )
 
 type Text struct {
+	Tag string
 	MetaEvent
 	Text string
 }
@@ -21,6 +22,7 @@ func NewText(event *MetaEvent, r io.ByteReader) (*Text, error) {
 	}
 
 	return &Text{
+		Tag:       "Text",
 		MetaEvent: *event,
 		Text:      string(data),
 	}, nil
