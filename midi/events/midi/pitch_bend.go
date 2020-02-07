@@ -6,6 +6,7 @@ import (
 )
 
 type PitchBend struct {
+	Tag string
 	MidiEvent
 	Bend uint16
 }
@@ -27,6 +28,7 @@ func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
 	}
 
 	return &PitchBend{
+		Tag:       "PitchBend",
 		MidiEvent: *event,
 		Bend:      bend,
 	}, nil

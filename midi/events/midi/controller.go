@@ -6,6 +6,7 @@ import (
 )
 
 type Controller struct {
+	Tag string
 	MidiEvent
 	Controller byte
 	Value      byte
@@ -27,6 +28,7 @@ func NewController(event *MidiEvent, r io.ByteReader) (*Controller, error) {
 	}
 
 	return &Controller{
+		Tag:        "Controller",
 		MidiEvent:  *event,
 		Controller: controller,
 		Value:      value,

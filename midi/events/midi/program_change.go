@@ -6,6 +6,7 @@ import (
 )
 
 type ProgramChange struct {
+	Tag string
 	MidiEvent
 	Program byte
 }
@@ -21,6 +22,7 @@ func NewProgramChange(event *MidiEvent, r io.ByteReader) (*ProgramChange, error)
 	}
 
 	return &ProgramChange{
+		Tag:       "ProgramChange",
 		MidiEvent: *event,
 		Program:   program,
 	}, nil

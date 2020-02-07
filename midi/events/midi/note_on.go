@@ -7,6 +7,7 @@ import (
 )
 
 type NoteOn struct {
+	Tag string
 	MidiEvent
 	Note     Note
 	Velocity byte
@@ -30,6 +31,7 @@ func NewNoteOn(ctx *context.Context, event *MidiEvent, r io.ByteReader) (*NoteOn
 	ctx.PutNoteOn(event.Channel, note)
 
 	return &NoteOn{
+		Tag:       "NoteOn",
 		MidiEvent: *event,
 		Note: Note{
 			Value: note,

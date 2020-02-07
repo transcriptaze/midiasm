@@ -212,8 +212,8 @@ func TestUnmarshalSMF(t *testing.T) {
 
 				&events.EventW{
 					Event: &midievent.NoteOn{
+						Tag: "NoteOn",
 						MidiEvent: midievent.MidiEvent{
-							Tag: "NoteOn",
 							Event: events.Event{
 								Status: 0x91,
 								Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
@@ -231,8 +231,8 @@ func TestUnmarshalSMF(t *testing.T) {
 
 				&events.EventW{
 					Event: &midievent.NoteOn{
+						Tag: "NoteOn",
 						MidiEvent: midievent.MidiEvent{
-							Tag: "NoteOn",
 							Event: events.Event{
 								Status: 0x91,
 								Bytes:  types.Hex{0x00, 0x3c, 0x4c},
@@ -250,8 +250,8 @@ func TestUnmarshalSMF(t *testing.T) {
 
 				&events.EventW{
 					Event: &midievent.NoteOff{
+						Tag: "NoteOff",
 						MidiEvent: midievent.MidiEvent{
-							Tag: "NoteOff",
 							Event: events.Event{
 								Status: 0x81,
 								Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},
@@ -460,8 +460,8 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 
 			&events.EventW{
 				Event: &midievent.NoteOn{
+					Tag: "NoteOn",
 					MidiEvent: midievent.MidiEvent{
-						Tag: "NoteOn",
 						Event: events.Event{
 							Status: 0x91,
 							Bytes:  types.Hex{0x00, 0x91, 0x31, 0x48},
@@ -495,8 +495,8 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 
 			&events.EventW{
 				Event: &midievent.NoteOff{
+					Tag: "NoteOff",
 					MidiEvent: midievent.MidiEvent{
-						Tag: "NoteOff",
 						Event: events.Event{
 							Status: 0x81,
 							Bytes:  types.Hex{0x00, 0x81, 0x31, 0x64},

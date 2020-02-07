@@ -6,6 +6,7 @@ import (
 )
 
 type ChannelPressure struct {
+	Tag string
 	MidiEvent
 	Pressure byte
 }
@@ -21,6 +22,7 @@ func NewChannelPressure(event *MidiEvent, r io.ByteReader) (*ChannelPressure, er
 	}
 
 	return &ChannelPressure{
+		Tag:       "ChannelPressure",
 		MidiEvent: *event,
 		Pressure:  pressure,
 	}, nil

@@ -6,6 +6,7 @@ import (
 )
 
 type PolyphonicPressure struct {
+	Tag string
 	MidiEvent
 	Pressure byte
 }
@@ -21,6 +22,7 @@ func NewPolyphonicPressure(event *MidiEvent, r io.ByteReader) (*PolyphonicPressu
 	}
 
 	return &PolyphonicPressure{
+		Tag:       "PolyphonicPressure",
 		MidiEvent: *event,
 		Pressure:  pressure,
 	}, nil
