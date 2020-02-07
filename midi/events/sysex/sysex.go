@@ -8,6 +8,7 @@ import (
 )
 
 type SysExEvent struct {
+	Tag string
 	events.Event
 }
 

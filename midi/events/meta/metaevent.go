@@ -9,6 +9,7 @@ import (
 )
 
 type MetaEvent struct {
+	Tag string
 	events.Event
 	Type types.MetaEventType
 }

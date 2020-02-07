@@ -10,6 +10,7 @@ import (
 )
 
 type MidiEvent struct {
+	Tag string
 	events.Event
 	Channel types.Channel
 }

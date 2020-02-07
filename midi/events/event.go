@@ -5,7 +5,7 @@ import (
 )
 
 type Event struct {
-	Tag    string
+	// Tag    string
 	Status types.Status
 	Bytes  types.Hex
 }

@@ -9,14 +9,13 @@ import (
 
 func TestParseTimeSignature(t *testing.T) {
 	e := events.Event{
-		Tag:    "TimeSignature",
 		Status: 0xff,
 		Bytes:  []byte{0x00, 0xff},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{4, 3, 3, 24, 8}))
 
-	event, err := NewTimeSignature(&MetaEvent{e, 0x58}, r)
+	event, err := NewTimeSignature(&MetaEvent{"TimeSignature", e, 0x58}, r)
 	if err != nil {
 		t.Fatalf("TimeSignature parse error: %v", err)
 	}

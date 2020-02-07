@@ -13,7 +13,8 @@ import (
 func TestParseNoteOffInMajorKey(t *testing.T) {
 	expected := NoteOff{
 		MidiEvent{
-			events.Event{"NoteOff", 0x81, []byte{0x00, 0x81, 0x31, 0x48}},
+			"NoteOff",
+			events.Event{0x81, []byte{0x00, 0x81, 0x31, 0x48}},
 			1,
 		},
 		Note{
@@ -53,7 +54,8 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 func TestParseNoteOffInMinorKey(t *testing.T) {
 	expected := NoteOff{
 		MidiEvent{
-			events.Event{"NoteOff", 0x81, []byte{0x00, 0x81, 0x31, 0x48}},
+			"NoteOff",
+			events.Event{0x81, []byte{0x00, 0x81, 0x31, 0x48}},
 			1,
 		},
 		Note{
