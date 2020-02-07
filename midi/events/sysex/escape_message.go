@@ -8,6 +8,7 @@ import (
 )
 
 type SysExEscapeMessage struct {
+	Tag string
 	SysExEvent
 	Data types.Hex
 }
@@ -27,6 +28,7 @@ func NewSysExEscapeMessage(event *SysExEvent, r io.ByteReader, ctx *context.Cont
 	}
 
 	return &SysExEscapeMessage{
+		Tag:        "SysExEscape",
 		SysExEvent: *event,
 		Data:       data,
 	}, nil

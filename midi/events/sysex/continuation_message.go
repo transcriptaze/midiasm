@@ -8,6 +8,7 @@ import (
 )
 
 type SysExContinuationMessage struct {
+	Tag string
 	SysExEvent
 	Data types.Hex
 }
@@ -31,6 +32,7 @@ func NewSysExContinuationMessage(event *SysExEvent, r io.ByteReader, ctx *contex
 	}
 
 	return &SysExContinuationMessage{
+		Tag:        "SysExContinuation",
 		SysExEvent: *event,
 		Data:       data,
 	}, nil

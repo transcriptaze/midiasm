@@ -8,7 +8,6 @@ import (
 )
 
 type SysExEvent struct {
-	Tag string
 	events.Event
 }
 
@@ -48,16 +47,13 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, 
 		if ctx.Casio() {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
-			event.Tag = "SysExMessage"
 			return NewSysExSingleMessage(ctx, &event, rr)
 		}
 
 	case 0xf7:
 		if ctx.Casio() {
-			event.Tag = "SysExContinuation"
 			return NewSysExContinuationMessage(&event, rr, ctx)
 		} else {
-			event.Tag = "SysExEscape"
 			return NewSysExEscapeMessage(&event, rr, ctx)
 		}
 	}
