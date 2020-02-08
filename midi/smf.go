@@ -58,9 +58,11 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 				ctx := context.NewContext()
 				ctx.Manufacturers = smf.manufacturers
 
-				if err := mtrk.UnmarshalBinary(ctx, chunk); err == nil {
-					smf.Tracks = append(smf.Tracks, &mtrk)
+				if err := mtrk.UnmarshalBinary(ctx, chunk); err != nil {
+					return err
 				}
+
+				smf.Tracks = append(smf.Tracks, &mtrk)
 			}
 		}
 	}
