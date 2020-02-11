@@ -2,19 +2,24 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type PitchBend struct {
 	Tag string
-	MidiEvent
-	Bend uint16
+	*events.Event
+	Channel types.Channel
+	Bend    uint16
 }
 
-func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
+func NewPitchBend(event *events.Event, r io.ByteReader) (*PitchBend, error) {
 	if event.Status&0xF0 != 0xE0 {
 		return nil, fmt.Errorf("Invalid PitchBend status (%02x): expected 'E0'", event.Status&0x80)
 	}
+
+	channel := types.Channel((event.Status) & 0x0F)
 
 	bend := uint16(0)
 
@@ -28,8 +33,9 @@ func NewPitchBend(event *MidiEvent, r io.ByteReader) (*PitchBend, error) {
 	}
 
 	return &PitchBend{
-		Tag:       "PitchBend",
-		MidiEvent: *event,
-		Bend:      bend,
+		Tag:     "PitchBend",
+		Event:   event,
+		Channel: channel,
+		Bend:    bend,
 	}, nil
 }

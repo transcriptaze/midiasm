@@ -13,10 +13,8 @@ import (
 func TestParseNoteOnInMajorKey(t *testing.T) {
 	expected := NoteOn{
 		"NoteOn",
-		MidiEvent{
-			events.Event{0x91, []byte{0x00, 0x91, 0x31, 0x48}},
-			1,
-		},
+		&events.Event{0x91, []byte{0x00, 0x91, 0x31, 0x48}},
+		1,
 		Note{
 			Value: 49,
 			Name:  "C♯2",
@@ -54,10 +52,8 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 func TestParseNoteOnInMinorKey(t *testing.T) {
 	expected := NoteOn{
 		"NoteOn",
-		MidiEvent{
-			events.Event{0x91, []byte{0x00, 0x91, 0x31, 0x48}},
-			1,
-		},
+		&events.Event{0x91, []byte{0x00, 0x91, 0x31, 0x48}},
+		1,
 		Note{
 			Value: 49,
 			Name:  "D♭2",

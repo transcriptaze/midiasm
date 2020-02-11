@@ -9,25 +9,16 @@ import (
 	"io"
 )
 
-type MidiEvent struct {
-	events.Event
-	Channel types.Channel
-}
-
 type Note struct {
 	Value byte
 	Name  string
 	Alias string
 }
 
-func (e MidiEvent) String() string {
-	return fmt.Sprintf("%s %v", e.Event, e.Status)
-}
-
 type reader struct {
 	pushed io.ByteReader
 	rdr    io.ByteReader
-	event  *MidiEvent
+	event  *events.Event
 }
 
 func (r reader) ReadByte() (byte, error) {
@@ -47,29 +38,20 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	event := MidiEvent{
-		Event:   e,
-		Channel: types.Channel((e.Status) & 0x0F),
-	}
-
+func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	rr := reader{nil, r, &event}
 
 	//FIXME Ewwwwww :-(
-	if e.Status < 0x80 && !ctx.HasRunningStatus() {
-		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", e.Status&0xF0)
-	} else if e.Status < 0x80 {
-		rr.pushed = bytes.NewReader([]byte{byte(e.Status)})
-		e.Status = types.Status(ctx.GetRunningStatus())
-		event = MidiEvent{
-			Event:   e,
-			Channel: types.Channel((e.Status) & 0x0F),
-		}
+	if event.Status < 0x80 && !ctx.HasRunningStatus() {
+		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
+	} else if event.Status < 0x80 {
+		rr.pushed = bytes.NewReader([]byte{byte(event.Status)})
+		event.Status = types.Status(ctx.GetRunningStatus())
 	}
 
-	ctx.PutRunningStatus(byte(e.Status))
+	ctx.PutRunningStatus(byte(event.Status))
 
-	switch e.Status & 0xF0 {
+	switch event.Status & 0xF0 {
 	case 0x80:
 		return NewNoteOff(ctx, &event, rr)
 
@@ -92,5 +74,5 @@ func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, 
 		return NewPitchBend(&event, rr)
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", e.Status&0xF0)
+	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
 }
