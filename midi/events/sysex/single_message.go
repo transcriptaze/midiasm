@@ -3,18 +3,19 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type SysExSingleMessage struct {
 	Tag string
-	SysExEvent
+	events.Event
 	Manufacturer types.Manufacturer
 	Data         types.Hex
 }
 
-func NewSysExSingleMessage(ctx *context.Context, event *SysExEvent, r io.ByteReader) (*SysExSingleMessage, error) {
+func NewSysExSingleMessage(ctx *context.Context, event *events.Event, r io.ByteReader) (*SysExSingleMessage, error) {
 	if event.Status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", event.Status)
 	}
@@ -45,7 +46,7 @@ func NewSysExSingleMessage(ctx *context.Context, event *SysExEvent, r io.ByteRea
 
 	return &SysExSingleMessage{
 		Tag:          "SysExMessage",
-		SysExEvent:   *event,
+		Event:        *event,
 		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,
 	}, nil

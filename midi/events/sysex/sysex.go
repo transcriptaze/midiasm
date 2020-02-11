@@ -7,13 +7,9 @@ import (
 	"io"
 )
 
-type SysExEvent struct {
-	events.Event
-}
-
 type reader struct {
 	rdr   io.ByteReader
-	event *SysExEvent
+	event *events.Event
 }
 
 func (r reader) ReadByte() (byte, error) {
@@ -25,20 +21,12 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func (e SysExEvent) String() string {
-	return fmt.Sprintf("%s %v", e.Event, e.Status)
-}
-
-func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	if e.Status != 0xF0 && e.Status != 0xF7 {
-		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", e.Status)
+func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
+	if event.Status != 0xF0 && event.Status != 0xF7 {
+		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", event.Status)
 	}
 
 	ctx.ClearRunningStatus()
-
-	event := SysExEvent{
-		Event: e,
-	}
 
 	rr := reader{r, &event}
 
