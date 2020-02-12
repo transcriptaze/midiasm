@@ -2,18 +2,20 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type SequenceNumber struct {
 	Tag string
 	MetaEvent
+	Type           types.MetaEventType
 	SequenceNumber uint16
 }
 
-func NewSequenceNumber(event *MetaEvent, r io.ByteReader) (*SequenceNumber, error) {
-	if event.Type != 0x00 {
-		return nil, fmt.Errorf("Invalid SequenceNumber event type (%02x): expected '00'", event.Type)
+func NewSequenceNumber(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*SequenceNumber, error) {
+	if eventType != 0x00 {
+		return nil, fmt.Errorf("Invalid SequenceNumber event type (%02x): expected '00'", eventType)
 	}
 
 	data, err := read(r)
@@ -32,6 +34,7 @@ func NewSequenceNumber(event *MetaEvent, r io.ByteReader) (*SequenceNumber, erro
 	return &SequenceNumber{
 		Tag:            "SequenceNumber",
 		MetaEvent:      *event,
+		Type:           eventType,
 		SequenceNumber: sequence,
 	}, nil
 }

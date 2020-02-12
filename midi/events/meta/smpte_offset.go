@@ -2,12 +2,14 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type SMPTEOffset struct {
 	Tag string
 	MetaEvent
+	Type             types.MetaEventType
 	Hour             uint8
 	Minute           uint8
 	Second           uint8
@@ -16,9 +18,9 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
-	if event.Type != 0x54 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset event type (%02x): expected '54'", event.Type)
+func NewSMPTEOffset(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*SMPTEOffset, error) {
+	if eventType != 0x54 {
+		return nil, fmt.Errorf("Invalid SMPTEOffset event type (%02x): expected '54'", eventType)
 	}
 
 	data, err := read(r)
@@ -74,6 +76,7 @@ func NewSMPTEOffset(event *MetaEvent, r io.ByteReader) (*SMPTEOffset, error) {
 	return &SMPTEOffset{
 		Tag:              "SMPTEOffset",
 		MetaEvent:        *event,
+		Type:             eventType,
 		Hour:             hour,
 		Minute:           minute,
 		Second:           second,

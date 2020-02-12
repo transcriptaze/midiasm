@@ -10,13 +10,14 @@ import (
 type SequencerSpecificEvent struct {
 	Tag string
 	MetaEvent
+	Type         types.MetaEventType
 	Manufacturer types.Manufacturer
 	Data         types.Hex
 }
 
-func NewSequencerSpecificEvent(ctx *context.Context, event *MetaEvent, r io.ByteReader) (*SequencerSpecificEvent, error) {
-	if event.Type != 0x7f {
-		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", event.Type)
+func NewSequencerSpecificEvent(ctx *context.Context, event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*SequencerSpecificEvent, error) {
+	if eventType != 0x7f {
+		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", eventType)
 	}
 
 	bytes, err := read(r)
@@ -34,6 +35,7 @@ func NewSequencerSpecificEvent(ctx *context.Context, event *MetaEvent, r io.Byte
 	return &SequencerSpecificEvent{
 		Tag:          "SequencerSpecificEvent",
 		MetaEvent:    *event,
+		Type:         eventType,
 		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,
 	}, nil

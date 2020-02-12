@@ -2,18 +2,20 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type MIDIPort struct {
 	Tag string
 	MetaEvent
+	Type types.MetaEventType
 	Port uint8
 }
 
-func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
-	if event.Type != 0x21 {
-		return nil, fmt.Errorf("Invalid MIDIPort event type (%02x): expected '21'", event.Type)
+func NewMIDIPort(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*MIDIPort, error) {
+	if eventType != 0x21 {
+		return nil, fmt.Errorf("Invalid MIDIPort event type (%02x): expected '21'", eventType)
 	}
 
 	data, err := read(r)
@@ -33,6 +35,7 @@ func NewMIDIPort(event *MetaEvent, r io.ByteReader) (*MIDIPort, error) {
 	return &MIDIPort{
 		Tag:       "MIDIPort",
 		MetaEvent: *event,
+		Type:      eventType,
 		Port:      port & 0x7f,
 	}, nil
 }
