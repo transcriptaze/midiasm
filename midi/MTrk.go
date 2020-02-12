@@ -24,17 +24,21 @@ type MTrk struct {
 }
 
 type reader struct {
-	rdr   io.ByteReader
-	event *events.Event
+	rdr    *bufio.Reader
+	buffer *bytes.Buffer
 }
 
 func (r reader) ReadByte() (byte, error) {
 	b, err := r.rdr.ReadByte()
-	if err == nil {
-		r.event.Bytes = append(r.event.Bytes, b)
+	if err != nil {
+		return b, err
 	}
 
-	return b, err
+	return b, r.buffer.WriteByte(b)
+}
+
+func (r reader) Peek(n int) ([]byte, error) {
+	return r.rdr.Peek(n)
 }
 
 func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
@@ -72,15 +76,16 @@ func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, error) {
-	bytes := make([]byte, 0)
+	var buffer bytes.Buffer
 
-	delta, m, err := vlq(r)
+	rr := reader{r, &buffer}
+
+	delta, err := vlq(rr)
 	if err != nil {
 		return nil, err
 	}
-	bytes = append(bytes, m...)
 
-	bb, err := r.Peek(1)
+	bb, err := rr.Peek(1)
 	if err != nil {
 		return nil, err
 	}
@@ -90,14 +95,14 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	if b == 0xff {
 		ctx.RunningStatus = 0x00
 
-		r.ReadByte()
+		rr.ReadByte()
 
 		e := events.Event{
 			Status: types.Status(b),
-			Bytes:  append(bytes, b),
 		}
 
-		x, err := metaevent.Parse(&e, reader{r, &e}, ctx)
+		x, err := metaevent.Parse(&e, rr, ctx)
+		e.Bytes = buffer.Bytes()
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
@@ -109,14 +114,14 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	if b == 0xf0 || b == 0xf7 {
 		ctx.RunningStatus = 0x00
 
-		r.ReadByte()
+		rr.ReadByte()
 
 		e := events.Event{
 			Status: types.Status(b),
-			Bytes:  append(bytes, b),
 		}
 
-		x, err := sysex.Parse(&e, reader{r, &e}, ctx)
+		x, err := sysex.Parse(&e, rr, ctx)
+		e.Bytes = buffer.Bytes()
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
@@ -131,19 +136,18 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 
 	e := events.Event{
 		Status: types.Status(b),
-		Bytes:  bytes,
 	}
 
 	if b < 0x80 {
 		e.Status = ctx.RunningStatus
 	} else {
-		r.ReadByte()
-		e.Bytes = append(bytes, b)
+		rr.ReadByte()
 	}
 
 	ctx.RunningStatus = e.Status
 
-	x, err := midievent.Parse(&e, reader{r, &e}, ctx)
+	x, err := midievent.Parse(&e, rr, ctx)
+	e.Bytes = buffer.Bytes()
 	return &events.EventW{
 		Tick:  types.Tick(tick + delta),
 		Delta: types.Delta(delta),
@@ -151,16 +155,14 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	}, err
 }
 
-func vlq(r *bufio.Reader) (uint32, []byte, error) {
+func vlq(r io.ByteReader) (uint32, error) {
 	l := uint32(0)
-	bytes := make([]byte, 0)
 
 	for {
 		b, err := r.ReadByte()
 		if err != nil {
-			return 0, nil, err
+			return 0, err
 		}
-		bytes = append(bytes, b)
 
 		l <<= 7
 		l += uint32(b & 0x7f)
@@ -170,5 +172,5 @@ func vlq(r *bufio.Reader) (uint32, []byte, error) {
 		}
 	}
 
-	return l, bytes, nil
+	return l, nil
 }

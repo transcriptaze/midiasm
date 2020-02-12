@@ -10,7 +10,7 @@ import (
 
 type SysExSingleMessage struct {
 	Tag string
-	events.Event
+	*events.Event
 	Manufacturer types.Manufacturer
 	Data         types.Hex
 }
@@ -46,7 +46,7 @@ func NewSysExSingleMessage(ctx *context.Context, event *events.Event, r io.ByteR
 
 	return &SysExSingleMessage{
 		Tag:          "SysExMessage",
-		Event:        *event,
+		Event:        event,
 		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,
 	}, nil
