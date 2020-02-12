@@ -2,13 +2,14 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type TimeSignature struct {
 	Tag string
-	MetaEvent
+	*events.Event
 	Type                    types.MetaEventType
 	Numerator               uint8
 	Denominator             uint8
@@ -16,7 +17,7 @@ type TimeSignature struct {
 	ThirtySecondsPerQuarter uint8
 }
 
-func NewTimeSignature(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*TimeSignature, error) {
+func NewTimeSignature(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*TimeSignature, error) {
 	if eventType != 0x58 {
 		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", eventType)
 	}
@@ -39,7 +40,7 @@ func NewTimeSignature(event *MetaEvent, eventType types.MetaEventType, r io.Byte
 
 	return &TimeSignature{
 		Tag:                     "TimeSignature",
-		MetaEvent:               *event,
+		Event:                   event,
 		Type:                    eventType,
 		Numerator:               numerator,
 		Denominator:             denominator,

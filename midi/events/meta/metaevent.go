@@ -8,13 +8,9 @@ import (
 	"io"
 )
 
-type MetaEvent struct {
-	events.Event
-}
-
 type reader struct {
 	rdr   io.ByteReader
-	event *MetaEvent
+	event *events.Event
 }
 
 func (r reader) ReadByte() (byte, error) {
@@ -26,16 +22,12 @@ func (r reader) ReadByte() (byte, error) {
 	return b, err
 }
 
-func Parse(e events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	if e.Status != 0xFF {
-		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", e.Status)
+func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
+	if event.Status != 0xFF {
+		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", event.Status)
 	}
 
 	ctx.ClearRunningStatus()
-
-	event := MetaEvent{
-		Event: e,
-	}
 
 	rr := reader{r, &event}
 

@@ -2,18 +2,19 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type ProgramName struct {
 	Tag string
-	MetaEvent
+	*events.Event
 	Type types.MetaEventType
 	Name string
 }
 
-func NewProgramName(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*ProgramName, error) {
+func NewProgramName(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*ProgramName, error) {
 	if eventType != 0x08 {
 		return nil, fmt.Errorf("Invalid ProgramName event type (%02x): expected '08'", eventType)
 	}
@@ -24,9 +25,9 @@ func NewProgramName(event *MetaEvent, eventType types.MetaEventType, r io.ByteRe
 	}
 
 	return &ProgramName{
-		Tag:       "ProgramName",
-		MetaEvent: *event,
-		Type:      eventType,
-		Name:      string(name),
+		Tag:   "ProgramName",
+		Event: event,
+		Type:  eventType,
+		Name:  string(name),
 	}, nil
 }

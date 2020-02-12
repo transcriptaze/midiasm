@@ -2,18 +2,19 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type MIDIChannelPrefix struct {
 	Tag string
-	MetaEvent
+	*events.Event
 	Type    types.MetaEventType
 	Channel int8
 }
 
-func NewMIDIChannelPrefix(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*MIDIChannelPrefix, error) {
+func NewMIDIChannelPrefix(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*MIDIChannelPrefix, error) {
 	if eventType != 0x20 {
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix event type (%02x): expected '20'", eventType)
 	}
@@ -31,9 +32,9 @@ func NewMIDIChannelPrefix(event *MetaEvent, eventType types.MetaEventType, r io.
 	}
 
 	return &MIDIChannelPrefix{
-		Tag:       "MIDIChannelPrefix",
-		MetaEvent: *event,
-		Type:      eventType,
-		Channel:   channel,
+		Tag:     "MIDIChannelPrefix",
+		Event:   event,
+		Type:    eventType,
+		Channel: channel,
 	}, nil
 }

@@ -2,18 +2,19 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type Tempo struct {
 	Tag string
-	MetaEvent
+	*events.Event
 	Type  types.MetaEventType
 	Tempo uint32
 }
 
-func NewTempo(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) (*Tempo, error) {
+func NewTempo(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*Tempo, error) {
 	if eventType != 0x51 {
 		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", eventType)
 	}
@@ -32,9 +33,9 @@ func NewTempo(event *MetaEvent, eventType types.MetaEventType, r io.ByteReader) 
 	}
 
 	return &Tempo{
-		Tag:       "Tempo",
-		MetaEvent: *event,
-		Type:      eventType,
-		Tempo:     tempo,
+		Tag:   "Tempo",
+		Event: event,
+		Type:  eventType,
+		Tempo: tempo,
 	}, nil
 }

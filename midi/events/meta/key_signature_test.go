@@ -13,9 +13,8 @@ import (
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		"KeySignature",
-		MetaEvent{
-			events.Event{0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}},
-		}, 0x59, 0, 0, "C major"}
+		&events.Event{0xff, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}},
+		0x59, 0, 0, "C major"}
 
 	ctx := context.NewContext()
 	e := events.Event{
@@ -51,9 +50,8 @@ func TestParseCMajorKeySignature(t *testing.T) {
 func TestParseCMinorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		"KeySignature",
-		MetaEvent{
-			events.Event{0xff, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}},
-		}, 0x59, -3, 1, "C minor"}
+		&events.Event{0xff, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}},
+		0x59, -3, 1, "C minor"}
 
 	ctx := context.Context{}
 
