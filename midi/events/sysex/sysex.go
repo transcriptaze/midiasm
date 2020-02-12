@@ -7,42 +7,26 @@ import (
 	"io"
 )
 
-type reader struct {
-	rdr   io.ByteReader
-	event *events.Event
-}
-
-func (r reader) ReadByte() (byte, error) {
-	b, err := r.rdr.ReadByte()
-	if err == nil {
-		r.event.Bytes = append(r.event.Bytes, b)
-	}
-
-	return b, err
-}
-
-func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
+func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	if event.Status != 0xF0 && event.Status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", event.Status)
 	}
 
 	ctx.ClearRunningStatus()
 
-	rr := reader{r, &event}
-
 	switch event.Status {
 	case 0xf0:
 		if ctx.Casio() {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
-			return NewSysExSingleMessage(ctx, &event, rr)
+			return NewSysExSingleMessage(ctx, event, r)
 		}
 
 	case 0xf7:
 		if ctx.Casio() {
-			return NewSysExContinuationMessage(&event, rr, ctx)
+			return NewSysExContinuationMessage(event, r, ctx)
 		} else {
-			return NewSysExEscapeMessage(&event, rr, ctx)
+			return NewSysExEscapeMessage(event, r, ctx)
 		}
 	}
 

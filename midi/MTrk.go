@@ -23,6 +23,20 @@ type MTrk struct {
 	Events []*events.EventW
 }
 
+type reader struct {
+	rdr   io.ByteReader
+	event *events.Event
+}
+
+func (r reader) ReadByte() (byte, error) {
+	b, err := r.rdr.ReadByte()
+	if err == nil {
+		r.event.Bytes = append(r.event.Bytes, b)
+	}
+
+	return b, err
+}
+
 func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 	tag := string(data[0:4])
 	if tag != "MTrk" {
@@ -86,7 +100,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 		}, err
 	} else if b == 0xf0 || b == 0xf7 {
 		ctx.ClearRunningStatus()
-		x, err := sysex.Parse(e, r, ctx)
+		x, err := sysex.Parse(&e, reader{r, &e}, ctx)
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
