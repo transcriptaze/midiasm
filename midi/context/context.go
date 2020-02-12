@@ -37,7 +37,7 @@ var Flats = map[byte]string{
 
 type Context struct {
 	scale         map[byte]string
-	runningStatus byte
+	RunningStatus types.Status
 	casio         bool
 	notes         map[uint16]string
 	Manufacturers map[string]types.Manufacturer
@@ -46,7 +46,7 @@ type Context struct {
 func NewContext() *Context {
 	return &Context{
 		scale:         Sharps,
-		runningStatus: 0x00,
+		RunningStatus: 0x00,
 		casio:         false,
 		notes:         make(map[uint16]string),
 		Manufacturers: make(map[string]types.Manufacturer),
@@ -110,22 +110,6 @@ func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
 	key |= uint16(n)
 
 	ctx.notes[key] = ctx.FormatNote(n)
-}
-
-func (ctx *Context) GetRunningStatus() byte {
-	return ctx.runningStatus
-}
-
-func (ctx *Context) PutRunningStatus(b byte) {
-	ctx.runningStatus = b
-}
-
-func (ctx *Context) HasRunningStatus() bool {
-	return ctx.runningStatus != 0x00
-}
-
-func (ctx *Context) ClearRunningStatus() {
-	ctx.runningStatus = 0x00
 }
 
 func (ctx *Context) LookupManufacturer(id []byte) types.Manufacturer {

@@ -12,8 +12,6 @@ func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interfac
 		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", event.Status)
 	}
 
-	ctx.ClearRunningStatus()
-
 	switch event.Status {
 	case 0xf0:
 		if ctx.Casio() {

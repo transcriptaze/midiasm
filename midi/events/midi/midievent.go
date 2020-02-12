@@ -1,11 +1,9 @@
 package midievent
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
@@ -15,64 +13,29 @@ type Note struct {
 	Alias string
 }
 
-type reader struct {
-	pushed io.ByteReader
-	rdr    io.ByteReader
-	event  *events.Event
-}
-
-func (r reader) ReadByte() (byte, error) {
-	if r.pushed != nil {
-		if b, err := r.pushed.ReadByte(); err == nil {
-			return b, nil
-		} else if err != io.EOF {
-			return b, err
-		}
-	}
-
-	b, err := r.rdr.ReadByte()
-	if err == nil {
-		r.event.Bytes = append(r.event.Bytes, b)
-	}
-
-	return b, err
-}
-
-func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	rr := reader{nil, r, &event}
-
-	//FIXME Ewwwwww :-(
-	if event.Status < 0x80 && !ctx.HasRunningStatus() {
-		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
-	} else if event.Status < 0x80 {
-		rr.pushed = bytes.NewReader([]byte{byte(event.Status)})
-		event.Status = types.Status(ctx.GetRunningStatus())
-	}
-
-	ctx.PutRunningStatus(byte(event.Status))
-
+func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	switch event.Status & 0xF0 {
 	case 0x80:
-		return NewNoteOff(ctx, &event, rr)
+		return NewNoteOff(ctx, event, r)
 
 	case 0x90:
-		return NewNoteOn(ctx, &event, rr)
+		return NewNoteOn(ctx, event, r)
 
 	case 0xA0:
-		return NewPolyphonicPressure(&event, rr)
+		return NewPolyphonicPressure(event, r)
 
 	case 0xB0:
-		return NewController(&event, rr)
+		return NewController(event, r)
 
 	case 0xC0:
-		return NewProgramChange(&event, rr)
+		return NewProgramChange(event, r)
 
 	case 0xD0:
-		return NewChannelPressure(&event, rr)
+		return NewChannelPressure(event, r)
 
 	case 0xE0:
-		return NewPitchBend(&event, rr)
+		return NewPitchBend(event, r)
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", event.Status&0xF0)
+	return nil, fmt.Errorf("Unrecognised MIDI event: %02X", byte(event.Status&0xF0))
 }

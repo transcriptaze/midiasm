@@ -563,7 +563,7 @@ func TestUnmarshalSMFWithInvalidRunningStatus(t *testing.T) {
 		0x00, 0xff, 0x2f, 0x00,
 	}
 
-	expected := fmt.Errorf("Unrecognised MIDI event: 3330")
+	expected := fmt.Errorf("Unrecognised MIDI event: 30")
 
 	smf := SMF{}
 	err := smf.UnmarshalBinary(bytes)

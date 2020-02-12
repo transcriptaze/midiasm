@@ -22,14 +22,14 @@
 - [x] Identify manufacturer for SequencerSpecificEvent (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Check SMTPEOffset only in track 0 for format 1
+- [x] Running status
+- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac
 - [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
-- [ ] Running status
-  - FIXME: Ewwwwww :-(
 - [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
 - [ ] Add outstanding events to TestUnmarshalSMF
-- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac
+- [ ] MTrk Unit test for running status
 
 ### Notes 
 

@@ -80,40 +80,75 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	}
 	bytes = append(bytes, m...)
 
-	b, err := r.ReadByte()
+	bb, err := r.Peek(1)
 	if err != nil {
 		return nil, err
 	}
-	bytes = append(bytes, b)
+	b := bb[0]
 
-	e := events.Event{
-		Status: types.Status(b),
-		Bytes:  bytes,
-	}
-
+	// ... meta event
 	if b == 0xff {
+		ctx.RunningStatus = 0x00
+
+		r.ReadByte()
+
+		e := events.Event{
+			Status: types.Status(b),
+			Bytes:  append(bytes, b),
+		}
+
 		x, err := metaevent.Parse(&e, reader{r, &e}, ctx)
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
 			Event: x,
 		}, err
-	} else if b == 0xf0 || b == 0xf7 {
-		ctx.ClearRunningStatus()
+	}
+
+	// ... SysEx event
+	if b == 0xf0 || b == 0xf7 {
+		ctx.RunningStatus = 0x00
+
+		r.ReadByte()
+
+		e := events.Event{
+			Status: types.Status(b),
+			Bytes:  append(bytes, b),
+		}
+
 		x, err := sysex.Parse(&e, reader{r, &e}, ctx)
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
 			Event: x,
 		}, err
-	} else {
-		x, err := midievent.Parse(e, r, ctx)
-		return &events.EventW{
-			Tick:  types.Tick(tick + delta),
-			Delta: types.Delta(delta),
-			Event: x,
-		}, err
 	}
+
+	// ... MIDI event
+	if b < 0x80 && ctx.RunningStatus < 0x80 {
+		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", b&0xF0)
+	}
+
+	e := events.Event{
+		Status: types.Status(b),
+		Bytes:  bytes,
+	}
+
+	if b < 0x80 {
+		e.Status = ctx.RunningStatus
+	} else {
+		r.ReadByte()
+		e.Bytes = append(bytes, b)
+	}
+
+	ctx.RunningStatus = e.Status
+
+	x, err := midievent.Parse(&e, reader{r, &e}, ctx)
+	return &events.EventW{
+		Tick:  types.Tick(tick + delta),
+		Delta: types.Delta(delta),
+		Event: x,
+	}, err
 }
 
 func vlq(r *bufio.Reader) (uint32, []byte, error) {
