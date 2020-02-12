@@ -8,30 +8,14 @@ import (
 	"io"
 )
 
-type reader struct {
-	rdr   io.ByteReader
-	event *events.Event
-}
-
-func (r reader) ReadByte() (byte, error) {
-	b, err := r.rdr.ReadByte()
-	if err == nil {
-		r.event.Bytes = append(r.event.Bytes, b)
-	}
-
-	return b, err
-}
-
-func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
+func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
 	if event.Status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", event.Status)
 	}
 
 	ctx.ClearRunningStatus()
 
-	rr := reader{r, &event}
-
-	b, err := rr.ReadByte()
+	b, err := r.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -40,58 +24,58 @@ func Parse(event events.Event, r io.ByteReader, ctx *context.Context) (interface
 
 	switch eventType {
 	case 0x00:
-		return NewSequenceNumber(&event, eventType, rr)
+		return NewSequenceNumber(event, eventType, r)
 
 	case 0x01:
-		return NewText(&event, eventType, rr)
+		return NewText(event, eventType, r)
 
 	case 0x02:
-		return NewCopyright(&event, eventType, rr)
+		return NewCopyright(event, eventType, r)
 
 	case 0x03:
-		return NewTrackName(&event, eventType, rr)
+		return NewTrackName(event, eventType, r)
 
 	case 0x04:
-		return NewInstrumentName(&event, eventType, rr)
+		return NewInstrumentName(event, eventType, r)
 
 	case 0x05:
-		return NewLyric(&event, eventType, rr)
+		return NewLyric(event, eventType, r)
 
 	case 0x06:
-		return NewMarker(&event, eventType, rr)
+		return NewMarker(event, eventType, r)
 
 	case 0x07:
-		return NewCuePoint(&event, eventType, rr)
+		return NewCuePoint(event, eventType, r)
 
 	case 0x08:
-		return NewProgramName(&event, eventType, rr)
+		return NewProgramName(event, eventType, r)
 
 	case 0x09:
-		return NewDeviceName(&event, eventType, rr)
+		return NewDeviceName(event, eventType, r)
 
 	case 0x20:
-		return NewMIDIChannelPrefix(&event, eventType, rr)
+		return NewMIDIChannelPrefix(event, eventType, r)
 
 	case 0x21:
-		return NewMIDIPort(&event, eventType, rr)
+		return NewMIDIPort(event, eventType, r)
 
 	case 0x2f:
-		return NewEndOfTrack(&event, eventType, rr)
+		return NewEndOfTrack(event, eventType, r)
 
 	case 0x51:
-		return NewTempo(&event, eventType, rr)
+		return NewTempo(event, eventType, r)
 
 	case 0x54:
-		return NewSMPTEOffset(&event, eventType, rr)
+		return NewSMPTEOffset(event, eventType, r)
 
 	case 0x58:
-		return NewTimeSignature(&event, eventType, rr)
+		return NewTimeSignature(event, eventType, r)
 
 	case 0x59:
-		return NewKeySignature(ctx, &event, eventType, rr)
+		return NewKeySignature(ctx, event, eventType, r)
 
 	case 0x7f:
-		return NewSequencerSpecificEvent(ctx, &event, eventType, rr)
+		return NewSequencerSpecificEvent(ctx, event, eventType, r)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %02X", byte(eventType))

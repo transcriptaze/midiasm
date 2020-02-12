@@ -6,9 +6,24 @@ import (
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 	"reflect"
 	"testing"
 )
+
+type reader struct {
+	rdr   io.ByteReader
+	event *events.Event
+}
+
+func (r reader) ReadByte() (byte, error) {
+	b, err := r.rdr.ReadByte()
+	if err == nil {
+		r.event.Bytes = append(r.event.Bytes, b)
+	}
+
+	return b, err
+}
 
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
@@ -24,7 +39,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0x00, 0x00}))
 
-	event, err := Parse(e, r, ctx)
+	event, err := Parse(&e, reader{r, &e}, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
@@ -62,7 +77,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0xfd, 0x01}))
 
-	event, err := Parse(e, r, &ctx)
+	event, err := Parse(&e, reader{r, &e}, &ctx)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}

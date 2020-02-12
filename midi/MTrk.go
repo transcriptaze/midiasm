@@ -92,7 +92,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	}
 
 	if b == 0xff {
-		x, err := metaevent.Parse(e, r, ctx)
+		x, err := metaevent.Parse(&e, reader{r, &e}, ctx)
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
