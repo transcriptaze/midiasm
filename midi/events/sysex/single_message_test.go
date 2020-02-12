@@ -14,7 +14,6 @@ func TestParseSingleMessage(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
 		Status: 0xf0,
-		Bytes:  []byte{0x00, 0xf0},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
@@ -56,7 +55,6 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
 		Status: 0xf0,
-		Bytes:  []byte{0x00, 0xf0},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}))

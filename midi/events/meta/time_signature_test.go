@@ -10,7 +10,6 @@ import (
 func TestParseTimeSignature(t *testing.T) {
 	e := events.Event{
 		Status: 0xff,
-		Bytes:  []byte{0x00, 0xff},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{4, 3, 3, 24, 8}))

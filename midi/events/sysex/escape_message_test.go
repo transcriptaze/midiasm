@@ -14,7 +14,6 @@ func TestParseEscapeMessage(t *testing.T) {
 	ctx := context.NewContext()
 	e := events.Event{
 		Status: 0xf7,
-		Bytes:  []byte{0x00, 0xf7},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x02, 0xf3, 0x01}))

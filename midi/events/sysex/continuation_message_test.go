@@ -14,7 +14,6 @@ func TestParseContinuationMessage(t *testing.T) {
 	ctx := context.NewContext().CasioOn()
 	e := events.Event{
 		Status: 0xf7,
-		Bytes:  []byte{0x00, 0xf7},
 	}
 
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))

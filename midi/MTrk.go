@@ -102,10 +102,10 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 		}
 
 		x, err := metaevent.Parse(&e, rr, ctx)
-		e.Bytes = buffer.Bytes()
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
+			Bytes: buffer.Bytes(),
 			Event: x,
 		}, err
 	}
@@ -121,10 +121,10 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 		}
 
 		x, err := sysex.Parse(&e, rr, ctx)
-		e.Bytes = buffer.Bytes()
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
+			Bytes: buffer.Bytes(),
 			Event: x,
 		}, err
 	}
@@ -147,10 +147,10 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	ctx.RunningStatus = e.Status
 
 	x, err := midievent.Parse(&e, rr, ctx)
-	e.Bytes = buffer.Bytes()
 	return &events.EventW{
 		Tick:  types.Tick(tick + delta),
 		Delta: types.Delta(delta),
+		Bytes: buffer.Bytes(),
 		Event: x,
 	}, err
 }
