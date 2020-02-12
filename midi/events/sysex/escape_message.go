@@ -3,20 +3,19 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type SysExEscapeMessage struct {
-	Tag string
-	*events.Event
-	Data types.Hex
+	Tag    string
+	Status types.Status
+	Data   types.Hex
 }
 
-func NewSysExEscapeMessage(event *events.Event, r io.ByteReader, ctx *context.Context) (*SysExEscapeMessage, error) {
-	if event.Status != 0xf7 {
-		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", event.Status)
+func NewSysExEscapeMessage(r io.ByteReader, status types.Status, ctx *context.Context) (*SysExEscapeMessage, error) {
+	if status != 0xf7 {
+		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
 
 	if ctx.Casio() {
@@ -29,8 +28,8 @@ func NewSysExEscapeMessage(event *events.Event, r io.ByteReader, ctx *context.Co
 	}
 
 	return &SysExEscapeMessage{
-		Tag:   "SysExEscape",
-		Event: event,
-		Data:  data,
+		Tag:    "SysExEscape",
+		Status: status,
+		Data:   data,
 	}, nil
 }

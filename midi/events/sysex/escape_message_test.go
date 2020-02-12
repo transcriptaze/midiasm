@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
@@ -12,13 +11,9 @@ import (
 
 func TestParseEscapeMessage(t *testing.T) {
 	ctx := context.NewContext()
-	e := events.Event{
-		Status: 0xf7,
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x02, 0xf3, 0x01}))
 
-	event, err := Parse(&e, r, ctx)
+	event, err := Parse(r, 0xf7, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx escape message parse error: %v", err)
 	}

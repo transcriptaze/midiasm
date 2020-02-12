@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
@@ -12,13 +11,9 @@ import (
 
 func TestParseContinuationMessage(t *testing.T) {
 	ctx := context.NewContext().CasioOn()
-	e := events.Event{
-		Status: 0xf7,
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
 
-	event, err := Parse(&e, r, ctx)
+	event, err := Parse(r, 0xf7, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx continuation message parse error: %v", err)
 	}

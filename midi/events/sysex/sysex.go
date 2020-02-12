@@ -3,32 +3,32 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
+	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
-func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	if event.Status != 0xF0 && event.Status != 0xF7 {
-		return nil, fmt.Errorf("Invalid SysEx tag (%02x): expected 'F0' or 'F7'", event.Status)
+func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
+	if status != 0xF0 && status != 0xF7 {
+		return nil, fmt.Errorf("Invalid SysEx tag (%v): expected 'F0' or 'F7'", status)
 	}
 
-	switch event.Status {
+	switch status {
 	case 0xf0:
 		if ctx.Casio() {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
-			return NewSysExSingleMessage(ctx, event, r)
+			return NewSysExSingleMessage(ctx, status, r)
 		}
 
 	case 0xf7:
 		if ctx.Casio() {
-			return NewSysExContinuationMessage(event, r, ctx)
+			return NewSysExContinuationMessage(r, status, ctx)
 		} else {
-			return NewSysExEscapeMessage(event, r, ctx)
+			return NewSysExEscapeMessage(r, status, ctx)
 		}
 	}
 
-	return nil, fmt.Errorf("Unrecognised SYSEX event: %02X", event.Status)
+	return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
 }
 
 func read(r io.ByteReader) ([]byte, error) {
