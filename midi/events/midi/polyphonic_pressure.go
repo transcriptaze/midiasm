@@ -2,24 +2,23 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type PolyphonicPressure struct {
-	Tag string
-	*events.Event
+	Tag      string
+	Status   types.Status
 	Channel  types.Channel
 	Pressure byte
 }
 
-func NewPolyphonicPressure(event *events.Event, r io.ByteReader) (*PolyphonicPressure, error) {
-	if event.Status&0xF0 != 0xA0 {
-		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%02x): expected 'A0'", event.Status&0x80)
+func NewPolyphonicPressure(r io.ByteReader, status types.Status) (*PolyphonicPressure, error) {
+	if status&0xF0 != 0xA0 {
+		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%v): expected 'Ax'", status)
 	}
 
-	channel := types.Channel((event.Status) & 0x0F)
+	channel := types.Channel(status & 0x0F)
 
 	pressure, err := r.ReadByte()
 	if err != nil {
@@ -28,7 +27,7 @@ func NewPolyphonicPressure(event *events.Event, r io.ByteReader) (*PolyphonicPre
 
 	return &PolyphonicPressure{
 		Tag:      "PolyphonicPressure",
-		Event:    event,
+		Status:   status,
 		Channel:  channel,
 		Pressure: pressure,
 	}, nil

@@ -2,24 +2,23 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type ProgramChange struct {
-	Tag string
-	*events.Event
+	Tag     string
+	Status  types.Status
 	Channel types.Channel
 	Program byte
 }
 
-func NewProgramChange(event *events.Event, r io.ByteReader) (*ProgramChange, error) {
-	if event.Status&0xF0 != 0xc0 {
-		return nil, fmt.Errorf("Invalid ProgramChange status (%02x): expected 'C0'", event.Status&0x80)
+func NewProgramChange(r io.ByteReader, status types.Status) (*ProgramChange, error) {
+	if status&0xF0 != 0xc0 {
+		return nil, fmt.Errorf("Invalid ProgramChange status (%v): expected 'Cx'", status)
 	}
 
-	channel := types.Channel((event.Status) & 0x0F)
+	channel := types.Channel(status & 0x0F)
 
 	program, err := r.ReadByte()
 	if err != nil {
@@ -28,7 +27,7 @@ func NewProgramChange(event *events.Event, r io.ByteReader) (*ProgramChange, err
 
 	return &ProgramChange{
 		Tag:     "ProgramChange",
-		Event:   event,
+		Status:  status,
 		Channel: channel,
 		Program: program,
 	}, nil

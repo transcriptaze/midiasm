@@ -2,24 +2,23 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type ChannelPressure struct {
-	Tag string
-	*events.Event
+	Tag      string
+	Status   types.Status
 	Channel  types.Channel
 	Pressure byte
 }
 
-func NewChannelPressure(event *events.Event, r io.ByteReader) (*ChannelPressure, error) {
-	if event.Status&0xF0 != 0xD0 {
-		return nil, fmt.Errorf("Invalid ChannelPressure status (%02x): expected 'D0'", event.Status&0x80)
+func NewChannelPressure(r io.ByteReader, status types.Status) (*ChannelPressure, error) {
+	if status&0xF0 != 0xD0 {
+		return nil, fmt.Errorf("Invalid ChannelPressure status (%v): expected 'Dx'", status)
 	}
 
-	channel := types.Channel((event.Status) & 0x0F)
+	channel := types.Channel(status & 0x0F)
 
 	pressure, err := r.ReadByte()
 	if err != nil {
@@ -28,7 +27,7 @@ func NewChannelPressure(event *events.Event, r io.ByteReader) (*ChannelPressure,
 
 	return &ChannelPressure{
 		Tag:      "ChannelPressure",
-		Event:    event,
+		Status:   status,
 		Channel:  channel,
 		Pressure: pressure,
 	}, nil

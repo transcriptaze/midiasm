@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
 )
@@ -13,7 +11,7 @@ import (
 func TestParseNoteOnInMajorKey(t *testing.T) {
 	expected := NoteOn{
 		"NoteOn",
-		&events.Event{0x91},
+		0x91,
 		1,
 		Note{
 			Value: 49,
@@ -23,13 +21,9 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	e := events.Event{
-		Status: types.Status(0x91),
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
 
-	event, err := Parse(&e, r, ctx)
+	event, err := Parse(r, 0x91, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}
@@ -51,7 +45,7 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 func TestParseNoteOnInMinorKey(t *testing.T) {
 	expected := NoteOn{
 		"NoteOn",
-		&events.Event{0x91},
+		0x91,
 		1,
 		Note{
 			Value: 49,
@@ -61,13 +55,9 @@ func TestParseNoteOnInMinorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext().UseFlats()
-	e := events.Event{
-		Status: types.Status(0x91),
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
 
-	event, err := Parse(&e, r, ctx)
+	event, err := Parse(r, 0x91, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}

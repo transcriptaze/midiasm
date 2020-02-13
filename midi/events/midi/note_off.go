@@ -3,25 +3,24 @@ package midievent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type NoteOff struct {
-	Tag string
-	*events.Event
+	Tag      string
+	Status   types.Status
 	Channel  types.Channel
 	Note     Note
 	Velocity byte
 }
 
-func NewNoteOff(ctx *context.Context, event *events.Event, r io.ByteReader) (*NoteOff, error) {
-	if event.Status&0xF0 != 0x80 {
-		return nil, fmt.Errorf("Invalid NoteOff status (%02x): expected '80'", event.Status&0xF0)
+func NewNoteOff(ctx *context.Context, r io.ByteReader, status types.Status) (*NoteOff, error) {
+	if status&0xF0 != 0x80 {
+		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
 
-	channel := types.Channel((event.Status) & 0x0F)
+	channel := types.Channel(status & 0x0F)
 
 	note, err := r.ReadByte()
 	if err != nil {
@@ -35,7 +34,7 @@ func NewNoteOff(ctx *context.Context, event *events.Event, r io.ByteReader) (*No
 
 	return &NoteOff{
 		Tag:     "NoteOff",
-		Event:   event,
+		Status:  status,
 		Channel: channel,
 		Note: Note{
 			Value: note,

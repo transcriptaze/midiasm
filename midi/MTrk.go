@@ -131,24 +131,22 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", b&0xF0)
 	}
 
-	e := events.Event{
-		Status: types.Status(b),
-	}
+	status := types.Status(b)
 
 	if b < 0x80 {
-		e.Status = ctx.RunningStatus
+		status = ctx.RunningStatus
 	} else {
 		rr.ReadByte()
 	}
 
-	ctx.RunningStatus = e.Status
+	ctx.RunningStatus = status
 
-	x, err := midievent.Parse(&e, rr, ctx)
+	e, err := midievent.Parse(rr, status, ctx)
 	return &events.EventW{
 		Tick:  types.Tick(tick + delta),
 		Delta: types.Delta(delta),
 		Bytes: buffer.Bytes(),
-		Event: x,
+		Event: e,
 	}, err
 }
 

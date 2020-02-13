@@ -2,25 +2,24 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type Controller struct {
-	Tag string
-	*events.Event
+	Tag        string
+	Status     types.Status
 	Channel    types.Channel
 	Controller byte
 	Value      byte
 }
 
-func NewController(event *events.Event, r io.ByteReader) (*Controller, error) {
-	if event.Status&0xF0 != 0xB0 {
-		return nil, fmt.Errorf("Invalid Controller status (%02x): expected 'B0'", event.Status&0x80)
+func NewController(r io.ByteReader, status types.Status) (*Controller, error) {
+	if status&0xF0 != 0xB0 {
+		return nil, fmt.Errorf("Invalid Controller status (%v): expected 'Bx'", status)
 	}
 
-	channel := types.Channel((event.Status) & 0x0F)
+	channel := types.Channel(status & 0x0F)
 
 	controller, err := r.ReadByte()
 	if err != nil {
@@ -34,7 +33,7 @@ func NewController(event *events.Event, r io.ByteReader) (*Controller, error) {
 
 	return &Controller{
 		Tag:        "Controller",
-		Event:      event,
+		Status:     status,
 		Channel:    channel,
 		Controller: controller,
 		Value:      value,
