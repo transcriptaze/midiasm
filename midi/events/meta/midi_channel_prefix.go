@@ -14,11 +14,7 @@ type MIDIChannelPrefix struct {
 	Channel int8
 }
 
-func NewMIDIChannelPrefix(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*MIDIChannelPrefix, error) {
-	if eventType != 0x20 {
-		return nil, fmt.Errorf("Invalid MIDIChannelPrefix event type (%02x): expected '20'", eventType)
-	}
-
+func NewMIDIChannelPrefix(r io.ByteReader) (*MIDIChannelPrefix, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -33,8 +29,8 @@ func NewMIDIChannelPrefix(r io.ByteReader, status types.Status, eventType types.
 
 	return &MIDIChannelPrefix{
 		Tag:     "MIDIChannelPrefix",
-		Status:  status,
-		Type:    eventType,
+		Status:  0xff,
+		Type:    0x20,
 		Channel: channel,
 	}, nil
 }

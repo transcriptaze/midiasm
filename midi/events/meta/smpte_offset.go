@@ -19,11 +19,7 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func NewSMPTEOffset(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*SMPTEOffset, error) {
-	if eventType != 0x54 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset event type (%02x): expected '54'", eventType)
-	}
-
+func NewSMPTEOffset(r io.ByteReader) (*SMPTEOffset, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -76,8 +72,8 @@ func NewSMPTEOffset(r io.ByteReader, status types.Status, eventType types.MetaEv
 
 	return &SMPTEOffset{
 		Tag:              "SMPTEOffset",
-		Status:           status,
-		Type:             eventType,
+		Status:           0xff,
+		Type:             0x54,
 		Hour:             hour,
 		Minute:           minute,
 		Second:           second,

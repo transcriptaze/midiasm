@@ -14,11 +14,7 @@ type SequenceNumber struct {
 	SequenceNumber uint16
 }
 
-func NewSequenceNumber(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*SequenceNumber, error) {
-	if eventType != 0x00 {
-		return nil, fmt.Errorf("Invalid SequenceNumber event type (%02x): expected '00'", eventType)
-	}
-
+func NewSequenceNumber(r io.ByteReader) (*SequenceNumber, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -34,8 +30,8 @@ func NewSequenceNumber(r io.ByteReader, status types.Status, eventType types.Met
 
 	return &SequenceNumber{
 		Tag:            "SequenceNumber",
-		Status:         status,
-		Type:           eventType,
+		Status:         0xff,
+		Type:           0x00,
 		SequenceNumber: sequence,
 	}, nil
 }

@@ -13,11 +13,7 @@ type EndOfTrack struct {
 	Type   types.MetaEventType
 }
 
-func NewEndOfTrack(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*EndOfTrack, error) {
-	if eventType != 0x2f {
-		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", eventType)
-	}
-
+func NewEndOfTrack(r io.ByteReader) (*EndOfTrack, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -27,7 +23,7 @@ func NewEndOfTrack(r io.ByteReader, status types.Status, eventType types.MetaEve
 
 	return &EndOfTrack{
 		Tag:    "EndOfTrack",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x2f,
 	}, nil
 }

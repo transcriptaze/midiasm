@@ -9,7 +9,7 @@ import (
 func TestParseTimeSignature(t *testing.T) {
 	r := bufio.NewReader(bytes.NewReader([]byte{4, 3, 3, 24, 8}))
 
-	event, err := NewTimeSignature(r, 0xff, 0x58)
+	event, err := NewTimeSignature(r)
 	if err != nil {
 		t.Fatalf("TimeSignature parse error: %v", err)
 	}

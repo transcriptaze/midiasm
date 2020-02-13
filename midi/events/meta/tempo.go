@@ -14,11 +14,7 @@ type Tempo struct {
 	Tempo  uint32
 }
 
-func NewTempo(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Tempo, error) {
-	if eventType != 0x51 {
-		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", eventType)
-	}
-
+func NewTempo(r io.ByteReader) (*Tempo, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -34,8 +30,8 @@ func NewTempo(r io.ByteReader, status types.Status, eventType types.MetaEventTyp
 
 	return &Tempo{
 		Tag:    "Tempo",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x51,
 		Tempo:  tempo,
 	}, nil
 }

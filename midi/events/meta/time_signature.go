@@ -17,11 +17,7 @@ type TimeSignature struct {
 	ThirtySecondsPerQuarter uint8
 }
 
-func NewTimeSignature(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*TimeSignature, error) {
-	if eventType != 0x58 {
-		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", eventType)
-	}
-
+func NewTimeSignature(r io.ByteReader) (*TimeSignature, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -40,8 +36,8 @@ func NewTimeSignature(r io.ByteReader, status types.Status, eventType types.Meta
 
 	return &TimeSignature{
 		Tag:                     "TimeSignature",
-		Status:                  status,
-		Type:                    eventType,
+		Status:                  0xff,
+		Type:                    0x58,
 		Numerator:               numerator,
 		Denominator:             denominator,
 		TicksPerClick:           ticksPerClick,

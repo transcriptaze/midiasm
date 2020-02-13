@@ -1,7 +1,6 @@
 package metaevent
 
 import (
-	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -14,11 +13,7 @@ type Lyric struct {
 	Lyric  string
 }
 
-func NewLyric(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Lyric, error) {
-	if eventType != 0x05 {
-		return nil, fmt.Errorf("Invalid Lyric event type (%02x): expected '05'", eventType)
-	}
-
+func NewLyric(r io.ByteReader) (*Lyric, error) {
 	lyric, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -26,8 +21,8 @@ func NewLyric(r io.ByteReader, status types.Status, eventType types.MetaEventTyp
 
 	return &Lyric{
 		Tag:    "Lyric",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x05,
 		Lyric:  string(lyric),
 	}, nil
 }

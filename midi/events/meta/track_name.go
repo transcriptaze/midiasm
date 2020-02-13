@@ -1,7 +1,6 @@
 package metaevent
 
 import (
-	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -14,11 +13,7 @@ type TrackName struct {
 	Name   string
 }
 
-func NewTrackName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*TrackName, error) {
-	if eventType != 0x03 {
-		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", eventType)
-	}
-
+func NewTrackName(r io.ByteReader) (*TrackName, error) {
 	name, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -26,8 +21,8 @@ func NewTrackName(r io.ByteReader, status types.Status, eventType types.MetaEven
 
 	return &TrackName{
 		Tag:    "TrackName",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x03,
 		Name:   string(name),
 	}, nil
 }

@@ -21,58 +21,58 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interfac
 
 	switch eventType {
 	case 0x00:
-		return NewSequenceNumber(r, status, eventType)
+		return NewSequenceNumber(r)
 
 	case 0x01:
-		return NewText(r, status, eventType)
+		return NewText(r)
 
 	case 0x02:
-		return NewCopyright(r, status, eventType)
+		return NewCopyright(r)
 
 	case 0x03:
-		return NewTrackName(r, status, eventType)
+		return NewTrackName(r)
 
 	case 0x04:
-		return NewInstrumentName(r, status, eventType)
+		return NewInstrumentName(r)
 
 	case 0x05:
-		return NewLyric(r, status, eventType)
+		return NewLyric(r)
 
 	case 0x06:
-		return NewMarker(r, status, eventType)
+		return NewMarker(r)
 
 	case 0x07:
-		return NewCuePoint(r, status, eventType)
+		return NewCuePoint(r)
 
 	case 0x08:
-		return NewProgramName(r, status, eventType)
+		return NewProgramName(r)
 
 	case 0x09:
-		return NewDeviceName(r, status, eventType)
+		return NewDeviceName(r)
 
 	case 0x20:
-		return NewMIDIChannelPrefix(r, status, eventType)
+		return NewMIDIChannelPrefix(r)
 
 	case 0x21:
-		return NewMIDIPort(r, status, eventType)
+		return NewMIDIPort(r)
 
 	case 0x2f:
-		return NewEndOfTrack(r, status, eventType)
+		return NewEndOfTrack(r)
 
 	case 0x51:
-		return NewTempo(r, status, eventType)
+		return NewTempo(r)
 
 	case 0x54:
-		return NewSMPTEOffset(r, status, eventType)
+		return NewSMPTEOffset(r)
 
 	case 0x58:
-		return NewTimeSignature(r, status, eventType)
+		return NewTimeSignature(r)
 
 	case 0x59:
-		return NewKeySignature(ctx, r, status, eventType)
+		return NewKeySignature(ctx, r)
 
 	case 0x7f:
-		return NewSequencerSpecificEvent(ctx, r, status, eventType)
+		return NewSequencerSpecificEvent(ctx, r)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)

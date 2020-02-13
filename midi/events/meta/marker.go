@@ -1,7 +1,6 @@
 package metaevent
 
 import (
-	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -14,11 +13,7 @@ type Marker struct {
 	Marker string
 }
 
-func NewMarker(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Marker, error) {
-	if eventType != 0x06 {
-		return nil, fmt.Errorf("Invalid Marker event type (%02x): expected '06'", eventType)
-	}
-
+func NewMarker(r io.ByteReader) (*Marker, error) {
 	marker, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -26,8 +21,8 @@ func NewMarker(r io.ByteReader, status types.Status, eventType types.MetaEventTy
 
 	return &Marker{
 		Tag:    "Marker",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x06,
 		Marker: string(marker),
 	}, nil
 }

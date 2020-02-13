@@ -59,11 +59,7 @@ var minor_keys = map[int8]string{
 	-6: "E\u266d minor",
 }
 
-func NewKeySignature(ctx *context.Context, r io.ByteReader, status types.Status, eventType types.MetaEventType) (*KeySignature, error) {
-	if eventType != 0x59 {
-		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", eventType)
-	}
-
+func NewKeySignature(ctx *context.Context, r io.ByteReader) (*KeySignature, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -101,8 +97,8 @@ func NewKeySignature(ctx *context.Context, r io.ByteReader, status types.Status,
 
 	return &KeySignature{
 		Tag:         "KeySignature",
-		Status:      status,
-		Type:        eventType,
+		Status:      0xff,
+		Type:        0x59,
 		Accidentals: accidentals,
 		KeyType:     KeyType(keyType),
 		Key:         key,

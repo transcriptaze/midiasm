@@ -1,7 +1,6 @@
 package metaevent
 
 import (
-	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -14,11 +13,7 @@ type InstrumentName struct {
 	Name   string
 }
 
-func NewInstrumentName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*InstrumentName, error) {
-	if eventType != 0x04 {
-		return nil, fmt.Errorf("Invalid InstrumentName event type (%02x): expected '04'", eventType)
-	}
-
+func NewInstrumentName(r io.ByteReader) (*InstrumentName, error) {
 	name, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -26,8 +21,8 @@ func NewInstrumentName(r io.ByteReader, status types.Status, eventType types.Met
 
 	return &InstrumentName{
 		Tag:    "InstrumentName",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x04,
 		Name:   string(name),
 	}, nil
 }

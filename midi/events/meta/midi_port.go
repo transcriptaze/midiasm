@@ -14,11 +14,7 @@ type MIDIPort struct {
 	Port   uint8
 }
 
-func NewMIDIPort(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*MIDIPort, error) {
-	if eventType != 0x21 {
-		return nil, fmt.Errorf("Invalid MIDIPort event type (%02x): expected '21'", eventType)
-	}
-
+func NewMIDIPort(r io.ByteReader) (*MIDIPort, error) {
 	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
@@ -35,8 +31,8 @@ func NewMIDIPort(r io.ByteReader, status types.Status, eventType types.MetaEvent
 
 	return &MIDIPort{
 		Tag:    "MIDIPort",
-		Status: status,
-		Type:   eventType,
+		Status: 0xff,
+		Type:   0x21,
 		Port:   port & 0x7f,
 	}, nil
 }
