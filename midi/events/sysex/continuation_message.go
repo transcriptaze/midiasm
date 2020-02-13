@@ -3,8 +3,8 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type SysExContinuationMessage struct {
@@ -13,12 +13,12 @@ type SysExContinuationMessage struct {
 	Data   types.Hex
 }
 
-func NewSysExContinuationMessage(r io.ByteReader, status types.Status, ctx *context.Context) (*SysExContinuationMessage, error) {
+func NewSysExContinuationMessage(ctx *context.Context, r events.EventReader, status types.Status) (*SysExContinuationMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
 
-	data, err := read(r)
+	data, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}

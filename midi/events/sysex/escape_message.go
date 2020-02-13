@@ -3,8 +3,8 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type SysExEscapeMessage struct {
@@ -13,7 +13,7 @@ type SysExEscapeMessage struct {
 	Data   types.Hex
 }
 
-func NewSysExEscapeMessage(r io.ByteReader, status types.Status, ctx *context.Context) (*SysExEscapeMessage, error) {
+func NewSysExEscapeMessage(ctx *context.Context, r events.EventReader, status types.Status) (*SysExEscapeMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
@@ -22,7 +22,7 @@ func NewSysExEscapeMessage(r io.ByteReader, status types.Status, ctx *context.Co
 		return nil, fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 
-	data, err := read(r)
+	data, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}

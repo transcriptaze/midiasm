@@ -41,6 +41,45 @@ func (r reader) Peek(n int) ([]byte, error) {
 	return r.rdr.Peek(n)
 }
 
+func (r reader) ReadVLQ() ([]byte, error) {
+	N, err := r.VLQ()
+	if err != nil {
+		return nil, err
+	}
+
+	bytes := make([]byte, N)
+
+	for i := 0; i < int(N); i++ {
+		if b, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			bytes[i] = b
+		}
+	}
+
+	return bytes, nil
+}
+
+func (r reader) VLQ() (uint32, error) {
+	vlq := uint32(0)
+
+	for {
+		b, err := r.ReadByte()
+		if err != nil {
+			return 0, err
+		}
+
+		vlq <<= 7
+		vlq += uint32(b & 0x7f)
+
+		if b&0x80 == 0 {
+			break
+		}
+	}
+
+	return vlq, nil
+}
+
 func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 	tag := string(data[0:4])
 	if tag != "MTrk" {
@@ -80,7 +119,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	rr := reader{r, &buffer}
 
-	delta, err := vlq(rr)
+	delta, err := rr.VLQ()
 	if err != nil {
 		return nil, err
 	}
@@ -146,24 +185,4 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		Bytes: buffer.Bytes(),
 		Event: e,
 	}, err
-}
-
-func vlq(r io.ByteReader) (uint32, error) {
-	l := uint32(0)
-
-	for {
-		b, err := r.ReadByte()
-		if err != nil {
-			return 0, err
-		}
-
-		l <<= 7
-		l += uint32(b & 0x7f)
-
-		if b&0x80 == 0 {
-			break
-		}
-	}
-
-	return l, nil
 }

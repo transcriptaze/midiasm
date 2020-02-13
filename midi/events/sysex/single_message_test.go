@@ -13,7 +13,7 @@ func TestParseSingleMessage(t *testing.T) {
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
 
-	event, err := Parse(r, 0xf0, ctx)
+	event, err := Parse(reader{r}, 0xf0, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx single message parse error: %v", err)
 	}
@@ -50,7 +50,7 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}))
 
-	event, err := Parse(r, 0xf0, ctx)
+	event, err := Parse(reader{r}, 0xf0, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx single message parse error: %v", err)
 	}
