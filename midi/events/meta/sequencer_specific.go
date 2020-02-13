@@ -3,20 +3,19 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type SequencerSpecificEvent struct {
-	Tag string
-	*events.Event
+	Tag          string
+	Status       types.Status
 	Type         types.MetaEventType
 	Manufacturer types.Manufacturer
 	Data         types.Hex
 }
 
-func NewSequencerSpecificEvent(ctx *context.Context, event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*SequencerSpecificEvent, error) {
+func NewSequencerSpecificEvent(ctx *context.Context, r io.ByteReader, status types.Status, eventType types.MetaEventType) (*SequencerSpecificEvent, error) {
 	if eventType != 0x7f {
 		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", eventType)
 	}
@@ -35,7 +34,7 @@ func NewSequencerSpecificEvent(ctx *context.Context, event *events.Event, eventT
 
 	return &SequencerSpecificEvent{
 		Tag:          "SequencerSpecificEvent",
-		Event:        event,
+		Status:       status,
 		Type:         eventType,
 		Manufacturer: ctx.LookupManufacturer(id),
 		Data:         data,

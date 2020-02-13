@@ -3,18 +3,13 @@ package metaevent
 import (
 	"bufio"
 	"bytes"
-	"github.com/twystd/midiasm/midi/events"
 	"testing"
 )
 
 func TestParseTimeSignature(t *testing.T) {
-	e := events.Event{
-		Status: 0xff,
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{4, 3, 3, 24, 8}))
 
-	event, err := NewTimeSignature(&e, 0x58, r)
+	event, err := NewTimeSignature(r, 0xff, 0x58)
 	if err != nil {
 		t.Fatalf("TimeSignature parse error: %v", err)
 	}

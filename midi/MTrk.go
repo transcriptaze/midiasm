@@ -97,16 +97,12 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 
 		rr.ReadByte()
 
-		e := events.Event{
-			Status: types.Status(b),
-		}
-
-		x, err := metaevent.Parse(&e, rr, ctx)
+		e, err := metaevent.Parse(ctx, rr, types.Status(b))
 		return &events.EventW{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
 			Bytes: buffer.Bytes(),
-			Event: x,
+			Event: e,
 		}, err
 	}
 

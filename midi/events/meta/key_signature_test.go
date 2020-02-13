@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
 )
@@ -13,17 +11,13 @@ import (
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		"KeySignature",
-		&events.Event{0xff},
+		0xff,
 		0x59, 0, 0, "C major"}
 
 	ctx := context.NewContext()
-	e := events.Event{
-		Status: types.Status(0xff),
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0x00, 0x00}))
 
-	event, err := Parse(&e, r, ctx)
+	event, err := Parse(ctx, r, 0xff)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
@@ -49,18 +43,13 @@ func TestParseCMajorKeySignature(t *testing.T) {
 func TestParseCMinorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		"KeySignature",
-		&events.Event{0xff},
+		0xff,
 		0x59, -3, 1, "C minor"}
 
 	ctx := context.Context{}
-
-	e := events.Event{
-		Status: types.Status(0xff),
-	}
-
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0xfd, 0x01}))
 
-	event, err := Parse(&e, r, &ctx)
+	event, err := Parse(&ctx, r, 0xff)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}

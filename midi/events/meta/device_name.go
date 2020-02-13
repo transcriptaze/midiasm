@@ -2,19 +2,18 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type DeviceName struct {
-	Tag string
-	*events.Event
-	Type types.MetaEventType
-	Name string
+	Tag    string
+	Status types.Status
+	Type   types.MetaEventType
+	Name   string
 }
 
-func NewDeviceName(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*DeviceName, error) {
+func NewDeviceName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*DeviceName, error) {
 	if eventType != 0x09 {
 		return nil, fmt.Errorf("Invalid DeviceName event type (%02x): expected '09'", eventType)
 	}
@@ -25,9 +24,9 @@ func NewDeviceName(event *events.Event, eventType types.MetaEventType, r io.Byte
 	}
 
 	return &DeviceName{
-		Tag:   "DeviceName",
-		Event: event,
-		Type:  eventType,
-		Name:  string(name),
+		Tag:    "DeviceName",
+		Status: status,
+		Type:   eventType,
+		Name:   string(name),
 	}, nil
 }

@@ -3,14 +3,13 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
-func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interface{}, error) {
-	if event.Status != 0xFF {
-		return nil, fmt.Errorf("Invalid MetaEvent tag (%02x): expected 'FF'", event.Status)
+func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interface{}, error) {
+	if status != 0xFF {
+		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
 	}
 
 	b, err := r.ReadByte()
@@ -22,61 +21,61 @@ func Parse(event *events.Event, r io.ByteReader, ctx *context.Context) (interfac
 
 	switch eventType {
 	case 0x00:
-		return NewSequenceNumber(event, eventType, r)
+		return NewSequenceNumber(r, status, eventType)
 
 	case 0x01:
-		return NewText(event, eventType, r)
+		return NewText(r, status, eventType)
 
 	case 0x02:
-		return NewCopyright(event, eventType, r)
+		return NewCopyright(r, status, eventType)
 
 	case 0x03:
-		return NewTrackName(event, eventType, r)
+		return NewTrackName(r, status, eventType)
 
 	case 0x04:
-		return NewInstrumentName(event, eventType, r)
+		return NewInstrumentName(r, status, eventType)
 
 	case 0x05:
-		return NewLyric(event, eventType, r)
+		return NewLyric(r, status, eventType)
 
 	case 0x06:
-		return NewMarker(event, eventType, r)
+		return NewMarker(r, status, eventType)
 
 	case 0x07:
-		return NewCuePoint(event, eventType, r)
+		return NewCuePoint(r, status, eventType)
 
 	case 0x08:
-		return NewProgramName(event, eventType, r)
+		return NewProgramName(r, status, eventType)
 
 	case 0x09:
-		return NewDeviceName(event, eventType, r)
+		return NewDeviceName(r, status, eventType)
 
 	case 0x20:
-		return NewMIDIChannelPrefix(event, eventType, r)
+		return NewMIDIChannelPrefix(r, status, eventType)
 
 	case 0x21:
-		return NewMIDIPort(event, eventType, r)
+		return NewMIDIPort(r, status, eventType)
 
 	case 0x2f:
-		return NewEndOfTrack(event, eventType, r)
+		return NewEndOfTrack(r, status, eventType)
 
 	case 0x51:
-		return NewTempo(event, eventType, r)
+		return NewTempo(r, status, eventType)
 
 	case 0x54:
-		return NewSMPTEOffset(event, eventType, r)
+		return NewSMPTEOffset(r, status, eventType)
 
 	case 0x58:
-		return NewTimeSignature(event, eventType, r)
+		return NewTimeSignature(r, status, eventType)
 
 	case 0x59:
-		return NewKeySignature(ctx, event, eventType, r)
+		return NewKeySignature(ctx, r, status, eventType)
 
 	case 0x7f:
-		return NewSequencerSpecificEvent(ctx, event, eventType, r)
+		return NewSequencerSpecificEvent(ctx, r, status, eventType)
 	}
 
-	return nil, fmt.Errorf("Unrecognised META event: %02X", byte(eventType))
+	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
 }
 
 func read(r io.ByteReader) ([]byte, error) {

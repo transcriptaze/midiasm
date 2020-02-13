@@ -3,7 +3,6 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
@@ -19,8 +18,8 @@ func (k KeyType) String() string {
 }
 
 type KeySignature struct {
-	Tag string
-	*events.Event
+	Tag         string
+	Status      types.Status
 	Type        types.MetaEventType
 	Accidentals int8
 	KeyType     KeyType
@@ -59,7 +58,7 @@ var minor_keys = map[int8]string{
 	-6: "E\u266d minor",
 }
 
-func NewKeySignature(ctx *context.Context, event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*KeySignature, error) {
+func NewKeySignature(ctx *context.Context, r io.ByteReader, status types.Status, eventType types.MetaEventType) (*KeySignature, error) {
 	if eventType != 0x59 {
 		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", eventType)
 	}
@@ -101,7 +100,7 @@ func NewKeySignature(ctx *context.Context, event *events.Event, eventType types.
 
 	return &KeySignature{
 		Tag:         "KeySignature",
-		Event:       event,
+		Status:      status,
 		Type:        eventType,
 		Accidentals: accidentals,
 		KeyType:     KeyType(keyType),

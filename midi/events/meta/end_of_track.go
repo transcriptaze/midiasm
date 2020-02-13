@@ -2,18 +2,17 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
 )
 
 type EndOfTrack struct {
-	Tag string
-	*events.Event
-	Type types.MetaEventType
+	Tag    string
+	Status types.Status
+	Type   types.MetaEventType
 }
 
-func NewEndOfTrack(event *events.Event, eventType types.MetaEventType, r io.ByteReader) (*EndOfTrack, error) {
+func NewEndOfTrack(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*EndOfTrack, error) {
 	if eventType != 0x2f {
 		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", eventType)
 	}
@@ -26,8 +25,8 @@ func NewEndOfTrack(event *events.Event, eventType types.MetaEventType, r io.Byte
 	}
 
 	return &EndOfTrack{
-		Tag:   "EndOfTrack",
-		Event: event,
-		Type:  eventType,
+		Tag:    "EndOfTrack",
+		Status: status,
+		Type:   eventType,
 	}, nil
 }
