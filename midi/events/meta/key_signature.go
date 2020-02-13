@@ -3,9 +3,7 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type KeyType uint8
@@ -59,16 +57,13 @@ var minor_keys = map[int8]string{
 	-6: "E\u266d minor",
 }
 
-func NewKeySignature(ctx *context.Context, r io.ByteReader) (*KeySignature, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	} else if len(data) != 2 {
-		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(data))
+func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) {
+	if len(bytes) != 2 {
+		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(bytes))
 	}
 
-	accidentals := int8(data[0])
-	keyType := data[1]
+	accidentals := int8(bytes[0])
+	keyType := bytes[1]
 	if keyType != 0 && keyType != 1 {
 		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0,1]", keyType)
 	}

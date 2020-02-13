@@ -1,9 +1,7 @@
 package metaevent
 
 import (
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Marker struct {
@@ -13,16 +11,11 @@ type Marker struct {
 	Marker string
 }
 
-func NewMarker(r io.ByteReader) (*Marker, error) {
-	marker, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
-
+func NewMarker(bytes []byte) (*Marker, error) {
 	return &Marker{
 		Tag:    "Marker",
 		Status: 0xff,
 		Type:   0x06,
-		Marker: string(marker),
+		Marker: string(bytes),
 	}, nil
 }

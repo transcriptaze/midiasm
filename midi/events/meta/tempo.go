@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Tempo struct {
@@ -14,16 +12,13 @@ type Tempo struct {
 	Tempo  uint32
 }
 
-func NewTempo(r io.ByteReader) (*Tempo, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	} else if len(data) != 3 {
-		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
+func NewTempo(bytes []byte) (*Tempo, error) {
+	if len(bytes) != 3 {
+		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(bytes))
 	}
 
 	tempo := uint32(0)
-	for _, b := range data {
+	for _, b := range bytes {
 		tempo <<= 8
 		tempo += uint32(b)
 	}

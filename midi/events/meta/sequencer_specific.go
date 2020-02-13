@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type SequencerSpecificEvent struct {
@@ -15,12 +13,7 @@ type SequencerSpecificEvent struct {
 	Data         types.Hex
 }
 
-func NewSequencerSpecificEvent(ctx *context.Context, r io.ByteReader) (*SequencerSpecificEvent, error) {
-	bytes, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
-
+func NewSequencerSpecificEvent(ctx *context.Context, bytes []byte) (*SequencerSpecificEvent, error) {
 	id := bytes[0:1]
 	data := bytes[1:]
 	if bytes[0] == 0x00 {

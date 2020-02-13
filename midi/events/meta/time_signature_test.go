@@ -1,15 +1,11 @@
 package metaevent
 
 import (
-	"bufio"
-	"bytes"
 	"testing"
 )
 
 func TestParseTimeSignature(t *testing.T) {
-	r := bufio.NewReader(bytes.NewReader([]byte{4, 3, 3, 24, 8}))
-
-	event, err := NewTimeSignature(r)
+	event, err := NewTimeSignature([]byte{3, 3, 24, 8})
 	if err != nil {
 		t.Fatalf("TimeSignature parse error: %v", err)
 	}

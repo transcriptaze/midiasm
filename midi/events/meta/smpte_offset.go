@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type SMPTEOffset struct {
@@ -19,20 +17,17 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func NewSMPTEOffset(r io.ByteReader) (*SMPTEOffset, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	} else if len(data) != 5 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(data))
+func NewSMPTEOffset(bytes []byte) (*SMPTEOffset, error) {
+	if len(bytes) != 5 {
+		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(bytes))
 	}
 
-	rr := (data[0] >> 6) & 0x03
-	hour := data[0] & 0x01f
-	minute := data[1]
-	second := data[2]
-	frames := data[3]
-	fractions := data[4]
+	rr := (bytes[0] >> 6) & 0x03
+	hour := bytes[0] & 0x01f
+	minute := bytes[1]
+	second := bytes[2]
+	frames := bytes[3]
+	fractions := bytes[4]
 
 	if hour > 24 {
 		return nil, fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)

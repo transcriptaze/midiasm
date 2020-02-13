@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type MIDIPort struct {
@@ -14,17 +12,12 @@ type MIDIPort struct {
 	Port   uint8
 }
 
-func NewMIDIPort(r io.ByteReader) (*MIDIPort, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
+func NewMIDIPort(bytes []byte) (*MIDIPort, error) {
+	if len(bytes) != 1 {
+		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(bytes))
 	}
 
-	if len(data) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
-	}
-
-	port := data[0]
+	port := bytes[0]
 	if port > 127 {
 		return nil, fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
 	}

@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type EndOfTrack struct {
@@ -13,12 +11,9 @@ type EndOfTrack struct {
 	Type   types.MetaEventType
 }
 
-func NewEndOfTrack(r io.ByteReader) (*EndOfTrack, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	} else if len(data) != 0 {
-		return nil, fmt.Errorf("Invalid EndOfTrack length (%d): expected '0'", len(data))
+func NewEndOfTrack(bytes []byte) (*EndOfTrack, error) {
+	if len(bytes) != 0 {
+		return nil, fmt.Errorf("Invalid EndOfTrack length (%d): expected '0'", len(bytes))
 	}
 
 	return &EndOfTrack{

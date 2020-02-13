@@ -1,9 +1,7 @@
 package metaevent
 
 import (
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type InstrumentName struct {
@@ -13,16 +11,11 @@ type InstrumentName struct {
 	Name   string
 }
 
-func NewInstrumentName(r io.ByteReader) (*InstrumentName, error) {
-	name, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
-
+func NewInstrumentName(bytes []byte) (*InstrumentName, error) {
 	return &InstrumentName{
 		Tag:    "InstrumentName",
 		Status: 0xff,
 		Type:   0x04,
-		Name:   string(name),
+		Name:   string(bytes),
 	}, nil
 }

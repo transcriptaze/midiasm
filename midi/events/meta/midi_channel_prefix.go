@@ -2,9 +2,7 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type MIDIChannelPrefix struct {
@@ -14,15 +12,12 @@ type MIDIChannelPrefix struct {
 	Channel int8
 }
 
-func NewMIDIChannelPrefix(r io.ByteReader) (*MIDIChannelPrefix, error) {
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	} else if len(data) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(data))
+func NewMIDIChannelPrefix(bytes []byte) (*MIDIChannelPrefix, error) {
+	if len(bytes) != 1 {
+		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(bytes))
 	}
 
-	channel := int8(data[0])
+	channel := int8(bytes[0])
 	if channel < 0 || channel > 15 {
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
 	}
