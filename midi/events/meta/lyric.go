@@ -2,8 +2,8 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Lyric struct {
@@ -13,12 +13,12 @@ type Lyric struct {
 	Lyric  string
 }
 
-func NewLyric(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Lyric, error) {
+func NewLyric(r events.EventReader, status types.Status, eventType types.MetaEventType) (*Lyric, error) {
 	if eventType != 0x05 {
 		return nil, fmt.Errorf("Invalid Lyric event type (%02x): expected '05'", eventType)
 	}
 
-	lyric, err := read(r)
+	lyric, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}

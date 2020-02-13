@@ -3,11 +3,11 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
-func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interface{}, error) {
+func Parse(ctx *context.Context, r events.EventReader, status types.Status) (interface{}, error) {
 	if status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
 	}
@@ -76,43 +76,4 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interfac
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
-}
-
-func read(r io.ByteReader) ([]byte, error) {
-	N, err := vlq(r)
-	if err != nil {
-		return nil, err
-	}
-
-	bytes := make([]byte, N)
-
-	for i := 0; i < int(N); i++ {
-		if b, err := r.ReadByte(); err != nil {
-			return nil, err
-		} else {
-			bytes[i] = b
-		}
-	}
-
-	return bytes, nil
-}
-
-func vlq(r io.ByteReader) (uint32, error) {
-	l := uint32(0)
-
-	for {
-		b, err := r.ReadByte()
-		if err != nil {
-			return 0, err
-		}
-
-		l <<= 7
-		l += uint32(b & 0x7f)
-
-		if b&0x80 == 0 {
-			break
-		}
-	}
-
-	return l, nil
 }

@@ -2,8 +2,8 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type CuePoint struct {
@@ -13,12 +13,12 @@ type CuePoint struct {
 	CuePoint string
 }
 
-func NewCuePoint(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*CuePoint, error) {
+func NewCuePoint(r events.EventReader, status types.Status, eventType types.MetaEventType) (*CuePoint, error) {
 	if eventType != 0x07 {
 		return nil, fmt.Errorf("Invalid CuePoint event type (%02x): expected '07'", eventType)
 	}
 
-	cuepoint, err := read(r)
+	cuepoint, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}

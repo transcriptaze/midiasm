@@ -2,8 +2,8 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Marker struct {
@@ -13,12 +13,12 @@ type Marker struct {
 	Marker string
 }
 
-func NewMarker(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Marker, error) {
+func NewMarker(r events.EventReader, status types.Status, eventType types.MetaEventType) (*Marker, error) {
 	if eventType != 0x06 {
 		return nil, fmt.Errorf("Invalid Marker event type (%02x): expected '06'", eventType)
 	}
 
-	marker, err := read(r)
+	marker, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}

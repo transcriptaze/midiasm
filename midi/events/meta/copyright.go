@@ -2,8 +2,8 @@ package metaevent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Copyright struct {
@@ -13,12 +13,12 @@ type Copyright struct {
 	Copyright string
 }
 
-func NewCopyright(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Copyright, error) {
+func NewCopyright(r events.EventReader, status types.Status, eventType types.MetaEventType) (*Copyright, error) {
 	if eventType != 0x02 {
 		return nil, fmt.Errorf("Invalid Copyright event type (%02x): expected '02'", eventType)
 	}
 
-	data, err := read(r)
+	data, err := r.ReadVLQ()
 	if err != nil {
 		return nil, err
 	}
