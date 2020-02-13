@@ -3,8 +3,8 @@ package midievent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type NoteOn struct {
@@ -15,7 +15,7 @@ type NoteOn struct {
 	Velocity byte
 }
 
-func NewNoteOn(ctx *context.Context, r io.ByteReader, status types.Status) (*NoteOn, error) {
+func NewNoteOn(ctx *context.Context, r events.EventReader, status types.Status) (*NoteOn, error) {
 	if status&0xF0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}

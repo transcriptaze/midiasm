@@ -2,8 +2,8 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Controller struct {
@@ -14,7 +14,7 @@ type Controller struct {
 	Value      byte
 }
 
-func NewController(r io.ByteReader, status types.Status) (*Controller, error) {
+func NewController(r events.EventReader, status types.Status) (*Controller, error) {
 	if status&0xF0 != 0xB0 {
 		return nil, fmt.Errorf("Invalid Controller status (%v): expected 'Bx'", status)
 	}

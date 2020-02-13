@@ -2,8 +2,8 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type ProgramChange struct {
@@ -13,7 +13,7 @@ type ProgramChange struct {
 	Program byte
 }
 
-func NewProgramChange(r io.ByteReader, status types.Status) (*ProgramChange, error) {
+func NewProgramChange(r events.EventReader, status types.Status) (*ProgramChange, error) {
 	if status&0xF0 != 0xc0 {
 		return nil, fmt.Errorf("Invalid ProgramChange status (%v): expected 'Cx'", status)
 	}

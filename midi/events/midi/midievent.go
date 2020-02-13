@@ -3,8 +3,8 @@ package midievent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type Note struct {
@@ -13,7 +13,7 @@ type Note struct {
 	Alias string
 }
 
-func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(r events.EventReader, status types.Status, ctx *context.Context) (interface{}, error) {
 	switch status & 0xF0 {
 	case 0x80:
 		return NewNoteOff(ctx, r, status)

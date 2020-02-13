@@ -2,8 +2,8 @@ package midievent
 
 import (
 	"fmt"
+	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
-	"io"
 )
 
 type PitchBend struct {
@@ -13,7 +13,7 @@ type PitchBend struct {
 	Bend    uint16
 }
 
-func NewPitchBend(r io.ByteReader, status types.Status) (*PitchBend, error) {
+func NewPitchBend(r events.EventReader, status types.Status) (*PitchBend, error) {
 	if status&0xF0 != 0xE0 {
 		return nil, fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
 	}

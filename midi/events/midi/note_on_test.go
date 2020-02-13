@@ -23,7 +23,7 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
 
-	event, err := Parse(r, 0x91, ctx)
+	event, err := Parse(reader{r}, 0x91, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}
@@ -57,7 +57,7 @@ func TestParseNoteOnInMinorKey(t *testing.T) {
 	ctx := context.NewContext().UseFlats()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
 
-	event, err := Parse(r, 0x91, ctx)
+	event, err := Parse(reader{r}, 0x91, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}
