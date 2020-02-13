@@ -18,7 +18,7 @@ func NewTempo(r events.EventReader, status types.Status, eventType types.MetaEve
 		return nil, fmt.Errorf("Invalid Tempo event type (%02x): expected '51'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 3 {

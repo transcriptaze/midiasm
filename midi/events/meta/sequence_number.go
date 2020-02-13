@@ -18,7 +18,7 @@ func NewSequenceNumber(r events.EventReader, status types.Status, eventType type
 		return nil, fmt.Errorf("Invalid SequenceNumber event type (%02x): expected '00'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 2 {

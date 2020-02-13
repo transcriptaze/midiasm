@@ -18,7 +18,7 @@ func NewLyric(r events.EventReader, status types.Status, eventType types.MetaEve
 		return nil, fmt.Errorf("Invalid Lyric event type (%02x): expected '05'", eventType)
 	}
 
-	lyric, err := r.ReadVLQ()
+	lyric, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

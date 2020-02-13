@@ -18,7 +18,7 @@ func NewDeviceName(r events.EventReader, status types.Status, eventType types.Me
 		return nil, fmt.Errorf("Invalid DeviceName event type (%02x): expected '09'", eventType)
 	}
 
-	name, err := r.ReadVLQ()
+	name, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

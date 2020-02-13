@@ -63,7 +63,7 @@ func NewKeySignature(ctx *context.Context, r events.EventReader, status types.St
 		return nil, fmt.Errorf("Invalid KeySignature event type (%02x): expected '59'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 2 {

@@ -19,7 +19,7 @@ func NewSysExSingleMessage(ctx *context.Context, r events.EventReader, status ty
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", status)
 	}
 
-	bytes, err := r.ReadVLQ()
+	bytes, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

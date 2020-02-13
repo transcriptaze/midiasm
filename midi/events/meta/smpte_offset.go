@@ -23,7 +23,7 @@ func NewSMPTEOffset(r events.EventReader, status types.Status, eventType types.M
 		return nil, fmt.Errorf("Invalid SMPTEOffset event type (%02x): expected '54'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 5 {

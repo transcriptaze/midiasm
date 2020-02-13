@@ -18,7 +18,7 @@ func NewMIDIChannelPrefix(r events.EventReader, status types.Status, eventType t
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix event type (%02x): expected '20'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 1 {

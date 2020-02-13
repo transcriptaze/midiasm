@@ -16,7 +16,7 @@ func (r reader) Peek(n int) ([]byte, error) {
 	return r.r.Peek(n)
 }
 
-func (r reader) ReadVLQ() ([]byte, error) {
+func (r reader) ReadVLF() ([]byte, error) {
 	N, err := r.VLQ()
 	if err != nil {
 		return nil, err

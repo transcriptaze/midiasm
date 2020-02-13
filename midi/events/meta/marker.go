@@ -18,7 +18,7 @@ func NewMarker(r events.EventReader, status types.Status, eventType types.MetaEv
 		return nil, fmt.Errorf("Invalid Marker event type (%02x): expected '06'", eventType)
 	}
 
-	marker, err := r.ReadVLQ()
+	marker, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

@@ -18,7 +18,7 @@ func NewCopyright(r events.EventReader, status types.Status, eventType types.Met
 		return nil, fmt.Errorf("Invalid Copyright event type (%02x): expected '02'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

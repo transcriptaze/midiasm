@@ -18,7 +18,7 @@ func NewInstrumentName(r events.EventReader, status types.Status, eventType type
 		return nil, fmt.Errorf("Invalid InstrumentName event type (%02x): expected '04'", eventType)
 	}
 
-	name, err := r.ReadVLQ()
+	name, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

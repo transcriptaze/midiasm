@@ -18,7 +18,7 @@ func NewMIDIPort(r events.EventReader, status types.Status, eventType types.Meta
 		return nil, fmt.Errorf("Invalid MIDIPort event type (%02x): expected '21'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

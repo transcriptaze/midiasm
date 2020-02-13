@@ -17,7 +17,7 @@ func NewEndOfTrack(r events.EventReader, status types.Status, eventType types.Me
 		return nil, fmt.Errorf("Invalid EndOfTrack event type (%02x): expected '2f'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 0 {

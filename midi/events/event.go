@@ -14,6 +14,6 @@ type Event struct {
 type EventReader interface {
 	ReadByte() (byte, error)
 	Peek(n int) ([]byte, error)
-	ReadVLQ() ([]byte, error)
+	ReadVLF() ([]byte, error)
 	VLQ() (uint32, error)
 }

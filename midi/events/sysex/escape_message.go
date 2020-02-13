@@ -22,7 +22,7 @@ func NewSysExEscapeMessage(ctx *context.Context, r events.EventReader, status ty
 		return nil, fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

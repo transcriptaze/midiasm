@@ -18,7 +18,7 @@ func NewProgramName(r events.EventReader, status types.Status, eventType types.M
 		return nil, fmt.Errorf("Invalid ProgramName event type (%02x): expected '08'", eventType)
 	}
 
-	name, err := r.ReadVLQ()
+	name, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

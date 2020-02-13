@@ -20,7 +20,7 @@ func NewSequencerSpecificEvent(ctx *context.Context, r events.EventReader, statu
 		return nil, fmt.Errorf("Invalid SequencerSpecificEvent event type (%02x): expected '7F'", eventType)
 	}
 
-	bytes, err := r.ReadVLQ()
+	bytes, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

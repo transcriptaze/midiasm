@@ -21,7 +21,7 @@ func NewTimeSignature(r events.EventReader, status types.Status, eventType types
 		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	} else if len(data) != 4 {

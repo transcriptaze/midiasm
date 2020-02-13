@@ -18,7 +18,7 @@ func NewCuePoint(r events.EventReader, status types.Status, eventType types.Meta
 		return nil, fmt.Errorf("Invalid CuePoint event type (%02x): expected '07'", eventType)
 	}
 
-	cuepoint, err := r.ReadVLQ()
+	cuepoint, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

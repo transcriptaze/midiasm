@@ -18,7 +18,7 @@ func NewText(r events.EventReader, status types.Status, eventType types.MetaEven
 		return nil, fmt.Errorf("Invalid Text event type (%02x): expected '01'", eventType)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

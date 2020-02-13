@@ -18,7 +18,7 @@ func NewTrackName(r events.EventReader, status types.Status, eventType types.Met
 		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", eventType)
 	}
 
-	name, err := r.ReadVLQ()
+	name, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

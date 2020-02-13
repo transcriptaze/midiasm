@@ -18,7 +18,7 @@ func NewSysExContinuationMessage(ctx *context.Context, r events.EventReader, sta
 		return nil, fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
 
-	data, err := r.ReadVLQ()
+	data, err := r.ReadVLF()
 	if err != nil {
 		return nil, err
 	}

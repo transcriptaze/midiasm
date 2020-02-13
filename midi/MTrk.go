@@ -23,63 +23,6 @@ type MTrk struct {
 	Events []*events.Event
 }
 
-type reader struct {
-	rdr    *bufio.Reader
-	buffer *bytes.Buffer
-}
-
-func (r reader) ReadByte() (byte, error) {
-	b, err := r.rdr.ReadByte()
-	if err != nil {
-		return b, err
-	}
-
-	return b, r.buffer.WriteByte(b)
-}
-
-func (r reader) Peek(n int) ([]byte, error) {
-	return r.rdr.Peek(n)
-}
-
-func (r reader) ReadVLQ() ([]byte, error) {
-	N, err := r.VLQ()
-	if err != nil {
-		return nil, err
-	}
-
-	bytes := make([]byte, N)
-
-	for i := 0; i < int(N); i++ {
-		if b, err := r.ReadByte(); err != nil {
-			return nil, err
-		} else {
-			bytes[i] = b
-		}
-	}
-
-	return bytes, nil
-}
-
-func (r reader) VLQ() (uint32, error) {
-	vlq := uint32(0)
-
-	for {
-		b, err := r.ReadByte()
-		if err != nil {
-			return 0, err
-		}
-
-		vlq <<= 7
-		vlq += uint32(b & 0x7f)
-
-		if b&0x80 == 0 {
-			break
-		}
-	}
-
-	return vlq, nil
-}
-
 func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 	tag := string(data[0:4])
 	if tag != "MTrk" {
