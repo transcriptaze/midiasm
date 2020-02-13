@@ -32,7 +32,7 @@ type Note struct {
 func (x *Notes) Execute(smf *midi.SMF) error {
 	ppqn := uint64(smf.MThd.Division)
 	ctx := context.NewContext()
-	tempoMap := make([]*events.EventW, 0)
+	tempoMap := make([]*events.Event, 0)
 
 	for _, e := range smf.Tracks[0].Events {
 		if _, ok := e.Event.(*metaevent.Tempo); ok {
@@ -41,13 +41,13 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 	}
 
 	for _, track := range smf.Tracks[1:] {
-		eventlist := make(map[uint64][]*events.EventW, 0)
+		eventlist := make(map[uint64][]*events.Event, 0)
 
 		for _, e := range tempoMap {
 			tick := uint64(e.Tick)
 			list := eventlist[tick]
 			if list == nil {
-				list = make([]*events.EventW, 0)
+				list = make([]*events.Event, 0)
 			}
 
 			eventlist[tick] = append(list, e)
@@ -57,7 +57,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			tick := uint64(e.Tick)
 			list := eventlist[tick]
 			if list == nil {
-				list = make([]*events.EventW, 0)
+				list = make([]*events.Event, 0)
 			}
 
 			eventlist[tick] = append(list, e)

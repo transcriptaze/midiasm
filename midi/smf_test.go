@@ -51,8 +51,8 @@ func TestUnmarshalSMF(t *testing.T) {
 			TrackNumber: 0,
 			Length:      33,
 			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21},
-			Events: []*events.EventW{
-				&events.EventW{
+			Events: []*events.Event{
+				&events.Event{
 					Bytes: types.Hex{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31},
 					Event: &metaevent.TrackName{
 						Tag:    "TrackName",
@@ -62,7 +62,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
 					Event: &metaevent.Tempo{
 						Tag:    "Tempo",
@@ -72,7 +72,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
 					Event: &metaevent.SMPTEOffset{
 						Tag:              "SMPTEOffset",
@@ -87,7 +87,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x2f, 0x00},
 					Event: &metaevent.EndOfTrack{
 						Tag:    "EndOfTrack",
@@ -103,8 +103,8 @@ func TestUnmarshalSMF(t *testing.T) {
 			TrackNumber: 1,
 			Length:      95,
 			Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x5f},
-			Events: []*events.EventW{
-				&events.EventW{
+			Events: []*events.Event{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x00, 0x02, 0x00, 0x17},
 					Event: &metaevent.SequenceNumber{
 						Tag:            "SequenceNumber",
@@ -114,7 +114,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
 					Event: &metaevent.Text{
 						Tag:    "Text",
@@ -124,7 +124,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
 					Event: &metaevent.Copyright{
 						Tag:       "Copyright",
@@ -134,7 +134,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72},
 					Event: &metaevent.TrackName{
 						Tag:    "TrackName",
@@ -144,7 +144,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f},
 					Event: &metaevent.InstrumentName{
 						Tag:    "InstrumentName",
@@ -154,7 +154,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0x00, 0x01},
 					Event: &metaevent.KeySignature{
 						Tag:         "KeySignature",
@@ -166,7 +166,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 					Event: &metaevent.SequencerSpecificEvent{
 						Tag:    "SequencerSpecificEvent",
@@ -181,7 +181,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
 					Event: &midievent.NoteOn{
 						Tag:     "NoteOn",
@@ -196,7 +196,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0x3c, 0x4c},
 					Event: &midievent.NoteOn{
 						Tag:     "NoteOn",
@@ -211,7 +211,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
 					Event: &midievent.NoteOff{
 						Tag:     "NoteOff",
@@ -226,7 +226,7 @@ func TestUnmarshalSMF(t *testing.T) {
 					},
 				},
 
-				&events.EventW{
+				&events.Event{
 					Bytes: types.Hex{0x00, 0xff, 0x2f, 0x00},
 					Event: &metaevent.EndOfTrack{
 						Tag:    "EndOfTrack",
@@ -287,7 +287,7 @@ func TestUnmarshalSMFWithConf(t *testing.T) {
 		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
 	}
 
-	expected := events.EventW{
+	expected := events.Event{
 		Bytes: types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 		Event: &metaevent.SequencerSpecificEvent{
 			Tag:    "SequencerSpecificEvent",
@@ -392,8 +392,8 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 		TrackNumber: 1,
 		Length:      74,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4a},
-		Events: []*events.EventW{
-			&events.EventW{
+		Events: []*events.Event{
+			&events.Event{
 				Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0x06, 0x00},
 				Event: &metaevent.KeySignature{
 					Tag:         "KeySignature",
@@ -405,7 +405,7 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 				},
 			},
 
-			&events.EventW{
+			&events.Event{
 				Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
 				Event: &midievent.NoteOn{
 					Tag:     "NoteOn",
@@ -420,7 +420,7 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 				},
 			},
 
-			&events.EventW{
+			&events.Event{
 				Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01},
 				Event: &metaevent.KeySignature{
 					Tag:         "KeySignature",
@@ -432,7 +432,7 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 				},
 			},
 
-			&events.EventW{
+			&events.Event{
 				Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
 				Event: &midievent.NoteOff{
 					Tag:     "NoteOff",

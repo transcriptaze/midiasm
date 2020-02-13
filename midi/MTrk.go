@@ -20,7 +20,7 @@ type MTrk struct {
 	Length      uint32
 	Bytes       types.Hex
 
-	Events []*events.EventW
+	Events []*events.Event
 }
 
 type reader struct {
@@ -49,11 +49,11 @@ func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 
 	length := binary.BigEndian.Uint32(data[4:8])
 
-	eventlist := make([]*events.EventW, 0)
+	eventlist := make([]*events.Event, 0)
 	r := bufio.NewReader(bytes.NewReader(data[8:]))
 	tick := uint32(0)
 	err := error(nil)
-	var e *events.EventW = nil
+	var e *events.Event = nil
 
 	for err == nil {
 		e, err = parse(r, tick, ctx)
@@ -75,7 +75,7 @@ func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
 	return nil
 }
 
-func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, error) {
+func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {
 	var buffer bytes.Buffer
 
 	rr := reader{r, &buffer}
@@ -98,7 +98,8 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 		rr.ReadByte()
 
 		e, err := metaevent.Parse(ctx, rr, types.Status(b))
-		return &events.EventW{
+
+		return &events.Event{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
 			Bytes: buffer.Bytes(),
@@ -114,7 +115,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 
 		e, err := sysex.Parse(rr, types.Status(b), ctx)
 
-		return &events.EventW{
+		return &events.Event{
 			Tick:  types.Tick(tick + delta),
 			Delta: types.Delta(delta),
 			Bytes: buffer.Bytes(),
@@ -138,7 +139,8 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.EventW, 
 	ctx.RunningStatus = status
 
 	e, err := midievent.Parse(rr, status, ctx)
-	return &events.EventW{
+
+	return &events.Event{
 		Tick:  types.Tick(tick + delta),
 		Delta: types.Delta(delta),
 		Bytes: buffer.Bytes(),

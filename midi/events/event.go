@@ -5,10 +5,6 @@ import (
 )
 
 type Event struct {
-	Status types.Status
-}
-
-type EventW struct {
 	Tick  types.Tick
 	Delta types.Delta
 	Event interface{}
