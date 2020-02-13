@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type TrackName struct {
@@ -13,12 +14,12 @@ type TrackName struct {
 	Name   string
 }
 
-func NewTrackName(r events.EventReader, status types.Status, eventType types.MetaEventType) (*TrackName, error) {
+func NewTrackName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*TrackName, error) {
 	if eventType != 0x03 {
 		return nil, fmt.Errorf("Invalid TrackName event type (%02x): expected '03'", eventType)
 	}
 
-	name, err := r.ReadVLF()
+	name, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

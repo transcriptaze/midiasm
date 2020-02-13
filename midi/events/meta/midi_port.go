@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type MIDIPort struct {
@@ -13,12 +14,12 @@ type MIDIPort struct {
 	Port   uint8
 }
 
-func NewMIDIPort(r events.EventReader, status types.Status, eventType types.MetaEventType) (*MIDIPort, error) {
+func NewMIDIPort(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*MIDIPort, error) {
 	if eventType != 0x21 {
 		return nil, fmt.Errorf("Invalid MIDIPort event type (%02x): expected '21'", eventType)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

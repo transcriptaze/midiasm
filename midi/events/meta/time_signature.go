@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type TimeSignature struct {
@@ -16,12 +17,12 @@ type TimeSignature struct {
 	ThirtySecondsPerQuarter uint8
 }
 
-func NewTimeSignature(r events.EventReader, status types.Status, eventType types.MetaEventType) (*TimeSignature, error) {
+func NewTimeSignature(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*TimeSignature, error) {
 	if eventType != 0x58 {
 		return nil, fmt.Errorf("Invalid TimeSignature event type (%02x): expected '58'", eventType)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	} else if len(data) != 4 {

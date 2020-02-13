@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type InstrumentName struct {
@@ -13,12 +14,12 @@ type InstrumentName struct {
 	Name   string
 }
 
-func NewInstrumentName(r events.EventReader, status types.Status, eventType types.MetaEventType) (*InstrumentName, error) {
+func NewInstrumentName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*InstrumentName, error) {
 	if eventType != 0x04 {
 		return nil, fmt.Errorf("Invalid InstrumentName event type (%02x): expected '04'", eventType)
 	}
 
-	name, err := r.ReadVLF()
+	name, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

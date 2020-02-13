@@ -2,8 +2,8 @@ package midievent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type ChannelPressure struct {
@@ -13,7 +13,7 @@ type ChannelPressure struct {
 	Pressure byte
 }
 
-func NewChannelPressure(r events.EventReader, status types.Status) (*ChannelPressure, error) {
+func NewChannelPressure(r io.ByteReader, status types.Status) (*ChannelPressure, error) {
 	if status&0xF0 != 0xD0 {
 		return nil, fmt.Errorf("Invalid ChannelPressure status (%v): expected 'Dx'", status)
 	}

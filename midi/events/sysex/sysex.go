@@ -3,11 +3,11 @@ package sysex
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
-func Parse(r events.EventReader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
 	if status != 0xF0 && status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx tag (%v): expected 'F0' or 'F7'", status)
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type SequenceNumber struct {
@@ -13,12 +14,12 @@ type SequenceNumber struct {
 	SequenceNumber uint16
 }
 
-func NewSequenceNumber(r events.EventReader, status types.Status, eventType types.MetaEventType) (*SequenceNumber, error) {
+func NewSequenceNumber(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*SequenceNumber, error) {
 	if eventType != 0x00 {
 		return nil, fmt.Errorf("Invalid SequenceNumber event type (%02x): expected '00'", eventType)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	} else if len(data) != 2 {

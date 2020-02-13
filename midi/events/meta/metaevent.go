@@ -3,11 +3,11 @@ package metaevent
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
-func Parse(ctx *context.Context, r events.EventReader, status types.Status) (interface{}, error) {
+func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interface{}, error) {
 	if status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
 	}

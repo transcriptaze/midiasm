@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type Text struct {
@@ -13,12 +14,12 @@ type Text struct {
 	Text   string
 }
 
-func NewText(r events.EventReader, status types.Status, eventType types.MetaEventType) (*Text, error) {
+func NewText(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*Text, error) {
 	if eventType != 0x01 {
 		return nil, fmt.Errorf("Invalid Text event type (%02x): expected '01'", eventType)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

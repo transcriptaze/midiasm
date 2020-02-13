@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type MIDIChannelPrefix struct {
@@ -13,12 +14,12 @@ type MIDIChannelPrefix struct {
 	Channel int8
 }
 
-func NewMIDIChannelPrefix(r events.EventReader, status types.Status, eventType types.MetaEventType) (*MIDIChannelPrefix, error) {
+func NewMIDIChannelPrefix(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*MIDIChannelPrefix, error) {
 	if eventType != 0x20 {
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix event type (%02x): expected '20'", eventType)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	} else if len(data) != 1 {

@@ -62,7 +62,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	rr := reader{r, &buffer}
 
-	delta, err := rr.VLQ()
+	delta, err := events.VLQ(rr)
 	if err != nil {
 		return nil, err
 	}

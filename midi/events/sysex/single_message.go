@@ -5,6 +5,7 @@ import (
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type SysExSingleMessage struct {
@@ -14,12 +15,12 @@ type SysExSingleMessage struct {
 	Data         types.Hex
 }
 
-func NewSysExSingleMessage(ctx *context.Context, r events.EventReader, status types.Status) (*SysExSingleMessage, error) {
+func NewSysExSingleMessage(ctx *context.Context, r io.ByteReader, status types.Status) (*SysExSingleMessage, error) {
 	if status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", status)
 	}
 
-	bytes, err := r.ReadVLF()
+	bytes, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

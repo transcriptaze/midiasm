@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type DeviceName struct {
@@ -13,12 +14,12 @@ type DeviceName struct {
 	Name   string
 }
 
-func NewDeviceName(r events.EventReader, status types.Status, eventType types.MetaEventType) (*DeviceName, error) {
+func NewDeviceName(r io.ByteReader, status types.Status, eventType types.MetaEventType) (*DeviceName, error) {
 	if eventType != 0x09 {
 		return nil, fmt.Errorf("Invalid DeviceName event type (%02x): expected '09'", eventType)
 	}
 
-	name, err := r.ReadVLF()
+	name, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}

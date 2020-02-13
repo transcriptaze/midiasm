@@ -5,6 +5,7 @@ import (
 	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events"
 	"github.com/twystd/midiasm/midi/types"
+	"io"
 )
 
 type SysExContinuationMessage struct {
@@ -13,12 +14,12 @@ type SysExContinuationMessage struct {
 	Data   types.Hex
 }
 
-func NewSysExContinuationMessage(ctx *context.Context, r events.EventReader, status types.Status) (*SysExContinuationMessage, error) {
+func NewSysExContinuationMessage(ctx *context.Context, r io.ByteReader, status types.Status) (*SysExContinuationMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
 
-	data, err := r.ReadVLF()
+	data, err := events.VLF(r)
 	if err != nil {
 		return nil, err
 	}
