@@ -40,7 +40,6 @@ type Context struct {
 	RunningStatus types.Status
 	casio         bool
 	notes         map[uint16]string
-	Manufacturers map[string]types.Manufacturer
 }
 
 func NewContext() *Context {
@@ -49,7 +48,6 @@ func NewContext() *Context {
 		RunningStatus: 0x00,
 		casio:         false,
 		notes:         make(map[uint16]string),
-		Manufacturers: make(map[string]types.Manufacturer),
 	}
 }
 
@@ -110,8 +108,4 @@ func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
 	key |= uint16(n)
 
 	ctx.notes[key] = ctx.FormatNote(n)
-}
-
-func (ctx *Context) LookupManufacturer(id []byte) types.Manufacturer {
-	return types.LookupManufacturer(id, ctx.Manufacturers)
 }

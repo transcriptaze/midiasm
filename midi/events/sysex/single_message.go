@@ -47,7 +47,7 @@ func NewSysExSingleMessage(ctx *context.Context, r io.ByteReader, status types.S
 	return &SysExSingleMessage{
 		Tag:          "SysExMessage",
 		Status:       status,
-		Manufacturer: ctx.LookupManufacturer(id),
+		Manufacturer: types.LookupManufacturer(id),
 		Data:         data,
 	}, nil
 }

@@ -78,7 +78,7 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interfac
 		return NewEndOfTrack(data)
 
 	case 0x7f:
-		return NewSequencerSpecificEvent(ctx, data)
+		return NewSequencerSpecificEvent(data)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)

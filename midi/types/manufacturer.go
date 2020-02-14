@@ -1,7 +1,10 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 )
 
@@ -11,13 +14,75 @@ type Manufacturer struct {
 	Name   string `json:"name"`
 }
 
-func MakeManufacturer(ID []byte, region string, name string) (string, *Manufacturer, error) {
+func AddManufacturers(list map[string]Manufacturer) {
+	for k, v := range list {
+		manufacturers[k] = v
+	}
+}
+
+func LookupManufacturer(id []byte) Manufacturer {
+	manufacturer := Manufacturer{
+		ID:     id,
+		Region: "<unknown>",
+		Name:   "<unknown>",
+	}
+
+	switch len(id) {
+	case 1:
+		key := fmt.Sprintf("%02X", id[0])
+		if m, ok := manufacturers[key]; ok {
+			return m
+		}
+
+	case 3:
+		key := fmt.Sprintf("%02X%02X", id[1], id[2])
+		if m, ok := manufacturers[key]; ok {
+			return m
+		}
+	}
+
+	return manufacturer
+}
+
+func LoadManufacturers(r io.Reader) (map[string]Manufacturer, error) {
+	conf := struct {
+		Manufacturers []Manufacturer `json:"manufacturers"`
+	}{
+		Manufacturers: []Manufacturer{},
+	}
+
+	bytes, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(bytes, &conf)
+	if err != nil {
+		return nil, err
+	}
+
+	list := map[string]Manufacturer{}
+	for _, m := range conf.Manufacturers {
+		k, v, err := makeManufacturer(m.ID, m.Region, m.Name)
+		if err != nil {
+			return nil, err
+		}
+
+		if v != nil {
+			list[k] = *v
+		}
+	}
+
+	return list, nil
+}
+
+func makeManufacturer(ID []byte, region string, name string) (string, *Manufacturer, error) {
 	if len(ID) != 1 && len(ID) != 3 {
 		return "", nil, fmt.Errorf("Invalid manufacturer ID: %v", ID)
 	}
 
 	if strings.Trim(name, " ") == "" {
-		return "", nil, fmt.Errorf("Invalid manufacturer Name: %s", name)
+		return "", nil, fmt.Errorf("Invalid manufacturer name: %s", name)
 	}
 
 	key := fmt.Sprintf("%02X", ID[0])
@@ -34,40 +99,6 @@ func MakeManufacturer(ID []byte, region string, name string) (string, *Manufactu
 	copy(m.ID, ID)
 
 	return key, &m, nil
-}
-
-func LookupManufacturer(id []byte, additional map[string]Manufacturer) Manufacturer {
-	manufacturer := Manufacturer{
-		ID:     id,
-		Region: "<unknown>",
-		Name:   "<unknown>",
-	}
-
-	switch len(id) {
-	case 1:
-		key := fmt.Sprintf("%02X", id[0])
-		if additional != nil {
-			if m, ok := additional[key]; ok {
-				return m
-			}
-		}
-		if m, ok := manufacturers[key]; ok {
-			return m
-		}
-
-	case 3:
-		key := fmt.Sprintf("%02X%02X", id[1], id[2])
-		if additional != nil {
-			if m, ok := additional[key]; ok {
-				return m
-			}
-		}
-		if m, ok := manufacturers[key]; ok {
-			return m
-		}
-	}
-
-	return manufacturer
 }
 
 var manufacturers = map[string]Manufacturer{

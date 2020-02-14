@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
+	"github.com/twystd/midiasm/midi/types"
 	"io/ioutil"
 	"os"
 )
@@ -47,15 +48,21 @@ func main() {
 
 	if conf := cmd.config(); conf != "" {
 		f, err := os.Open(conf)
-		if err == nil {
-			err = smf.LoadConfiguration(f)
-			f.Close()
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
 		}
+
+		manufacturers, err := types.LoadManufacturers(f)
+
+		f.Close()
 
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
+
+		types.AddManufacturers(manufacturers)
 	}
 
 	if err = smf.UnmarshalBinary(bytes); err != nil {
