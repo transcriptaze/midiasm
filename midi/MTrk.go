@@ -23,7 +23,8 @@ type MTrk struct {
 	Events []*events.Event
 }
 
-func (chunk *MTrk) UnmarshalBinary(ctx *context.Context, data []byte) error {
+func (chunk *MTrk) UnmarshalBinary(data []byte) error {
+	ctx := context.NewContext()
 	tag := string(data[0:4])
 	if tag != "MTrk" {
 		return fmt.Errorf("Invalid MTrk chunk type (%s): expected 'MTrk'", tag)

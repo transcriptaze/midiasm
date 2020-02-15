@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
 	"github.com/twystd/midiasm/midi/events/meta"
 	"github.com/twystd/midiasm/midi/types"
 	"io"
@@ -51,8 +50,7 @@ func (smf *SMF) UnmarshalBinary(data []byte) error {
 					TrackNumber: types.TrackNumber(len(smf.Tracks)),
 				}
 
-				ctx := context.NewContext()
-				if err := mtrk.UnmarshalBinary(ctx, chunk); err != nil {
+				if err := mtrk.UnmarshalBinary(chunk); err != nil {
 					return err
 				}
 
