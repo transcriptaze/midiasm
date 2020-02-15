@@ -83,49 +83,80 @@ func (smf *SMF) Validate() []ValidationError {
 		return t
 	}
 
-	if smf.MThd.Format == 0 && len(smf.Tracks) != 1 {
-		errors = append(errors, ValidationError(fmt.Errorf("File contains %d tracks (expected 1 track for FORMAT 0)", len(smf.Tracks))))
+	if smf.MThd.Format == 0 {
+		errors = append(errors, smf.ValidateFormat0()...)
 	}
 
 	if smf.MThd.Format == 1 {
-		if len(smf.Tracks) > 0 {
-			track := smf.Tracks[0]
-			for _, e := range track.Events {
-				event := e.Event
-				switch event.(type) {
-				case *metaevent.Tempo,
-					*metaevent.TrackName,
-					*metaevent.SMPTEOffset,
-					*metaevent.EndOfTrack:
-					continue
-				default:
-					errors = append(errors, ValidationError(fmt.Errorf("Track 0: unexpected event (%s)", clean(event))))
+		errors = append(errors, smf.ValidateFormat1()...)
+	}
+
+loop:
+	for _, track := range smf.Tracks {
+		for i, e := range track.Events {
+			event := e.Event
+			if _, ok := event.(*metaevent.EndOfTrack); ok {
+				if i != len(track.Events)-1 {
+					errors = append(errors, ValidationError(fmt.Errorf("Track %d: EndOfTrack (%s) is not last event", track.TrackNumber, clean(event))))
 				}
+				break loop
 			}
+
+			errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event", track.TrackNumber)))
 		}
+	}
 
-		for _, track := range smf.Tracks[1:] {
-			for _, e := range track.Events {
-				event := e.Event
-				switch event.(type) {
-				case *metaevent.Tempo:
-					errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
+	return errors
+}
 
-				case *metaevent.SMPTEOffset:
-					errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
-				}
+func (smf *SMF) ValidateFormat0() []ValidationError {
+	errors := []ValidationError{}
+
+	if len(smf.Tracks) != 1 {
+		errors = append(errors, ValidationError(fmt.Errorf("File contains %d tracks (expected 1 track for FORMAT 0)", len(smf.Tracks))))
+	}
+
+	return errors
+}
+
+func (smf *SMF) ValidateFormat1() []ValidationError {
+	errors := []ValidationError{}
+
+	clean := func(e interface{}) string {
+		t := fmt.Sprintf("%T", e)
+		t = strings.TrimPrefix(t, "*")
+		t = strings.TrimPrefix(t, "metaevent.")
+		t = strings.TrimPrefix(t, "midievent.")
+		t = strings.TrimPrefix(t, "sysex.")
+
+		return t
+	}
+
+	if len(smf.Tracks) > 0 {
+		track := smf.Tracks[0]
+		for _, e := range track.Events {
+			event := e.Event
+			switch event.(type) {
+			case *metaevent.Tempo,
+				*metaevent.TrackName,
+				*metaevent.SMPTEOffset,
+				*metaevent.EndOfTrack:
+				continue
+			default:
+				errors = append(errors, ValidationError(fmt.Errorf("Track 0: unexpected event (%s)", clean(event))))
 			}
 		}
 	}
 
-	for _, track := range smf.Tracks {
-		if len(track.Events) == 0 {
-			errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event", track.TrackNumber)))
-		} else {
-			e := track.Events[len(track.Events)-1]
+	for _, track := range smf.Tracks[1:] {
+		for _, e := range track.Events {
 			event := e.Event
-			if _, ok := event.(*metaevent.EndOfTrack); !ok {
-				errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event (%s)", track.TrackNumber, clean(event))))
+			switch event.(type) {
+			case *metaevent.Tempo:
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
+
+			case *metaevent.SMPTEOffset:
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, clean(event))))
 			}
 		}
 	}
