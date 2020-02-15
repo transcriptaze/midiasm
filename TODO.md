@@ -24,10 +24,14 @@
 - [x] Check SMTPEOffset only in track 0 for format 1
 - [x] Running status
 - [x] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
-- [ ] Format 0
+- [ ] Identify bank for Program Change
 - [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
+- [ ] Format 0
 - [ ] Format 2
 - [ ] Reference files
+   - Format 0
+   - Format 1
+   - Format 2
 - [ ] Add outstanding events to TestUnmarshalSMF
 - [ ] MTrk Unit test for running status
 
@@ -41,6 +45,7 @@
 - [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2
+- [ ] NoteOn with 0 velocity -> NoteOff
 
 ### MIDI events
 
