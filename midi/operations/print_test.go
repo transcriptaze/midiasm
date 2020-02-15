@@ -32,7 +32,7 @@ func TestPrintSMF(t *testing.T) {
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
       00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
       00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  program:25
-      00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  controller:101, value:0
+      00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  101/Registered Parameter Number (MSB), value:0
       00 A0 64                              tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
       00 D0 07                              tick:0          delta:0          D0 ChannelPressure        channel:0  pressure:7
       00 90 30 48                           tick:0          delta:0          90 NoteOn                 channel:0  note:C2, velocity:72
@@ -137,7 +137,7 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
       00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
       00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  program:25
-      00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  controller:101, value:0
+      00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  101/Registered Parameter Number (MSB), value:0
       00 A0 64                              tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
       00 D0 07                              tick:0          delta:0          D0 ChannelPressure        channel:0  pressure:7
       00 90 30 48                           tick:0          delta:0          90 NoteOn                 channel:0  note:C2, velocity:72

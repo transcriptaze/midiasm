@@ -23,9 +23,9 @@
 - [x] Identify manufacturer for SysEx (http://www.somascape.org/midi/tech/spec.html#sysexnotes)
 - [x] Check SMTPEOffset only in track 0 for format 1
 - [x] Running status
-- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
-- [ ] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
+- [x] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
 - [ ] Format 0
+- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
 - [ ] Format 2
 - [ ] Reference files
 - [ ] Add outstanding events to TestUnmarshalSMF

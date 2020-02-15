@@ -10,7 +10,7 @@ type Controller struct {
 	Tag        string
 	Status     types.Status
 	Channel    types.Channel
-	Controller byte
+	Controller types.Controller
 	Value      byte
 }
 
@@ -35,7 +35,7 @@ func NewController(r io.ByteReader, status types.Status) (*Controller, error) {
 		Tag:        "Controller",
 		Status:     status,
 		Channel:    channel,
-		Controller: controller,
+		Controller: types.LookupController(controller),
 		Value:      value,
 	}, nil
 }
