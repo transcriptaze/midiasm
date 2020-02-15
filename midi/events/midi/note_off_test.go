@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/twystd/midiasm/midi/context"
+	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		"NoteOff",
 		0x81,
 		1,
-		Note{
+		types.Note{
 			Value: 49,
 			Name:  "C♯2",
 			Alias: "C♯2",
@@ -47,7 +48,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		"NoteOff",
 		0x81,
 		1,
-		Note{
+		types.Note{
 			Value: 49,
 			Name:  "D♭2",
 			Alias: "D♭2",

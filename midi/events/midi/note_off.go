@@ -11,7 +11,7 @@ type NoteOff struct {
 	Tag      string
 	Status   types.Status
 	Channel  types.Channel
-	Note     Note
+	Note     types.Note
 	Velocity byte
 }
 
@@ -36,7 +36,7 @@ func NewNoteOff(ctx *context.Context, r io.ByteReader, status types.Status) (*No
 		Tag:     "NoteOff",
 		Status:  status,
 		Channel: channel,
-		Note: Note{
+		Note: types.Note{
 			Value: note,
 			Name:  ctx.GetNoteOff(channel, note),
 			Alias: ctx.FormatNote(note),

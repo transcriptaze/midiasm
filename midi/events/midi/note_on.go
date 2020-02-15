@@ -11,7 +11,7 @@ type NoteOn struct {
 	Tag      string
 	Status   types.Status
 	Channel  types.Channel
-	Note     Note
+	Note     types.Note
 	Velocity byte
 }
 
@@ -38,7 +38,7 @@ func NewNoteOn(ctx *context.Context, r io.ByteReader, status types.Status) (*Not
 		Tag:     "NoteOn",
 		Status:  status,
 		Channel: channel,
-		Note: Note{
+		Note: types.Note{
 			Value: note,
 			Name:  ctx.FormatNote(note),
 			Alias: ctx.FormatNote(note),

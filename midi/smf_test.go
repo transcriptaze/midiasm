@@ -186,7 +186,7 @@ func TestUnmarshalSMF(t *testing.T) {
 						Tag:     "NoteOn",
 						Status:  0x91,
 						Channel: types.Channel(0x01),
-						Note: midievent.Note{
+						Note: types.Note{
 							Value: 49,
 							Name:  "C♯2",
 							Alias: "C♯2",
@@ -201,7 +201,7 @@ func TestUnmarshalSMF(t *testing.T) {
 						Tag:     "NoteOn",
 						Status:  0x91,
 						Channel: types.Channel(0x01),
-						Note: midievent.Note{
+						Note: types.Note{
 							Value: 60,
 							Name:  "C3",
 							Alias: "C3",
@@ -216,7 +216,7 @@ func TestUnmarshalSMF(t *testing.T) {
 						Tag:     "NoteOff",
 						Status:  0x81,
 						Channel: types.Channel(0x01),
-						Note: midievent.Note{
+						Note: types.Note{
 							Value: 49,
 							Name:  "C♯2",
 							Alias: "C♯2",
@@ -313,7 +313,7 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 					Tag:     "NoteOn",
 					Status:  0x91,
 					Channel: types.Channel(0x01),
-					Note: midievent.Note{
+					Note: types.Note{
 						Value: 49,
 						Name:  "C♯2",
 						Alias: "C♯2",
@@ -340,7 +340,7 @@ func TestUnmarshalSMFNoteAlias(t *testing.T) {
 					Tag:     "NoteOff",
 					Status:  0x81,
 					Channel: types.Channel(0x01),
-					Note: midievent.Note{
+					Note: types.Note{
 						Value: 49,
 						Name:  "C♯2",
 						Alias: "D♭2",
