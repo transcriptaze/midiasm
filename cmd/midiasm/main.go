@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/twystd/midiasm/midi"
+	"github.com/twystd/midiasm/midi/encoding/midifile"
 	"github.com/twystd/midiasm/midi/types"
 	"io/ioutil"
 	"os"
@@ -41,11 +42,6 @@ func main() {
 		return
 	}
 
-	smf := midi.SMF{
-		File:   filename,
-		Tracks: make([]*midi.MTrk, 0),
-	}
-
 	if conf := cmd.config(); conf != "" {
 		f, err := os.Open(conf)
 		if err != nil {
@@ -65,21 +61,29 @@ func main() {
 		types.AddManufacturers(manufacturers)
 	}
 
-	if err = smf.UnmarshalBinary(bytes); err != nil {
+	decoder := midifile.NewDecoder()
+
+	smf, err := decoder.Decode(bytes)
+	if err != nil {
 		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	if smf == nil {
+		fmt.Printf("Error: Mysteriously failed to decode MIDI file\n")
 		return
 	}
 
 	if errors := smf.Validate(); len(errors) > 0 {
 		fmt.Fprintln(os.Stderr)
-		fmt.Fprintf(os.Stderr, "WARNING: found invalid MIDI events\n")
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
 		for _, e := range errors {
 			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
 		}
 		fmt.Fprintln(os.Stderr)
 	}
 
-	cmd.Execute(&smf)
+	cmd.Execute(smf)
 }
 
 func parse() (command, string, error) {

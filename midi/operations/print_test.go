@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/twystd/midiasm/midi"
+	"github.com/twystd/midiasm/midi/encoding/midifile"
 	"strings"
 	"testing"
 )
@@ -90,8 +90,8 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x2f, 0x00,
 	}
 
-	smf := midi.SMF{}
-	if err := smf.UnmarshalBinary(bytes); err != nil {
+	smf, err := midifile.NewDecoder().Decode(bytes)
+	if err != nil {
 		t.Fatalf("Error unmarshaling SMF: %v", err)
 	}
 
@@ -195,8 +195,8 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
   }
 }`
 
-	smf := midi.SMF{}
-	if err := smf.UnmarshalBinary(bytes); err != nil {
+	smf, err := midifile.NewDecoder().Decode(bytes)
+	if err != nil {
 		t.Fatalf("Error unmarshaling SMF: %v", err)
 	}
 

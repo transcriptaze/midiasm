@@ -10,10 +10,7 @@ build: format
 
 test: build
 	go clean -testcache
-#	go test ./...
-	go test -v ./midi -run TestUnmarshal
-	go test -v ./midi -run TestValidateSMF
-	go test -v midi/operations/*.go
+	go test ./...
 
 benchmark: build
 	go test -bench ./...
@@ -27,7 +24,9 @@ clean:
 	rm -rf bin/*
 
 debug: build
-	./bin/midiasm --debug --templates examples/example-01.templates examples/example-01.mid
+	go test -v ./midi/encoding/midifile
+	go test -v ./midi -run TestUnmarshalNoteAlias
+#	./bin/midiasm --debug --templates examples/example-01.templates examples/example-01.mid
 
 example: build
 	mkdir -p tmp
