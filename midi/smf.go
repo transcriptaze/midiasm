@@ -33,17 +33,19 @@ func (smf *SMF) Validate() []ValidationError {
 		errors = append(errors, smf.validateFormat1()...)
 	}
 
-loop:
 	for _, track := range smf.Tracks {
+		eot := false
 		for i, e := range track.Events {
 			event := e.Event
 			if _, ok := event.(*metaevent.EndOfTrack); ok {
-				if i != len(track.Events)-1 {
-					errors = append(errors, ValidationError(fmt.Errorf("Track %d: EndOfTrack (%s) is not last event", track.TrackNumber, clean(event))))
+				eot = true
+				if i+1 != len(track.Events) {
+					errors = append(errors, ValidationError(fmt.Errorf("Track %d: EndOfTrack @%d (%s) is not last event", track.TrackNumber, i+1, clean(event))))
 				}
-				break loop
 			}
+		}
 
+		if !eot {
 			errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event", track.TrackNumber)))
 		}
 	}
