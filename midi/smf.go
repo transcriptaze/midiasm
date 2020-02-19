@@ -3,6 +3,7 @@ package midi
 import (
 	"fmt"
 	"github.com/twystd/midiasm/midi/events/meta"
+	"github.com/twystd/midiasm/midi/events/midi"
 	"strings"
 )
 
@@ -33,6 +34,7 @@ func (smf *SMF) Validate() []ValidationError {
 		errors = append(errors, smf.validateFormat1()...)
 	}
 
+	// End of Track
 	for _, track := range smf.Tracks {
 		eot := false
 		for i, e := range track.Events {
@@ -47,6 +49,39 @@ func (smf *SMF) Validate() []ValidationError {
 
 		if !eot {
 			errors = append(errors, ValidationError(fmt.Errorf("Track %d: missing EndOfTrack event", track.TrackNumber)))
+		}
+	}
+
+	// Program Bank
+	for _, track := range smf.Tracks {
+		var last interface{}
+		for i, e := range track.Events {
+			event := e.Event
+			c := []*midievent.Controller{nil, nil}
+
+			if cx, ok := last.(*midievent.Controller); ok {
+				c[0] = cx
+			}
+
+			if cx, ok := event.(*midievent.Controller); ok {
+				c[1] = cx
+			}
+
+			if c[0] != nil && c[0].Controller.ID == 0x00 && (c[1] == nil || c[1].Controller.ID != 0x20) {
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select MSB' event @%d missing LSB (%s)", track.TrackNumber, i, clean(last))))
+			}
+
+			if c[1] != nil && c[1].Controller.ID == 0x20 && (c[0] == nil || c[0].Controller.ID != 0x00) {
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select LSB' event @%d missing MSB (%s)", track.TrackNumber, i+1, clean(event))))
+			}
+
+			fmt.Printf(">>>> %+v\n     %+v\n", c[0], c[1])
+			if c[0] != nil && c[0].Controller.ID == 0x00 && c[1] != nil && c[1].Controller.ID == 0x20 && c[0].Channel != c[1].Channel {
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select MSB' event @%d LSB on another channel (%s)", track.TrackNumber, i, clean(last))))
+				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select LSB' event @%d MSB on another channel (%s)", track.TrackNumber, i+1, clean(event))))
+			}
+
+			last = e.Event
 		}
 	}
 
