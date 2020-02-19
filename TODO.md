@@ -25,15 +25,11 @@
 - [x] Running status
 - [x] Identify controller numbers (http://www.somascape.org/midi/tech/spec.html#ctrlnums)
 - [x] MTrk unit test for running status
-- [ ] Identify bank for Program Change
-- [ ] Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
+- [x] Identify bank for Program Change
 - [x] Format 0
+- [x] Format 1
 - [ ] Format 2
-- [ ] Reference files
-   - Format 0
-   - Format 1
-   - Format 2
-- [ ] Add outstanding events to TestUnmarshalSMF
+- [ ] Add outstanding events to TestDecode
 
 ### Notes 
 
@@ -89,6 +85,16 @@
 - [x] Casio sequences
 
 ## TODO
+
+### Disassembler
+
+1. Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
+2. Reference files
+   - Format 0
+   - Format 1
+   - Format 2
+
+### Other
 
 1.  Assembler
 2.  TSV

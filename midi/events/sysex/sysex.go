@@ -14,14 +14,14 @@ func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interfac
 
 	switch status {
 	case 0xf0:
-		if ctx.Casio() {
+		if ctx.Casio {
 			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
 		} else {
 			return NewSysExSingleMessage(ctx, r, status)
 		}
 
 	case 0xf7:
-		if ctx.Casio() {
+		if ctx.Casio {
 			return NewSysExContinuationMessage(ctx, r, status)
 		} else {
 			return NewSysExEscapeMessage(ctx, r, status)

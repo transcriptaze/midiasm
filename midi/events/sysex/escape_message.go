@@ -19,7 +19,7 @@ func NewSysExEscapeMessage(ctx *context.Context, r io.ByteReader, status types.S
 		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
 
-	if ctx.Casio() {
+	if ctx.Casio {
 		return nil, fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 

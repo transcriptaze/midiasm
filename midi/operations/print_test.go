@@ -15,7 +15,7 @@ func TestPrintSMF(t *testing.T) {
       00 FF 54 05 4D 2D 3B 07 27            tick:0          delta:0          54 SMPTEOffset            13 45 59 25 7 39
       00 FF 2F 00                           tick:0          delta:0          2F EndOfTrack
 
-4D 54 72 6B 00 00 00 F1…                    MTrk 1  length:241
+4D 54 72 6B 00 00 00 F9…                    MTrk 1  length:249
       00 FF 00 02 00 17                     tick:0          delta:0          00 SequenceNumber         23
       00 FF 01 0D 54 68 69 73 20 61 6E 64…  tick:0          delta:0          01 Text                   This and That
       00 FF 02 04 54 68 65 6D               tick:0          delta:0          02 Copyright              Them
@@ -31,7 +31,9 @@ func TestPrintSMF(t *testing.T) {
       00 FF 58 04 04 02 18 08               tick:0          delta:0          58 TimeSignature          4/4, 24 ticks per click, 8/32 per quarter
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
       00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
-      00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  program:25
+      00 B0 00 05                           tick:0          delta:0          B0 Controller             channel:0  0/Bank Select (MSB), value:5
+      00 B0 20 21                           tick:0          delta:0          B0 Controller             channel:0  32/Bank Select (LSB), value:33
+      00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  bank:673, program:25
       00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  101/Registered Parameter Number (MSB), value:0
       00 A0 64                              tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
       00 D0 07                              tick:0          delta:0          D0 ChannelPressure        channel:0  pressure:7
@@ -57,7 +59,7 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27,
 		0x00, 0xff, 0x2f, 0x00,
 
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xf1,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xf9,
 		0x00, 0xff, 0x00, 0x02, 0x00, 0x17,
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
@@ -73,6 +75,8 @@ func TestPrintSMF(t *testing.T) {
 		0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08,
 		0x00, 0xff, 0x59, 0x02, 0x00, 0x01,
 		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
+		0x00, 0xb0, 0x00, 0x05,
+		0x00, 0xb0, 0x20, 0x21,
 		0x00, 0xc0, 0x19,
 		0x00, 0xb0, 0x65, 0x00,
 		0x00, 0xa0, 0x64,
@@ -120,7 +124,7 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
       00 FF 54 05 4D 2D 3B 07 27            tick:0          delta:0          54 SMPTEOffset            13 45 59 25 7 39
       00 FF 2F 00                           tick:0          delta:0          2F EndOfTrack
 
-4D 54 72 6B 00 00 00 EA…                    MTrk 1  length:234
+4D 54 72 6B 00 00 00 F2…                    MTrk 1  length:242
       00 FF 00 02 00 17                     tick:0          delta:0          00 SequenceNumber         23
       00 FF 01 0D 54 68 69 73 20 61 6E 64…  tick:0          delta:0          01 Text                   This and That
       00 FF 02 04 54 68 65 6D               tick:0          delta:0          02 Copyright              Them
@@ -136,7 +140,9 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
       00 FF 58 04 04 02 18 08               tick:0          delta:0          58 TimeSignature          4/4, 24 ticks per click, 8/32 per quarter
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
       00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
-      00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  program:25
+      00 B0 00 05                           tick:0          delta:0          B0 Controller             channel:0  0/Bank Select (MSB), value:5
+      00 B0 20 21                           tick:0          delta:0          B0 Controller             channel:0  32/Bank Select (LSB), value:33
+      00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  bank:673, program:25
       00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  101/Registered Parameter Number (MSB), value:0
       00 A0 64                              tick:0          delta:0          A0 PolyphonicPressure     channel:0  pressure:100
       00 D0 07                              tick:0          delta:0          D0 ChannelPressure        channel:0  pressure:7
@@ -158,7 +164,7 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
 		0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20,
 		0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27,
 		0x00, 0xff, 0x2f, 0x00,
-		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xea,
+		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0xf2,
 		0x00, 0xff, 0x00, 0x02, 0x00, 0x17,
 		0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74,
 		0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d,
@@ -174,6 +180,8 @@ func TestPrintWithLoadedTemplate(t *testing.T) {
 		0x00, 0xff, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08,
 		0x00, 0xff, 0x59, 0x02, 0x00, 0x01,
 		0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e,
+		0x00, 0xb0, 0x00, 0x05,
+		0x00, 0xb0, 0x20, 0x21,
 		0x00, 0xc0, 0x19,
 		0x00, 0xb0, 0x65, 0x00,
 		0x00, 0xa0, 0x64,

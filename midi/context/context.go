@@ -38,7 +38,8 @@ var Flats = map[byte]string{
 type Context struct {
 	scale         map[byte]string
 	RunningStatus types.Status
-	casio         bool
+	Casio         bool
+	ProgramBank   map[uint8]uint16
 	notes         map[uint16]string
 }
 
@@ -46,7 +47,8 @@ func NewContext() *Context {
 	return &Context{
 		scale:         Sharps,
 		RunningStatus: 0x00,
-		casio:         false,
+		Casio:         false,
+		ProgramBank:   make(map[uint8]uint16),
 		notes:         make(map[uint16]string),
 	}
 }
@@ -63,22 +65,6 @@ func (ctx *Context) UseSharps() *Context {
 
 func (ctx *Context) UseFlats() *Context {
 	ctx.scale = Flats
-
-	return ctx
-}
-
-func (ctx *Context) Casio() bool {
-	return ctx.casio
-}
-
-func (ctx *Context) CasioOn() *Context {
-	ctx.casio = true
-
-	return ctx
-}
-
-func (ctx *Context) CasioOff() *Context {
-	ctx.casio = false
 
 	return ctx
 }

@@ -77,7 +77,7 @@ var templates = map[string]string{
 	"noteon":             `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
 	"polyphonicpressure": `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 	"controller":         `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} {{.Controller.ID}}/{{.Controller.Name}}, value:{{.Value}}`,
-	"programchange":      `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} program:{{.Program }}`,
+	"programchange":      `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bank:{{.Bank}}, program:{{.Program }}`,
 	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
 	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
 

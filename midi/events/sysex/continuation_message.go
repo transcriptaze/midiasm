@@ -28,7 +28,7 @@ func NewSysExContinuationMessage(ctx *context.Context, r io.ByteReader, status t
 		terminator := data[len(data)-1]
 		if terminator == 0xf7 {
 			data = data[:len(data)-1]
-			ctx.CasioOff()
+			ctx.Casio = false
 		}
 	}
 

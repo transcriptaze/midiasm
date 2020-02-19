@@ -41,7 +41,7 @@ func TestParseSingleMessage(t *testing.T) {
 		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", data, message.Data)
 	}
 
-	if ctx.Casio() {
+	if ctx.Casio {
 		t.Errorf("context Casio flag should not be set")
 	}
 }
@@ -78,7 +78,7 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", data, message.Data)
 	}
 
-	if !ctx.Casio() {
+	if !ctx.Casio {
 		t.Errorf("context Casio flag should be set")
 	}
 }

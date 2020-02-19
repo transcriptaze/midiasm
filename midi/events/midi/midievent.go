@@ -19,10 +19,10 @@ func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interfac
 		return NewPolyphonicPressure(r, status)
 
 	case 0xB0:
-		return NewController(r, status)
+		return NewController(ctx, r, status)
 
 	case 0xC0:
-		return NewProgramChange(r, status)
+		return NewProgramChange(ctx, r, status)
 
 	case 0xD0:
 		return NewChannelPressure(r, status)
