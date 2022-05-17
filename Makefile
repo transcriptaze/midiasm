@@ -47,4 +47,6 @@ entangled: build
 	./bin/midiasm       examples/entangled.mid
 	./bin/midiasm notes examples/entangled.mid
 
+click: build
+	./bin/midiasm click --debug examples/interstellar.mid
 

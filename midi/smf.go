@@ -75,7 +75,6 @@ func (smf *SMF) Validate() []ValidationError {
 				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select LSB' event @%d missing MSB (%s)", track.TrackNumber, i+1, clean(event))))
 			}
 
-			fmt.Printf(">>>> %+v\n     %+v\n", c[0], c[1])
 			if c[0] != nil && c[0].Controller.ID == 0x00 && c[1] != nil && c[1].Controller.ID == 0x20 && c[0].Channel != c[1].Channel {
 				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select MSB' event @%d LSB on another channel (%s)", track.TrackNumber, i, clean(last))))
 				errors = append(errors, ValidationError(fmt.Errorf("Track %d: 'Bank Select LSB' event @%d MSB on another channel (%s)", track.TrackNumber, i+1, clean(event))))

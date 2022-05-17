@@ -23,6 +23,7 @@ A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM (last se
 1. [The Complete MIDI 1.0 Detailed Specification](https://www.midi.org/specifications/item/the-midi-1-0-specification)
 2. [Somascape - MIDI Files Specification](http://www.somascape.org/midi/tech/mfile.html)
 3. [(archive) MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)
+4. [(github) mido](https://github.com/mido/mido)
 
 
 

@@ -19,6 +19,7 @@ type command interface {
 var cli = map[string]command{
 	"print": &Print{},
 	"notes": &Notes{},
+	"click": &Click{},
 }
 
 func main() {

@@ -39,3 +39,7 @@ func NewTimeSignature(bytes []byte) (*TimeSignature, error) {
 		ThirtySecondsPerQuarter: thirtySecondsPerQuarter,
 	}, nil
 }
+
+func (t TimeSignature) String() string {
+	return fmt.Sprintf("%v/%v", t.Numerator, t.Denominator)
+}
