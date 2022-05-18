@@ -15,12 +15,13 @@
 
 ### Click Track
 
-- [ ] Extract time signature changes
-- [ ] Extract bars
-- [ ] Map beats to clicks
-- [ ] Configurable kick/snare/etc
-- [ ] Export as MIDI
+- [x] Extract time signature changes
+- [x] Extract bars
 - [ ] Export as JSON
+- [ ] Export as MIDI
+      - [ ] Map beats to clicks
+      - [ ] Configurable kick/snare/etc
+- [ ] Include tempo changes
 
 ### Notes 
 

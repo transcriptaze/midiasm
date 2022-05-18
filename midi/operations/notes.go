@@ -46,20 +46,12 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 		for _, e := range tempoMap {
 			tick := uint64(e.Tick)
 			list := eventlist[tick]
-			if list == nil {
-				list = make([]*events.Event, 0)
-			}
-
 			eventlist[tick] = append(list, e)
 		}
 
 		for _, e := range track.Events {
 			tick := uint64(e.Tick)
 			list := eventlist[tick]
-			if list == nil {
-				list = make([]*events.Event, 0)
-			}
-
 			eventlist[tick] = append(list, e)
 		}
 

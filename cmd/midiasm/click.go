@@ -32,12 +32,11 @@ func (c *Click) config() string {
 }
 
 func (c *Click) Execute(smf *midi.SMF) {
-	w := os.Stdout
-	err := error(nil)
+	var w = os.Stdout
+	var err error
 
 	if c.out != "" {
-		w, err = os.Create(c.out)
-		if err != nil {
+		if w, err = os.Create(c.out); err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
@@ -49,8 +48,7 @@ func (c *Click) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Debug = c.debug
 
 	p := operations.ClickTrack{w}
-	err = p.Execute(smf)
-	if err != nil {
+	if err = p.Execute(smf); err != nil {
 		fmt.Printf("Error %v extracting click track\n", err)
 	}
 }

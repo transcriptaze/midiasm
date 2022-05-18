@@ -115,13 +115,15 @@ func (smf *SMF) validateFormat1() []ValidationError {
 		for _, e := range track.Events {
 			event := e.Event
 			switch event.(type) {
-			case *metaevent.Tempo,
+			case
+				*metaevent.Tempo,
 				*metaevent.TrackName,
 				*metaevent.SMPTEOffset,
-				*metaevent.EndOfTrack:
+				*metaevent.EndOfTrack,
+				*metaevent.Copyright:
 				continue
 			default:
-				errors = append(errors, ValidationError(fmt.Errorf("Track 0: unexpected event (%s)", clean(event))))
+				errors = append(errors, ValidationError(fmt.Errorf("Track 0: unexpected event (%v)", clean(event))))
 			}
 		}
 	}
