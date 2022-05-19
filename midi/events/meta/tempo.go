@@ -2,6 +2,8 @@ package metaevent
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/twystd/midiasm/midi/types"
 )
 
@@ -29,4 +31,10 @@ func NewTempo(bytes []byte) (*Tempo, error) {
 		Type:   0x51,
 		Tempo:  tempo,
 	}, nil
+}
+
+func (t Tempo) String() string {
+	bpm := uint(math.Round(60.0 * 1000000.0 / float64(t.Tempo)))
+
+	return fmt.Sprintf("%v", bpm)
 }

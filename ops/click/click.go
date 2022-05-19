@@ -1,8 +1,9 @@
-package operations
+package click
 
 import (
 	"fmt"
 	"io"
+	"math"
 	"sort"
 
 	"github.com/twystd/midiasm/midi"
@@ -15,29 +16,19 @@ type ClickTrack struct {
 	Writer io.Writer
 }
 
-// type Click struct {
-// 	Channel       types.Channel
-// 	Note          byte
-// 	FormattedNote string
-// 	Velocity      byte
-// 	StartTick     uint64
-// 	EndTick       uint64
-// 	Start         time.Duration
-// 	End           time.Duration
-// }
+type Cluck struct {
+	Bar           uint
+	Tempo         uint
+	TimeSignature string
+}
 
 type signature struct {
-	numerator   uint8 
+	numerator   uint8
 	denominator uint8
 }
 
 func (x *ClickTrack) Execute(smf *midi.SMF) error {
-	type change struct {
-		Bar       uint32
-		Signature signature
-	}
-
-	changes := []change{}
+	clucks := map[uint]Cluck{}
 	ppqn := uint64(smf.MThd.Division)
 	tempoMap := make([]*events.Event, 0)
 
@@ -73,26 +64,27 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 			return ticks[i] < ticks[j]
 		})
 
-		var tempo uint64 = 50000
-		// var t time.Duration = 0
+		var tempo uint = 120
 		var beat float64 = 0.0
-		var bar uint32 = 0
+		var bar uint = 1
 		var last float64 = 0.0
 		var timeSignature *metaevent.TimeSignature
 
 		for _, tick := range ticks {
 			beat = float64(tick) / float64(ppqn)
-			// t = time.Duration(1000 * tick * tempo / ppqn)
-
-			if dt := (tick * tempo) % ppqn; dt > 0 {
-				eventlog.Warn(fmt.Sprintf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick))
-			}
 
 			list := eventlist[tick]
 			for _, e := range list {
 				event := e.Event
 				if v, ok := event.(*metaevent.Tempo); ok {
-					tempo = uint64(v.Tempo)
+					tempo = uint(math.Round(60.0 * 1000000.0 / float64(v.Tempo)))
+
+					eventlog.Debug(fmt.Sprintf("TEMPO %v  bar:%-3d", v, bar))
+
+					cluck := clucks[bar]
+					cluck.Bar = bar
+					cluck.Tempo = tempo
+					clucks[bar] = cluck
 				}
 			}
 
@@ -100,21 +92,19 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				event := e.Event
 				if v, ok := event.(*metaevent.TimeSignature); ok {
 					if timeSignature == nil {
-						bar = 1
 						last = beat
 					} else {
-						bar += uint32((beat - last) / float64(timeSignature.Numerator))
+						bar += uint((beat - last) / float64(timeSignature.Numerator))
 						last = beat
 					}
 
-					eventlog.Debug(fmt.Sprintf("TIME SIGNATURE %d/%d  bar:%-3d", v.Numerator, v.Denominator, bar))
-					changes = append(changes, change{
-						Bar: bar,
-						Signature: signature{
-							numerator:   v.Numerator,
-							denominator: v.Denominator,
-						},
-					})
+					eventlog.Debug(fmt.Sprintf("TIME SIGNATURE %v  bar:%-3d", v, bar))
+
+					cluck := clucks[bar]
+					cluck.Bar = bar
+					cluck.Tempo = tempo
+					cluck.TimeSignature = fmt.Sprintf("%v", v)
+					clucks[bar] = cluck
 
 					timeSignature = v
 				}
@@ -125,8 +115,17 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		break
 	}
 
-	for _, v := range changes {
-		fmt.Fprintf(x.Writer, "bar %-4v  time-signature %d/%d\n", v.Bar, v.Signature.numerator, v.Signature.denominator)
+	summary := []Cluck{}
+	for _, v := range clucks {
+		summary = append(summary, v)
+	}
+
+	sort.SliceStable(summary, func(i, j int) bool {
+		return summary[i].Bar < summary[j].Bar
+	})
+
+	for _, v := range summary {
+		fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
 	}
 
 	return fmt.Errorf("NOT IMPLEMENTED")

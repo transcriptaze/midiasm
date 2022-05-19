@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/operations"
+	"github.com/twystd/midiasm/ops"
 	"os"
 	"path"
 	"strings"
@@ -40,7 +40,7 @@ func (p *Print) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
-	op, err := operations.NewPrint()
+	op, err := ops.NewPrint()
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
@@ -66,7 +66,7 @@ func (p *Print) Execute(smf *midi.SMF) {
 	}
 }
 
-func (p *Print) write(op *operations.Print, smf *midi.SMF) {
+func (p *Print) write(op *ops.Print, smf *midi.SMF) {
 	out := os.Stdout
 
 	if p.out != "" {
@@ -87,7 +87,7 @@ func (p *Print) write(op *operations.Print, smf *midi.SMF) {
 	}
 }
 
-func (p *Print) separate(op *operations.Print, smf *midi.SMF) {
+func (p *Print) separate(op *ops.Print, smf *midi.SMF) {
 	// Get base filename and Create out directory
 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
 	dir := path.Dir(smf.File)

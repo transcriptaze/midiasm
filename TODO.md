@@ -17,11 +17,13 @@
 
 - [x] Extract time signature changes
 - [x] Extract bars
-- [ ] Export as JSON
+      - [ ] Calculate total bars
+- [x] Extract tempo changes
+- [ ] Export summary as JSON
+- [ ] Export clicks as JSON
 - [ ] Export as MIDI
       - [ ] Map beats to clicks
       - [ ] Configurable kick/snare/etc
-- [ ] Include tempo changes
 
 ### Notes 
 

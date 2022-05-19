@@ -1,4 +1,4 @@
-package operations
+package ops
 
 import (
 	"github.com/twystd/midiasm/midi/encoding/midifile"

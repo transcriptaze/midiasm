@@ -1,4 +1,4 @@
-package operations
+package ops
 
 import (
 	"encoding/json"

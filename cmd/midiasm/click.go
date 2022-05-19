@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/operations"
+	"github.com/twystd/midiasm/ops/click"
 	"os"
 )
 
@@ -47,7 +47,7 @@ func (c *Click) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = c.verbose
 	eventlog.EventLog.Debug = c.debug
 
-	p := operations.ClickTrack{w}
+	p := click.ClickTrack{w}
 	if err = p.Execute(smf); err != nil {
 		fmt.Printf("Error %v extracting click track\n", err)
 	}
