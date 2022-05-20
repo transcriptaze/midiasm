@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/twystd/midiasm/midi"
 	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/ops"
+	"github.com/twystd/midiasm/ops/notes"
 	"os"
 )
 
@@ -48,7 +48,7 @@ func (n *Notes) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = n.verbose
 	eventlog.EventLog.Debug = n.debug
 
-	p := ops.Notes{w}
+	p := notes.Notes{w}
 	err = p.Execute(smf)
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)

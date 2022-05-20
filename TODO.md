@@ -3,6 +3,21 @@
 - Take a look at [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
 - [ ] Redo logging
 
+### Click Track
+
+- [x] Extract time signature changes
+- [x] Extract bars
+      - [x] Calculate total bars
+      - [X] Summarize as spans
+- [x] Extract tempo changes
+- [ ] --track option (default to track 1)
+- [ ] Export summary as JSON
+- [ ] Export clicks as JSON
+- [ ] Export as MIDI
+      - [ ] Map beats to clicks
+      - [ ] Configurable kick/snare/etc
+
+
 ### Disassembler
 
 - [ ] Format 2
@@ -12,18 +27,6 @@
       - Format 0
       - Format 1
       - Format 2
-
-### Click Track
-
-- [x] Extract time signature changes
-- [x] Extract bars
-      - [ ] Calculate total bars
-- [x] Extract tempo changes
-- [ ] Export summary as JSON
-- [ ] Export clicks as JSON
-- [ ] Export as MIDI
-      - [ ] Map beats to clicks
-      - [ ] Configurable kick/snare/etc
 
 ### Notes 
 

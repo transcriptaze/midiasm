@@ -22,6 +22,13 @@ type Cluck struct {
 	TimeSignature string
 }
 
+type Span struct {
+	Start         uint
+	End           uint
+	Tempo         uint
+	TimeSignature string
+}
+
 type signature struct {
 	numerator   uint8
 	denominator uint8
@@ -53,6 +60,12 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				list := eventlist[tick]
 				eventlist[tick] = append(list, e)
 			}
+
+			if _, ok := e.Event.(*metaevent.EndOfTrack); ok {
+				tick := uint64(e.Tick)
+				list := eventlist[tick]
+				eventlist[tick] = append(list, e)
+			}
 		}
 
 		var ticks []uint64
@@ -70,6 +83,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		var last float64 = 0.0
 		var timeSignature *metaevent.TimeSignature
 
+		// ... tempo changes
 		for _, tick := range ticks {
 			beat = float64(tick) / float64(ppqn)
 
@@ -79,7 +93,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				if v, ok := event.(*metaevent.Tempo); ok {
 					tempo = uint(math.Round(60.0 * 1000000.0 / float64(v.Tempo)))
 
-					eventlog.Debug(fmt.Sprintf("TEMPO %v  bar:%-3d", v, bar))
+					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "TEMPO", v, bar))
 
 					cluck := clucks[bar]
 					cluck.Bar = bar
@@ -87,7 +101,13 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 					clucks[bar] = cluck
 				}
 			}
+		}
 
+		// ... time signature changes
+		for _, tick := range ticks {
+			beat = float64(tick) / float64(ppqn)
+
+			list := eventlist[tick]
 			for _, e := range list {
 				event := e.Event
 				if v, ok := event.(*metaevent.TimeSignature); ok {
@@ -98,7 +118,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 						last = beat
 					}
 
-					eventlog.Debug(fmt.Sprintf("TIME SIGNATURE %v  bar:%-3d", v, bar))
+					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "TIME SIGNATURE", v, bar))
 
 					cluck := clucks[bar]
 					cluck.Bar = bar
@@ -108,25 +128,65 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 
 					timeSignature = v
 				}
+
+				if _, ok := event.(*metaevent.EndOfTrack); ok {
+					bar += uint((beat - last) / float64(timeSignature.Numerator))
+					bar -= 1 // because end of track as after the last bar ????
+
+					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "END OF TRACK", "", bar))
+					cluck := clucks[bar]
+					cluck.Bar = bar
+					cluck.Tempo = tempo
+					cluck.TimeSignature = fmt.Sprintf("%v", timeSignature)
+					clucks[bar] = cluck
+				}
 			}
 		}
 
-		// Only process Tracks 0 and 1 for now
+		// Only process Track 1 for now
 		break
 	}
 
-	summary := []Cluck{}
+	list := []Cluck{}
 	for _, v := range clucks {
-		summary = append(summary, v)
+		list = append(list, v)
 	}
 
-	sort.SliceStable(summary, func(i, j int) bool {
-		return summary[i].Bar < summary[j].Bar
+	sort.SliceStable(list, func(i, j int) bool {
+		return list[i].Bar < list[j].Bar
 	})
 
-	for _, v := range summary {
-		fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
+	// for _, v := range list {
+	// 	fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
+	// }
+
+	spans := []Span{}
+	if len(list) > 0 {
+		span := Span{
+			Start:         list[0].Bar,
+			End:           list[0].Bar,
+			Tempo:         list[0].Tempo,
+			TimeSignature: list[0].TimeSignature,
+		}
+
+		for _, v := range list[1:] {
+			span.End = v.Bar - 1
+			spans = append(spans, span)
+
+			span = Span{
+				Start:         v.Bar,
+				End:           v.Bar,
+				Tempo:         v.Tempo,
+				TimeSignature: v.TimeSignature,
+			}
+		}
 	}
+
+	fmt.Println()
+	for _, v := range spans {
+		fmt.Fprintf(x.Writer, "bars %-7v  tempo:%-3v  time-signature %v\n", fmt.Sprintf("%v:%v", v.Start, v.End), v.Tempo, v.TimeSignature)
+	}
+	fmt.Println()
 
 	return fmt.Errorf("NOT IMPLEMENTED")
 }
