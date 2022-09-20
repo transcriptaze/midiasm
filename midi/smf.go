@@ -117,6 +117,7 @@ func (smf *SMF) validateFormat1() []ValidationError {
 			switch event.(type) {
 			case
 				*metaevent.Tempo,
+				*metaevent.TimeSignature,
 				*metaevent.TrackName,
 				*metaevent.SMPTEOffset,
 				*metaevent.EndOfTrack,

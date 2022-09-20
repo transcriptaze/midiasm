@@ -2,6 +2,7 @@
 
 - Take a look at [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
 - [ ] Redo logging
+- https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
 
 ### Click Track
 
@@ -27,6 +28,9 @@
       - Format 0
       - Format 1
       - Format 2
+- [ ] Decode RPNs
+      - https://en.wikipedia.org/wiki/General_MIDI
+- [ ] Channel 0-15 or 1-16
 
 ### Notes 
 

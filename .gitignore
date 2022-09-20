@@ -1,27 +1,12 @@
-# Binaries for programs and plugins
+.DS_Store
 bin
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Interim test files
+tmp
 examples/entangled.mid
 examples/jukskei.mid
 examples/interstellar.mid
 examples/*.gp
 examples/*.xml
-tmp
-
-# Miscellaneous
+examples/test-midi-files
+examples/tetragon
 documentation/midi.org
 
-# MacOS
-.DS_Store

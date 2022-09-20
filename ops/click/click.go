@@ -83,13 +83,18 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		var last float64 = 0.0
 		var timeSignature *metaevent.TimeSignature
 
-		// ... tempo changes
 		for _, tick := range ticks {
 			beat = float64(tick) / float64(ppqn)
+			if timeSignature != nil {
+				bar += uint((beat - last) / float64(timeSignature.Numerator))
+			}
+			last = beat
 
 			list := eventlist[tick]
 			for _, e := range list {
 				event := e.Event
+
+				// ... tempo changes
 				if v, ok := event.(*metaevent.Tempo); ok {
 					tempo = uint(math.Round(60.0 * 1000000.0 / float64(v.Tempo)))
 
@@ -100,24 +105,9 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 					cluck.Tempo = tempo
 					clucks[bar] = cluck
 				}
-			}
-		}
 
-		// ... time signature changes
-		for _, tick := range ticks {
-			beat = float64(tick) / float64(ppqn)
-
-			list := eventlist[tick]
-			for _, e := range list {
-				event := e.Event
+				// ... time signature changes
 				if v, ok := event.(*metaevent.TimeSignature); ok {
-					if timeSignature == nil {
-						last = beat
-					} else {
-						bar += uint((beat - last) / float64(timeSignature.Numerator))
-						last = beat
-					}
-
 					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "TIME SIGNATURE", v, bar))
 
 					cluck := clucks[bar]
@@ -130,12 +120,10 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				}
 
 				if _, ok := event.(*metaevent.EndOfTrack); ok {
-					bar += uint((beat - last) / float64(timeSignature.Numerator))
-					bar -= 1 // because end of track as after the last bar ????
-
 					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "END OF TRACK", "", bar))
+
 					cluck := clucks[bar]
-					cluck.Bar = bar
+					cluck.Bar = bar - 1 // because end of track as after the last bar ????
 					cluck.Tempo = tempo
 					cluck.TimeSignature = fmt.Sprintf("%v", timeSignature)
 					clucks[bar] = cluck
@@ -156,9 +144,9 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		return list[i].Bar < list[j].Bar
 	})
 
-	// for _, v := range list {
-	// 	fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
-	// }
+	for _, v := range list {
+		fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
+	}
 
 	spans := []Span{}
 	if len(list) > 0 {
