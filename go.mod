@@ -1,3 +1,3 @@
-module github.com/twystd/midiasm
+module github.com/transcriptaze/midiasm
 
-go 1.13
+go 1.19

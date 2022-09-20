@@ -21,6 +21,8 @@
 
 ### Disassembler
 
+- [ ] Move TimeSignature in reference-01.mid to track 0
+- [ ] JSON output
 - [ ] Format 2
 - [ ] Add outstanding events to TestDecode
 - (?) Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch

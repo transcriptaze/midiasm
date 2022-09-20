@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/encoding/midifile"
-	"github.com/twystd/midiasm/midi/types"
 	"io/ioutil"
 	"os"
+
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type command interface {
@@ -17,9 +18,10 @@ type command interface {
 }
 
 var cli = map[string]command{
-	"print": &Print{},
-	"notes": &Notes{},
-	"click": &Click{},
+	"print":  &Print{},
+	"notes":  &Notes{},
+	"click":  &Click{},
+	"export": &Export{},
 }
 
 func main() {

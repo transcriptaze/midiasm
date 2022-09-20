@@ -3,7 +3,8 @@ package midi
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/twystd/midiasm/midi/types"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type MThd struct {

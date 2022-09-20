@@ -6,10 +6,10 @@ import (
 	"math"
 	"sort"
 
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/eventlog"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
 )
 
 type ClickTrack struct {

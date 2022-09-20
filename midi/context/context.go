@@ -2,7 +2,8 @@ package context
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/types"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 var Sharps = map[byte]string{

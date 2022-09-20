@@ -2,8 +2,9 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/types"
+
+	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type KeyType uint8

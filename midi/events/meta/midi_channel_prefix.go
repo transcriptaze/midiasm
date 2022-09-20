@@ -2,7 +2,8 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/types"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type MIDIChannelPrefix struct {

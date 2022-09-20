@@ -1,8 +1,9 @@
 package events
 
 import (
-	"github.com/twystd/midiasm/midi/types"
 	"io"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Event struct {

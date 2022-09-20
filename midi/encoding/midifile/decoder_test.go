@@ -1,13 +1,14 @@
 package midifile
 
 import (
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/events/meta"
-	"github.com/twystd/midiasm/midi/events/midi"
-	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 var SMF0 = []byte{

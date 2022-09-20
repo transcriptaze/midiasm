@@ -5,9 +5,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/types"
 	"io"
+
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Decoder struct {

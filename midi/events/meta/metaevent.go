@@ -2,10 +2,11 @@ package metaevent
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/events"
-	"github.com/twystd/midiasm/midi/types"
 	"io"
+
+	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interface{}, error) {

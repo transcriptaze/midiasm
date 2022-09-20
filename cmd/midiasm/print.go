@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/ops"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/eventlog"
+	"github.com/transcriptaze/midiasm/ops/print"
 )
 
 type Print struct {
@@ -40,7 +41,7 @@ func (p *Print) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
-	op, err := ops.NewPrint()
+	op, err := print.NewPrint()
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
@@ -66,7 +67,7 @@ func (p *Print) Execute(smf *midi.SMF) {
 	}
 }
 
-func (p *Print) write(op *ops.Print, smf *midi.SMF) {
+func (p *Print) write(op *print.Print, smf *midi.SMF) {
 	out := os.Stdout
 
 	if p.out != "" {
@@ -87,7 +88,7 @@ func (p *Print) write(op *ops.Print, smf *midi.SMF) {
 	}
 }
 
-func (p *Print) separate(op *ops.Print, smf *midi.SMF) {
+func (p *Print) separate(op *print.Print, smf *midi.SMF) {
 	// Get base filename and Create out directory
 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
 	dir := path.Dir(smf.File)

@@ -1,3 +1,5 @@
+CMD =./bin/midiasm
+
 all: test      \
 	 benchmark \
      coverage
@@ -26,30 +28,33 @@ clean:
 debug: build
 	go test -v ./midi/encoding/midifile
 	go test -v ./midi -run TestUnmarshalNoteAlias
-#	./bin/midiasm --debug --templates examples/example-01.templates examples/example-01.mid
+#	$(CMD) --debug --templates examples/example-01.templates examples/example-01.mid
 
 example: build
 	mkdir -p tmp
 	rm -f tmp/example.*
-	./bin/midiasm       --debug --verbose --out tmp/example.txt examples/example-01.mid
-	./bin/midiasm notes --debug --verbose --out tmp/example.notes examples/example-01.mid
+	$(CMD)       --debug --verbose --out tmp/example.txt examples/example-01.mid
+	$(CMD) notes --debug --verbose --out tmp/example.notes examples/example-01.mid
 	cat tmp/example.txt
 	cat tmp/example.notes
 
 split: build
 	rm -f tmp/example-01.*
-	./bin/midiasm --split --out tmp examples/example-01.mid
+	$(CMD) --split --out tmp examples/example-01.mid
 	cat tmp/example-01.MThd
 	cat tmp/example-01-0.MTrk
 	cat tmp/example-01-1.MTrk
 
 entangled: build
-	./bin/midiasm       examples/entangled.mid
-	./bin/midiasm notes examples/entangled.mid
+	$(CMD)       examples/entangled.mid
+	$(CMD) notes examples/entangled.mid
 
 greensleeves: build
-	./bin/midiasm examples/greensleeves.mid
+	$(CMD) examples/greensleeves.mid
 
 click: build
-	./bin/midiasm click --debug examples/interstellar.mid
+	$(CMD) click --debug examples/interstellar.mid
+
+export: build
+	$(CMD) export --debug examples/reference-01.mid
 

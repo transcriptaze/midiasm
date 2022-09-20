@@ -1,13 +1,14 @@
-package ops
+package print
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/twystd/midiasm/midi/types"
 	"io"
 	"io/ioutil"
 	"strings"
 	"text/template"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 const document string = `{{template "SMF" .}}`

@@ -2,9 +2,10 @@ package midi
 
 import (
 	"fmt"
-	"github.com/twystd/midiasm/midi/events/meta"
-	"github.com/twystd/midiasm/midi/events/midi"
 	"strings"
+
+	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
 type SMF struct {

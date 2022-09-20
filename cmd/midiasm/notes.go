@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/twystd/midiasm/midi"
-	"github.com/twystd/midiasm/midi/eventlog"
-	"github.com/twystd/midiasm/ops/notes"
 	"os"
+
+	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/eventlog"
+	"github.com/transcriptaze/midiasm/ops/notes"
 )
 
 type Notes struct {

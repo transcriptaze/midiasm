@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/twystd/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Tempo struct {

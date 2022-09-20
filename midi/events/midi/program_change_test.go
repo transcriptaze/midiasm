@@ -3,9 +3,10 @@ package midievent
 import (
 	"bufio"
 	"bytes"
-	"github.com/twystd/midiasm/midi/context"
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/context"
 )
 
 func TestProgramChange(t *testing.T) {

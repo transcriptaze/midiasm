@@ -3,9 +3,10 @@ package metaevent
 import (
 	"bufio"
 	"bytes"
-	"github.com/twystd/midiasm/midi/context"
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/context"
 )
 
 func TestParseCMajorKeySignature(t *testing.T) {

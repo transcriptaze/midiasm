@@ -1,9 +1,10 @@
-package ops
+package print
 
 import (
-	"github.com/twystd/midiasm/midi/encoding/midifile"
 	"strings"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 )
 
 func TestPrintSMF(t *testing.T) {

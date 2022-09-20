@@ -3,10 +3,11 @@ package sysex
 import (
 	"bufio"
 	"bytes"
-	"github.com/twystd/midiasm/midi/context"
-	"github.com/twystd/midiasm/midi/types"
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseEscapeMessage(t *testing.T) {
