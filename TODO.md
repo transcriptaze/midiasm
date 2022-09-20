@@ -1,8 +1,9 @@
 ## v0.0
 
-- Take a look at [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
+- [ ] JSON output
+- [ ] github workflow
 - [ ] Redo logging
-- https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
+- [ ] Move TimeSignature in reference-01.mid to track 0
 
 ### Click Track
 
@@ -21,8 +22,6 @@
 
 ### Disassembler
 
-- [ ] Move TimeSignature in reference-01.mid to track 0
-- [ ] JSON output
 - [ ] Format 2
 - [ ] Add outstanding events to TestDecode
 - (?) Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
@@ -54,6 +53,9 @@
 ### SysEx events
 
 ## TODO
+
+- Take a look at [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
+- https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
 
 ### Other
 

@@ -18,7 +18,7 @@ type MThd struct {
 	SubFrames     uint16
 	FPS           uint8
 	DropFrame     bool
-	Bytes         types.Hex
+	Bytes         types.Hex `json:"-"`
 }
 
 func (chunk *MThd) UnmarshalBinary(data []byte) error {

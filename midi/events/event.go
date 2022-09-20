@@ -10,7 +10,7 @@ type Event struct {
 	Tick  types.Tick
 	Delta types.Delta
 	Event interface{}
-	Bytes types.Hex
+	Bytes types.Hex `json:"-"`
 }
 
 func VLF(r io.ByteReader) ([]byte, error) {

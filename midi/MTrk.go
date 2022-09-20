@@ -19,7 +19,7 @@ type MTrk struct {
 	Tag         string
 	TrackNumber types.TrackNumber
 	Length      uint32
-	Bytes       types.Hex
+	Bytes       types.Hex `json:"-"`
 
 	Events []*events.Event
 }

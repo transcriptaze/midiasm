@@ -9,9 +9,9 @@ import (
 )
 
 type SMF struct {
-	File   string
-	MThd   *MThd
-	Tracks []*MTrk
+	File   string  `json:"-"s`
+	MThd   *MThd   `json:"header"`
+	Tracks []*MTrk `json:"tracks"`
 }
 
 func (smf *SMF) Validate() []ValidationError {
