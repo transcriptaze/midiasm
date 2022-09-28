@@ -1,6 +1,7 @@
 package notes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"sort"
@@ -17,6 +18,7 @@ import (
 
 type Notes struct {
 	Writer io.Writer
+	JSON   bool
 }
 
 type Note struct {
@@ -143,11 +145,58 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			}
 		}
 
-		for _, n := range notes {
-			start := n.Start.Truncate(time.Millisecond)
-			end := n.End.Truncate(time.Millisecond)
-			fmt.Fprintf(x.Writer, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end)
+		if x.JSON {
+			export(notes, x.Writer)
+		} else {
+			print(notes, x.Writer)
 		}
+	}
+
+	return nil
+}
+
+func print(notes []*Note, w io.Writer) error {
+	for _, n := range notes {
+		start := n.Start.Truncate(time.Millisecond)
+		end := n.End.Truncate(time.Millisecond)
+		fmt.Fprintf(w, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end)
+	}
+
+	return nil
+}
+
+func export(notes []*Note, w io.Writer) error {
+	type note struct {
+		Channel  types.Channel `json:"channel"`
+		MidiNote byte          `json:"midi-note"`
+		Note     string        `json:"note"`
+		Velocity byte          `json:"velocity"`
+		Start    float64       `json:"start"`
+		End      float64       `json:"end"`
+	}
+
+	object := struct {
+		Notes []note `json:"notes"`
+	}{}
+
+	for _, n := range notes {
+		start := n.Start.Truncate(time.Millisecond)
+		end := n.End.Truncate(time.Millisecond)
+
+		object.Notes = append(object.Notes, note{
+			Channel:  n.Channel,
+			Note:     n.FormattedNote,
+			MidiNote: n.Note,
+			Velocity: n.Velocity,
+			Start:    start.Seconds(),
+			End:      end.Seconds(),
+		})
+	}
+
+	if bytes, err := json.MarshalIndent(object, "", "  "); err != nil {
+		return err
+	} else {
+		w.Write(bytes)
 	}
 
 	return nil

@@ -14,6 +14,7 @@ type Notes struct {
 	conf    string
 	out     string
 	split   bool
+	json    bool
 	verbose bool
 	debug   bool
 }
@@ -22,6 +23,7 @@ func (n *Notes) flagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
 
 	flagset.StringVar(&n.out, "out", "", "Output file path")
+	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
 	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
 	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
 
@@ -49,7 +51,11 @@ func (n *Notes) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = n.verbose
 	eventlog.EventLog.Debug = n.debug
 
-	p := notes.Notes{w}
+	p := notes.Notes{
+		Writer: w,
+		JSON:   n.json,
+	}
+
 	err = p.Execute(smf)
 	if err != nil {
 		fmt.Printf("Error %v extracting notes\n", err)

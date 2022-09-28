@@ -1,17 +1,13 @@
 ## v0.0
 
 - [ ] JSON output
+- [ ] Coloured output
 - [ ] github workflow
 - [ ] Redo logging
 - [ ] Move TimeSignature in reference-01.mid to track 0
 
 ### Click Track
 
-- [x] Extract time signature changes
-- [x] Extract bars
-      - [x] Calculate total bars
-      - [X] Summarize as spans
-- [x] Extract tempo changes
 - [ ] --track option (default to track 1)
 - [ ] Export summary as JSON
 - [ ] Export clicks as JSON
@@ -76,4 +72,5 @@
 15. REST/GraphQL interface
 16. https://sound.stackexchange.com/questions/39457/how-to-open-midi-file-in-text-editor
 17. https://github.com/mido/mido
+18. [Janet](https://janet-lang.org)
 
