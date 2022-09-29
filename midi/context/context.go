@@ -72,7 +72,7 @@ func (ctx *Context) UseFlats() *Context {
 
 func (ctx *Context) FormatNote(n byte) string {
 	note := ctx.scale[n%12]
-	octave := int(n/12) - 2
+	octave := int(n/12) - 1
 
 	return fmt.Sprintf("%s%d", note, octave)
 }

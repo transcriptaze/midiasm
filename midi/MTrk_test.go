@@ -35,7 +35,7 @@ var keysignatureEFm = events.Event{
 	},
 }
 
-var noteOnC2v72 = events.Event{
+var noteOnC3v72 = events.Event{
 	Bytes: types.Hex{0x00, 0x91, 0x30, 0x48},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -43,14 +43,14 @@ var noteOnC2v72 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
+			Name:  "C3",
+			Alias: "C3",
 		},
 		Velocity: 72,
 	},
 }
 
-var noteOnC2v0 = events.Event{
+var noteOnC3v0 = events.Event{
 	Bytes: types.Hex{0x00, 0x30, 0x00},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -58,14 +58,14 @@ var noteOnC2v0 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
+			Name:  "C3",
+			Alias: "C3",
 		},
 		Velocity: 0,
 	},
 }
 
-var noteOnC2v64 = events.Event{
+var noteOnC3v64 = events.Event{
 	Bytes: types.Hex{0x00, 0x30, 0x40},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -73,14 +73,14 @@ var noteOnC2v64 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
+			Name:  "C3",
+			Alias: "C3",
 		},
 		Velocity: 64,
 	},
 }
 
-var noteOnC2v32 = events.Event{
+var noteOnC3v32 = events.Event{
 	Bytes: types.Hex{0x00, 0x30, 0x20},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -88,14 +88,14 @@ var noteOnC2v32 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
+			Name:  "C3",
+			Alias: "C3",
 		},
 		Velocity: 32,
 	},
 }
 
-var noteOnCS2 = events.Event{
+var noteOnCS3 = events.Event{
 	Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -103,14 +103,14 @@ var noteOnCS2 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 49,
-			Name:  "C♯2",
-			Alias: "C♯2",
+			Name:  "C♯3",
+			Alias: "C♯3",
 		},
 		Velocity: 72,
 	},
 }
 
-var noteOffCS2Alias = events.Event{
+var noteOffCS3Alias = events.Event{
 	Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
 	Event: &midievent.NoteOff{
 		Tag:     "NoteOff",
@@ -118,8 +118,8 @@ var noteOffCS2Alias = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 49,
-			Name:  "C♯2",
-			Alias: "D♭2",
+			Name:  "C♯3",
+			Alias: "D♭3",
 		},
 		Velocity: 100,
 	},
@@ -141,9 +141,9 @@ func TestUnmarshalNoteAlias(t *testing.T) {
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4a},
 		Events: []*events.Event{
 			&keysignatureFSM,
-			&noteOnCS2,
+			&noteOnCS3,
 			&keysignatureEFm,
-			&noteOffCS2Alias,
+			&noteOffCS3Alias,
 		},
 	}
 
@@ -173,10 +173,10 @@ func TestUnmarshalWithRunningStatus(t *testing.T) {
 	}
 
 	expected := []*events.Event{
-		&noteOnC2v72,
-		&noteOnC2v0,
-		&noteOnC2v64,
-		&noteOnC2v32,
+		&noteOnC3v72,
+		&noteOnC3v0,
+		&noteOnC3v64,
+		&noteOnC3v32,
 		&endOfTrack,
 	}
 

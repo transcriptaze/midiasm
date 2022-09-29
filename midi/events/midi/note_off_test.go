@@ -17,8 +17,8 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		1,
 		types.Note{
 			Value: 49,
-			Name:  "C♯2",
-			Alias: "C♯2",
+			Name:  "C♯3",
+			Alias: "C♯3",
 		}, 72,
 	}
 
@@ -51,8 +51,8 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		1,
 		types.Note{
 			Value: 49,
-			Name:  "D♭2",
-			Alias: "D♭2",
+			Name:  "D♭3",
+			Alias: "D♭3",
 		}, 72,
 	}
 

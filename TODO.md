@@ -1,6 +1,11 @@
 ## v0.0
 
-- [ ] JSON output
+- [ ] Notes seem to be transposed an octave down
+      - [ ] C3/C4 convention
+            - https://computermusicresource.com/midikeys.html
+
+- [x] JSON output
+- [ ] Transpose
 - [ ] Coloured output
 - [ ] github workflow
 - [ ] Redo logging
@@ -31,9 +36,9 @@
 
 ### Notes 
 
+- [ ] Configurable formats
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
-- [ ] Configurable formats
 - [ ] Pretty print
 - [ ] Format 0
 - [ ] Format 2

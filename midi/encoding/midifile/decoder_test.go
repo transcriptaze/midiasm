@@ -89,9 +89,9 @@ var MTRK0 = []*midi.MTrk{
 			&didgeridoo,
 			&aMinor,
 			&motu,
-			&noteOnCS2,
-			&noteOnC3,
-			&noteOffCS2,
+			&noteOnCS3,
+			&noteOnC4,
+			&noteOffCS3,
 			&endOfTrack,
 		},
 	},
@@ -124,9 +124,9 @@ var MTRK1 = []*midi.MTrk{
 			&didgeridoo,
 			&aMinor,
 			&motu,
-			&noteOnCS2,
-			&noteOnC3,
-			&noteOffCS2,
+			&noteOnCS3,
+			&noteOnC4,
+			&noteOffCS3,
 			&endOfTrack,
 		},
 	},
@@ -276,7 +276,7 @@ var motu = events.Event{
 	},
 }
 
-var noteOnCS2 = events.Event{
+var noteOnCS3 = events.Event{
 	Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -284,14 +284,14 @@ var noteOnCS2 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 49,
-			Name:  "C♯2",
-			Alias: "C♯2",
+			Name:  "C♯3",
+			Alias: "C♯3",
 		},
 		Velocity: 72,
 	},
 }
 
-var noteOnC3 = events.Event{
+var noteOnC4 = events.Event{
 	Bytes: types.Hex{0x00, 0x3c, 0x4c},
 	Event: &midievent.NoteOn{
 		Tag:     "NoteOn",
@@ -299,14 +299,14 @@ var noteOnC3 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 60,
-			Name:  "C3",
-			Alias: "C3",
+			Name:  "C4",
+			Alias: "C4",
 		},
 		Velocity: 76,
 	},
 }
 
-var noteOffCS2 = events.Event{
+var noteOffCS3 = events.Event{
 	Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
 	Event: &midievent.NoteOff{
 		Tag:     "NoteOff",
@@ -314,8 +314,8 @@ var noteOffCS2 = events.Event{
 		Channel: types.Channel(0x01),
 		Note: types.Note{
 			Value: 49,
-			Name:  "C♯2",
-			Alias: "C♯2",
+			Name:  "C♯3",
+			Alias: "C♯3",
 		},
 		Velocity: 100,
 	},

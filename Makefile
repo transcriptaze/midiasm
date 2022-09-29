@@ -55,7 +55,7 @@ greensleeves: build
 greensleeves2: build
 	$(CMD) notes --json examples/greensleeves-simple.mid \
 	| jq .notes \
-	| jq 'map({ note: .note, velocity: .velocity, start: "\(.start)s", end: "\(.end)s" })'
+	| jq 'map({ note: .note, velocity: .velocity, start: .start, end: .end })' > xxx.txt
 
 click: build
 	$(CMD) click --debug examples/interstellar.mid

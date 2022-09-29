@@ -11,7 +11,7 @@ func TestFormatNote(t *testing.T) {
 
 	ctx := NewContext()
 	note := byte(0)
-	octave := -2
+	octave := -1
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 12; j++ {
 			expected := sharps[note%12] + strconv.Itoa(octave)
@@ -27,7 +27,7 @@ func TestFormatNote(t *testing.T) {
 	ctx = NewContext().UseFlats()
 
 	note = byte(0)
-	octave = -2
+	octave = -1
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 12; j++ {
 			expected := flats[note%12] + strconv.Itoa(octave)
