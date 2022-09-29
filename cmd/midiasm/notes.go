@@ -11,18 +11,20 @@ import (
 )
 
 type Notes struct {
-	conf    string
-	out     string
-	split   bool
-	json    bool
-	verbose bool
-	debug   bool
+	conf      string
+	out       string
+	split     bool
+	transpose int
+	json      bool
+	verbose   bool
+	debug     bool
 }
 
 func (n *Notes) flagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
 
 	flagset.StringVar(&n.out, "out", "", "Output file path")
+	flagset.IntVar(&n.transpose, "transpose", 0, "Transpose notes up or down")
 	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
 	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
 	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
@@ -52,8 +54,9 @@ func (n *Notes) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Debug = n.debug
 
 	p := notes.Notes{
-		Writer: w,
-		JSON:   n.json,
+		JSON:      n.json,
+		Transpose: n.transpose,
+		Writer:    w,
 	}
 
 	err = p.Execute(smf)

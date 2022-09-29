@@ -17,8 +17,9 @@ import (
 )
 
 type Notes struct {
-	Writer io.Writer
-	JSON   bool
+	Transpose int
+	JSON      bool
+	Writer    io.Writer
 }
 
 type Note struct {
@@ -122,8 +123,8 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					note := Note{
 						Channel:       v.Channel,
-						Note:          v.Note.Value,
-						FormattedNote: ctx.FormatNote(v.Note.Value),
+						Note:          transpose(v.Note.Value, x.Transpose),
+						FormattedNote: ctx.FormatNote(transpose(v.Note.Value, x.Transpose)),
 						Velocity:      v.Velocity,
 						Start:         t,
 						StartTick:     tick,
@@ -153,6 +154,18 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 	}
 
 	return nil
+}
+
+func transpose(note uint8, transpose int) uint8 {
+	v := int(note) + transpose
+
+	if v < 0 {
+		return 0
+	} else if v > 255 {
+		return 255
+	} else {
+		return uint8(v)
+	}
 }
 
 func print(notes []*Note, w io.Writer) error {

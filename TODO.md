@@ -4,8 +4,6 @@
       - [ ] C3/C4 convention
             - https://computermusicresource.com/midikeys.html
 
-- [x] JSON output
-- [ ] Transpose
 - [ ] Coloured output
 - [ ] github workflow
 - [ ] Redo logging
@@ -36,6 +34,8 @@
 
 ### Notes 
 
+- [x] Transpose
+- [ ] --compact format (JSON)
 - [ ] Configurable formats
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion

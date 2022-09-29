@@ -50,12 +50,12 @@ entangled: build
 	$(CMD) notes examples/entangled.mid
 
 greensleeves: build
-	$(CMD) examples/greensleeves.mid
+	$(CMD) notes --transpose +12 examples/greensleeves.mid
 
 greensleeves2: build
-	$(CMD) notes --json examples/greensleeves-simple.mid \
+	$(CMD) notes --json --transpose +12 examples/greensleeves-simple.mid \
 	| jq .notes \
-	| jq 'map({ note: .note, velocity: .velocity, start: .start, end: .end })' > xxx.txt
+	| jq 'map({ note: .note, velocity: .velocity, start: .start, end: .end })' 
 
 click: build
 	$(CMD) click --debug examples/interstellar.mid
