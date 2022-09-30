@@ -9,6 +9,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/eventlog"
+	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/print"
 )
 
@@ -17,27 +18,33 @@ type Print struct {
 	out       string
 	split     bool
 	templates string
+	middleC   types.MiddleC
 	verbose   bool
 	debug     bool
 }
 
-func (p *Print) flagset() *flag.FlagSet {
+func (p Print) flagset() *flag.FlagSet {
 	flagset := flag.NewFlagSet("print", flag.ExitOnError)
 
 	flagset.StringVar(&p.out, "out", "", "Output file path (or directory for split files)")
 	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&p.templates, "templates", "", "Loads the formatting templates from a file")
+	flagset.Var(&p.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
 	flagset.BoolVar(&p.verbose, "verbose", false, "Enable progress information")
 	flagset.BoolVar(&p.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }
 
-func (p *Print) config() string {
+func (p Print) config() string {
 	return p.conf
 }
 
-func (p *Print) Execute(smf *midi.SMF) {
+func (p Print) MiddleC() types.MiddleC {
+	return p.middleC
+}
+
+func (p Print) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
@@ -67,7 +74,7 @@ func (p *Print) Execute(smf *midi.SMF) {
 	}
 }
 
-func (p *Print) write(op *print.Print, smf *midi.SMF) {
+func (p Print) write(op *print.Print, smf *midi.SMF) {
 	out := os.Stdout
 
 	if p.out != "" {
@@ -88,7 +95,7 @@ func (p *Print) write(op *print.Print, smf *midi.SMF) {
 	}
 }
 
-func (p *Print) separate(op *print.Print, smf *midi.SMF) {
+func (p Print) separate(op *print.Print, smf *midi.SMF) {
 	// Get base filename and Create out directory
 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
 	dir := path.Dir(smf.File)

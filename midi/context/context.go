@@ -44,6 +44,13 @@ type Context struct {
 	notes         map[uint16]string
 }
 
+// Ref. https://computermusicresource.com/midikeys.html
+func SetMiddleC(c types.MiddleC) {
+	middleC = c
+}
+
+var middleC = types.C3
+
 func NewContext() *Context {
 	return &Context{
 		scale:         Sharps,
@@ -71,8 +78,14 @@ func (ctx *Context) UseFlats() *Context {
 }
 
 func (ctx *Context) FormatNote(n byte) string {
-	note := ctx.scale[n%12]
-	octave := int(n/12) - 1
+	var note = ctx.scale[n%12]
+	var octave int
+
+	if middleC == types.C4 {
+		octave = int(n/12) - 2
+	} else {
+		octave = int(n/12) - 1
+	}
 
 	return fmt.Sprintf("%s%d", note, octave)
 }

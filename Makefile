@@ -1,8 +1,13 @@
-CMD =./bin/midiasm
+DIST ?= development
+CMD   = ./bin/midiasm
 
 all: test      \
 	 benchmark \
      coverage
+
+clean:
+	go clean
+	rm -rf bin/*
 
 format: 
 	go fmt ./...
@@ -21,9 +26,13 @@ coverage: build
 	go clean -testcache
 	go test -cover ./...
 
-clean:
-	go clean
-	rm -rf bin/*
+build-all: build test
+	mkdir -p dist/$(DIST)/windows
+	mkdir -p dist/$(DIST)/darwin
+	mkdir -p dist/$(DIST)/linux
+	env GOOS=linux   GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/linux   ./...
+	env GOOS=darwin  GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/darwin  ./...
+	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
 
 debug: build
 	go test -v ./midi/encoding/midifile

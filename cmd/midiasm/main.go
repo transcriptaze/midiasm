@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
@@ -14,6 +15,7 @@ import (
 type command interface {
 	flagset() *flag.FlagSet
 	config() string
+	MiddleC() types.MiddleC
 	Execute(*midi.SMF)
 }
 
@@ -63,6 +65,8 @@ func main() {
 
 		types.AddManufacturers(manufacturers)
 	}
+
+	context.SetMiddleC(cmd.MiddleC())
 
 	decoder := midifile.NewDecoder()
 

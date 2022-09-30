@@ -1,13 +1,13 @@
 ## v0.0
 
-- [ ] Notes seem to be transposed an octave down
-      - [ ] C3/C4 convention
-            - https://computermusicresource.com/midikeys.html
-
+- [x] C3/C4 convention
+- [ ] Package for release
 - [ ] Coloured output
 - [ ] github workflow
 - [ ] Redo logging
 - [ ] Move TimeSignature in reference-01.mid to track 0
+
+### Assembler
 
 ### Click Track
 
