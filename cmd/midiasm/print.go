@@ -14,34 +14,26 @@ import (
 )
 
 type Print struct {
-	conf      string
+	command
 	out       string
 	split     bool
 	templates string
-	middleC   types.MiddleC
-	verbose   bool
-	debug     bool
 }
 
-func (p Print) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("print", flag.ExitOnError)
+var PRINT = Print{
+	command: command{
+		middleC: types.C3,
+	},
+}
+
+func (p *Print) flagset() *flag.FlagSet {
+	flagset := p.command.flagset("print")
 
 	flagset.StringVar(&p.out, "out", "", "Output file path (or directory for split files)")
 	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&p.templates, "templates", "", "Loads the formatting templates from a file")
-	flagset.Var(&p.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
-	flagset.BoolVar(&p.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&p.debug, "debug", false, "Enable debugging information")
 
 	return flagset
-}
-
-func (p Print) config() string {
-	return p.conf
-}
-
-func (p Print) MiddleC() types.MiddleC {
-	return p.middleC
 }
 
 func (p Print) Execute(smf *midi.SMF) {

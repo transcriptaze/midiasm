@@ -69,6 +69,9 @@ greensleeves2: build
 click: build
 	$(CMD) click --debug examples/interstellar.mid
 
+transpose: build
+	$(CMD) transpose --debug --transpose +12 examples/greensleeves.mid
+
 export: build
 	$(CMD) export --debug examples/reference-01.mid
 

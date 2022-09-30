@@ -1,9 +1,11 @@
 ## v0.0
 
+- [ ] 'transpose' command
+      - and lose the --transpose option
 - [x] C3/C4 convention
+- [ ] github workflow
 - [ ] Package for release
 - [ ] Coloured output
-- [ ] github workflow
 - [ ] Redo logging
 - [ ] Move TimeSignature in reference-01.mid to track 0
 

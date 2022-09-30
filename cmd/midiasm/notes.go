@@ -12,35 +12,26 @@ import (
 )
 
 type Notes struct {
-	conf      string
+	command
 	out       string
-	split     bool
-	middleC   types.MiddleC
 	transpose int
 	json      bool
-	verbose   bool
-	debug     bool
 }
 
-func (n Notes) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
+var NOTES = Notes{
+	command: command{
+		middleC: types.C3,
+	},
+}
+
+func (n *Notes) flagset() *flag.FlagSet {
+	flagset := n.command.flagset("notes")
 
 	flagset.StringVar(&n.out, "out", "", "Output file path")
-	flagset.Var(&n.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
 	flagset.IntVar(&n.transpose, "transpose", 0, "Transpose notes up or down")
 	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
-	flagset.BoolVar(&n.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&n.debug, "debug", false, "Enable debugging information")
 
 	return flagset
-}
-
-func (n Notes) config() string {
-	return n.conf
-}
-
-func (n Notes) MiddleC() types.MiddleC {
-	return n.middleC
 }
 
 func (n Notes) Execute(smf *midi.SMF) {

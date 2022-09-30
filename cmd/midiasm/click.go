@@ -12,34 +12,25 @@ import (
 )
 
 type Click struct {
-	conf    string
-	out     string
-	middleC types.MiddleC
-	split   bool
-	verbose bool
-	debug   bool
+	command
+	out string
+}
+
+var CLICK = Click{
+	command: command{
+		middleC: types.C3,
+	},
 }
 
 func (c *Click) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("notes", flag.ExitOnError)
+	flagset := c.command.flagset("click")
 
 	flagset.StringVar(&c.out, "out", "", "Output file path")
-	flagset.Var(&c.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
-	flagset.BoolVar(&c.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&c.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }
 
-func (c *Click) config() string {
-	return c.conf
-}
-
-func (c *Click) MiddleC() types.MiddleC {
-	return c.middleC
-}
-
-func (c *Click) Execute(smf *midi.SMF) {
+func (c Click) Execute(smf *midi.SMF) {
 	var w = os.Stdout
 	var err error
 

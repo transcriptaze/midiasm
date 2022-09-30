@@ -1,29 +1,21 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 
-	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-type command interface {
-	flagset() *flag.FlagSet
-	config() string
-	MiddleC() types.MiddleC
-	Execute(*midi.SMF)
-}
-
-var cli = map[string]command{
-	"print":  &Print{},
-	"notes":  &Notes{},
-	"click":  &Click{},
-	"export": &Export{},
+var cli = map[string]Command{
+	"print":     &PRINT,
+	"notes":     &NOTES,
+	"click":     &CLICK,
+	"export":    &EXPORT,
+	"transpose": &TRANSPOSE,
 }
 
 func main() {
@@ -95,7 +87,7 @@ func main() {
 	}
 }
 
-func parse() (command, string, error) {
+func parse() (Command, string, error) {
 	cmd := &Print{}
 	if len(os.Args) > 1 {
 		c, ok := cli[os.Args[1]]

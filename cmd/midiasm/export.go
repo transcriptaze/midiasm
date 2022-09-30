@@ -12,30 +12,22 @@ import (
 )
 
 type Export struct {
-	conf    string
-	out     string
-	middleC types.MiddleC
-	verbose bool
-	debug   bool
+	command
+	out string
 }
 
-func (x Export) flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("print", flag.ExitOnError)
+var EXPORT = Export{
+	command: command{
+		middleC: types.C3,
+	},
+}
+
+func (x *Export) flagset() *flag.FlagSet {
+	flagset := x.command.flagset("export")
 
 	flagset.StringVar(&x.out, "out", "", "Output file path (or directory for split files)")
-	flagset.Var(&x.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
-	flagset.BoolVar(&x.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&x.debug, "debug", false, "Enable debugging information")
 
 	return flagset
-}
-
-func (x Export) config() string {
-	return x.conf
-}
-
-func (x Export) MiddleC() types.MiddleC {
-	return x.middleC
 }
 
 func (x Export) Execute(smf *midi.SMF) {
