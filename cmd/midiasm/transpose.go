@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/transpose"
@@ -35,19 +36,27 @@ func (t Transpose) Execute(filename string) error {
 	eventlog.EventLog.Verbose = t.verbose
 	eventlog.EventLog.Debug = t.debug
 
-	if bytes, err := t.read(filename); err != nil {
+	smf, err := t.decode(filename)
+	if err != nil {
 		return err
-	} else if t.out == "" {
-		return fmt.Errorf("missing 'out' file")
-	} else {
-		return t.execute(bytes)
 	}
+
+	if errors := smf.Validate(); len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return t.execute(smf)
 }
 
-func (t Transpose) execute(bytes []byte) error {
+func (t Transpose) execute(smf *midi.SMF) error {
 	op := transpose.Transpose{}
 
-	transposed, err := op.Execute(bytes)
+	transposed, err := op.Execute(smf, t.transpose)
 	if err != nil {
 		return err
 	}

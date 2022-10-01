@@ -22,10 +22,11 @@ type MTrk struct {
 	Bytes       types.Hex `json:"-"`
 
 	Events []*events.Event
+
+	Context *context.Context
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
-	ctx := context.NewContext()
 	tag := string(data[0:4])
 	if tag != "MTrk" {
 		return fmt.Errorf("Invalid MTrk chunk type (%s): expected 'MTrk'", tag)
@@ -40,7 +41,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	var e *events.Event = nil
 
 	for err == nil {
-		e, err = parse(r, tick, ctx)
+		e, err = parse(r, tick, chunk.Context)
 		if err == nil && e != nil {
 			tick += uint32(e.Delta)
 			eventlist = append(eventlist, e)
@@ -57,6 +58,24 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	chunk.Bytes = data
 
 	return nil
+}
+
+func (t *MTrk) Transpose(steps int) {
+	for _, event := range t.Events {
+		switch v := event.Event.(type) {
+		case *metaevent.KeySignature:
+			v.Transpose(t.Context, steps)
+			event.Bytes[len(event.Bytes)-2] = byte(v.Accidentals)
+
+		case *midievent.NoteOn:
+			v.Transpose(t.Context, steps)
+			event.Bytes[len(event.Bytes)-2] = v.Note.Value
+
+		case *midievent.NoteOff:
+			v.Transpose(t.Context, steps)
+			event.Bytes[len(event.Bytes)-2] = v.Note.Value
+		}
+	}
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {

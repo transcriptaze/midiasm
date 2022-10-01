@@ -1,8 +1,13 @@
 ## v0.0
 
 - [ ] 'transpose' command
-      - and lose the --transpose option
-- [x] C3/C4 convention
+      - [x] NoteOn
+      - [x] NoteOff
+      - [ ] KeySignature
+      - [ ] Transpose while decoding - otherwise lose track of stuff 
+      - [ ] Lose the --transpose option
+      - [ ] Maybe just keep the bytes and translate on the fly ?
+
 - [ ] github workflow
 - [ ] Package for release
 - [ ] Coloured output

@@ -76,7 +76,7 @@ transpose: build
 	rm -f ./tmp/greensleeves+12.mid
 # 	$(CMD)           --debug --verbose examples/greensleeves.mid
 	$(CMD) transpose --debug --transpose +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
-	ls -la ./tmp/greensleeves+12.mid
-	diff examples/greensleeves.mid ./tmp/greensleeves+12.mid 
+	$(CMD)           --debug --verbose ./tmp/greensleeves+12.mid 
+# 	diff examples/greensleeves.mid ./tmp/greensleeves+12.mid 
 
 

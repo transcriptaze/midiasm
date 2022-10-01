@@ -9,7 +9,7 @@ import (
 type Event struct {
 	Tick  types.Tick
 	Delta types.Delta
-	Event interface{}
+	Event any
 	Bytes types.Hex `json:"-"`
 }
 

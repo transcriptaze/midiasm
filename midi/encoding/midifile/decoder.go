@@ -8,6 +8,7 @@ import (
 	"io"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -40,6 +41,7 @@ func (d *Decoder) Decode(b []byte) (*midi.SMF, error) {
 			if string(chunk[0:4]) == "MTrk" {
 				mtrk := midi.MTrk{
 					TrackNumber: types.TrackNumber(len(smf.Tracks)),
+					Context:     context.NewContext(),
 				}
 
 				if err := mtrk.UnmarshalBinary(chunk); err != nil {

@@ -100,3 +100,24 @@ func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) 
 		Key:         key,
 	}, nil
 }
+
+func (k *KeySignature) Transpose(ctx *context.Context, steps int) {
+	v := int(k.Accidentals) + steps + 6
+	v %= 12
+	v -= 6
+
+	k.Accidentals = int8(v)
+
+	switch k.KeyType {
+	case 0:
+		k.Key, _ = major_keys[k.Accidentals]
+	case 1:
+		k.Key, _ = minor_keys[k.Accidentals]
+	}
+
+	if k.Accidentals < 0 {
+		ctx.UseFlats()
+	} else {
+		ctx.UseSharps()
+	}
+}
