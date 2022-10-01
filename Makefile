@@ -73,6 +73,10 @@ export: build
 	$(CMD) export --debug examples/reference-01.mid
 
 transpose: build
-	$(CMD) transpose --debug --transpose +12 examples/greensleeves.mid
+	rm -f ./tmp/greensleeves+12.mid
+# 	$(CMD)           --debug --verbose examples/greensleeves.mid
+	$(CMD) transpose --debug --transpose +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+	ls -la ./tmp/greensleeves+12.mid
+	diff examples/greensleeves.mid ./tmp/greensleeves+12.mid 
 
 

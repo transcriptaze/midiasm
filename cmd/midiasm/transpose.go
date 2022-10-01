@@ -2,7 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 
+	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/transpose"
 )
@@ -29,35 +32,37 @@ func (t *Transpose) flagset() *flag.FlagSet {
 }
 
 func (t Transpose) Execute(filename string) error {
+	eventlog.EventLog.Verbose = t.verbose
+	eventlog.EventLog.Debug = t.debug
+
 	if bytes, err := t.read(filename); err != nil {
 		return err
+	} else if t.out == "" {
+		return fmt.Errorf("missing 'out' file")
 	} else {
 		return t.execute(bytes)
 	}
 }
 
 func (t Transpose) execute(bytes []byte) error {
-	// var w = os.Stdout
-	// var err error
-
-	// if t.out != "" {
-	// 	if w, err = os.Create(t.out); err != nil {
-	// 		fmt.Printf("Error: %v\n", err)
-	// 		return
-	// 	}
-
-	// 	defer w.Close()
-	// }
-
-	// eventlog.EventLog.Verbose = t.verbose
-	// eventlog.EventLog.Debug = t.debug
-
-	// p := transpose.Transpose{w}
-	// if err = p.Execute(smf); err != nil {
-	// 	fmt.Printf("Error transposing %q (%v)\n", smf.File, err)
-	// }
-
 	op := transpose.Transpose{}
 
-	return op.Execute(bytes)
+	transposed, err := op.Execute(bytes)
+	if err != nil {
+		return err
+	}
+
+	if t.out != "" {
+		if w, err := os.Create(t.out); err != nil {
+			return err
+		} else {
+			defer w.Close()
+
+			if _, err := w.Write(transposed); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
