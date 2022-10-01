@@ -1,10 +1,11 @@
 # midiasm
 
-MIDI assembler/disassembler to convert between standard MIDI files and a textual equivalent.
+MIDI assembler/disassembler to convert between standard MIDI files and a text/JSON equivalent.
 
 ## Raison d'être
 
-A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM (last seen archived at [MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)) because sometimes it's easier to just programmatically deal with text or JSON.
+A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM (last seen archived at [MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)). Because sometimes it's easier to just programmatically deal with
+text or JSON.
 
 ## Releases
 
@@ -24,8 +25,8 @@ A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM (last se
 2. [Somascape - MIDI Files Specification](http://www.somascape.org/midi/tech/mfile.html)
 3. [(archive) MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)
 4. [(github) mido](https://github.com/mido/mido)
-
-
+5. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
+6. [StackExchange::Music Transposing key signatures - how to do so quickly?](https://music.stackexchange.com/questions/110078/transposing-key-signatures-how-to-do-so-quickly)
 
 
 

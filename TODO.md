@@ -1,5 +1,7 @@
 ## v0.0
 
+- [ ] README
+
 - [ ] 'transpose' command
       - [x] NoteOn
       - [x] NoteOff
@@ -7,6 +9,7 @@
       - [ ] Transpose while decoding - otherwise lose track of stuff 
       - [ ] Lose the --transpose option
       - [ ] Maybe just keep the bytes and translate on the fly ?
+      - [ ] https://www.fourmilab.ch/webtools/midicsv/
 
 - [ ] github workflow
 - [ ] Package for release

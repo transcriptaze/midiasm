@@ -27,35 +27,62 @@ type KeySignature struct {
 }
 
 var major_keys = map[int8]string{
-	0:  "C major",
-	1:  "G major",
-	2:  "D major",
-	3:  "A major",
-	4:  "E major",
-	5:  "B major",
-	6:  "F\u266f major",
-	-1: "F major",
-	-2: "B\u266d major",
-	-3: "E\u266d major",
-	-4: "A\u266d major",
-	-5: "D\u266d major",
-	-6: "G\u266d major",
+	7:  `C♯ major`,
+	6:  `F♯ major`,
+	5:  `B major`,
+	4:  `E major`,
+	3:  `A major`,
+	2:  `D major`,
+	1:  `G major`,
+	0:  `C major`,
+	-1: `F major`,
+	-2: `B♭ major`,
+	-3: `E♭ major`,
+	-4: `A♭ major`,
+	-5: `D♭ major`,
+	-6: `G♭ major`,
+	-7: `C♭ major`,
 }
 
 var minor_keys = map[int8]string{
-	0:  "A minor",
-	1:  "E minor",
-	2:  "B minor",
-	3:  "F\u266f minor",
-	4:  "C\u266f minor",
-	5:  "G\u266f minor",
-	6:  "D\u266f minor",
-	-1: "D minor",
-	-2: "G minor",
-	-3: "C minor",
-	-4: "F minor",
-	-5: "B\u266d minor",
-	-6: "E\u266d minor",
+	7:  `A♯ minor`,
+	6:  `D♯ minor`,
+	5:  `G♯ minor`,
+	4:  `C♯ minor`,
+	3:  `F♯ minor`,
+	2:  `B minor`,
+	1:  `E minor`,
+	0:  `A minor`,
+	-1: `D minor`,
+	-2: `G minor`,
+	-3: `C minor`,
+	-4: `F minor`,
+	-5: `B♭ minor`,
+	-6: `E♭ minor`,
+	-7: `A♭ minor`,
+}
+
+var notes = map[int8][]string{
+	7:  []string{`C♯`, `D♯`, `E♯`, `F♯`, `G♯`, `A♯`, `B♯`},
+	6:  []string{`C♯`, `D♯`, `E♯`, `F♯`, `G♯`, `A♯`, `B`},
+	5:  []string{`C♯`, `D♯`, `E`, `F♯`, `G♯`, `A♯`, `B`},
+	4:  []string{`C♯`, `D♯`, `E`, `F♯`, `G♯`, `A`, `B`},
+	3:  []string{`C♯`, `D`, `E`, `F♯`, `G♯`, `A`, `B`},
+	2:  []string{`C♯`, `D`, `E`, `F♯`, `G`, `A`, `B`},
+	1:  []string{`C`, `D`, `E`, `F♯`, `G`, `A`, `B`},
+	0:  []string{`C`, `D`, `E`, `F`, `G`, `A`, `B`},
+	-1: []string{`C`, `D`, `E`, `F`, `G`, `A`, `B♭`},
+	-2: []string{`C`, `D`, `E♭`, `F`, `G`, `A`, `B♭`},
+	-3: []string{`C`, `D`, `E♭`, `F`, `G`, `A♭`, `B♭`},
+	-4: []string{`C`, `D♭`, `E♭`, `F`, `G`, `A♭`, `B♭`},
+	-5: []string{`C`, `D♭`, `E♭`, `F`, `G♭`, `A♭`, `B♭`},
+	-6: []string{`C♭`, `D♭`, `E♭`, `F`, `G♭`, `A♭`, `B♭`},
+	-7: []string{`C♭`, `D♭`, `E♭`, `F♭`, `G♭`, `A♭`, `B♭`},
+}
+
+var scales = [][]string{
+	{`C`, `C♯`, `D`, `D♯`, `E`, `F`, `F♯`, `G`, `G♯`, `A`, `A♯`, `B`},
+	{`C`, `D♭`, `D`, `E♭`, `E`, `F`, `G♭`, `G`, `A♭`, `A`, `B♭`, `B`},
 }
 
 func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) {
@@ -102,22 +129,25 @@ func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) 
 }
 
 func (k *KeySignature) Transpose(ctx *context.Context, steps int) {
-	v := int(k.Accidentals) + steps + 6
-	v %= 12
-	v -= 6
+	// v := int(k.Accidentals) + steps
+	// v %= 12
 
-	k.Accidentals = int8(v)
+	// // 0 + 8  => 8
+	// // 8 % 12 => 8
+	// // 8 - 14 => -6
 
-	switch k.KeyType {
-	case 0:
-		k.Key, _ = major_keys[k.Accidentals]
-	case 1:
-		k.Key, _ = minor_keys[k.Accidentals]
-	}
+	// k.Accidentals = int8(v)
 
-	if k.Accidentals < 0 {
-		ctx.UseFlats()
-	} else {
-		ctx.UseSharps()
-	}
+	// switch k.KeyType {
+	// case 0:
+	// 	k.Key, _ = major_keys[k.Accidentals]
+	// case 1:
+	// 	k.Key, _ = minor_keys[k.Accidentals]
+	// }
+
+	// if k.Accidentals < 0 {
+	// 	ctx.UseFlats()
+	// } else {
+	// 	ctx.UseSharps()
+	// }
 }
