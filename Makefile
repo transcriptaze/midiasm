@@ -35,9 +35,7 @@ build-all: build test
 	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
 
 debug: build
-	go test -v ./midi/encoding/midifile
-	go test -v ./midi -run TestUnmarshalNoteAlias
-#	$(CMD) --debug --templates examples/example-01.templates examples/example-01.mid
+	go test -v ./midi/types -run TestScaleTranspose
 
 example: build
 	mkdir -p tmp

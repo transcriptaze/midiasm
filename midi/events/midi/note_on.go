@@ -12,7 +12,7 @@ type NoteOn struct {
 	Tag      string
 	Status   types.Status
 	Channel  types.Channel
-	Note     types.Note
+	Note     Note
 	Velocity byte
 }
 
@@ -39,7 +39,7 @@ func NewNoteOn(ctx *context.Context, r io.ByteReader, status types.Status) (*Not
 		Tag:     "NoteOn",
 		Status:  status,
 		Channel: channel,
-		Note: types.Note{
+		Note: Note{
 			Value: note,
 			Name:  ctx.FormatNote(note),
 			Alias: ctx.FormatNote(note),
@@ -63,7 +63,7 @@ func (n *NoteOn) Transpose(ctx *context.Context, steps int) {
 		note = byte(v)
 	}
 
-	n.Note = types.Note{
+	n.Note = Note{
 		Value: note,
 		Name:  ctx.FormatNote(note),
 		Alias: ctx.FormatNote(note),

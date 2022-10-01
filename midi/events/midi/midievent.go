@@ -8,6 +8,12 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
+type Note struct {
+	Value byte
+	Name  string
+	Alias string
+}
+
 func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
 	switch status & 0xF0 {
 	case 0x80:
