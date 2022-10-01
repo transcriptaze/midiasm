@@ -30,27 +30,43 @@ func (x *Export) flagset() *flag.FlagSet {
 	return flagset
 }
 
-func (x Export) Execute(smf *midi.SMF) {
+func (x Export) Execute(filename string) error {
+	smf, err := x.decode(filename)
+	if err != nil {
+		return err
+	}
+
+	if errors := smf.Validate(); len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return x.execute(smf)
+}
+
+func (x Export) execute(smf *midi.SMF) error {
 	eventlog.EventLog.Verbose = x.verbose
 	eventlog.EventLog.Debug = x.debug
 
 	op, err := export.NewExport()
 	if err != nil {
-		fmt.Printf("ERROR  %v\n", err)
-		return
+		return err
 	}
 
-	x.write(op, smf)
+	return x.write(op, smf)
 }
 
-func (x Export) write(op *export.Export, smf *midi.SMF) {
+func (x Export) write(op *export.Export, smf *midi.SMF) error {
 	out := os.Stdout
 
 	if x.out != "" {
 		w, err := os.Create(x.out)
 		if err != nil {
-			fmt.Printf("ERROR  %v\n", err)
-			return
+			return err
 		}
 
 		defer w.Close()
@@ -58,8 +74,5 @@ func (x Export) write(op *export.Export, smf *midi.SMF) {
 		out = w
 	}
 
-	err := op.Export(smf, out)
-	if err != nil {
-		fmt.Printf("ERROR  %v\n", err)
-	}
+	return op.Export(smf, out)
 }

@@ -2,8 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -11,7 +15,7 @@ type Command interface {
 	flagset() *flag.FlagSet
 	config() string
 	MiddleC() types.MiddleC
-	Execute(*midi.SMF)
+	Execute(filename string) error
 }
 
 type command struct {
@@ -37,4 +41,33 @@ func (c *command) flagset(name string) *flag.FlagSet {
 	flagset.BoolVar(&c.debug, "debug", false, "Enable debugging information")
 
 	return flagset
+}
+
+func (c *command) decode(filename string) (*midi.SMF, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	defer f.Close()
+
+	bytes, err := ioutil.ReadAll(f)
+	if err != nil {
+		return nil, err
+	}
+
+	decoder := midifile.NewDecoder()
+
+	smf, err := decoder.Decode(bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	if smf == nil {
+		return nil, fmt.Errorf("failed to decode MIDI file")
+	}
+
+	smf.File = filename
+
+	return smf, nil
 }

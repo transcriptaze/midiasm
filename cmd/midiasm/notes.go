@@ -34,15 +34,32 @@ func (n *Notes) flagset() *flag.FlagSet {
 	return flagset
 }
 
-func (n Notes) Execute(smf *midi.SMF) {
+func (n Notes) Execute(filename string) error {
+	smf, err := n.decode(filename)
+	if err != nil {
+		return err
+	}
+
+	if errors := smf.Validate(); len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return n.execute(smf)
+}
+
+func (n Notes) execute(smf *midi.SMF) error {
 	w := os.Stdout
 	err := error(nil)
 
 	if n.out != "" {
 		w, err = os.Create(n.out)
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
+			return err
 		}
 
 		defer w.Close()
@@ -51,14 +68,11 @@ func (n Notes) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = n.verbose
 	eventlog.EventLog.Debug = n.debug
 
-	p := notes.Notes{
+	op := notes.Notes{
 		JSON:      n.json,
 		Transpose: n.transpose,
 		Writer:    w,
 	}
 
-	err = p.Execute(smf)
-	if err != nil {
-		fmt.Printf("Error %v extracting notes\n", err)
-	}
+	return op.Execute(smf)
 }

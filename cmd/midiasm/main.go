@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -19,26 +17,14 @@ var cli = map[string]Command{
 }
 
 func main() {
+	// ... parse command line
 	cmd, filename, err := parse()
 	if err != nil {
 		fmt.Printf("ERROR: unable to parse command line (%v)\n", err)
 		return
 	}
 
-	f, err := os.Open(filename)
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-		return
-	}
-
-	defer f.Close()
-
-	bytes, err := ioutil.ReadAll(f)
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-		return
-	}
-
+	// ... set manufacturer specific options
 	if conf := cmd.config(); conf != "" {
 		f, err := os.Open(conf)
 		if err != nil {
@@ -58,33 +44,11 @@ func main() {
 		types.AddManufacturers(manufacturers)
 	}
 
+	// ... set middle C convention
 	context.SetMiddleC(cmd.MiddleC())
 
-	decoder := midifile.NewDecoder()
-
-	smf, err := decoder.Decode(bytes)
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-		return
-	}
-
-	if smf == nil {
-		fmt.Printf("ERROR: failed to decode MIDI file\n")
-		return
-	}
-
-	errors := smf.Validate()
-
-	cmd.Execute(smf)
-
-	if len(errors) > 0 {
-		fmt.Fprintln(os.Stderr)
-		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
-		for _, e := range errors {
-			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
-		}
-		fmt.Fprintln(os.Stderr)
-	}
+	// ... get MIDI bytes
+	cmd.Execute(filename)
 }
 
 func parse() (Command, string, error) {

@@ -30,14 +30,31 @@ func (c *Click) flagset() *flag.FlagSet {
 	return flagset
 }
 
-func (c Click) Execute(smf *midi.SMF) {
+func (c Click) Execute(filename string) error {
+	smf, err := c.decode(filename)
+	if err != nil {
+		return err
+	}
+
+	if errors := smf.Validate(); len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return c.execute(smf)
+}
+
+func (c Click) execute(smf *midi.SMF) error {
 	var w = os.Stdout
 	var err error
 
 	if c.out != "" {
 		if w, err = os.Create(c.out); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
+			return err
 		}
 
 		defer w.Close()
@@ -46,8 +63,7 @@ func (c Click) Execute(smf *midi.SMF) {
 	eventlog.EventLog.Verbose = c.verbose
 	eventlog.EventLog.Debug = c.debug
 
-	p := click.ClickTrack{w}
-	if err = p.Execute(smf); err != nil {
-		fmt.Printf("Error %v extracting click track\n", err)
-	}
+	track := click.ClickTrack{w}
+
+	return track.Execute(smf)
 }

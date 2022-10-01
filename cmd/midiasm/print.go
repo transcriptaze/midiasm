@@ -36,14 +36,31 @@ func (p *Print) flagset() *flag.FlagSet {
 	return flagset
 }
 
-func (p Print) Execute(smf *midi.SMF) {
+func (p Print) Execute(filename string) error {
+	smf, err := p.decode(filename)
+	if err != nil {
+		return err
+	}
+
+	if errors := smf.Validate(); len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return p.execute(smf)
+}
+
+func (p Print) execute(smf *midi.SMF) error {
 	eventlog.EventLog.Verbose = p.verbose
 	eventlog.EventLog.Debug = p.debug
 
 	op, err := print.NewPrint()
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		return
+		return err
 	}
 
 	if p.templates != "" {
@@ -54,26 +71,24 @@ func (p Print) Execute(smf *midi.SMF) {
 		}
 
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
+			return err
 		}
 	}
 
 	if p.split {
-		p.separate(op, smf)
+		return p.separate(op, smf)
 	} else {
-		p.write(op, smf)
+		return p.write(op, smf)
 	}
 }
 
-func (p Print) write(op *print.Print, smf *midi.SMF) {
+func (p Print) write(op *print.Print, smf *midi.SMF) error {
 	out := os.Stdout
 
 	if p.out != "" {
 		w, err := os.Create(p.out)
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
+			return err
 		}
 
 		defer w.Close()
@@ -81,13 +96,10 @@ func (p Print) write(op *print.Print, smf *midi.SMF) {
 		out = w
 	}
 
-	err := op.Print(smf, "document", out)
-	if err != nil {
-		fmt.Printf("Error %v extracting MIDI information\n", err)
-	}
+	return op.Print(smf, "document", out)
 }
 
-func (p Print) separate(op *print.Print, smf *midi.SMF) {
+func (p Print) separate(op *print.Print, smf *midi.SMF) error {
 	// Get base filename and Create out directory
 	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
 	dir := path.Dir(smf.File)
@@ -96,8 +108,7 @@ func (p Print) separate(op *print.Print, smf *midi.SMF) {
 		dir = p.out
 		err := os.MkdirAll(dir, os.ModeDir)
 		if err != nil {
-			fmt.Printf("Error: %v", err)
-			return
+			return err
 		}
 	}
 
@@ -105,8 +116,7 @@ func (p Print) separate(op *print.Print, smf *midi.SMF) {
 	filename := fmt.Sprintf("%s.MThd", base)
 	w, err := os.Create(path.Join(dir, filename))
 	if err != nil {
-		fmt.Printf("Error: %v", err)
-		return
+		return err
 	}
 
 	if err = op.Print(smf.MThd, "MThd", w); err != nil {
@@ -120,8 +130,7 @@ func (p Print) separate(op *print.Print, smf *midi.SMF) {
 		filename := fmt.Sprintf("%s-%d.MTrk", base, mtrk.TrackNumber)
 		w, err := os.Create(path.Join(dir, filename))
 		if err != nil {
-			fmt.Printf("Error: %v", err)
-			return
+			return err
 		}
 
 		if err = op.Print(mtrk, "MTrk", w); err != nil {
@@ -130,4 +139,6 @@ func (p Print) separate(op *print.Print, smf *midi.SMF) {
 
 		w.Close()
 	}
+
+	return nil
 }

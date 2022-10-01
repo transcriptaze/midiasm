@@ -2,12 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"os"
 
-	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/ops/transpose"
 )
 
 type Transpose struct {
@@ -31,26 +28,32 @@ func (t *Transpose) flagset() *flag.FlagSet {
 	return flagset
 }
 
-func (t Transpose) Execute(smf *midi.SMF) {
-	var w = os.Stdout
-	var err error
+func (t Transpose) Execute(filename string) error {
+	return t.execute()
+}
 
-	if t.out != "" {
-		if w, err = os.Create(t.out); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
-		}
+func (t Transpose) execute() error {
+	// var w = os.Stdout
+	// var err error
 
-		defer w.Close()
-	}
+	// if t.out != "" {
+	// 	if w, err = os.Create(t.out); err != nil {
+	// 		fmt.Printf("Error: %v\n", err)
+	// 		return
+	// 	}
 
-	eventlog.EventLog.Verbose = t.verbose
-	eventlog.EventLog.Debug = t.debug
-
-	// p := click.ClickTrack{w}
-	// if err = p.Execute(smf); err != nil {
-	//  fmt.Printf("Error %v extracting click track\n", err)
+	// 	defer w.Close()
 	// }
 
-	fmt.Printf("NOT IMPLEMENTED %+v\n", t)
+	// eventlog.EventLog.Verbose = t.verbose
+	// eventlog.EventLog.Debug = t.debug
+
+	// p := transpose.Transpose{w}
+	// if err = p.Execute(smf); err != nil {
+	// 	fmt.Printf("Error transposing %q (%v)\n", smf.File, err)
+	// }
+
+	op := transpose.Transpose{}
+
+	return op.Execute()
 }
