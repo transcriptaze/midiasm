@@ -10,6 +10,6 @@ type Transpose struct {
 	Writer io.Writer
 }
 
-func (t *Transpose) Execute() error {
+func (t *Transpose) Execute(bytes []byte) error {
 	return fmt.Errorf("NOT IMPLEMENTED")
 }

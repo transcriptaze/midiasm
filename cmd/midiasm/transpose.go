@@ -29,10 +29,14 @@ func (t *Transpose) flagset() *flag.FlagSet {
 }
 
 func (t Transpose) Execute(filename string) error {
-	return t.execute()
+	if bytes, err := t.read(filename); err != nil {
+		return err
+	} else {
+		return t.execute(bytes)
+	}
 }
 
-func (t Transpose) execute() error {
+func (t Transpose) execute(bytes []byte) error {
 	// var w = os.Stdout
 	// var err error
 
@@ -55,5 +59,5 @@ func (t Transpose) execute() error {
 
 	op := transpose.Transpose{}
 
-	return op.Execute()
+	return op.Execute(bytes)
 }

@@ -47,8 +47,12 @@ func main() {
 	// ... set middle C convention
 	context.SetMiddleC(cmd.MiddleC())
 
-	// ... get MIDI bytes
-	cmd.Execute(filename)
+	// ... process
+	if err := cmd.Execute(filename); err != nil {
+		fmt.Println()
+		fmt.Printf("   *** ERROR: %v\n", err)
+		fmt.Println()
+	}
 }
 
 func parse() (Command, string, error) {

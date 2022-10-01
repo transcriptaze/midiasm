@@ -44,14 +44,7 @@ func (c *command) flagset(name string) *flag.FlagSet {
 }
 
 func (c *command) decode(filename string) (*midi.SMF, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	defer f.Close()
-
-	bytes, err := ioutil.ReadAll(f)
+	bytes, err := c.read(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -70,4 +63,15 @@ func (c *command) decode(filename string) (*midi.SMF, error) {
 	smf.File = filename
 
 	return smf, nil
+}
+
+func (c *command) read(filename string) ([]byte, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	defer f.Close()
+
+	return ioutil.ReadAll(f)
 }
