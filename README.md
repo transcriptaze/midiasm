@@ -81,12 +81,12 @@ Command line:
 ` midiasm [--debug] [--verbose] [--C4] [--split] [--out <file>] <MIDI file>`
 
 ```
-  --out <file>  Writes the disassembly to a file. Default is to write to _stdout_.
+  --out <file>  Writes the disassembly to a file. Default is to write to stdout.
   --split       Writes each track to a separate file. Default is `false`.
 
   Options:
 
-  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 
@@ -104,11 +104,11 @@ Command line:
 ` midiasm notes [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
 
 ```
-  --out <file>  Writes the notes to a file. Default is to write to _stdout_.
+  --out <file>  Writes the notes to a file. Default is to write to stdout.
 
   Options:
 
-  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 
@@ -126,13 +126,13 @@ Command line:
 ` midiasm export [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
 
 ```
-  --out <file>     Writes the JSON to a file. Default is to write to _stdout_.
+  --out <file>     Writes the JSON to a file. Default is to write to stdout.
   --json           Formats the output as JSON - the default is human readable text.
   --transpose <N>  Transposes the notes up or down by N semitones.
 
   Options:
 
-  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 
@@ -151,11 +151,11 @@ Command line:
 ` midiasm click [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
 
 ```
-  --out <file>  Writes the click track to a file. Default is to write to _stdout_.
+  --out <file>  Writes the click track to a file. Default is to write to stdout.
 
   Options:
 
-  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 
@@ -173,12 +173,12 @@ Command line:
 ` midiasm transpose [--debug] [--verbose] [--C4] --semitones <steps> --out <file> <MIDI file>`
 
 ```
-  --semitones <N>  Number of semitones to transpose up or down.. Defaults to 0.
-  --out <file>     Writes the click track to a file. Default is to write to _stdout_.
+  --semitones <N>  Number of semitones to transpose up or down. Defaults to 0.
+  --out <file>     (required) Destination file for the transposed MIDI. 
 
   Options:
 
-  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 

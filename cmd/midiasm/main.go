@@ -18,6 +18,8 @@ var cli = map[string]Command{
 	"version":     &VERSION,
 }
 
+const version = "v0.1.0"
+
 func main() {
 	// ... parse command line
 	cmd, err := parse()
@@ -54,6 +56,8 @@ func main() {
 		fmt.Println()
 		fmt.Printf("   *** ERROR: %v\n", err)
 		fmt.Println()
+
+		os.Exit(1)
 	}
 }
 

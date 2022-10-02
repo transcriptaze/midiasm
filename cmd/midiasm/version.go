@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 )
 
 type Version struct {
@@ -15,5 +16,6 @@ func (t *Version) flagset() *flag.FlagSet {
 }
 
 func (t Version) Execute() error {
+	fmt.Printf("midiasm %v\n", version)
 	return nil
 }
