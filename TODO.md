@@ -12,12 +12,12 @@
 - [ ] Scales
       - [x] Transpose major keys
       - [x] Transpose minor keys
-      - [ ] Unit tests for all major keys
-      - [ ] Unit tests for all minor keys
-      - [ ] Transpose flat keys
+      - [ ] Unit tests for other major keys
+      - [ ] Unit tests for other minor keys
+      - [ ] Transpose enharmonic keys
             - (?) Get all candidates and pick the best
             - (?) Where best is least number of accidentals
-            - (?) Or somesuch
+            - (?) Or just a lookup table
 
 - [ ] github workflow
 - [ ] Package for release

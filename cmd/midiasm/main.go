@@ -9,11 +9,11 @@ import (
 )
 
 var cli = map[string]Command{
-	"print":     &PRINT,
-	"notes":     &NOTES,
-	"click":     &CLICK,
-	"export":    &EXPORT,
-	"transpose": &TRANSPOSE,
+	"disassemble": &DISASSEMBLE,
+	"notes":       &NOTES,
+	"click":       &CLICK,
+	"export":      &EXPORT,
+	"transpose":   &TRANSPOSE,
 }
 
 func main() {
@@ -56,7 +56,7 @@ func main() {
 }
 
 func parse() (Command, string, error) {
-	cmd := &Print{}
+	cmd := &DISASSEMBLE
 	if len(os.Args) > 1 {
 		c, ok := cli[os.Args[1]]
 		if ok {

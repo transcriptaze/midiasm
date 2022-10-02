@@ -253,6 +253,7 @@ var A_FLAT_MAJOR = Scale{
 	Notes:       []Note{A_FLAT, B_FLAT, C, D_FLAT, E_FLAT, F, G},
 }
 
+// D major -1 => enharmonic to C# major
 var D_FLAT_MAJOR = Scale{
 	Name:        `D♭ major`,
 	Accidentals: -5,
@@ -260,6 +261,7 @@ var D_FLAT_MAJOR = Scale{
 	Notes:       []Note{C, D_FLAT, E_FLAT, F, G_FLAT, A_FLAT, B_FLAT},
 }
 
+// G major -1 => enharmonic to F# major
 var G_FLAT_MAJOR = Scale{
 	Name:        `G♭ major`,
 	Accidentals: -6,
@@ -267,6 +269,7 @@ var G_FLAT_MAJOR = Scale{
 	Notes:       []Note{C_FLAT, D_FLAT, E_FLAT, F, G_FLAT, A_FLAT, B_FLAT},
 }
 
+// F major +1 => enharmonic to E major
 var C_FLAT_MAJOR = Scale{
 	Name:        `C♭ major`,
 	Accidentals: -7,
@@ -360,6 +363,7 @@ var F_MINOR = Scale{
 	Notes:       []Note{F, G, A_FLAT, B_FLAT, C, D_FLAT, E_FLAT},
 }
 
+// D min -1 => enharmonic to A# minor
 var B_FLAT_MINOR = Scale{
 	Name:        `B♭ minor`,
 	Accidentals: -5,
@@ -367,6 +371,7 @@ var B_FLAT_MINOR = Scale{
 	Notes:       []Note{C, D_FLAT, E_FLAT, F, G_FLAT, A_FLAT, B_FLAT},
 }
 
+// A minor +1 => enharmonic to G# minor
 var E_FLAT_MINOR = Scale{
 	Name:        `E♭ minor`,
 	Accidentals: -6,
@@ -374,6 +379,7 @@ var E_FLAT_MINOR = Scale{
 	Notes:       []Note{C_FLAT, D_FLAT, E_FLAT, F, G_FLAT, A_FLAT, B_FLAT},
 }
 
+// F# minor -1 => enharmonic to F minor
 var A_FLAT_MINOR = Scale{
 	Name:        `A♭ minor`,
 	Accidentals: -7,
