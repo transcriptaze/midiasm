@@ -14,6 +14,8 @@ var cli = map[string]Command{
 	"click":       &CLICK,
 	"export":      &EXPORT,
 	"transpose":   &TRANSPOSE,
+	"help":        &HELP,
+	"version":     &VERSION,
 }
 
 func main() {

@@ -39,6 +39,12 @@ debug: build
 # 	go test -v ./midi/types
 	go test -v ./midi -run TestUnmarshalNoteAlias
 
+help: build
+	$(CMD) help
+
+version: build
+	$(CMD) version
+
 disassemble: build
 	$(CMD) --debug --verbose      examples/example-01.mid
 	$(CMD) --debug --verbose --C4 examples/example-01.mid

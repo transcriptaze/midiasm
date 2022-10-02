@@ -2,6 +2,8 @@
 
 - [x] README
 - [x] github workflow
+- [ ] `help`
+- [ ] `version`
 - [ ] Package for release
 
 - [ ] 'transpose' command
