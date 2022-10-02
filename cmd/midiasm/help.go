@@ -14,6 +14,6 @@ func (t *Help) flagset() *flag.FlagSet {
 	return flag.NewFlagSet("help", flag.ExitOnError)
 }
 
-func (t Help) Execute(filename string) error {
+func (t Help) Execute() error {
 	return nil
 }

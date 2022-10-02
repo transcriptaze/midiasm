@@ -15,7 +15,7 @@ type Command interface {
 	flagset() *flag.FlagSet
 	config() string
 	MiddleC() types.MiddleC
-	Execute(filename string) error
+	Execute() error
 }
 
 type command struct {

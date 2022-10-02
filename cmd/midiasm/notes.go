@@ -15,6 +15,7 @@ type Notes struct {
 	out       string
 	transpose int
 	json      bool
+	flags     *flag.FlagSet
 }
 
 var NOTES = Notes{}
@@ -26,10 +27,14 @@ func (n *Notes) flagset() *flag.FlagSet {
 	flagset.IntVar(&n.transpose, "transpose", 0, "Transpose notes up or down")
 	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
 
+	n.flags = flagset
+
 	return flagset
 }
 
-func (n Notes) Execute(filename string) error {
+func (n Notes) Execute() error {
+	filename := n.flags.Arg(0)
+
 	smf, err := n.decode(filename)
 	if err != nil {
 		return err

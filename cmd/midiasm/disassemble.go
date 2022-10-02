@@ -17,6 +17,7 @@ type Disassemble struct {
 	out       string
 	split     bool
 	templates string
+	flags     *flag.FlagSet
 }
 
 var DISASSEMBLE = Disassemble{
@@ -32,10 +33,14 @@ func (p *Disassemble) flagset() *flag.FlagSet {
 	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&p.templates, "templates", "", "Loads the formatting templates from a file")
 
+	p.flags = flagset
+
 	return flagset
 }
 
-func (p Disassemble) Execute(filename string) error {
+func (p Disassemble) Execute() error {
+	filename := p.flags.Arg(0)
+
 	smf, err := p.decode(filename)
 	if err != nil {
 		return err

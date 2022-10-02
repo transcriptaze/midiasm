@@ -14,6 +14,6 @@ func (t *Version) flagset() *flag.FlagSet {
 	return flag.NewFlagSet("version", flag.ExitOnError)
 }
 
-func (t Version) Execute(filename string) error {
+func (t Version) Execute() error {
 	return nil
 }
