@@ -13,6 +13,7 @@ format:
 	go fmt ./...
 
 build: format
+	mkdir -p bin
 	go build -o bin ./... 
 
 test: build
