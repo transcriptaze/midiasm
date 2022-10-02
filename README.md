@@ -1,3 +1,5 @@
+![build](https://github.com/transcriptaze/midiasm/workflows/build/badge.svg)
+
 # midiasm
 
 MIDI assembler/disassembler to convert between standard MIDI files and a text/JSON equivalent.

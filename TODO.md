@@ -1,7 +1,7 @@
 ## v0.1
 
 - [x] README
-- [ ] github workflow
+- [x] github workflow
 - [ ] Package for release
 
 - [ ] 'transpose' command
