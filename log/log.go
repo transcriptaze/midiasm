@@ -14,20 +14,26 @@ const (
 	Debug
 )
 
+var logging = struct {
+	level  Level
+	format string
+}{
+	level:  Warn,
+	format: "%-5v  %-9s  %s",
+}
+
 type Level int
 
 func (l Level) String() string {
 	return [...]string{"", "FATAL", "ERROR", "WARN", "info", "debug"}[l]
 }
 
-var level Level = Info
-
 func init() {
 	syslog.SetFlags(0)
 }
 
 func SetLogLevel(l Level) {
-	level = l
+	logging.level = l
 }
 
 func Debugf(operation string, format string, v ...interface{}) {
@@ -47,11 +53,11 @@ func Errorf(operation string, format string, v ...interface{}) {
 }
 
 func Fatalf(operation string, format string, v ...interface{}) {
-	syslog.Fatalf("%-5v %-8s  %-6s %s", Fatal, operation, fmt.Sprintf(format, v...))
+	syslog.Fatalf(logging.format, Fatal, operation, fmt.Sprintf(format, v...))
 }
 
 func log(l Level, operation string, msg string) {
-	if l >= level {
-		syslog.Printf("%-5v  %-9s %s", l, operation, msg)
+	if l >= logging.level {
+		syslog.Printf(logging.format, l, operation, msg)
 	}
 }
