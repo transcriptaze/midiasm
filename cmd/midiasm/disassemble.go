@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/ops/disassemble"
 )
 
@@ -59,9 +58,6 @@ func (p Disassemble) Execute() error {
 }
 
 func (p Disassemble) execute(smf *midi.SMF) error {
-	eventlog.EventLog.Verbose = p.verbose
-	eventlog.EventLog.Debug = p.debug
-
 	op, err := disassemble.NewDisassemble()
 	if err != nil {
 		return err

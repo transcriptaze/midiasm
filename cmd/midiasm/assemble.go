@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 )
 
 type Assemble struct {
@@ -34,9 +33,6 @@ func (a Assemble) Execute(smf *midi.SMF) {
 
 		defer w.Close()
 	}
-
-	eventlog.EventLog.Verbose = a.verbose
-	eventlog.EventLog.Debug = a.debug
 
 	// p := click.ClickTrack{w}
 	// if err = p.Execute(smf); err != nil {

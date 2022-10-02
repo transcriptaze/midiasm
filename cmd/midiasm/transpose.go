@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/ops/transpose"
 )
 
@@ -32,9 +31,6 @@ func (t *Transpose) flagset() *flag.FlagSet {
 
 func (t Transpose) Execute() error {
 	filename := t.flags.Arg(0)
-
-	eventlog.EventLog.Verbose = t.verbose
-	eventlog.EventLog.Debug = t.debug
 
 	smf, err := t.decode(filename)
 	if err != nil {

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/ops/export"
 )
 
@@ -49,9 +48,6 @@ func (x Export) Execute() error {
 }
 
 func (x Export) execute(smf *midi.SMF) error {
-	eventlog.EventLog.Verbose = x.verbose
-	eventlog.EventLog.Debug = x.debug
-
 	op, err := export.NewExport()
 	if err != nil {
 		return err

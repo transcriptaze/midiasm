@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/ops/notes"
 )
 
@@ -64,9 +63,6 @@ func (n Notes) execute(smf *midi.SMF) error {
 
 		defer w.Close()
 	}
-
-	eventlog.EventLog.Verbose = n.verbose
-	eventlog.EventLog.Debug = n.debug
 
 	op := notes.Notes{
 		JSON:      n.json,

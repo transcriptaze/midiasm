@@ -6,11 +6,13 @@ import (
 	"math"
 	"sort"
 
+	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 )
+
+const LOG_TAG = "click"
 
 type ClickTrack struct {
 	Writer io.Writer
@@ -98,7 +100,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				if v, ok := event.(*metaevent.Tempo); ok {
 					tempo = uint(math.Round(60.0 * 1000000.0 / float64(v.Tempo)))
 
-					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "TEMPO", v, bar))
+					debugf("%-14v  %-5v bar:%-3d", "TEMPO", v, bar)
 
 					cluck := clucks[bar]
 					cluck.Bar = bar
@@ -108,7 +110,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 
 				// ... time signature changes
 				if v, ok := event.(*metaevent.TimeSignature); ok {
-					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "TIME SIGNATURE", v, bar))
+					debugf("%-14v  %-5v bar:%-3d", "TIME SIGNATURE", v, bar)
 
 					cluck := clucks[bar]
 					cluck.Bar = bar
@@ -120,7 +122,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 				}
 
 				if _, ok := event.(*metaevent.EndOfTrack); ok {
-					eventlog.Debug(fmt.Sprintf("%-14v  %-5v bar:%-3d", "END OF TRACK", "", bar))
+					debugf("%-14v  %-5v bar:%-3d", "END OF TRACK", "", bar)
 
 					cluck := clucks[bar]
 					cluck.Bar = bar - 1 // because end of track as after the last bar ????
@@ -144,6 +146,7 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		return list[i].Bar < list[j].Bar
 	})
 
+	fmt.Println()
 	for _, v := range list {
 		fmt.Fprintf(x.Writer, "bar %-4v  tempo:%-3v  time-signature %v\n", v.Bar, v.Tempo, v.TimeSignature)
 	}
@@ -176,5 +179,13 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 	}
 	fmt.Println()
 
-	return fmt.Errorf("NOT IMPLEMENTED")
+	return nil
+}
+
+func debugf(format string, args ...any) {
+	log.Debugf(LOG_TAG, format, args...)
+}
+
+func warnf(format string, args ...any) {
+	log.Warnf(LOG_TAG, format, args...)
 }

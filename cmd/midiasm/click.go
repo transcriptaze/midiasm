@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/ops/click"
 )
 
@@ -59,9 +58,6 @@ func (c Click) execute(smf *midi.SMF) error {
 
 		defer w.Close()
 	}
-
-	eventlog.EventLog.Verbose = c.verbose
-	eventlog.EventLog.Debug = c.debug
 
 	track := click.ClickTrack{w}
 

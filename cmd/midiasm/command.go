@@ -14,8 +14,11 @@ import (
 type Command interface {
 	flagset() *flag.FlagSet
 	config() string
-	MiddleC() types.MiddleC
 	Execute() error
+
+	MiddleC() types.MiddleC
+	Debug() bool
+	Verbose() bool
 }
 
 type command struct {
@@ -35,6 +38,14 @@ func (c command) MiddleC() types.MiddleC {
 	}
 
 	return types.C3
+}
+
+func (c command) Debug() bool {
+	return c.debug
+}
+
+func (c command) Verbose() bool {
+	return c.verbose
 }
 
 func (c *command) flagset(name string) *flag.FlagSet {

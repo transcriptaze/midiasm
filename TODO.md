@@ -1,18 +1,14 @@
 ## v0.1
 
-- [x] README
-- [x] github workflow
 - [ ] `help`
 - [x] `version`
 - [ ] Package for release
+- [ ] Document custom templates
 
 - [ ] 'transpose' command
-      - [x] NoteOn
-      - [x] NoteOff
-      - [x] KeySignature
       - [ ] Transpose while decoding - otherwise lose track of stuff 
 
-- [ ] Redo logging
+- [x] Redo logging
 - [ ] Scales
       - [x] Transpose major keys
       - [x] Transpose minor keys
@@ -31,6 +27,7 @@
 ### Click Track
 
 - [ ] --track option (default to track 1)
+- [ ] --format consolidated/events
 - [ ] Export summary as JSON
 - [ ] Export clicks as JSON
 - [ ] Export as MIDI

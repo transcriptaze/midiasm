@@ -7,14 +7,16 @@ import (
 	"sort"
 	"time"
 
+	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/eventlog"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
+
+const LOG_TAG = "notes"
 
 type Notes struct {
 	Transpose int
@@ -80,7 +82,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			t = time.Duration(1000 * tick * tempo / ppqn)
 
 			if dt := (tick * tempo) % ppqn; dt > 0 {
-				eventlog.Warn(fmt.Sprintf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick))
+				warnf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick)
 			}
 
 			list := eventlist[tick]
@@ -94,11 +96,11 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			for _, e := range list {
 				event := e.Event
 				if v, ok := event.(*midievent.NoteOff); ok {
-					eventlog.Debug(fmt.Sprintf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
+					debugf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					if note := pending[key]; note == nil {
-						eventlog.Warn(fmt.Sprintf("NOTE OFF without preceding NOTE ON for %d:%02X", v.Channel, v.Note))
+						warnf("NOTE OFF without preceding NOTE ON for %d:%02X", v.Channel, v.Note)
 					} else {
 						note.End = t
 						note.EndTick = tick
@@ -118,7 +120,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 				}
 
 				if v, ok := event.(*midievent.NoteOn); ok {
-					eventlog.Debug(fmt.Sprintf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t))
+					debugf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					note := Note{
@@ -131,7 +133,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					}
 
 					if pending[key] != nil {
-						eventlog.Warn(fmt.Sprintf("NOTE ON without preceding NOTE OFF for %d:%02X", v.Channel, v.Note))
+						warnf("NOTE ON without preceding NOTE OFF for %d:%02X", v.Channel, v.Note)
 					}
 
 					pending[key] = &note
@@ -142,7 +144,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 
 		if len(pending) > 0 {
 			for k, n := range pending {
-				eventlog.Warn(fmt.Sprintf("Incomplete note: %04X %#v", k, n))
+				warnf("Incomplete note: %04X %#v", k, n)
 			}
 		}
 
@@ -213,4 +215,12 @@ func export(notes []*Note, w io.Writer) error {
 	}
 
 	return nil
+}
+
+func debugf(format string, args ...any) {
+	log.Debugf(LOG_TAG, format, args...)
+}
+
+func warnf(format string, args ...any) {
+	log.Warnf(LOG_TAG, format, args...)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
@@ -48,7 +49,14 @@ func main() {
 		types.AddManufacturers(manufacturers)
 	}
 
-	// ... set middle C convention
+	// ... set global stuff
+
+	if cmd.Debug() {
+		log.SetLogLevel(log.Debug)
+	} else if cmd.Verbose() {
+		log.SetLogLevel(log.Info)
+	}
+
 	context.SetMiddleC(cmd.MiddleC())
 
 	// ... process
