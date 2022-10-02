@@ -88,4 +88,4 @@
 16. https://sound.stackexchange.com/questions/39457/how-to-open-midi-file-in-text-editor
 17. https://github.com/mido/mido
 18. [Janet](https://janet-lang.org)
-
+19. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)

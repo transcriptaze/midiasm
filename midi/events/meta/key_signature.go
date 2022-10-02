@@ -26,65 +26,6 @@ type KeySignature struct {
 	Key         string
 }
 
-var major_keys = map[int8]string{
-	7:  `C♯ major`,
-	6:  `F♯ major`,
-	5:  `B major`,
-	4:  `E major`,
-	3:  `A major`,
-	2:  `D major`,
-	1:  `G major`,
-	0:  `C major`,
-	-1: `F major`,
-	-2: `B♭ major`,
-	-3: `E♭ major`,
-	-4: `A♭ major`,
-	-5: `D♭ major`,
-	-6: `G♭ major`,
-	-7: `C♭ major`,
-}
-
-var minor_keys = map[int8]string{
-	7:  `A♯ minor`,
-	6:  `D♯ minor`,
-	5:  `G♯ minor`,
-	4:  `C♯ minor`,
-	3:  `F♯ minor`,
-	2:  `B minor`,
-	1:  `E minor`,
-	0:  `A minor`,
-	-1: `D minor`,
-	-2: `G minor`,
-	-3: `C minor`,
-	-4: `F minor`,
-	-5: `B♭ minor`,
-	-6: `E♭ minor`,
-	-7: `A♭ minor`,
-}
-
-var notes = map[int8][]string{
-	7:  []string{`C♯`, `D♯`, `E♯`, `F♯`, `G♯`, `A♯`, `B♯`},
-	6:  []string{`C♯`, `D♯`, `E♯`, `F♯`, `G♯`, `A♯`, `B`},
-	5:  []string{`C♯`, `D♯`, `E`, `F♯`, `G♯`, `A♯`, `B`},
-	4:  []string{`C♯`, `D♯`, `E`, `F♯`, `G♯`, `A`, `B`},
-	3:  []string{`C♯`, `D`, `E`, `F♯`, `G♯`, `A`, `B`},
-	2:  []string{`C♯`, `D`, `E`, `F♯`, `G`, `A`, `B`},
-	1:  []string{`C`, `D`, `E`, `F♯`, `G`, `A`, `B`},
-	0:  []string{`C`, `D`, `E`, `F`, `G`, `A`, `B`},
-	-1: []string{`C`, `D`, `E`, `F`, `G`, `A`, `B♭`},
-	-2: []string{`C`, `D`, `E♭`, `F`, `G`, `A`, `B♭`},
-	-3: []string{`C`, `D`, `E♭`, `F`, `G`, `A♭`, `B♭`},
-	-4: []string{`C`, `D♭`, `E♭`, `F`, `G`, `A♭`, `B♭`},
-	-5: []string{`C`, `D♭`, `E♭`, `F`, `G♭`, `A♭`, `B♭`},
-	-6: []string{`C♭`, `D♭`, `E♭`, `F`, `G♭`, `A♭`, `B♭`},
-	-7: []string{`C♭`, `D♭`, `E♭`, `F♭`, `G♭`, `A♭`, `B♭`},
-}
-
-var scales = [][]string{
-	{`C`, `C♯`, `D`, `D♯`, `E`, `F`, `F♯`, `G`, `G♯`, `A`, `A♯`, `B`},
-	{`C`, `D♭`, `D`, `E♭`, `E`, `F`, `G♭`, `G`, `A♭`, `A`, `B♭`, `B`},
-}
-
 func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) {
 	if len(bytes) != 2 {
 		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(bytes))
@@ -99,16 +40,16 @@ func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) 
 	key := ""
 	switch keyType {
 	case 0:
-		if signature, ok := major_keys[accidentals]; !ok {
+		if scale, ok := types.MajorScale(accidentals); !ok {
 			return nil, fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
 		} else {
-			key = signature
+			key = scale.Name
 		}
 	case 1:
-		if signature, ok := minor_keys[accidentals]; !ok {
+		if scale, ok := types.MinorScale(accidentals); !ok {
 			return nil, fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
 		} else {
-			key = signature
+			key = scale.Name
 		}
 	}
 
@@ -129,25 +70,32 @@ func NewKeySignature(ctx *context.Context, bytes []byte) (*KeySignature, error) 
 }
 
 func (k *KeySignature) Transpose(ctx *context.Context, steps int) {
-	// v := int(k.Accidentals) + steps
-	// v %= 12
+	var scale types.Scale
+	var ok bool
 
-	// // 0 + 8  => 8
-	// // 8 % 12 => 8
-	// // 8 - 14 => -6
+	switch k.KeyType {
+	case 0:
+		if scale, ok = types.MajorScale(k.Accidentals); !ok {
+			return
+		}
 
-	// k.Accidentals = int8(v)
+	case 1:
+		if scale, ok = types.MinorScale(k.Accidentals); !ok {
+			return
+		}
 
-	// switch k.KeyType {
-	// case 0:
-	// 	k.Key, _ = major_keys[k.Accidentals]
-	// case 1:
-	// 	k.Key, _ = minor_keys[k.Accidentals]
-	// }
+	default:
+		return
+	}
 
-	// if k.Accidentals < 0 {
-	// 	ctx.UseFlats()
-	// } else {
-	// 	ctx.UseSharps()
-	// }
+	transposed := scale.Transpose(steps)
+
+	k.Key = transposed.Name
+	k.Accidentals = transposed.Accidentals
+
+	if k.Accidentals < 0 {
+		ctx.UseFlats()
+	} else {
+		ctx.UseSharps()
+	}
 }

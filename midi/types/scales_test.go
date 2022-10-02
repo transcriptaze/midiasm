@@ -5,41 +5,64 @@ import (
 	"testing"
 )
 
-func TestScaleTranspose(t *testing.T) {
+func TestCMajorScaleTransposeUp(t *testing.T) {
 	tests := []struct {
 		scale    Scale
+		steps    int
 		expected Scale
 	}{
-		{C_MAJOR, C_SHARP_MAJOR},
-		// {G_MAJOR, C_SHARP_MAJOR},
+		{C_MAJOR, 1, C_SHARP_MAJOR},
+		{C_MAJOR, 2, D_MAJOR},
+		{C_MAJOR, 3, E_FLAT_MAJOR},
+		{C_MAJOR, 4, E_MAJOR},
+		{C_MAJOR, 5, F_MAJOR},
+		{C_MAJOR, 6, F_SHARP_MAJOR},
+		{C_MAJOR, 7, G_MAJOR},
+		{C_MAJOR, 8, A_FLAT_MAJOR},
+		{C_MAJOR, 9, A_MAJOR},
+		{C_MAJOR, 10, B_FLAT_MAJOR},
+		{C_MAJOR, 11, B_MAJOR},
+		{C_MAJOR, 12, C_MAJOR},
 	}
 
-	for _, v := range tests {
-		scale := v.scale
-		expected := v.expected
-		transposed := scale.Transpose(1)
+	for octave := 0; octave < 8; octave++ {
+		for _, v := range tests {
+			transposed := v.scale.Transpose(12*octave + v.steps)
 
-		if !reflect.DeepEqual(transposed, expected) {
-			t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", scale.Name, expected, transposed)
+			if !reflect.DeepEqual(transposed, v.expected) {
+				t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", v.scale.Name, v.expected, transposed)
+			}
 		}
 	}
 }
 
-func TestScaleTransposeByFifths(t *testing.T) {
+func TestCMajorScaleTransposeDown(t *testing.T) {
 	tests := []struct {
 		scale    Scale
+		steps    int
 		expected Scale
 	}{
-		{C_MAJOR, F_MAJOR},
+		{C_MAJOR, -1, B_MAJOR},
+		{C_MAJOR, -2, B_FLAT_MAJOR},
+		{C_MAJOR, -3, A_MAJOR},
+		{C_MAJOR, -4, A_FLAT_MAJOR},
+		{C_MAJOR, -5, G_MAJOR},
+		{C_MAJOR, -6, F_SHARP_MAJOR},
+		{C_MAJOR, -7, F_MAJOR},
+		{C_MAJOR, -8, E_MAJOR},
+		{C_MAJOR, -9, E_FLAT_MAJOR},
+		{C_MAJOR, -10, D_MAJOR},
+		{C_MAJOR, -11, C_SHARP_MAJOR},
+		{C_MAJOR, -12, C_MAJOR},
 	}
 
-	for _, v := range tests {
-		scale := v.scale
-		expected := v.expected
-		transposed := scale.Transpose(5)
+	for octave := 0; octave < 1; octave++ {
+		for _, v := range tests {
+			transposed := v.scale.Transpose(12*octave + v.steps)
 
-		if !reflect.DeepEqual(transposed, expected) {
-			t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", scale.Name, expected, transposed)
+			if !reflect.DeepEqual(transposed, v.expected) {
+				t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", v.scale.Name, v.expected, transposed)
+			}
 		}
 	}
 }

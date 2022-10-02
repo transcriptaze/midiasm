@@ -19,8 +19,8 @@ const (
 )
 
 type Note struct {
-	Name       string
-	Enharmonic string
+	Name string
+	Ord  int
 }
 
 func (n Note) String() string {
@@ -30,19 +30,19 @@ func (n Note) String() string {
 func (s Scale) Transpose(steps int) Scale {
 	notes := make([]Note, len(s.Notes))
 
-	copy(notes, s.Notes)
+	// fmt.Printf(">>>>>>>>> SCALE: %+v\n", s.Notes)
 
-	for ix, n := range notes {
+	for ix, n := range s.Notes {
 		notes[ix] = transpose(n, steps)
 	}
 
-	fmt.Printf(">>>>>>>>> NOTES: %+v\n", notes)
+	// fmt.Printf(">>>>>>>>> NOTES: %+v\n", notes)
 loop:
 	for _, scale := range MAJOR_SCALES {
 		for ix, note := range notes {
 			m := scale.Notes[ix]
 
-			if note.Name == m.Name || note.Name == m.Enharmonic {
+			if note.Ord == m.Ord {
 				continue
 			}
 
@@ -57,8 +57,14 @@ loop:
 
 func transpose(note Note, steps int) Note {
 	for ix, n := range SCALE {
-		if n.Name == note.Name || note.Name == n.Enharmonic {
-			ix = (ix + steps) % len(SCALE)
+		if n.Ord == note.Ord {
+			ix = (ix + steps)
+			for ix < 0 {
+				ix += 12
+			}
+
+			ix %= len(SCALE)
+
 			return SCALE[ix]
 		}
 	}
@@ -71,6 +77,26 @@ var SCALE = []Note{
 }
 
 // {C, D_FLAT, D, E_FLAT, E, F, G_FLAT, G, A_FLAT, A, B_FLAT, B},
+
+func MajorScale(accidentals int8) (Scale, bool) {
+	for _, scale := range MAJOR_SCALES {
+		if scale.Accidentals == accidentals {
+			return scale, true
+		}
+	}
+
+	return C_MAJOR, false
+}
+
+func MinorScale(accidentals int8) (Scale, bool) {
+	for _, scale := range MINOR_SCALES {
+		if scale.Accidentals == accidentals {
+			return scale, true
+		}
+	}
+
+	return A_MINOR, false
+}
 
 var MAJOR_SCALES = []Scale{
 	C_MAJOR,
@@ -108,110 +134,27 @@ var MINOR_SCALES = []Scale{
 	A_FLAT_MINOR,
 }
 
-var C = Note{
-	Name:       `C`,
-	Enharmonic: `B♯`,
-}
-
-var C_SHARP = Note{
-	Name:       `C♯`,
-	Enharmonic: `D♭`,
-}
-
-var C_FLAT = Note{
-	Name:       `C♭`,
-	Enharmonic: `B`,
-}
-
-var D = Note{
-	Name:       `D`,
-	Enharmonic: `?`,
-}
-
-var D_SHARP = Note{
-	Name:       `D♯`,
-	Enharmonic: `E♭`,
-}
-
-var D_FLAT = Note{
-	Name:       `D♭`,
-	Enharmonic: `C♯`,
-}
-
-var E = Note{
-	Name:       `E`,
-	Enharmonic: `F♭`,
-}
-
-var E_SHARP = Note{
-	Name:       `E♯`,
-	Enharmonic: `F`,
-}
-
-var E_FLAT = Note{
-	Name:       `E♭`,
-	Enharmonic: `D♯`,
-}
-
-var F = Note{
-	Name:       `F`,
-	Enharmonic: `E♯`,
-}
-
-var F_SHARP = Note{
-	Name:       `F♯`,
-	Enharmonic: `D♭`,
-}
-
-var F_FLAT = Note{
-	Name:       `F♭`,
-	Enharmonic: `E`,
-}
-
-var G = Note{
-	Name:       `G`,
-	Enharmonic: `?`,
-}
-
-var G_SHARP = Note{
-	Name:       `G♯`,
-	Enharmonic: `A♭`,
-}
-
-var G_FLAT = Note{
-	Name:       `G♭`,
-	Enharmonic: `F♯`,
-}
-
-var A = Note{
-	Name:       `A`,
-	Enharmonic: `?`,
-}
-
-var A_SHARP = Note{
-	Name:       `A♯`,
-	Enharmonic: `B♭`,
-}
-
-var A_FLAT = Note{
-	Name:       `A♭`,
-	Enharmonic: `G♯`,
-}
-
-var B = Note{
-	Name:       `B`,
-	Enharmonic: `C♭`,
-}
-
-var B_SHARP = Note{
-	Name:       `B♯`,
-	Enharmonic: `C`,
-}
-
-var B_FLAT = Note{
-	Name:       `B♭`,
-	Enharmonic: `A♯`,
-}
+var C = Note{Name: `C`, Ord: 0}
+var C_SHARP = Note{Name: `C♯`, Ord: 1}
+var D_FLAT = Note{Name: `D♭`, Ord: 1}
+var D = Note{Name: `D`, Ord: 2}
+var D_SHARP = Note{Name: `D♯`, Ord: 3}
+var E_FLAT = Note{Name: `E♭`, Ord: 3}
+var E = Note{Name: `E`, Ord: 4}
+var E_SHARP = Note{Name: `E♯`, Ord: 5}
+var F_FLAT = Note{Name: `F♭`, Ord: 4}
+var F = Note{Name: `F`, Ord: 5}
+var F_SHARP = Note{Name: `F♯`, Ord: 6}
+var G_FLAT = Note{Name: `G♭`, Ord: 6}
+var G = Note{Name: `G`, Ord: 7}
+var G_SHARP = Note{Name: `G♯`, Ord: 8}
+var A_FLAT = Note{Name: `A♭`, Ord: 8}
+var A = Note{Name: `A`, Ord: 9}
+var A_SHARP = Note{Name: `A♯`, Ord: 10}
+var B_FLAT = Note{Name: `B♭`, Ord: 10}
+var B = Note{Name: `B`, Ord: 11}
+var B_SHARP = Note{Name: `B♯`, Ord: 0}
+var C_FLAT = Note{Name: `C♭`, Ord: 11}
 
 var C_MAJOR = Scale{
 	Name:        `C major`,
@@ -224,42 +167,42 @@ var G_MAJOR = Scale{
 	Name:        `G major`,
 	Accidentals: 1,
 	Type:        Major,
-	Notes:       []Note{C, D, E, F_SHARP, G, A, B},
+	Notes:       []Note{G, A, B, C, D, E, F_SHARP},
 }
 
 var D_MAJOR = Scale{
 	Name:        `D major`,
 	Accidentals: 2,
 	Type:        Major,
-	Notes:       []Note{C_SHARP, D, E, F_SHARP, G, A, B},
+	Notes:       []Note{D, E, F_SHARP, G, A, B, C_SHARP},
 }
 
 var A_MAJOR = Scale{
 	Name:        `A major`,
 	Accidentals: 3,
 	Type:        Major,
-	Notes:       []Note{C_SHARP, D, E, F_SHARP, G_SHARP, A, B},
+	Notes:       []Note{A, B, C_SHARP, D, E, F_SHARP, G_SHARP},
 }
 
 var E_MAJOR = Scale{
 	Name:        `E major`,
 	Accidentals: 4,
 	Type:        Major,
-	Notes:       []Note{C_SHARP, D_SHARP, E, F_SHARP, G_SHARP, A, B},
+	Notes:       []Note{E, F_SHARP, G_SHARP, A, B, C_SHARP, D_SHARP},
 }
 
 var B_MAJOR = Scale{
 	Name:        `B major`,
 	Accidentals: 5,
 	Type:        Major,
-	Notes:       []Note{C_SHARP, D_SHARP, E, F_SHARP, G_SHARP, A_SHARP, B},
+	Notes:       []Note{B, C_SHARP, D_SHARP, E, F_SHARP, G_SHARP, A_SHARP},
 }
 
 var F_SHARP_MAJOR = Scale{
 	Name:        `F♯ major`,
 	Accidentals: 6,
 	Type:        Major,
-	Notes:       []Note{C_SHARP, D_SHARP, E_SHARP, F_SHARP, G_SHARP, A_SHARP, B},
+	Notes:       []Note{F_SHARP, G_SHARP, A_SHARP, B, C_SHARP, D_SHARP, E_SHARP},
 }
 
 var C_SHARP_MAJOR = Scale{
@@ -273,28 +216,28 @@ var F_MAJOR = Scale{
 	Name:        `F major`,
 	Accidentals: -1,
 	Type:        Major,
-	Notes:       []Note{C, D, E, F, G, A, B_FLAT},
+	Notes:       []Note{F, G, A, B_FLAT, C, D, E},
 }
 
 var B_FLAT_MAJOR = Scale{
 	Name:        `B♭ major`,
 	Accidentals: -2,
 	Type:        Major,
-	Notes:       []Note{C, D, E_FLAT, F, G, A, B_FLAT},
+	Notes:       []Note{B_FLAT, C, D, E_FLAT, F, G, A},
 }
 
 var E_FLAT_MAJOR = Scale{
 	Name:        `E♭ major`,
 	Accidentals: -3,
 	Type:        Major,
-	Notes:       []Note{C, D, E_FLAT, F, G, A_FLAT, B_FLAT},
+	Notes:       []Note{E_FLAT, F, G, A_FLAT, B_FLAT, C, D},
 }
 
 var A_FLAT_MAJOR = Scale{
 	Name:        `A♭ major`,
 	Accidentals: -4,
 	Type:        Major,
-	Notes:       []Note{C, D_FLAT, E_FLAT, F, G, A_FLAT, B_FLAT},
+	Notes:       []Note{A_FLAT, B_FLAT, C, D_FLAT, E_FLAT, F, G},
 }
 
 var D_FLAT_MAJOR = Scale{

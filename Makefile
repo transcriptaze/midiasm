@@ -35,7 +35,7 @@ build-all: build test
 	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
 
 debug: build
-	go test -v ./midi/types -run TestScaleTranspose
+	go test -v ./midi/types 
 
 example: build
 	mkdir -p tmp
@@ -73,7 +73,7 @@ export: build
 transpose: build
 	rm -f ./tmp/greensleeves+12.mid
 # 	$(CMD)           --debug --verbose examples/greensleeves.mid
-	$(CMD) transpose --debug --transpose +0 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+	$(CMD) transpose --debug --transpose +1 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 # 	$(CMD)           --debug --verbose ./tmp/greensleeves+12.mid 
 # 	diff examples/greensleeves.mid ./tmp/greensleeves+12.mid 
 
