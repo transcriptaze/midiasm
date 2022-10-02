@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
@@ -41,7 +42,7 @@ var noteOnC3v72 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C3",
 			Alias: "C3",
@@ -56,7 +57,7 @@ var noteOnC3v0 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C3",
 			Alias: "C3",
@@ -71,7 +72,7 @@ var noteOnC3v64 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C3",
 			Alias: "C3",
@@ -86,7 +87,7 @@ var noteOnC3v32 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C3",
 			Alias: "C3",
@@ -101,7 +102,7 @@ var noteOnCS3 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 49,
 			Name:  "C♯3",
 			Alias: "C♯3",
@@ -116,7 +117,7 @@ var noteOffCS3Alias = events.Event{
 		Tag:     "NoteOff",
 		Status:  0x81,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 49,
 			Name:  "C♯3",
 			Alias: "D♭3",
@@ -149,6 +150,7 @@ func TestUnmarshalNoteAlias(t *testing.T) {
 
 	mtrk := MTrk{
 		TrackNumber: 1,
+		Context:     context.NewContext(),
 	}
 
 	if err := mtrk.UnmarshalBinary(bytes); err != nil {
@@ -182,6 +184,7 @@ func TestUnmarshalWithRunningStatus(t *testing.T) {
 
 	mtrk := MTrk{
 		TrackNumber: 1,
+		Context:     context.NewContext(),
 	}
 
 	if err := mtrk.UnmarshalBinary(bytes); err != nil {
@@ -207,6 +210,7 @@ func TestUnmarshalWithInvalidRunningStatus(t *testing.T) {
 
 	mtrk := MTrk{
 		TrackNumber: 1,
+		Context:     context.NewContext(),
 	}
 
 	err := mtrk.UnmarshalBinary(bytes)

@@ -35,7 +35,8 @@ build-all: build test
 	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
 
 debug: build
-	go test -v ./midi/types 
+# 	go test -v ./midi/types
+	go test -v ./midi -run TestUnmarshalNoteAlias
 
 example: build
 	mkdir -p tmp

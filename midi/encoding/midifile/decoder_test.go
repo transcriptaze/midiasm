@@ -282,7 +282,7 @@ var noteOnCS3 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 49,
 			Name:  "C♯3",
 			Alias: "C♯3",
@@ -297,7 +297,7 @@ var noteOnC4 = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 60,
 			Name:  "C4",
 			Alias: "C4",
@@ -312,7 +312,7 @@ var noteOffCS3 = events.Event{
 		Tag:     "NoteOff",
 		Status:  0x81,
 		Channel: types.Channel(0x01),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 49,
 			Name:  "C♯3",
 			Alias: "C♯3",

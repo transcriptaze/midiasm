@@ -5,16 +5,23 @@
 - [ ] 'transpose' command
       - [x] NoteOn
       - [x] NoteOff
-      - [ ] KeySignature
+      - [x] KeySignature
       - [ ] Transpose while decoding - otherwise lose track of stuff 
-      - [ ] Lose the --transpose option
-      - [ ] Maybe just keep the bytes and translate on the fly ?
-      - [ ] https://www.fourmilab.ch/webtools/midicsv/
+
+- [ ] Redo logging
+- [ ] Scales
+      - [x] Transpose major keys
+      - [x] Transpose minor keys
+      - [ ] Unit tests for all major keys
+      - [ ] Unit tests for all minor keys
+      - [ ] Transpose flat keys
+            - (?) Get all candidates and pick the best
+            - (?) Where best is least number of accidentals
+            - (?) Or somesuch
 
 - [ ] github workflow
 - [ ] Package for release
-- [ ] Coloured output
-- [ ] Redo logging
+- [ ] Coloured output (Charm/BubbleTea ?)
 - [ ] Move TimeSignature in reference-01.mid to track 0
 
 ### Assembler

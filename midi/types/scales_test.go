@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCMajorScaleTransposeUp(t *testing.T) {
+func TestTransposeCMajorScale(t *testing.T) {
 	tests := []struct {
 		scale    Scale
 		steps    int
@@ -23,25 +23,7 @@ func TestCMajorScaleTransposeUp(t *testing.T) {
 		{C_MAJOR, 10, B_FLAT_MAJOR},
 		{C_MAJOR, 11, B_MAJOR},
 		{C_MAJOR, 12, C_MAJOR},
-	}
 
-	for octave := 0; octave < 8; octave++ {
-		for _, v := range tests {
-			transposed := v.scale.Transpose(12*octave + v.steps)
-
-			if !reflect.DeepEqual(transposed, v.expected) {
-				t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", v.scale.Name, v.expected, transposed)
-			}
-		}
-	}
-}
-
-func TestCMajorScaleTransposeDown(t *testing.T) {
-	tests := []struct {
-		scale    Scale
-		steps    int
-		expected Scale
-	}{
 		{C_MAJOR, -1, B_MAJOR},
 		{C_MAJOR, -2, B_FLAT_MAJOR},
 		{C_MAJOR, -3, A_MAJOR},
@@ -56,7 +38,51 @@ func TestCMajorScaleTransposeDown(t *testing.T) {
 		{C_MAJOR, -12, C_MAJOR},
 	}
 
-	for octave := 0; octave < 1; octave++ {
+	for octave := -2; octave <= 2; octave++ {
+		for _, v := range tests {
+			transposed := v.scale.Transpose(12*octave + v.steps)
+
+			if !reflect.DeepEqual(transposed, v.expected) {
+				t.Errorf("Incorrectly transposed %v scale\n   expected:%+v\n   got:     %+v", v.scale.Name, v.expected, transposed)
+			}
+		}
+	}
+}
+
+func TestTransposeAMinorScale(t *testing.T) {
+	tests := []struct {
+		scale    Scale
+		steps    int
+		expected Scale
+	}{
+		{A_MINOR, 1, A_SHARP_MINOR},
+		{A_MINOR, 2, B_MINOR},
+		{A_MINOR, 3, C_MINOR},
+		{A_MINOR, 4, C_SHARP_MINOR},
+		{A_MINOR, 5, D_MINOR},
+		{A_MINOR, 6, D_SHARP_MINOR},
+		{A_MINOR, 7, E_MINOR},
+		{A_MINOR, 8, F_MINOR},
+		{A_MINOR, 9, F_SHARP_MINOR},
+		{A_MINOR, 10, G_MINOR},
+		{A_MINOR, 11, G_SHARP_MINOR},
+		{A_MINOR, 12, A_MINOR},
+
+		{A_MINOR, -1, G_SHARP_MINOR},
+		{A_MINOR, -2, G_MINOR},
+		{A_MINOR, -3, F_SHARP_MINOR},
+		{A_MINOR, -4, F_MINOR},
+		{A_MINOR, -5, E_MINOR},
+		{A_MINOR, -6, D_SHARP_MINOR},
+		{A_MINOR, -7, D_MINOR},
+		{A_MINOR, -8, C_SHARP_MINOR},
+		{A_MINOR, -9, C_MINOR},
+		{A_MINOR, -10, B_MINOR},
+		{A_MINOR, -11, A_SHARP_MINOR},
+		{A_MINOR, -12, A_MINOR},
+	}
+
+	for octave := -2; octave <= 2; octave++ {
 		for _, v := range tests {
 			transposed := v.scale.Transpose(12*octave + v.steps)
 

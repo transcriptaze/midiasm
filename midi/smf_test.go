@@ -86,7 +86,7 @@ var noteOn = events.Event{
 		Tag:     "NoteOn",
 		Status:  0x97,
 		Channel: types.Channel(7),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C2",
 			Alias: "C2",
@@ -101,7 +101,7 @@ var noteOff = events.Event{
 		Tag:     "NoteO.n",
 		Status:  0x87,
 		Channel: types.Channel(7),
-		Note: types.Note{
+		Note: midievent.Note{
 			Value: 48,
 			Name:  "C2",
 			Alias: "C2",

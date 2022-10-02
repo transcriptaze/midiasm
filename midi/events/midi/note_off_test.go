@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseNoteOffInMajorKey(t *testing.T) {
@@ -15,7 +14,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		"NoteOff",
 		0x81,
 		1,
-		types.Note{
+		Note{
 			Value: 49,
 			Name:  "C♯3",
 			Alias: "C♯3",
@@ -49,7 +48,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		"NoteOff",
 		0x81,
 		1,
-		types.Note{
+		Note{
 			Value: 49,
 			Name:  "D♭3",
 			Alias: "D♭3",

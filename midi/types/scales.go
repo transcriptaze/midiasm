@@ -29,16 +29,26 @@ func (n Note) String() string {
 
 func (s Scale) Transpose(steps int) Scale {
 	notes := make([]Note, len(s.Notes))
-
-	// fmt.Printf(">>>>>>>>> SCALE: %+v\n", s.Notes)
-
 	for ix, n := range s.Notes {
 		notes[ix] = transpose(n, steps)
 	}
 
+	// fmt.Printf(">>>>>>>>> SCALE: %+v\n", s.Notes)
 	// fmt.Printf(">>>>>>>>> NOTES: %+v\n", notes)
+
+	var scales []Scale
+
+	switch s.Type {
+	case Major:
+		scales = MAJOR_SCALES
+	case Minor:
+		scales = MINOR_SCALES
+	default:
+		return s
+	}
+
 loop:
-	for _, scale := range MAJOR_SCALES {
+	for _, scale := range scales {
 		for ix, note := range notes {
 			m := scale.Notes[ix]
 
@@ -117,14 +127,15 @@ var MAJOR_SCALES = []Scale{
 }
 
 var MINOR_SCALES = []Scale{
+	A_MINOR,
+	E_MINOR,
+	B_MINOR,
+
 	A_SHARP_MINOR,
 	D_SHARP_MINOR,
 	G_SHARP_MINOR,
 	C_SHARP_MINOR,
 	F_SHARP_MINOR,
-	B_MINOR,
-	E_MINOR,
-	A_MINOR,
 	D_MINOR,
 	G_MINOR,
 	C_MINOR,
@@ -155,6 +166,8 @@ var B_FLAT = Note{Name: `B♭`, Ord: 10}
 var B = Note{Name: `B`, Ord: 11}
 var B_SHARP = Note{Name: `B♯`, Ord: 0}
 var C_FLAT = Note{Name: `C♭`, Ord: 11}
+
+// Major scales
 
 var C_MAJOR = Scale{
 	Name:        `C major`,
@@ -261,25 +274,34 @@ var C_FLAT_MAJOR = Scale{
 	Notes:       []Note{C_FLAT, D_FLAT, E_FLAT, F_FLAT, G_FLAT, A_FLAT, B_FLAT},
 }
 
-var A_SHARP_MINOR = Scale{
-	Name:        `A♯ minor`,
-	Accidentals: 7,
+// Minor scales
+
+var A_MINOR = Scale{
+	Name:        `A minor`,
+	Accidentals: 0,
 	Type:        Minor,
-	Notes:       []Note{C_SHARP, D_SHARP, E_SHARP, F_SHARP, G_SHARP, A_SHARP, B_SHARP},
+	Notes:       []Note{A, B, C, D, E, F, G},
 }
 
-var D_SHARP_MINOR = Scale{
-	Name:        `D♯ minor`,
-	Accidentals: 6,
+var E_MINOR = Scale{
+	Name:        `E minor`,
+	Accidentals: 1,
 	Type:        Minor,
-	Notes:       []Note{C_SHARP, D_SHARP, E_SHARP, F_SHARP, G_SHARP, A_SHARP, B},
+	Notes:       []Note{E, F_SHARP, G, A, B, C, D},
 }
 
-var G_SHARP_MINOR = Scale{
-	Name:        `G♯ minor`,
-	Accidentals: 5,
+var B_MINOR = Scale{
+	Name:        `B minor`,
+	Accidentals: 2,
 	Type:        Minor,
-	Notes:       []Note{C_SHARP, D_SHARP, E, F_SHARP, G_SHARP, A_SHARP, B},
+	Notes:       []Note{B, C_SHARP, D, E, F_SHARP, G, A},
+}
+
+var F_SHARP_MINOR = Scale{
+	Name:        `F♯ minor`,
+	Accidentals: 3,
+	Type:        Minor,
+	Notes:       []Note{F_SHARP, G_SHARP, A, B, C_SHARP, D, E},
 }
 
 var C_SHARP_MINOR = Scale{
@@ -289,46 +311,39 @@ var C_SHARP_MINOR = Scale{
 	Notes:       []Note{C_SHARP, D_SHARP, E, F_SHARP, G_SHARP, A, B},
 }
 
-var F_SHARP_MINOR = Scale{
-	Name:        `F♯ minor`,
-	Accidentals: 3,
+var G_SHARP_MINOR = Scale{
+	Name:        `G♯ minor`,
+	Accidentals: 5,
 	Type:        Minor,
-	Notes:       []Note{C_SHARP, D, E, F_SHARP, G_SHARP, A, B},
+	Notes:       []Note{G_SHARP, A_SHARP, B, C_SHARP, D_SHARP, E, F_SHARP},
 }
 
-var B_MINOR = Scale{
-	Name:        `B minor`,
-	Accidentals: 2,
+var D_SHARP_MINOR = Scale{
+	Name:        `D♯ minor`,
+	Accidentals: 6,
 	Type:        Minor,
-	Notes:       []Note{C_SHARP, D, E, F_SHARP, G, A, B},
+	Notes:       []Note{D_SHARP, E_SHARP, F_SHARP, G_SHARP, A_SHARP, B, C_SHARP},
 }
 
-var E_MINOR = Scale{
-	Name:        `E minor`,
-	Accidentals: 1,
+var A_SHARP_MINOR = Scale{
+	Name:        `A♯ minor`,
+	Accidentals: 7,
 	Type:        Minor,
-	Notes:       []Note{C, D, E, F_SHARP, G, A, B},
-}
-
-var A_MINOR = Scale{
-	Name:        `A minor`,
-	Accidentals: 0,
-	Type:        Minor,
-	Notes:       []Note{C, D, E, F, G, A, B},
+	Notes:       []Note{A_SHARP, B_SHARP, C_SHARP, D_SHARP, E_SHARP, F_SHARP, G_SHARP},
 }
 
 var D_MINOR = Scale{
 	Name:        `D minor`,
 	Accidentals: -1,
 	Type:        Minor,
-	Notes:       []Note{C, D, E, F, G, A, B_FLAT},
+	Notes:       []Note{D, E, F, G, A, B_FLAT, C},
 }
 
 var G_MINOR = Scale{
 	Name:        `G minor`,
 	Accidentals: -2,
 	Type:        Minor,
-	Notes:       []Note{C, D, E_FLAT, F, G, A, B_FLAT},
+	Notes:       []Note{G, A, B_FLAT, C, D, E_FLAT, F},
 }
 
 var C_MINOR = Scale{
@@ -342,7 +357,7 @@ var F_MINOR = Scale{
 	Name:        `F minor`,
 	Accidentals: -4,
 	Type:        Minor,
-	Notes:       []Note{C, D_FLAT, E_FLAT, F, G, A_FLAT, B_FLAT},
+	Notes:       []Note{F, G, A_FLAT, B_FLAT, C, D_FLAT, E_FLAT},
 }
 
 var B_FLAT_MINOR = Scale{
