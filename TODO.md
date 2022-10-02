@@ -1,14 +1,25 @@
 ## v0.1
 
-- [ ] `help`
 - [x] `version`
+- [x] Redo logging
+- [x] `help`
+      - [ ] --debug
+      - [ ] --verbose
+      - [ ] --C4
+            
+- [ ] _help <command>_
+      - [ ] disassemble
+      - [ ] notes
+      - [ ] export
+      - [ ] click
+      - [ ] transpose
+
 - [ ] Package for release
 - [ ] Document custom templates
 
 - [ ] 'transpose' command
       - [ ] Transpose while decoding - otherwise lose track of stuff 
 
-- [x] Redo logging
 - [ ] Scales
       - [x] Transpose major keys
       - [x] Transpose minor keys

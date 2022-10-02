@@ -9,14 +9,17 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-var cli = map[string]Command{
-	"disassemble": &DISASSEMBLE,
-	"notes":       &NOTES,
-	"click":       &CLICK,
-	"export":      &EXPORT,
-	"transpose":   &TRANSPOSE,
-	"help":        &HELP,
-	"version":     &VERSION,
+var cli = []struct {
+	cmd     string
+	command Command
+}{
+	{"disassemble", &DISASSEMBLE},
+	{"notes", &NOTES},
+	{"click", &CLICK},
+	{"export", &EXPORT},
+	{"transpose", &TRANSPOSE},
+	{"help", &HELP},
+	{"version", &VERSION},
 }
 
 const version = "v0.1.0"
@@ -70,19 +73,21 @@ func main() {
 }
 
 func parse() (Command, error) {
-	cmd := &DISASSEMBLE
 	if len(os.Args) > 1 {
-		c, ok := cli[os.Args[1]]
-		if ok {
-			flagset := c.flagset()
-			if err := flagset.Parse(os.Args[2:]); err != nil {
-				return cmd, err
+		for _, c := range cli {
+			if c.cmd == os.Args[1] {
+				cmd := c.command
+				flagset := cmd.flagset()
+				if err := flagset.Parse(os.Args[2:]); err != nil {
+					return cmd, err
+				} else {
+					return cmd, nil
+				}
 			}
-
-			return c, nil
 		}
 	}
 
+	cmd := &DISASSEMBLE
 	flagset := cmd.flagset()
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, err

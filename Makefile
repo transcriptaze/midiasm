@@ -37,7 +37,8 @@ build-all: build test
 
 debug: build
 # 	go test -v ./midi/types
-	go test -v ./midi -run TestUnmarshalNoteAlias
+# 	go test -v ./midi -run TestUnmarshalNoteAlias
+	$(CMD)  examples/example-01.mid
 
 help: build
 	$(CMD) help
