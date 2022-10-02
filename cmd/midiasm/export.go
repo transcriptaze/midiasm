@@ -7,7 +7,6 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/eventlog"
-	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/export"
 )
 
@@ -16,11 +15,7 @@ type Export struct {
 	out string
 }
 
-var EXPORT = Export{
-	command: command{
-		middleC: types.C3,
-	},
-}
+var EXPORT = Export{}
 
 func (x *Export) flagset() *flag.FlagSet {
 	flagset := x.command.flagset("export")

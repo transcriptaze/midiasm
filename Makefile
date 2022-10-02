@@ -38,9 +38,20 @@ debug: build
 # 	go test -v ./midi/types
 	go test -v ./midi -run TestUnmarshalNoteAlias
 
+disassemble: build
+	$(CMD) --debug --verbose      examples/example-01.mid
+	$(CMD) --debug --verbose --C4 examples/example-01.mid
+	$(CMD) disassemble --debug --verbose --out tmp/example.txt examples/example-01.mid
+	cat tmp/example.txt
+
+notes: build
+	$(CMD) notes --debug --verbose --transpose +5 --out tmp/example.notes examples/example-01.mid
+	cat tmp/example.notes
+
 example: build
 	mkdir -p tmp
 	rm -f tmp/example.*
+	$(CMD)       --debug --verbose --out tmp/example.txt examples/example-01.mid
 	$(CMD)       --debug --verbose --out tmp/example.txt examples/example-01.mid
 	$(CMD) notes --debug --verbose --out tmp/example.notes examples/example-01.mid
 	cat tmp/example.txt
@@ -52,6 +63,7 @@ split: build
 	cat tmp/example-01.MThd
 	cat tmp/example-01-0.MTrk
 	cat tmp/example-01-1.MTrk
+
 
 entangled: build
 	$(CMD)       examples/entangled.mid
@@ -72,10 +84,6 @@ export: build
 	$(CMD) export --debug examples/reference-01.mid
 
 transpose: build
-	rm -f ./tmp/greensleeves+12.mid
-# 	$(CMD)           --debug --verbose examples/greensleeves.mid
-	$(CMD) transpose --debug --transpose +1 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
-# 	$(CMD)           --debug --verbose ./tmp/greensleeves+12.mid 
-# 	diff examples/greensleeves.mid ./tmp/greensleeves+12.mid 
+	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 
 

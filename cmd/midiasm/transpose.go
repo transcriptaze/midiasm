@@ -7,27 +7,22 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/eventlog"
-	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/transpose"
 )
 
 type Transpose struct {
 	command
 	out       string
-	transpose int
+	semitones int
 }
 
-var TRANSPOSE = Transpose{
-	command: command{
-		middleC: types.C3,
-	},
-}
+var TRANSPOSE = Transpose{}
 
 func (t *Transpose) flagset() *flag.FlagSet {
 	flagset := t.command.flagset("transpose")
 
 	flagset.StringVar(&t.out, "out", "", "Output file path")
-	flagset.IntVar(&t.transpose, "transpose", 0, "Transpose notes up or down")
+	flagset.IntVar(&t.semitones, "semitones", 0, "Number of semitones to transpose notes (+ve is up, -ve is down")
 
 	return flagset
 }
@@ -56,7 +51,7 @@ func (t Transpose) Execute(filename string) error {
 func (t Transpose) execute(smf *midi.SMF) error {
 	op := transpose.Transpose{}
 
-	transposed, err := op.Execute(smf, t.transpose)
+	transposed, err := op.Execute(smf, t.semitones)
 	if err != nil {
 		return err
 	}

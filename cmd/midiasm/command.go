@@ -20,7 +20,7 @@ type Command interface {
 
 type command struct {
 	conf    string
-	middleC types.MiddleC
+	c4      bool
 	verbose bool
 	debug   bool
 }
@@ -30,13 +30,17 @@ func (c command) config() string {
 }
 
 func (c command) MiddleC() types.MiddleC {
-	return c.middleC
+	if c.c4 {
+		return types.C4
+	}
+
+	return types.C3
 }
 
 func (c *command) flagset(name string) *flag.FlagSet {
 	flagset := flag.NewFlagSet(name, flag.ExitOnError)
 
-	flagset.Var(&c.middleC, "middle-c", "Middle C convention (C3 or C4). Defaults to C3")
+	flagset.BoolVar(&c.c4, "C4", c.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
 	flagset.BoolVar(&c.verbose, "verbose", false, "Enable progress information")
 	flagset.BoolVar(&c.debug, "debug", false, "Enable debugging information")
 

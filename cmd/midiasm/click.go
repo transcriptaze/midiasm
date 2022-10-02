@@ -7,7 +7,6 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/eventlog"
-	"github.com/transcriptaze/midiasm/midi/types"
 	"github.com/transcriptaze/midiasm/ops/click"
 )
 
@@ -16,11 +15,7 @@ type Click struct {
 	out string
 }
 
-var CLICK = Click{
-	command: command{
-		middleC: types.C3,
-	},
-}
+var CLICK = Click{}
 
 func (c *Click) flagset() *flag.FlagSet {
 	flagset := c.command.flagset("click")

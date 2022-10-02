@@ -1,6 +1,8 @@
-## v0.0
+## v0.1
 
-- [ ] README
+- [x] README
+- [ ] github workflow
+- [ ] Package for release
 
 - [ ] 'transpose' command
       - [x] NoteOn
@@ -19,8 +21,6 @@
             - (?) Where best is least number of accidentals
             - (?) Or just a lookup table
 
-- [ ] github workflow
-- [ ] Package for release
 - [ ] Coloured output (Charm/BubbleTea ?)
 - [ ] Move TimeSignature in reference-01.mid to track 0
 

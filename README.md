@@ -76,7 +76,7 @@ Disassemble a MIDI file and displays the tracks in a human readable format.
 
 Command line:
 
-` midiasm [--debug] [--verbose] [--split] [--out <file>] <MIDI file>`
+` midiasm [--debug] [--verbose] [--C4] [--split] [--out <file>] <MIDI file>`
 
 ```
   --out <file>  Writes the disassembly to a file. Default is to write to _stdout_.
@@ -84,54 +84,106 @@ Command line:
 
   Options:
 
+  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
   --debug    Displays internal information while processing a MIDI file. Defaults to false
   --verbose  Enables 'verbose' logging. Defaults to false
 
   Example:
 
-  uhppoted-codegen generate --models bindings/.models --templates bindings/rust --out generated/rust
+  midiasm --debug --verbose --out one-time.txt one-time.mid
+```
+
+### `notes`
+
+Extracts the _NoteOn_ and _NoteOff_ events to generate a list of notes with start times and durations.
+
+Command line:
+
+` midiasm notes [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
+
+```
+  --out <file>  Writes the notes to a file. Default is to write to _stdout_.
+
+  Options:
+
+  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
+
+  Example:
+
+  midiasm notes --debug --verbose --out one-time.notes one-time.mid
 ```
 
 ### `export`
 
-Generates a _models.json_ file that represents the internal UHPPOTE models used to generate the functions,
-requests and responses.
+Extracts the MIDI information as JSON for use with other tools (e.g. _jq_).
 
 Command line:
 
-` uhppoted-codegen export [--out <file>]`
+` midiasm export [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
 
 ```
-  --out <file> File for models JSON. Defaults to models.json.
+  --out <file>     Writes the JSON to a file. Default is to write to _stdout_.
+  --json           Formats the output as JSON - the default is human readable text.
+  --transpose <N>  Transposes the notes up or down by N semitones.
+
+  Options:
+
+  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
 
   Example:
   
-  uhppoted-codegen export --out my-models.json
+  midiasm notes --debug --verbose --out one-time.json one-time.mid
 ```
 
 
+### `click`
 
+Extracts the _beats_ from the MIDI file to use for creating a click track.
 
+Command line:
 
+` midiasm click [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
 
+```
+  --out <file>  Writes the click track to a file. Default is to write to _stdout_.
 
+  Options:
 
+  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
 
+  Example:
+  
+  midiasm click --debug --verbose --out one-time.click one-time.mid
+```
 
+### `transpose`
 
+Transposes the key of the notes (and key signature) and writes it back as MIDI file.
 
+Command line:
 
+` midiasm transpose [--debug] [--verbose] [--C4] --semitones <steps> --out <file> <MIDI file>`
 
+```
+  --semitones <N>  Number of semitones to transpose up or down.. Defaults to 0.
+  --out <file>     Writes the click track to a file. Default is to write to _stdout_.
 
+  Options:
 
+  --C4       Uses _C4_ as _middle C_ (Yamaha convention). Defaults to _C3_.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
 
-## Installation
-
-### Building from source
-
-#### Dependencies
-
-## midiasm
+  Example:
+  
+  midiasm transpose --debug --verbose --semitones +5 --out one-time+5.mid one-time.mid
+```
 
 ## References
 
