@@ -16,7 +16,6 @@ type Disassemble struct {
 	out       string
 	split     bool
 	templates string
-	flags     *flag.FlagSet
 }
 
 var DISASSEMBLE = Disassemble{
@@ -25,16 +24,37 @@ var DISASSEMBLE = Disassemble{
 	},
 }
 
-func (p *Disassemble) flagset() *flag.FlagSet {
-	flagset := p.command.flagset("disassemble")
+func (d *Disassemble) Flagset() *flag.FlagSet {
+	flagset := d.command.flagset("disassemble")
 
-	flagset.StringVar(&p.out, "out", "", "Output file path (or directory for split files)")
-	flagset.BoolVar(&p.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
-	flagset.StringVar(&p.templates, "templates", "", "Loads the formatting templates from a file")
+	flagset.StringVar(&d.out, "out", "", "Output file path (or directory for split files)")
+	flagset.BoolVar(&d.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
+	flagset.StringVar(&d.templates, "templates", "", "Loads the formatting templates from a file")
 
-	p.flags = flagset
+	d.flags = flagset
 
 	return flagset
+}
+
+func (d Disassemble) Help() {
+	fmt.Println()
+	fmt.Println("  Disassembles a MIDI file and displays the tracks in a human readable format.")
+	fmt.Println()
+	fmt.Println("    midiasm [--debug] [--verbose] [--C4] [--split] [--out <file>] <MIDI file>")
+	fmt.Println()
+	fmt.Println("      --out <file>  Writes the disassembly to a file. Default is to write to stdout.")
+	fmt.Println("      --split       Writes each track to a separate file. Default is `false`.")
+	fmt.Println()
+	fmt.Println("    Options:")
+	fmt.Println()
+	fmt.Println("      --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.")
+	fmt.Println("      --debug    Displays internal information while processing a MIDI file. Defaults to false")
+	fmt.Println("      --verbose  Enables 'verbose' logging. Defaults to false")
+	fmt.Println()
+	fmt.Println("    Example:")
+	fmt.Println()
+	fmt.Println("      midiasm --debug --verbose --out one-time.txt one-time.mid")
+	fmt.Println()
 }
 
 func (p Disassemble) Execute() error {

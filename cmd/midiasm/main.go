@@ -77,7 +77,7 @@ func parse() (Command, error) {
 		for _, c := range cli {
 			if c.cmd == os.Args[1] {
 				cmd := c.command
-				flagset := cmd.flagset()
+				flagset := cmd.Flagset()
 				if err := flagset.Parse(os.Args[2:]); err != nil {
 					return cmd, err
 				} else {
@@ -88,7 +88,7 @@ func parse() (Command, error) {
 	}
 
 	cmd := &DISASSEMBLE
-	flagset := cmd.flagset()
+	flagset := cmd.Flagset()
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, err
 	}

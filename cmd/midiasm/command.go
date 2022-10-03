@@ -12,13 +12,15 @@ import (
 )
 
 type Command interface {
-	flagset() *flag.FlagSet
-	config() string
+	Flagset() *flag.FlagSet
 	Execute() error
+	Help()
 
 	MiddleC() types.MiddleC
 	Debug() bool
 	Verbose() bool
+
+	config() string
 }
 
 type command struct {
@@ -26,6 +28,7 @@ type command struct {
 	c4      bool
 	verbose bool
 	debug   bool
+	flags   *flag.FlagSet
 }
 
 func (c command) config() string {

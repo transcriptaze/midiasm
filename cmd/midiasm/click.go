@@ -17,7 +17,7 @@ type Click struct {
 
 var CLICK = Click{}
 
-func (c *Click) flagset() *flag.FlagSet {
+func (c *Click) Flagset() *flag.FlagSet {
 	flagset := c.command.flagset("click")
 
 	flagset.StringVar(&c.out, "out", "", "Output file path")
@@ -25,6 +25,26 @@ func (c *Click) flagset() *flag.FlagSet {
 	c.flags = flagset
 
 	return flagset
+}
+
+func (c Click) Help() {
+	fmt.Println()
+	fmt.Println("  Extracts the _beats_ from the MIDI file in a format that can be used to create a click track.")
+	fmt.Println()
+	fmt.Println("    midiasm click [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`")
+	fmt.Println()
+	fmt.Println("      --out <file>  Writes the click track to a file. Default is to write to stdout.")
+	fmt.Println()
+	fmt.Println("    Options:")
+	fmt.Println()
+	fmt.Println("      --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.")
+	fmt.Println("      --debug    Displays internal information while processing a MIDI file. Defaults to false")
+	fmt.Println("      --verbose  Enables 'verbose' logging. Defaults to false")
+	fmt.Println()
+	fmt.Println("    Example:")
+	fmt.Println()
+	fmt.Println("      midiasm click --debug --verbose --out one-time.click one-time.mid")
+	fmt.Println()
 }
 
 func (c Click) Execute() error {

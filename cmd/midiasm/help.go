@@ -11,11 +11,31 @@ type Help struct {
 
 var HELP = Help{}
 
-func (t *Help) flagset() *flag.FlagSet {
-	return flag.NewFlagSet("help", flag.ExitOnError)
+func (h *Help) Flagset() *flag.FlagSet {
+	flagset := flag.NewFlagSet("help", flag.ExitOnError)
+
+	h.flags = flagset
+
+	return flagset
 }
 
-func (t Help) Execute() error {
+func (h Help) Help() {
+}
+
+func (h Help) Execute() error {
+	for _, c := range cli {
+		if c.cmd == h.flags.Arg(0) {
+			c.command.Help()
+			return nil
+		}
+	}
+
+	h.help()
+
+	return nil
+}
+
+func (h Help) help() {
 	fmt.Println()
 	fmt.Println("  Usage: midiasm <command> <options>")
 	fmt.Println()
@@ -30,6 +50,4 @@ func (t Help) Execute() error {
 	fmt.Println()
 	fmt.Println("  Use 'midiasm help <command>' for command specific information.")
 	fmt.Println()
-
-	return nil
 }

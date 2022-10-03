@@ -11,11 +11,15 @@ type Version struct {
 
 var VERSION = Version{}
 
-func (t *Version) flagset() *flag.FlagSet {
+func (v *Version) Flagset() *flag.FlagSet {
 	return flag.NewFlagSet("version", flag.ExitOnError)
 }
 
-func (t Version) Execute() error {
+func (v Version) Help() {
+}
+
+func (v Version) Execute() error {
 	fmt.Printf("midiasm %v\n", version)
+
 	return nil
 }

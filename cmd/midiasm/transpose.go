@@ -18,7 +18,7 @@ type Transpose struct {
 
 var TRANSPOSE = Transpose{}
 
-func (t *Transpose) flagset() *flag.FlagSet {
+func (t *Transpose) Flagset() *flag.FlagSet {
 	flagset := t.command.flagset("transpose")
 
 	flagset.StringVar(&t.out, "out", "", "Output file path")
@@ -27,6 +27,27 @@ func (t *Transpose) flagset() *flag.FlagSet {
 	t.flags = flagset
 
 	return flagset
+}
+
+func (t Transpose) Help() {
+	fmt.Println()
+	fmt.Println("  Transposes the key of the notes (and key signature) and writes it back as MIDI file.")
+	fmt.Println()
+	fmt.Println("    midiasm transpose [--debug] [--verbose] [--C4] --semitones <steps> --out <file> <MIDI file>")
+	fmt.Println()
+	fmt.Println("      --semitones <N>  Number of semitones to transpose up or down. Defaults to 0.")
+	fmt.Println("      --out <file>     (required) Destination file for the transposed MIDI. ")
+	fmt.Println()
+	fmt.Println("    Options:")
+	fmt.Println()
+	fmt.Println("      --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.")
+	fmt.Println("      --debug    Displays internal information while processing a MIDI file. Defaults to false")
+	fmt.Println("      --verbose  Enables 'verbose' logging. Defaults to false")
+	fmt.Println()
+	fmt.Println("    Example:")
+	fmt.Println()
+	fmt.Println("      midiasm transpose --debug --verbose --semitones +5 --out one-time+5.mid one-time.mid")
+	fmt.Println()
 }
 
 func (t Transpose) Execute() error {

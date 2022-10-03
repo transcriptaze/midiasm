@@ -19,7 +19,7 @@ type Notes struct {
 
 var NOTES = Notes{}
 
-func (n *Notes) flagset() *flag.FlagSet {
+func (n *Notes) Flagset() *flag.FlagSet {
 	flagset := n.command.flagset("notes")
 
 	flagset.StringVar(&n.out, "out", "", "Output file path")
@@ -29,6 +29,26 @@ func (n *Notes) flagset() *flag.FlagSet {
 	n.flags = flagset
 
 	return flagset
+}
+
+func (n Notes) Help() {
+	fmt.Println()
+	fmt.Println("  Extracts the NoteOn and NoteOff events to generate a list of notes with start times and durations.")
+	fmt.Println()
+	fmt.Println("    midiasm notes [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>")
+	fmt.Println()
+	fmt.Println("      --out <file>  Writes the notes to a file. Default is to write to stdout.")
+	fmt.Println()
+	fmt.Println("    Options:")
+	fmt.Println()
+	fmt.Println("      --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.")
+	fmt.Println("      --debug    Displays internal information while processing a MIDI file. Defaults to false")
+	fmt.Println("      --verbose  Enables 'verbose' logging. Defaults to false")
+	fmt.Println()
+	fmt.Println("    Example:")
+	fmt.Println()
+	fmt.Println("      midiasm notes --debug --verbose --out one-time.notes one-time.mid")
+	fmt.Println()
 }
 
 func (n Notes) Execute() error {

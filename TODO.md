@@ -3,16 +3,16 @@
 - [x] `version`
 - [x] Redo logging
 - [x] `help`
-      - [ ] --debug
-      - [ ] --verbose
-      - [ ] --C4
+      - [x] --debug
+      - [x] --verbose
+      - [x] --C4
             
-- [ ] _help <command>_
-      - [ ] disassemble
-      - [ ] notes
-      - [ ] export
-      - [ ] click
-      - [ ] transpose
+- [x] _help command_
+      - [x] disassemble
+      - [x] notes
+      - [x] export
+      - [x] click
+      - [x] transpose
 
 - [ ] Package for release
 - [ ] Document custom templates

@@ -13,12 +13,15 @@ type Assemble struct {
 	out string
 }
 
-func (a *Assemble) flagset() *flag.FlagSet {
+func (a *Assemble) Flagset() *flag.FlagSet {
 	flagset := a.command.flagset("assemble")
 
 	flagset.StringVar(&a.out, "out", "", "Output file path")
 
 	return flagset
+}
+
+func (a Assemble) Help() {
 }
 
 func (a Assemble) Execute(smf *midi.SMF) {

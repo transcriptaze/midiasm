@@ -74,7 +74,7 @@ Defaults to `disassemble` if the command is not provided.
 
 ### `disassemble`
 
-Disassemble a MIDI file and displays the tracks in a human readable format.
+Disassembles a MIDI file and displays the tracks in a human readable format.
 
 Command line:
 
@@ -144,7 +144,7 @@ Command line:
 
 ### `click`
 
-Extracts the _beats_ from the MIDI file to use for creating a click track.
+Extracts the _beats_ from the MIDI file in a format that can be used to create a click track.
 
 Command line:
 

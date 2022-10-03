@@ -42,6 +42,11 @@ debug: build
 
 help: build
 	$(CMD) help
+	$(CMD) help disassemble
+	$(CMD) help export
+	$(CMD) help notes
+	$(CMD) help click
+	$(CMD) help transpose
 
 version: build
 	$(CMD) version
