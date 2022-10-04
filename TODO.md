@@ -1,19 +1,5 @@
 ## v0.1
 
-- [x] `version`
-- [x] Redo logging
-- [x] `help`
-      - [x] --debug
-      - [x] --verbose
-      - [x] --C4
-            
-- [x] _help command_
-      - [x] disassemble
-      - [x] notes
-      - [x] export
-      - [x] click
-      - [x] transpose
-
 - [ ] Package for release
 - [ ] Document custom templates
 
@@ -23,12 +9,8 @@
 - [ ] Scales
       - [x] Transpose major keys
       - [x] Transpose minor keys
-      - [ ] Unit tests for other major keys
-      - [ ] Unit tests for other minor keys
-      - [ ] Transpose enharmonic keys
-            - (?) Get all candidates and pick the best
-            - (?) Where best is least number of accidentals
-            - (?) Or just a lookup table
+      - [x] Unit tests for enharmonic keys
+      - [x] Transpose enharmonic keys
 
 - [ ] Coloured output (Charm/BubbleTea ?)
 - [ ] Move TimeSignature in reference-01.mid to track 0

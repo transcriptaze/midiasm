@@ -36,9 +36,7 @@ build-all: build test
 	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
 
 debug: build
-# 	go test -v ./midi/types
-# 	go test -v ./midi -run TestUnmarshalNoteAlias
-	$(CMD)  examples/example-01.mid
+	go test -v ./midi/types -run TestTransposeEnharmonicKeys
 
 help: build
 	$(CMD) help
