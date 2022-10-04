@@ -13,7 +13,6 @@ text or JSON.
 
 *In development*
 
-
 | *Version* | *Description*                                                                             |
 | --------- | ----------------------------------------------------------------------------------------- |
 |           |                                                                                           |
@@ -50,11 +49,7 @@ The above commands build the `midiasm` executable to the `bin` directory.
 
 #### Dependencies
 
-| *Dependency*                                                            | *Description*                        |
-| ----------------------------------------------------------------------- | -------------------------------------|
-|                                                                         |                                      |
-|                                                                         |                                      |
-
+_None_
 
 ## midiasm
 
@@ -95,6 +90,31 @@ Command line:
   midiasm --debug --verbose --out one-time.txt one-time.mid
 ```
 
+### `export`
+
+Extracts the MIDI information as JSON for use with other tools (e.g. _jq_).
+
+Command line:
+
+` midiasm export [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
+
+```
+  --out <file>     Writes the JSON to a file. Default is to write to stdout.
+  --json           Formats the output as JSON - the default is human readable text.
+  --transpose <N>  Transposes the notes up or down by N semitones.
+
+  Options:
+
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
+
+  Example:
+
+  midiasm notes --debug --verbose --out one-time.json one-time.mid
+```
+
+
 ### `notes`
 
 Extracts the _NoteOn_ and _NoteOff_ events to generate a list of notes with start times and durations.
@@ -116,31 +136,6 @@ Command line:
 
   midiasm notes --debug --verbose --out one-time.notes one-time.mid
 ```
-
-### `export`
-
-Extracts the MIDI information as JSON for use with other tools (e.g. _jq_).
-
-Command line:
-
-` midiasm export [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
-
-```
-  --out <file>     Writes the JSON to a file. Default is to write to stdout.
-  --json           Formats the output as JSON - the default is human readable text.
-  --transpose <N>  Transposes the notes up or down by N semitones.
-
-  Options:
-
-  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
-  --debug    Displays internal information while processing a MIDI file. Defaults to false
-  --verbose  Enables 'verbose' logging. Defaults to false
-
-  Example:
-  
-  midiasm notes --debug --verbose --out one-time.json one-time.mid
-```
-
 
 ### `click`
 
