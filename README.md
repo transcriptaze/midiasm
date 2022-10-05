@@ -15,7 +15,7 @@ text or JSON.
 
 | *Version* | *Description*                                                                             |
 | --------- | ----------------------------------------------------------------------------------------- |
-|           |                                                                                           |
+| v0.1.0    | Initial release with support for dissassemble, export, notes, click and transpose         |
 
 ## Installation
 
