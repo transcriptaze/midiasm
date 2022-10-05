@@ -59,11 +59,11 @@ Supported commands:
 
 - `help`
 - `version`
-- `disassemble`
-- `notes`
-- `export`
-- `click`
-- `transpose`
+- [`disassemble`](#disassemble)
+- [`export`](#export)
+- [`notes`](#notes)
+- [`click`](#click)
+- [`transpose`](#transpose)
 
 Defaults to `disassemble` if the command is not provided.
 

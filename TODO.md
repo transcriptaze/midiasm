@@ -1,21 +1,11 @@
 ## v0.1
 
-- [ ] Package for release
-- [ ] Document custom templates
-
-- [ ] 'transpose' command
-      - [ ] Transpose while decoding - otherwise lose track of stuff 
-
-- [ ] Scales
-      - [x] Transpose major keys
-      - [x] Transpose minor keys
-      - [x] Unit tests for enharmonic keys
-      - [x] Transpose enharmonic keys
-
-- [ ] Coloured output (Charm/BubbleTea ?)
-- [ ] Move TimeSignature in reference-01.mid to track 0
+- [x] Package for release
 
 ### Assembler
+
+### Transpose
+      - [ ] Transpose while decoding - otherwise lose track of stuff 
 
 ### Click Track
 
@@ -30,7 +20,10 @@
 
 ### Disassembler
 
+- [ ] Document custom templates
+- [ ] Move TimeSignature in reference-01.mid to track 0
 - [ ] Format 2
+- [ ] Coloured output (Charm/BubbleTea ?)
 - [ ] Add outstanding events to TestDecode
 - (?) Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
 - [ ] Reference files
@@ -43,8 +36,7 @@
 
 ### Notes 
 
-- [x] Transpose
-- [ ] --compact format (JSON)
+- [ ] --compact format (JSON): puts notes on one line
 - [ ] Configurable formats
 - [ ] Check loss of precision
 - [ ] Unit tests for tempo map to time conversion
@@ -52,15 +44,6 @@
 - [ ] Format 0
 - [ ] Format 2
 - [ ] NoteOn with 0 velocity -> NoteOff
-
-### MIDI events
-
-### META events
-
-- [x] TimeSignature: [Unicode fractions](http://unicodefractions.com)
-- [x] KeySignature:  [Unicode symbols](https://unicode-table.com/en/blocks/musical-symbols/)
-
-### SysEx events
 
 ## TODO
 

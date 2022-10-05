@@ -28,12 +28,17 @@ coverage: build
 	go test -cover ./...
 
 build-all: build test
-	mkdir -p dist/$(DIST)/windows
-	mkdir -p dist/$(DIST)/darwin
-	mkdir -p dist/$(DIST)/linux
-	env GOOS=linux   GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/linux   ./...
-	env GOOS=darwin  GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/darwin  ./...
-	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/$(DIST)/windows ./...
+	mkdir -p dist/linux/$(DIST)
+	mkdir -p dist/darwin/$(DIST)
+	mkdir -p dist/windows/$(DIST)
+	env GOOS=linux   GOARCH=amd64 GOWORK=off go build -trimpath -o dist/linux/$(DIST)   ./...
+	env GOOS=darwin  GOARCH=amd64 GOWORK=off go build -trimpath -o dist/darwin/$(DIST)  ./...
+	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/windows/$(DIST) ./...
+
+release: build-all
+	tar --directory=dist/linux   --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz   $(DIST)
+	tar --directory=dist/darwin  --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin.tar.gz  $(DIST)
+	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
 	go test -v ./midi/types -run TestTransposeEnharmonicKeys
