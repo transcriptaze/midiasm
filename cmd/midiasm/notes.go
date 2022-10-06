@@ -17,7 +17,13 @@ type Notes struct {
 	flags     *flag.FlagSet
 }
 
-var NOTES = Notes{}
+var NOTES = Notes{
+	command: command{
+		c4:      false,
+		verbose: false,
+		debug:   false,
+	},
+}
 
 func (n *Notes) Flagset() *flag.FlagSet {
 	flagset := n.command.flagset("notes")

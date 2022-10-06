@@ -15,7 +15,13 @@ type Click struct {
 	flags *flag.FlagSet
 }
 
-var CLICK = Click{}
+var CLICK = Click{
+	command: command{
+		c4:      false,
+		verbose: false,
+		debug:   false,
+	},
+}
 
 func (c *Click) Flagset() *flag.FlagSet {
 	flagset := c.command.flagset("click")

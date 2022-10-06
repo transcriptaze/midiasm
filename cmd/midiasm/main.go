@@ -14,6 +14,7 @@ var cli = []struct {
 	command Command
 }{
 	{"disassemble", &DISASSEMBLE},
+	{"assemble", &ASSEMBLE},
 	{"notes", &NOTES},
 	{"click", &CLICK},
 	{"export", &EXPORT},

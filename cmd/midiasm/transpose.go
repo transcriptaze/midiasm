@@ -16,7 +16,13 @@ type Transpose struct {
 	flags     *flag.FlagSet
 }
 
-var TRANSPOSE = Transpose{}
+var TRANSPOSE = Transpose{
+	command: command{
+		c4:      false,
+		verbose: false,
+		debug:   false,
+	},
+}
 
 func (t *Transpose) Flagset() *flag.FlagSet {
 	flagset := t.command.flagset("transpose")

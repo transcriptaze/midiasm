@@ -1,8 +1,12 @@
-## v0.1
+# TODO
 
-- [x] Package for release
+- [ ] Optimise parsing
+- (?) SMF: TextMarshal/Unmarshal
+- (?) SMF: JsonMarshal/Unmarshal
 
 ### Assembler
+- [x] Command skeleton
+
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 

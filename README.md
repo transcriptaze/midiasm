@@ -60,6 +60,7 @@ Supported commands:
 - `help`
 - `version`
 - [`disassemble`](#disassemble)
+- [`assemble`](#assemble)
 - [`export`](#export)
 - [`notes`](#notes)
 - [`click`](#click)
@@ -88,6 +89,30 @@ Command line:
   Example:
 
   midiasm --debug --verbose --out one-time.txt one-time.mid
+```
+
+### `assemble`
+
+_IN DEVELOPMENT_
+
+Assembles a MIDI file from a text or JSON source.
+
+Command line:
+
+` midiasm assemble [--debug] [--verbose] [--C4] [--out <MIDI file>] <file>`
+
+```
+  --out <file>  Output MIDI file. Defaults to the input file with a .midi extension.
+
+  Options:
+
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
+
+  Example:
+
+  midiasm assemble --debug --verbose --out one-time.mid one-time.json
 ```
 
 ### `export`

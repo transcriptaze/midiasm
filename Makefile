@@ -46,6 +46,7 @@ debug: build
 help: build
 	$(CMD) help
 	$(CMD) help disassemble
+	$(CMD) help assemble
 	$(CMD) help export
 	$(CMD) help notes
 	$(CMD) help click
@@ -59,6 +60,9 @@ disassemble: build
 	$(CMD) --debug --verbose --C4 examples/example-01.mid
 	$(CMD) disassemble --debug --verbose --out tmp/example.txt examples/example-01.mid
 	cat tmp/example.txt
+
+assemble: build
+	$(CMD) assemble --debug --verbose --out tmp/example.mid examples/example.txt
 
 notes: build
 	$(CMD) notes --debug --verbose --transpose +5 --out tmp/example.notes examples/example-01.mid
@@ -101,5 +105,4 @@ export: build
 
 transpose: build
 	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
-
 

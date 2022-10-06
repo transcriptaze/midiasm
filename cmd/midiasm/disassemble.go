@@ -20,7 +20,9 @@ type Disassemble struct {
 
 var DISASSEMBLE = Disassemble{
 	command: command{
-		c4: false,
+		c4:      false,
+		verbose: false,
+		debug:   false,
 	},
 }
 

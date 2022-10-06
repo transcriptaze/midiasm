@@ -15,7 +15,13 @@ type Export struct {
 	flags *flag.FlagSet
 }
 
-var EXPORT = Export{}
+var EXPORT = Export{
+	command: command{
+		c4:      false,
+		verbose: false,
+		debug:   false,
+	},
+}
 
 func (x *Export) Flagset() *flag.FlagSet {
 	flagset := x.command.flagset("export")
