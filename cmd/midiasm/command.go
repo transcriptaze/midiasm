@@ -69,18 +69,13 @@ func (c *command) decode(filename string) (*midi.SMF, error) {
 
 	decoder := midifile.NewDecoder()
 
-	smf, err := decoder.Decode(bytes)
-	if err != nil {
+	if smf, err := decoder.Decode(bytes); err != nil {
 		return nil, err
-	}
-
-	if smf == nil {
+	} else if smf == nil {
 		return nil, fmt.Errorf("failed to decode MIDI file")
+	} else {
+		return smf, nil
 	}
-
-	smf.File = filename
-
-	return smf, nil
 }
 
 func (c *command) read(filename string) ([]byte, error) {

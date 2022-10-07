@@ -9,7 +9,6 @@ import (
 )
 
 type SMF struct {
-	File   string  `json:"-"s`
 	MThd   *MThd   `json:"header"`
 	Tracks []*MTrk `json:"tracks"`
 }

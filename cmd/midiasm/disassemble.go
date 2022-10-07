@@ -76,10 +76,6 @@ func (p Disassemble) Execute() error {
 		fmt.Fprintln(os.Stderr)
 	}
 
-	return p.execute(smf)
-}
-
-func (p Disassemble) execute(smf *midi.SMF) error {
 	op, err := disassemble.NewDisassemble()
 	if err != nil {
 		return err
@@ -97,8 +93,10 @@ func (p Disassemble) execute(smf *midi.SMF) error {
 		}
 	}
 
-	if p.split {
-		return p.separate(op, smf)
+	if p.split && p.out == "" {
+		return p.separate(op, smf, filename)
+	} else if p.split && p.out != "" {
+		return p.separate(op, smf, p.out)
 	} else {
 		return p.write(op, smf)
 	}
@@ -121,10 +119,10 @@ func (p Disassemble) write(op *disassemble.Disassemble, smf *midi.SMF) error {
 	return op.Print(smf, "document", out)
 }
 
-func (p Disassemble) separate(op *disassemble.Disassemble, smf *midi.SMF) error {
+func (p Disassemble) separate(op *disassemble.Disassemble, smf *midi.SMF, file string) error {
 	// Get base filename and Create out directory
-	base := strings.TrimSuffix(path.Base(smf.File), path.Ext(smf.File))
-	dir := path.Dir(smf.File)
+	base := strings.TrimSuffix(path.Base(file), path.Ext(file))
+	dir := path.Dir(file)
 
 	if p.out != "" {
 		dir = p.out

@@ -56,6 +56,7 @@ version: build
 	$(CMD) version
 
 disassemble: build
+	rm tmp/example.txt
 	$(CMD) --debug --verbose      examples/example-01.mid
 	$(CMD) --debug --verbose --C4 examples/example-01.mid
 	$(CMD) disassemble --debug --verbose --out tmp/example.txt examples/example-01.mid

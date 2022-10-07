@@ -51,12 +51,11 @@
 
 ## TODO
 
-- Take a look at [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
 - https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
 
 ### Other
 
-1.  Assembler
+1.  Tremolo/vibrato
 2.  TSV
 3.  Export to JSON
 4.  Export to S-expressions
@@ -75,3 +74,4 @@
 17. https://github.com/mido/mido
 18. [Janet](https://janet-lang.org)
 19. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)
+20. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
