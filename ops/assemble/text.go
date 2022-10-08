@@ -26,25 +26,20 @@ func (a TextAssembler) Assemble(source []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	mthd := midi.MThd{
-		Tag:    "MThd",
-		Length: 6,
-		// Format        : ,
-		Tracks: 2,
-		// Division      : ,
-		// PPQN          : ,
-		// SMPTETimeCode : ,
-		// SubFrames     : ,
-		// FPS           : ,
-		// DropFrame     : ,
-	}
+	tracks := make([]*midi.MTrk, 0)
 
-	tracks := make([]*midi.MTrk, mthd.Tracks)
+	mthd := midi.MThd{
+		Tag:      "MThd",
+		Length:   6,
+		Format:   1,
+		Tracks:   uint16(len(tracks)),
+		Division: 480,
+	}
 
 	smf := midi.SMF{
 		MThd:   &mthd,
 		Tracks: tracks,
 	}
 
-	return assemble(smf)
+	return smf.MarshalBinary()
 }

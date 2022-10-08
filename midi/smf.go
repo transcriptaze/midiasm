@@ -1,6 +1,7 @@
 package midi
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
@@ -11,6 +12,30 @@ import (
 type SMF struct {
 	MThd   *MThd   `json:"header"`
 	Tracks []*MTrk `json:"tracks"`
+}
+
+func (smf SMF) MarshalBinary() ([]byte, error) {
+	var b bytes.Buffer
+
+	if smf.MThd == nil {
+		return nil, fmt.Errorf("missing MThd chunk")
+	}
+
+	if mthd, err := smf.MThd.MarshalBinary(); err != nil {
+		return nil, err
+	} else if _, err := b.Write(mthd); err != nil {
+		return nil, err
+	}
+
+	for _, track := range smf.Tracks {
+		if mtrk, err := track.MarshalBinary(); err != nil {
+			return nil, err
+		} else if _, err := b.Write(mtrk); err != nil {
+			return nil, err
+		}
+	}
+
+	return b.Bytes(), nil
 }
 
 func (smf *SMF) Validate() []ValidationError {

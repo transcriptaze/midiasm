@@ -5,6 +5,33 @@ import (
 	"testing"
 )
 
+func TestMThdMarshal(t *testing.T) {
+	expected := []byte{
+		0x4d, 0x54, 0x68, 0x64, // MThd
+		0x00, 0x00, 0x00, 0x06, // length
+		0x00, 0x01, // format
+		0x00, 0x01, // tracks
+		0x01, 0xE0, // division
+	}
+
+	mthd := MThd{
+		Tag:      "MThd",
+		Length:   6,
+		Format:   1,
+		Tracks:   1,
+		Division: 480,
+	}
+
+	bytes, err := mthd.MarshalBinary()
+	if err != nil {
+		t.Fatalf("unexpected error (%v)", err)
+	}
+
+	if !reflect.DeepEqual(bytes, expected) {
+		t.Errorf("incorrectly marshalled\n   expected:%#v\n   got:     %#v", expected, bytes)
+	}
+}
+
 func TestMThdUnmarshal(t *testing.T) {
 	bytes := []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60}
 	expected := MThd{

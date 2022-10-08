@@ -26,6 +26,10 @@ type MTrk struct {
 	Context *context.Context
 }
 
+func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
+	return []byte{}, nil
+}
+
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	tag := string(data[0:4])
 	if tag != "MTrk" {

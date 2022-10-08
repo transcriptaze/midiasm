@@ -1,6 +1,7 @@
 package midi
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 
@@ -13,12 +14,40 @@ type MThd struct {
 	Format        uint16
 	Tracks        uint16
 	Division      uint16
-	PPQN          uint16
-	SMPTETimeCode bool
-	SubFrames     uint16
-	FPS           uint8
-	DropFrame     bool
-	Bytes         types.Hex `json:"-"`
+	PPQN          uint16    // TODO make getter/TextUnmarshal
+	SMPTETimeCode bool      // TODO make getter/TextUnmarshal
+	SubFrames     uint16    // TODO make getter/TextUnmarshal
+	FPS           uint8     // TODO make getter/TextUnmarshal
+	DropFrame     bool      // TODO make getter/TextUnmarshal
+	Bytes         types.Hex `json:"-"` // TODO make getter/TextUnmarshal
+}
+
+func (chunk MThd) MarshalBinary() (encoded []byte, err error) {
+	var b bytes.Buffer
+
+	if _, err = b.Write([]byte(chunk.Tag)); err != nil {
+		return
+	}
+
+	if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
+		return
+	}
+
+	if err = binary.Write(&b, binary.BigEndian, chunk.Format); err != nil {
+		return
+	}
+
+	if err = binary.Write(&b, binary.BigEndian, chunk.Tracks); err != nil {
+		return
+	}
+
+	if err = binary.Write(&b, binary.BigEndian, chunk.Division); err != nil {
+		return
+	}
+
+	encoded = b.Bytes()
+
+	return
 }
 
 func (chunk *MThd) UnmarshalBinary(data []byte) error {

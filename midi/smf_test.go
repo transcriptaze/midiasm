@@ -119,6 +119,31 @@ var endOfTrack = events.Event{
 	},
 }
 
+func TestMarshalBinary(t *testing.T) {
+	expected := []byte{
+		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x01, 0xE0, // MThd
+	}
+
+	smf := SMF{
+		MThd: &MThd{
+			Tag:      "MThd",
+			Length:   6,
+			Format:   1,
+			Tracks:   1,
+			Division: 480,
+		},
+	}
+
+	bytes, err := smf.MarshalBinary()
+	if err != nil {
+		t.Fatalf("unexpected error (%v)", err)
+	}
+
+	if !reflect.DeepEqual(bytes, expected) {
+		t.Errorf("incorrectly marshalled\n   expected:%#v\n   got:     %#v", expected, bytes)
+	}
+}
+
 func TestValidateFormat1(t *testing.T) {
 	smf := SMF{
 		MThd: &MThd{
