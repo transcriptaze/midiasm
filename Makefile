@@ -41,7 +41,10 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-	go test -v ./midi/types -run TestTransposeEnharmonicKeys
+	go test -v ./midi -run TestMTrkMarshalTrack0
+
+delve: build
+	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0
 
 help: build
 	$(CMD) help

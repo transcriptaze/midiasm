@@ -26,8 +26,60 @@ type MTrk struct {
 	Context *context.Context
 }
 
+type vlq struct {
+	v uint32
+}
+
+func (v vlq) MarshalBinary() ([]byte, error) {
+	buffer := []byte{0, 0, 0, 0, 0}
+	b := v.v
+
+	for i := 4; i > 0; i-- {
+		buffer[i] = byte(b & 0x7f)
+		if b >>= 7; b == 0 {
+			return buffer[i:], nil
+		}
+	}
+
+	buffer[1] |= 0x80
+	buffer[0] = byte(b & 0x7f)
+
+	return buffer, nil
+}
+
 func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
-	return []byte{}, nil
+	var b bytes.Buffer
+
+	if _, err = b.Write([]byte(chunk.Tag)); err != nil {
+		return
+	}
+
+	if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
+		return
+	}
+
+	for _, event := range chunk.Events {
+		var v []byte
+		delta := vlq{uint32(event.Delta)}
+		if v, err = delta.MarshalBinary(); err != nil {
+			return
+		} else if _, err = b.Write(v); err != nil {
+			return
+		}
+
+		switch e := event.Event.(type) {
+		case *metaevent.TrackName:
+			if v, err = e.MarshalBinary(); err != nil {
+				return
+			} else if _, err = b.Write(v); err != nil {
+				return
+			}
+		}
+	}
+
+	encoded = b.Bytes()
+
+	return
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {

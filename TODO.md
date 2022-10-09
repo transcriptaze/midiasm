@@ -6,7 +6,15 @@
 
 ### Assembler
 - [x] Command skeleton
-
+- [x] Assemble MThd
+- [ ] Assemble MTrk
+- [ ] Parse MThd
+- [ ] Parse MTrk
+- [ ] VLQ: TestMarshalBinary
+- [ ] VLQ: UnmarshalBinary
+- [ ] VLF: TestMarshalBinary
+- [ ] VLF: UnmarshalBinary
+- [ ] Event needs become embedded in Meta/Midi
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 
@@ -75,3 +83,4 @@
 18. [Janet](https://janet-lang.org)
 19. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)
 20. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
+21. [go-jq](https://github.com/itchyny/gojq)

@@ -215,6 +215,7 @@ Command line:
 4. [(github) mido](https://github.com/mido/mido)
 5. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
 6. [StackExchange::Music Transposing key signatures - how to do so quickly?](https://music.stackexchange.com/questions/110078/transposing-key-signatures-how-to-do-so-quickly)
-
+7. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
+8. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
 
 
