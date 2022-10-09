@@ -158,12 +158,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		e, err := metaevent.Parse(ctx, rr, types.Status(b))
 
-		return &events.Event{
-			Tick:  types.Tick(tick + delta),
-			Delta: types.Delta(delta),
-			Bytes: buffer.Bytes(),
-			Event: e,
-		}, err
+		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
 	}
 
 	// ... SysEx event
@@ -174,12 +169,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		e, err := sysex.Parse(rr, types.Status(b), ctx)
 
-		return &events.Event{
-			Tick:  types.Tick(tick + delta),
-			Delta: types.Delta(delta),
-			Bytes: buffer.Bytes(),
-			Event: e,
-		}, err
+		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
 	}
 
 	// ... MIDI event
@@ -199,10 +189,5 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	e, err := midievent.Parse(rr, status, ctx)
 
-	return &events.Event{
-		Tick:  types.Tick(tick + delta),
-		Delta: types.Delta(delta),
-		Bytes: buffer.Bytes(),
-		Event: e,
-	}, err
+	return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
 }

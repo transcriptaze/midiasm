@@ -18,12 +18,12 @@ var templates = map[string]string{
 {{range .Tracks}}
 {{template "MTrk" .}}{{end}}`,
 
-	"MThd": `{{pad (ellipsize .Bytes 42) 42}}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
+	"MThd": `{{pad 42 (ellipsize .Bytes 42) }} {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}`,
 
-	"MTrk": `{{pad (ellipsize .Bytes 24) 42}}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
+	"MTrk": `{{pad 42 (ellipsize .Bytes 24) }}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
 {{range .Events}}{{template "event" .}}{{end}}`,
 
-	"event": `{{template "hex" .Bytes}}  tick:{{pad .Tick.String 9}}  delta:{{pad .Delta.String 9}}  {{template "events" .Event}}`,
+	"event": `{{template "hex" .Bytes}}  tick:{{.Tick | pad 9}}  delta:{{pad 9 .Delta.String}}  {{template "events" .Event}}`,
 	"events": `{{if eq .Tag "SequenceNumber"}}{{template "sequenceno" .}}
 {{else if eq .Tag "Text"                   }}{{template "text"                   .}}
 {{else if eq .Tag "Copyright"              }}{{template "copyright"              .}}
@@ -55,39 +55,39 @@ var templates = map[string]string{
 {{else                                     }}{{template "unknown"                .}}
 {{end}}`,
 
-	"sequenceno":             `{{.Type}} {{pad .Tag 22}} {{.SequenceNumber}}`,
-	"text":                   `{{.Type}} {{pad .Tag 22}} {{.Text}}`,
-	"copyright":              `{{.Type}} {{pad .Tag 22}} {{.Copyright}}`,
-	"trackname":              `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
-	"instrumentname":         `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
-	"lyric":                  `{{.Type}} {{pad .Tag 22}} {{.Lyric}}`,
-	"marker":                 `{{.Type}} {{pad .Tag 22}} {{.Marker}}`,
-	"cuepoint":               `{{.Type}} {{pad .Tag 22}} {{.CuePoint}}`,
-	"programname":            `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
-	"devicename":             `{{.Type}} {{pad .Tag 22}} {{.Name}}`,
-	"midichannelprefix":      `{{.Type}} {{pad .Tag 22}} {{.Channel}}`,
-	"midiport":               `{{.Type}} {{pad .Tag 22}} {{.Port}}`,
+	"sequenceno":             `{{.Type}} {{pad 22 .Tag}} {{.SequenceNumber}}`,
+	"text":                   `{{.Type}} {{pad 22 .Tag}} {{.Text}}`,
+	"copyright":              `{{.Type}} {{pad 22 .Tag}} {{.Copyright}}`,
+	"trackname":              `{{.Type}} {{pad 22 .Tag}} {{.Name}}`,
+	"instrumentname":         `{{.Type}} {{pad 22 .Tag}} {{.Name}}`,
+	"lyric":                  `{{.Type}} {{pad 22 .Tag}} {{.Lyric}}`,
+	"marker":                 `{{.Type}} {{pad 22 .Tag}} {{.Marker}}`,
+	"cuepoint":               `{{.Type}} {{pad 22 .Tag}} {{.CuePoint}}`,
+	"programname":            `{{.Type}} {{pad 22 .Tag}} {{.Name}}`,
+	"devicename":             `{{.Type}} {{pad 22 .Tag}} {{.Name}}`,
+	"midichannelprefix":      `{{.Type}} {{pad 22 .Tag}} {{.Channel}}`,
+	"midiport":               `{{.Type}} {{pad 22 .Tag}} {{.Port}}`,
 	"endoftrack":             `{{.Type}} {{    .Tag   }}`,
-	"tempo":                  `{{.Type}} {{pad .Tag 22}} tempo:{{.Tempo}}`,
-	"smpteoffset":            `{{.Type}} {{pad .Tag 22}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
-	"timesignature":          `{{.Type}} {{pad .Tag 22}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
-	"keysignature":           `{{.Type}} {{pad .Tag 22}} {{.Key}}`,
-	"sequencerspecificevent": `{{.Type}} {{pad .Tag 22}} {{.Manufacturer.Name}}, {{.Data}}`,
+	"tempo":                  `{{.Type}} {{pad 22 .Tag}} tempo:{{.Tempo}}`,
+	"smpteoffset":            `{{.Type}} {{pad 22 .Tag}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}`,
+	"timesignature":          `{{.Type}} {{pad 22 .Tag}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter`,
+	"keysignature":           `{{.Type}} {{pad 22 .Tag}} {{.Key}}`,
+	"sequencerspecificevent": `{{.Type}} {{pad 22 .Tag}} {{.Manufacturer.Name}}, {{.Data}}`,
 
-	"noteoff":            `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"noteon":             `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
-	"polyphonicpressure": `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
-	"controller":         `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} {{.Controller.ID}}/{{.Controller.Name}}, value:{{.Value}}`,
-	"programchange":      `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bank:{{.Bank}}, program:{{.Program }}`,
-	"channelpressure":    `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} pressure:{{.Pressure}}`,
-	"pitchbend":          `{{.Status}} {{pad .Tag 22}} channel:{{pad .Channel 2}} bend:{{.Bend}}`,
+	"noteoff":            `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"noteon":             `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}`,
+	"polyphonicpressure": `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} pressure:{{.Pressure}}`,
+	"controller":         `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} {{.Controller.ID}}/{{.Controller.Name}}, value:{{.Value}}`,
+	"programchange":      `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} bank:{{.Bank}}, program:{{.Program }}`,
+	"channelpressure":    `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} pressure:{{.Pressure}}`,
+	"pitchbend":          `{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} bend:{{.Bend}}`,
 
-	"sysexmessage":      `{{.Status}} {{pad .Tag 22}} {{.Manufacturer.Name}}, {{.Data}}`,
-	"sysexcontinuation": `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
-	"sysexescape":       `{{.Status}} {{pad .Tag 22}} {{.Data}}`,
+	"sysexmessage":      `{{.Status}} {{pad 22 .Tag}} {{.Manufacturer.Name}}, {{.Data}}`,
+	"sysexcontinuation": `{{.Status}} {{pad 22 .Tag}} {{.Data}}`,
+	"sysexescape":       `{{.Status}} {{pad 22 .Tag}} {{.Data}}`,
 
 	"unknown": `?? {{.Tag}}`,
-	"hex":     `{{pad (ellipsize (valign . 3) 42) 42}}`,
+	"hex":     `{{pad 42 (ellipsize (valign . 3) 42) }}`,
 }
 
 type Disassemble struct {
@@ -165,7 +165,7 @@ func ellipsize(v interface{}, length int) string {
 	return string(s[0:length-1]) + `…`
 }
 
-func pad(v interface{}, width int) string {
+func pad(width int, v any) string {
 	s := fmt.Sprintf("%v", v)
 	if width < len([]rune(s)) {
 		return s

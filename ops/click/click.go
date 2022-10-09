@@ -51,20 +51,20 @@ func (x *ClickTrack) Execute(smf *midi.SMF) error {
 		eventlist := make(map[uint64][]*events.Event, 0)
 
 		for _, e := range tempoMap {
-			tick := uint64(e.Tick)
+			tick := e.Tick()
 			list := eventlist[tick]
 			eventlist[tick] = append(list, e)
 		}
 
 		for _, e := range track.Events {
 			if _, ok := e.Event.(*metaevent.TimeSignature); ok {
-				tick := uint64(e.Tick)
+				tick := e.Tick()
 				list := eventlist[tick]
 				eventlist[tick] = append(list, e)
 			}
 
 			if _, ok := e.Event.(*metaevent.EndOfTrack); ok {
-				tick := uint64(e.Tick)
+				tick := e.Tick()
 				list := eventlist[tick]
 				eventlist[tick] = append(list, e)
 			}

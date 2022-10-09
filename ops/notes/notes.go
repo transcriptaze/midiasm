@@ -50,13 +50,13 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 		eventlist := make(map[uint64][]*events.Event, 0)
 
 		for _, e := range tempoMap {
-			tick := uint64(e.Tick)
+			tick := e.Tick()
 			list := eventlist[tick]
 			eventlist[tick] = append(list, e)
 		}
 
 		for _, e := range track.Events {
-			tick := uint64(e.Tick)
+			tick := e.Tick()
 			list := eventlist[tick]
 			eventlist[tick] = append(list, e)
 		}
