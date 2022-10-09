@@ -28,16 +28,13 @@ func (a TextAssembler) Assemble(source []byte) ([]byte, error) {
 
 	tracks := make([]*midi.MTrk, 0)
 
-	mthd := midi.MThd{
-		Tag:      "MThd",
-		Length:   6,
-		Format:   1,
-		Tracks:   uint16(len(tracks)),
-		Division: 480,
+	mthd, err := midi.NewMThd(1, uint16(len(tracks)), 480)
+	if err != nil {
+		return nil, err
 	}
 
 	smf := midi.SMF{
-		MThd:   &mthd,
+		MThd:   mthd,
 		Tracks: tracks,
 	}
 

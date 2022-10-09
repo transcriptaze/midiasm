@@ -70,10 +70,15 @@ func (a Assemble) Execute() error {
 		assembler = assemble.NewTextAssembler()
 	}
 
-	if midi, err := assembler.Assemble(bytes); err != nil {
+	midi, err := assembler.Assemble(bytes)
+	if err != nil {
 		return err
-	} else {
-		fmt.Printf(">>>>>> MIDI: %v bytes", len(midi))
+	}
+
+	if a.out != "" {
+		if err := os.WriteFile(a.out, midi, 0660); err != nil {
+			return err
+		}
 	}
 
 	return nil
