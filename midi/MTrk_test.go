@@ -156,12 +156,7 @@ func TestMTrkMarshalTrack0(t *testing.T) {
 			events.NewEvent(
 				0,
 				0,
-				&metaevent.TrackName{
-					Tag:    "TrackName",
-					Status: 0xff,
-					Type:   0x03,
-					Name:   "Example 1",
-				},
+				metaevent.NewTrackName(0, 0, "Example 1"),
 				[]byte{}),
 		},
 	}

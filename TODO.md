@@ -17,7 +17,10 @@
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary
 - [ ] VLF: UnmarshalBinary
-- [ ] Event needs become embedded in Meta/Midi
+- [ ] MetaEvent embedded event
+      - [x] Embed Tag
+      - [] Embed Status
+      - [] Embed Type
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 

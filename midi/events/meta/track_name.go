@@ -2,33 +2,37 @@ package metaevent
 
 import (
 	"bytes"
-
-	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type TrackName struct {
 	event
-	Tag    string
-	Status types.Status
-	Type   types.MetaEventType
-	Name   string
+	Name string
+}
+
+func concat(list ...[]byte) []byte {
+	bytes := []byte{}
+
+	for _, b := range list {
+		bytes = append(bytes, b...)
+	}
+
+	return bytes
 }
 
 func NewTrackName(tick uint64, delta uint32, name string) *TrackName {
 	N, _ := vlq{uint32(len(name))}.MarshalBinary()
-	data := []byte(name)
-	bytes := append(append([]byte{0x00, 0xff, 0x03}, N...), data...)
 
 	return &TrackName{
 		event: event{
 			tick:  tick,
 			delta: delta,
-			bytes: bytes,
+			bytes: concat([]byte{0x00, 0xff, 0x03}, N, []byte(name)),
+
+			Tag:    "TrackName",
+			Status: 0xff,
+			Type:   0x03,
 		},
-		Tag:    "TrackName",
-		Status: 0xff,
-		Type:   0x03,
-		Name:   name,
+		Name: name,
 	}
 }
 
