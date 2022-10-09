@@ -6,7 +6,6 @@ import (
 )
 
 type Hex []byte
-type Delta uint32
 type Status byte
 type MetaEventType byte
 type TrackNumber uint
@@ -19,10 +18,6 @@ func (bytes Hex) String() string {
 	}
 
 	return strings.TrimSpace(hex)
-}
-
-func (d Delta) String() string {
-	return fmt.Sprintf("%d", d)
 }
 
 func (t Status) String() string {

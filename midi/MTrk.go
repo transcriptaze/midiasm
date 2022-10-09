@@ -60,7 +60,7 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 
 	for _, event := range chunk.Events {
 		var v []byte
-		delta := vlq{uint32(event.Delta)}
+		delta := vlq{event.Delta()}
 		if v, err = delta.MarshalBinary(); err != nil {
 			return
 		} else if _, err = b.Write(v); err != nil {
@@ -99,7 +99,7 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	for err == nil {
 		e, err = parse(r, tick, chunk.Context)
 		if err == nil && e != nil {
-			tick += uint32(e.Delta)
+			tick += e.Delta()
 			eventlist = append(eventlist, e)
 		}
 	}

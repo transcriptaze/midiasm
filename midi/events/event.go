@@ -8,7 +8,7 @@ import (
 
 type Event struct {
 	tick  uint64
-	Delta types.Delta
+	delta uint32
 	Event any
 	Bytes types.Hex `json:"-"`
 }
@@ -16,14 +16,18 @@ type Event struct {
 func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
 	return &Event{
 		tick:  tick,
-		Delta: types.Delta(delta),
+		delta: delta,
 		Event: evt,
 		Bytes: bytes,
 	}
 }
 
 func (e Event) Tick() uint64 {
-	return uint64(e.tick)
+	return e.tick
+}
+
+func (e Event) Delta() uint32 {
+	return e.delta
 }
 
 func VLF(r io.ByteReader) ([]byte, error) {
