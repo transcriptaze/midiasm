@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 
@@ -9,7 +10,70 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interface{}, error) {
+type event struct {
+	tick  uint64
+	delta uint32
+	bytes []byte
+}
+
+func (e event) Tick() uint64 {
+	return e.tick
+}
+
+func (e event) Delta() uint32 {
+	return e.delta
+}
+
+func (e event) Bytes() []byte {
+	return e.bytes
+}
+
+type vlq struct {
+	v uint32
+}
+
+func (v vlq) MarshalBinary() ([]byte, error) {
+	buffer := []byte{0, 0, 0, 0, 0}
+	b := v.v
+
+	for i := 4; i > 0; i-- {
+		buffer[i] = byte(b & 0x7f)
+		if b >>= 7; b == 0 {
+			return buffer[i:], nil
+		}
+	}
+
+	buffer[1] |= 0x80
+	buffer[0] = byte(b & 0x7f)
+
+	return buffer, nil
+}
+
+type vlf struct {
+	v []byte
+}
+
+func (v vlf) MarshalBinary() (encoded []byte, err error) {
+	var b bytes.Buffer
+	var u []byte
+
+	N := vlq{uint32(len(v.v))}
+	if u, err = N.MarshalBinary(); err != nil {
+		return
+	} else if _, err = b.Write(u); err != nil {
+		return
+	}
+
+	if _, err = b.Write(v.v); err != nil {
+		return
+	}
+
+	encoded = b.Bytes()
+
+	return
+}
+
+func Parse(ctx *context.Context, r io.ByteReader, status types.Status, tick uint64, delta uint32) (any, error) {
 	if status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
 	}
@@ -37,7 +101,7 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status) (interfac
 		return NewCopyright(data)
 
 	case 0x03:
-		return NewTrackName(data)
+		return NewTrackName(tick, delta, string(data)), nil
 
 	case 0x04:
 		return NewInstrumentName(data)

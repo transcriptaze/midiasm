@@ -1,7 +1,7 @@
 # TODO
 
 
-- [ ] dissassemble // FIXME MThd suddenly got one space shorter
+- [x] dissassemble // FIXME MThd suddenly got one space shorter
 
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal

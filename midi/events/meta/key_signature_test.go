@@ -18,7 +18,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0x00, 0x00}))
 
-	event, err := Parse(ctx, r, 0xff)
+	event, err := Parse(ctx, r, 0xff, 0, 0)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
@@ -50,7 +50,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 	ctx := context.Context{}
 	r := bufio.NewReader(bytes.NewReader([]byte{0x59, 0x02, 0xfd, 0x01}))
 
-	event, err := Parse(&ctx, r, 0xff)
+	event, err := Parse(&ctx, r, 0xff, 0, 0)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}

@@ -6,6 +6,12 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
+type IEvent interface {
+	Tick() uint64
+	Delta() uint32
+	Bytes() []byte
+}
+
 type Event struct {
 	tick  uint64
 	delta uint32
@@ -23,14 +29,26 @@ func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
 }
 
 func (e Event) Tick() uint64 {
+	if v, ok := e.Event.(IEvent); ok {
+		return v.Tick()
+	}
+
 	return e.tick
 }
 
 func (e Event) Delta() uint32 {
+	if v, ok := e.Event.(IEvent); ok {
+		return v.Delta()
+	}
+
 	return e.delta
 }
 
 func (e Event) Bytes() types.Hex {
+	if v, ok := e.Event.(IEvent); ok {
+		return v.Bytes()
+	}
+
 	return e.bytes
 }
 

@@ -156,7 +156,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		rr.ReadByte()
 
-		e, err := metaevent.Parse(ctx, rr, types.Status(b))
+		e, err := metaevent.Parse(ctx, rr, types.Status(b), uint64(tick)+uint64(delta), delta)
 
 		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
 	}
