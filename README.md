@@ -212,10 +212,12 @@ Command line:
 1. [The Complete MIDI 1.0 Detailed Specification](https://www.midi.org/specifications/item/the-midi-1-0-specification)
 2. [Somascape - MIDI Files Specification](http://www.somascape.org/midi/tech/mfile.html)
 3. [(archive) MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)
-4. [(github) mido](https://github.com/mido/mido)
-5. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
-6. [StackExchange::Music Transposing key signatures - how to do so quickly?](https://music.stackexchange.com/questions/110078/transposing-key-signatures-how-to-do-so-quickly)
-7. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
-8. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
+4. [StackExchange::Music Transposing key signatures - how to do so quickly?](https://music.stackexchange.com/questions/110078/transposing-key-signatures-how-to-do-so-quickly)
+5. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
+6. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
 
+## Alternatives
+1. [(github) mido](https://github.com/mido/mido)
+2. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
+3. [Werkmeister](https://werckme.github.io/werckmeister)
 

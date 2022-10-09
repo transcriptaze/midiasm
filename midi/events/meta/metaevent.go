@@ -76,8 +76,11 @@ func (v vlf) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func Parse(ctx *context.Context, r io.ByteReader, status types.Status, tick uint64, delta uint32) (any, error) {
-	if status != 0xFF {
+func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (any, error) {
+	status, err := r.ReadByte()
+	if err != nil {
+		return nil, err
+	} else if status != 0xFF {
 		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
 	}
 
@@ -104,7 +107,7 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status, tick uint
 		return NewCopyright(data)
 
 	case 0x03:
-		return NewTrackName(tick, delta, string(data)), nil
+		return NewTrackName(tick, delta, data), nil
 
 	case 0x04:
 		return NewInstrumentName(data)
@@ -150,4 +153,14 @@ func Parse(ctx *context.Context, r io.ByteReader, status types.Status, tick uint
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
+}
+
+func concat(list ...[]byte) []byte {
+	bytes := []byte{}
+
+	for _, b := range list {
+		bytes = append(bytes, b...)
+	}
+
+	return bytes
 }

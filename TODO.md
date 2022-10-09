@@ -1,8 +1,5 @@
 # TODO
 
-
-- [x] dissassemble // FIXME MThd suddenly got one space shorter
-
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal
 - (?) SMF: JsonMarshal/Unmarshal
@@ -66,6 +63,7 @@
 ## TODO
 
 - https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
+- CSS a la Werkmeister
 
 ### Other
 

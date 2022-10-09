@@ -9,17 +9,7 @@ type TrackName struct {
 	Name string
 }
 
-func concat(list ...[]byte) []byte {
-	bytes := []byte{}
-
-	for _, b := range list {
-		bytes = append(bytes, b...)
-	}
-
-	return bytes
-}
-
-func NewTrackName(tick uint64, delta uint32, name string) *TrackName {
+func NewTrackName(tick uint64, delta uint32, name []byte) *TrackName {
 	N, _ := vlq{uint32(len(name))}.MarshalBinary()
 
 	return &TrackName{
@@ -32,7 +22,7 @@ func NewTrackName(tick uint64, delta uint32, name string) *TrackName {
 			Status: 0xff,
 			Type:   0x03,
 		},
-		Name: name,
+		Name: string(name),
 	}
 }
 
