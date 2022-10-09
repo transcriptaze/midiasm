@@ -121,15 +121,15 @@ func (t *MTrk) Transpose(steps int) {
 		switch v := event.Event.(type) {
 		case *metaevent.KeySignature:
 			v.Transpose(t.Context, steps)
-			event.Bytes[len(event.Bytes)-2] = byte(v.Accidentals)
+			event.Mutate(-2, byte(v.Accidentals))
 
 		case *midievent.NoteOn:
 			v.Transpose(t.Context, steps)
-			event.Bytes[len(event.Bytes)-2] = v.Note.Value
+			event.Mutate(-2, v.Note.Value)
 
 		case *midievent.NoteOff:
 			v.Transpose(t.Context, steps)
-			event.Bytes[len(event.Bytes)-2] = v.Note.Value
+			event.Mutate(-2, v.Note.Value)
 		}
 	}
 }

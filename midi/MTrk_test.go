@@ -12,9 +12,10 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-var keysignatureFSM = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0x06, 0x00},
-	Event: &metaevent.KeySignature{
+var keysignatureFSM = events.NewEvent(
+	0,
+	0,
+	&metaevent.KeySignature{
 		Tag:         "KeySignature",
 		Status:      0xff,
 		Type:        types.MetaEventType(0x59),
@@ -22,11 +23,12 @@ var keysignatureFSM = events.Event{
 		KeyType:     0,
 		Key:         "F♯ major",
 	},
-}
+	[]byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
 
-var keysignatureEFm = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01},
-	Event: &metaevent.KeySignature{
+var keysignatureEFm = events.NewEvent(
+	0,
+	0,
+	&metaevent.KeySignature{
 		Tag:         "KeySignature",
 		Status:      0xff,
 		Type:        types.MetaEventType(0x59),
@@ -34,11 +36,12 @@ var keysignatureEFm = events.Event{
 		KeyType:     1,
 		Key:         "E♭ minor",
 	},
-}
+	[]byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
 
-var noteOnC3v72 = events.Event{
-	Bytes: types.Hex{0x00, 0x91, 0x30, 0x48},
-	Event: &midievent.NoteOn{
+var noteOnC3v72 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -49,11 +52,12 @@ var noteOnC3v72 = events.Event{
 		},
 		Velocity: 72,
 	},
-}
+	[]byte{0x00, 0x91, 0x30, 0x48})
 
-var noteOnC3v0 = events.Event{
-	Bytes: types.Hex{0x00, 0x30, 0x00},
-	Event: &midievent.NoteOn{
+var noteOnC3v0 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -64,11 +68,12 @@ var noteOnC3v0 = events.Event{
 		},
 		Velocity: 0,
 	},
-}
+	[]byte{0x00, 0x30, 0x00})
 
-var noteOnC3v64 = events.Event{
-	Bytes: types.Hex{0x00, 0x30, 0x40},
-	Event: &midievent.NoteOn{
+var noteOnC3v64 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -79,11 +84,12 @@ var noteOnC3v64 = events.Event{
 		},
 		Velocity: 64,
 	},
-}
+	[]byte{0x00, 0x30, 0x40})
 
-var noteOnC3v32 = events.Event{
-	Bytes: types.Hex{0x00, 0x30, 0x20},
-	Event: &midievent.NoteOn{
+var noteOnC3v32 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -94,11 +100,12 @@ var noteOnC3v32 = events.Event{
 		},
 		Velocity: 32,
 	},
-}
+	[]byte{0x00, 0x30, 0x20})
 
-var noteOnCS3 = events.Event{
-	Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
-	Event: &midievent.NoteOn{
+var noteOnCS3 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -109,11 +116,12 @@ var noteOnCS3 = events.Event{
 		},
 		Velocity: 72,
 	},
-}
+	[]byte{0x00, 0x91, 0x31, 0x48})
 
-var noteOffCS3Alias = events.Event{
-	Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
-	Event: &midievent.NoteOff{
+var noteOffCS3Alias = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOff{
 		Tag:     "NoteOff",
 		Status:  0x81,
 		Channel: types.Channel(0x01),
@@ -124,7 +132,8 @@ var noteOffCS3Alias = events.Event{
 		},
 		Velocity: 100,
 	},
-}
+	[]byte{0x00, 0x81, 0x31, 0x64},
+)
 
 func TestMTrkMarshalTrack0(t *testing.T) {
 	expected := []byte{
@@ -144,16 +153,16 @@ func TestMTrkMarshalTrack0(t *testing.T) {
 		Tag:    "MTrk",
 		Length: 24,
 		Events: []*events.Event{
-			&events.Event{
-				Tick:  0,
-				Delta: 0,
-				Event: &metaevent.TrackName{
+			events.NewEvent(
+				0,
+				0,
+				&metaevent.TrackName{
 					Tag:    "TrackName",
 					Status: 0xff,
 					Type:   0x03,
 					Name:   "Example 1",
 				},
-			},
+				[]byte{}),
 		},
 	}
 
@@ -182,10 +191,10 @@ func TestUnmarshalNoteAlias(t *testing.T) {
 		Length:      74,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x4a},
 		Events: []*events.Event{
-			&keysignatureFSM,
-			&noteOnCS3,
-			&keysignatureEFm,
-			&noteOffCS3Alias,
+			keysignatureFSM,
+			noteOnCS3,
+			keysignatureEFm,
+			noteOffCS3Alias,
 		},
 	}
 
@@ -216,11 +225,11 @@ func TestUnmarshalWithRunningStatus(t *testing.T) {
 	}
 
 	expected := []*events.Event{
-		&noteOnC3v72,
-		&noteOnC3v0,
-		&noteOnC3v64,
-		&noteOnC3v32,
-		&endOfTrack,
+		noteOnC3v72,
+		noteOnC3v0,
+		noteOnC3v64,
+		noteOnC3v32,
+		endOfTrack,
 	}
 
 	mtrk := MTrk{

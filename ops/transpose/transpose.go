@@ -22,7 +22,7 @@ func (t *Transpose) Execute(smf *midi.SMF, steps int) ([]byte, error) {
 		binary.Write(&b, binary.BigEndian, track.Length)
 
 		for _, event := range track.Events {
-			b.Write(event.Bytes)
+			b.Write(event.Bytes())
 		}
 	}
 

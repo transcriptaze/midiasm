@@ -11,19 +11,21 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-var tempo = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
-	Event: &metaevent.Tempo{
+var tempo = events.NewEvent(
+	0,
+	0,
+	&metaevent.Tempo{
 		Tag:    "Tempo",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x51),
 		Tempo:  500000,
 	},
-}
+	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
-var smpteOffset = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
-	Event: &metaevent.SMPTEOffset{
+var smpteOffset = events.NewEvent(
+	0,
+	0,
+	&metaevent.SMPTEOffset{
 		Tag:              "SMPTEOffset",
 		Status:           0xff,
 		Type:             types.MetaEventType(0x54),
@@ -34,55 +36,57 @@ var smpteOffset = events.Event{
 		Frames:           7,
 		FractionalFrames: 39,
 	},
-}
+	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 
-var programBankMSB = events.Event{
-	Bytes: types.Hex{0x00, 0xb7, 0x00, 0x05},
-	Event: &midievent.Controller{
+var programBankMSB = events.NewEvent(
+	0,
+	0,
+	&midievent.Controller{
 		Tag:        "Controller",
 		Status:     0xb7,
 		Channel:    types.Channel(7),
 		Controller: types.Controller{0, "Bank Select (MSB)"},
 		Value:      0x05,
 	},
-}
+	[]byte{0x00, 0xb7, 0x00, 0x05})
 
-var programBankLSB = events.Event{
-	Bytes: types.Hex{0x00, 0xb7, 0x20, 0x21},
-	Event: &midievent.Controller{
+var programBankLSB = events.NewEvent(
+	0,
+	0,
+	&midievent.Controller{
 		Tag:        "Controller",
 		Status:     0xb7,
 		Channel:    types.Channel(7),
 		Controller: types.Controller{32, "Bank Select (LSB)"},
-		Value:      0x21,
 	},
-}
+	[]byte{0x00, 0xb7, 0x20, 0x21})
 
-var programBankMSBCh3 = events.Event{
-	Bytes: types.Hex{0x00, 0xb3, 0x00, 0x05},
-	Event: &midievent.Controller{
+var programBankMSBCh3 = events.NewEvent(
+	0,
+	0,
+	&midievent.Controller{
 		Tag:        "Controller",
 		Status:     0xb3,
 		Channel:    types.Channel(3),
 		Controller: types.Controller{0, "Bank Select (MSB)"},
-		Value:      0x05,
 	},
-}
+	[]byte{0x00, 0xb3, 0x00, 0x05})
 
-var programBankLSBCh5 = events.Event{
-	Bytes: types.Hex{0x00, 0xb5, 0x20, 0x21},
-	Event: &midievent.Controller{
+var programBankLSBCh5 = events.NewEvent(
+	0,
+	0,
+	&midievent.Controller{
 		Tag:        "Controller",
 		Status:     0xb5,
 		Channel:    types.Channel(5),
 		Controller: types.Controller{32, "Bank Select (LSB)"},
-		Value:      0x21,
 	},
-}
+	[]byte{0x00, 0xb5, 0x20, 0x21})
 
-var noteOn = events.Event{
-	Bytes: types.Hex{0x00, 0x30, 0x40},
-	Event: &midievent.NoteOn{
+var noteOn = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x97,
 		Channel: types.Channel(7),
@@ -91,13 +95,13 @@ var noteOn = events.Event{
 			Name:  "C2",
 			Alias: "C2",
 		},
-		Velocity: 64,
 	},
-}
+	[]byte{0x00, 0x30, 0x40})
 
-var noteOff = events.Event{
-	Bytes: types.Hex{0x00, 0x30, 0x40},
-	Event: &midievent.NoteOff{
+var noteOff = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOff{
 		Tag:     "NoteO.n",
 		Status:  0x87,
 		Channel: types.Channel(7),
@@ -106,18 +110,18 @@ var noteOff = events.Event{
 			Name:  "C2",
 			Alias: "C2",
 		},
-		Velocity: 64,
 	},
-}
+	[]byte{0x00, 0x30, 0x40})
 
-var endOfTrack = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x2f, 0x00},
-	Event: &metaevent.EndOfTrack{
+var endOfTrack = events.NewEvent(
+	0,
+	0,
+	&metaevent.EndOfTrack{
 		Tag:    "EndOfTrack",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x2f),
 	},
-}
+	[]byte{0x00, 0xff, 0x2f, 0x00})
 
 // 0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0, 0x4d, 0x54
 //       0x72, 0x6b, 0x00, 0x00, 0x00, 0x18, 0x00, 0xff, 0x03, 0x09, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c
@@ -165,16 +169,16 @@ func TestValidateFormat1(t *testing.T) {
 			&MTrk{
 				TrackNumber: 0,
 				Events: []*events.Event{
-					&endOfTrack,
+					endOfTrack,
 				},
 			},
 
 			&MTrk{
 				TrackNumber: 1,
 				Events: []*events.Event{
-					&tempo,
-					&smpteOffset,
-					&endOfTrack,
+					tempo,
+					smpteOffset,
+					endOfTrack,
 				},
 			},
 		},
@@ -222,7 +226,7 @@ func TestValidateProgramBank(t *testing.T) {
 			&MTrk{
 				TrackNumber: 0,
 				Events: []*events.Event{
-					&endOfTrack,
+					endOfTrack,
 				},
 			},
 
@@ -230,26 +234,26 @@ func TestValidateProgramBank(t *testing.T) {
 				TrackNumber: 1,
 				Events: []*events.Event{
 					// normal program bank
-					&programBankMSB,
-					&programBankLSB,
-					&noteOn,
-					&noteOff,
+					programBankMSB,
+					programBankLSB,
+					noteOn,
+					noteOff,
 
 					// missing program bank LSB
-					&programBankMSB,
-					&noteOn,
+					programBankMSB,
+					noteOn,
 
 					// missing program bank MSB
-					&programBankLSB,
-					&noteOff,
+					programBankLSB,
+					noteOff,
 
 					// unmatched channel
-					&programBankMSBCh3,
-					&programBankLSBCh5,
-					&noteOn,
-					&noteOff,
+					programBankMSBCh3,
+					programBankLSBCh5,
+					noteOn,
+					noteOff,
 
-					&endOfTrack,
+					endOfTrack,
 				},
 			},
 		},

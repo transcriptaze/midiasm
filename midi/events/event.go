@@ -10,7 +10,7 @@ type Event struct {
 	tick  uint64
 	delta uint32
 	Event any
-	Bytes types.Hex `json:"-"`
+	bytes types.Hex `json:"-"`
 }
 
 func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
@@ -18,7 +18,7 @@ func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
 		tick:  tick,
 		delta: delta,
 		Event: evt,
-		Bytes: bytes,
+		bytes: bytes,
 	}
 }
 
@@ -28,6 +28,15 @@ func (e Event) Tick() uint64 {
 
 func (e Event) Delta() uint32 {
 	return e.delta
+}
+
+func (e Event) Bytes() types.Hex {
+	return e.bytes
+}
+
+// FIXME: temporary hack while reworking Event as embedded struct
+func (e *Event) Mutate(offset int, b byte) {
+	e.bytes[len(e.bytes)+offset] = b
 }
 
 func VLF(r io.ByteReader) ([]byte, error) {

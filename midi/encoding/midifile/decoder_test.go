@@ -80,19 +80,19 @@ var MTRK0 = []*midi.MTrk{
 		Length:      111,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x6f},
 		Events: []*events.Event{
-			&tempo,
-			&smpteOffset,
-			&sequenceNumber,
-			&text,
-			&copyright,
-			&acousticGuitar,
-			&didgeridoo,
-			&aMinor,
-			&motu,
-			&noteOnCS3,
-			&noteOnC4,
-			&noteOffCS3,
-			&endOfTrack,
+			tempo,
+			smpteOffset,
+			sequenceNumber,
+			text,
+			copyright,
+			acousticGuitar,
+			didgeridoo,
+			aMinor,
+			motu,
+			noteOnCS3,
+			noteOnC4,
+			noteOffCS3,
+			endOfTrack,
 		},
 	},
 }
@@ -104,10 +104,10 @@ var MTRK1 = []*midi.MTrk{
 		Length:      33,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21},
 		Events: []*events.Event{
-			&example1,
-			&tempo,
-			&smpteOffset,
-			&endOfTrack,
+			example1,
+			tempo,
+			smpteOffset,
+			endOfTrack,
 		},
 	},
 
@@ -117,17 +117,17 @@ var MTRK1 = []*midi.MTrk{
 		Length:      95,
 		Bytes:       []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x5f},
 		Events: []*events.Event{
-			&sequenceNumber,
-			&text,
-			&copyright,
-			&acousticGuitar,
-			&didgeridoo,
-			&aMinor,
-			&motu,
-			&noteOnCS3,
-			&noteOnC4,
-			&noteOffCS3,
-			&endOfTrack,
+			sequenceNumber,
+			text,
+			copyright,
+			acousticGuitar,
+			didgeridoo,
+			aMinor,
+			motu,
+			noteOnCS3,
+			noteOnC4,
+			noteOffCS3,
+			endOfTrack,
 		},
 	},
 }
@@ -189,69 +189,76 @@ func testDecode(t *testing.T, bytes []byte, mthd *midi.MThd, tracks []*midi.MTrk
 
 // TEST EVENTS
 
-var sequenceNumber = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x00, 0x02, 0x00, 0x17},
-	Event: &metaevent.SequenceNumber{
+var sequenceNumber = events.NewEvent(
+	0,
+	0,
+	&metaevent.SequenceNumber{
 		Tag:            "SequenceNumber",
 		Status:         0xff,
 		Type:           types.MetaEventType(0x00),
 		SequenceNumber: 23,
 	},
-}
+	[]byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17})
 
-var text = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
-	Event: &metaevent.Text{
+var text = events.NewEvent(
+	0,
+	0,
+	&metaevent.Text{
 		Tag:    "Text",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x01),
 		Text:   "This and That",
 	},
-}
+	[]byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74})
 
-var copyright = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
-	Event: &metaevent.Copyright{
+var copyright = events.NewEvent(
+	0,
+	0,
+	&metaevent.Copyright{
 		Tag:       "Copyright",
 		Status:    0xff,
 		Type:      types.MetaEventType(0x02),
 		Copyright: "Them",
 	},
-}
+	[]byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d})
 
-var example1 = events.Event{
-	Bytes: types.Hex{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31},
-	Event: &metaevent.TrackName{
+var example1 = events.NewEvent(
+	0,
+	0,
+	&metaevent.TrackName{
 		Tag:    "TrackName",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x03),
 		Name:   "Example 1",
 	},
-}
+	[]byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31})
 
-var acousticGuitar = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72},
-	Event: &metaevent.TrackName{
+var acousticGuitar = events.NewEvent(
+	0,
+	0,
+	&metaevent.TrackName{
 		Tag:    "TrackName",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x03),
 		Name:   "Acoustic Guitar",
 	},
-}
+	[]byte{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72})
 
-var didgeridoo = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f},
-	Event: &metaevent.InstrumentName{
+var didgeridoo = events.NewEvent(
+	0,
+	0,
+	&metaevent.InstrumentName{
 		Tag:    "InstrumentName",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x04),
 		Name:   "Didgeridoo",
 	},
-}
+	[]byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f})
 
-var aMinor = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x59, 0x02, 0x00, 0x01},
-	Event: &metaevent.KeySignature{
+var aMinor = events.NewEvent(
+	0,
+	0,
+	&metaevent.KeySignature{
 		Tag:         "KeySignature",
 		Status:      0xff,
 		Type:        types.MetaEventType(0x59),
@@ -259,11 +266,12 @@ var aMinor = events.Event{
 		KeyType:     1,
 		Key:         "A minor",
 	},
-}
+	[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
 
-var motu = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
-	Event: &metaevent.SequencerSpecificEvent{
+var motu = events.NewEvent(
+	0,
+	0,
+	&metaevent.SequencerSpecificEvent{
 		Tag:    "SequencerSpecificEvent",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x7f),
@@ -274,11 +282,12 @@ var motu = events.Event{
 		},
 		Data: []byte{0x3a, 0x4c, 0x5e},
 	},
-}
+	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
 
-var noteOnCS3 = events.Event{
-	Bytes: types.Hex{0x00, 0x91, 0x31, 0x48},
-	Event: &midievent.NoteOn{
+var noteOnCS3 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -289,11 +298,12 @@ var noteOnCS3 = events.Event{
 		},
 		Velocity: 72,
 	},
-}
+	[]byte{0x00, 0x91, 0x31, 0x48})
 
-var noteOnC4 = events.Event{
-	Bytes: types.Hex{0x00, 0x3c, 0x4c},
-	Event: &midievent.NoteOn{
+var noteOnC4 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOn{
 		Tag:     "NoteOn",
 		Status:  0x91,
 		Channel: types.Channel(0x01),
@@ -304,11 +314,12 @@ var noteOnC4 = events.Event{
 		},
 		Velocity: 76,
 	},
-}
+	[]byte{0x00, 0x3c, 0x4c})
 
-var noteOffCS3 = events.Event{
-	Bytes: types.Hex{0x00, 0x81, 0x31, 0x64},
-	Event: &midievent.NoteOff{
+var noteOffCS3 = events.NewEvent(
+	0,
+	0,
+	&midievent.NoteOff{
 		Tag:     "NoteOff",
 		Status:  0x81,
 		Channel: types.Channel(0x01),
@@ -319,21 +330,23 @@ var noteOffCS3 = events.Event{
 		},
 		Velocity: 100,
 	},
-}
+	[]byte{0x00, 0x81, 0x31, 0x64})
 
-var tempo = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
-	Event: &metaevent.Tempo{
+var tempo = events.NewEvent(
+	0,
+	0,
+	&metaevent.Tempo{
 		Tag:    "Tempo",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x51),
 		Tempo:  500000,
 	},
-}
+	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
-var smpteOffset = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
-	Event: &metaevent.SMPTEOffset{
+var smpteOffset = events.NewEvent(
+	0,
+	0,
+	&metaevent.SMPTEOffset{
 		Tag:              "SMPTEOffset",
 		Status:           0xff,
 		Type:             types.MetaEventType(0x54),
@@ -344,13 +357,14 @@ var smpteOffset = events.Event{
 		Frames:           7,
 		FractionalFrames: 39,
 	},
-}
+	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 
-var endOfTrack = events.Event{
-	Bytes: types.Hex{0x00, 0xff, 0x2f, 0x00},
-	Event: &metaevent.EndOfTrack{
+var endOfTrack = events.NewEvent(
+	0,
+	0,
+	&metaevent.EndOfTrack{
 		Tag:    "EndOfTrack",
 		Status: 0xff,
 		Type:   types.MetaEventType(0x2f),
 	},
-}
+	[]byte{0x00, 0xff, 0x2f, 0x00})
