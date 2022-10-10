@@ -41,8 +41,7 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-	go test -v ./midi/encoding/midifile -run TestDecodeFormat0
-# 	$(CMD) --debug --verbose examples/example-01.mid
+	go test -v ./ops/assemble -run TestTextAssemble
 
 delve: build
 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

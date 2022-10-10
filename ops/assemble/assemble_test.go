@@ -24,5 +24,4 @@ func TestTextAssemble(t *testing.T) {
 	if !reflect.DeepEqual(encoded, smf) {
 		t.Errorf("incorrectly assembled text file\n   expected:%+v\n   got:     %+v", smf, encoded)
 	}
-
 }

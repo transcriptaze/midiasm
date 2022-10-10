@@ -3,6 +3,7 @@
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal
 - (?) SMF: JsonMarshal/Unmarshal
+- (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 
 ### Assembler
 - [x] Command skeleton

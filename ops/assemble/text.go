@@ -19,7 +19,7 @@ func NewTextAssembler() TextAssembler {
 }
 
 func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
-	lines, err := a.read(r)
+	chunks, err := a.read(r)
 	if err != nil {
 		return nil, err
 	}
@@ -28,32 +28,34 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 
 	var mthd *midi.MThd
 
-	for _, line := range lines {
-		if strings.Contains(line, "MThd") {
-			var format uint16
-			var ppqn uint16
+	for _, chunk := range chunks {
+		for _, line := range chunk {
+			if strings.Contains(line, "MThd") {
+				var format uint16
+				var ppqn uint16
 
-			if match := regexp.MustCompile(`format:(0|1|2)`).FindStringSubmatch(line); match == nil || len(match) < 2 {
-				return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
-			} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
-				return nil, err
-			} else {
-				format = uint16(v)
+				if match := regexp.MustCompile(`format:(0|1|2)`).FindStringSubmatch(line); match == nil || len(match) < 2 {
+					return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
+				} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+					return nil, err
+				} else {
+					format = uint16(v)
+				}
+
+				if match := regexp.MustCompile(`metrical(?:[ -])?time:([0-9]+)\s*ppqn`).FindStringSubmatch(line); match == nil || len(match) < 2 {
+					return nil, fmt.Errorf("missing 'metrical-time' field in MThd")
+				} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+					return nil, err
+				} else {
+					ppqn = uint16(v)
+				}
+
+				if mthd, err = midi.NewMThd(format, 0, ppqn); err != nil {
+					return nil, err
+				}
+
+				break
 			}
-
-			if match := regexp.MustCompile(`metrical(?:[ -])?time:([0-9]+)\s*ppqn`).FindStringSubmatch(line); match == nil || len(match) < 2 {
-				return nil, fmt.Errorf("missing 'metrical-time' field in MThd")
-			} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
-				return nil, err
-			} else {
-				ppqn = uint16(v)
-			}
-
-			if mthd, err = midi.NewMThd(format, 0, ppqn); err != nil {
-				return nil, err
-			}
-
-			break
 		}
 	}
 
@@ -67,25 +69,63 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	return smf.MarshalBinary()
 }
 
-func (a TextAssembler) read(r io.Reader) ([]string, error) {
-	ch := make(chan string)
+func (a TextAssembler) read(r io.Reader) ([][]string, error) {
 	scanner := bufio.NewScanner(r)
+	lines := make(chan string)
+	chunks := make(chan []string)
 
-	go func() {
-		for scanner.Scan() {
-			ch <- scanner.Text()
-		}
-		close(ch)
-	}()
+	go a.scan(scanner, lines)
+	go a.chunkify(lines, chunks)
 
-	lines := []string{}
-	for line := range ch {
-		lines = append(lines, line)
+	list := [][]string{}
+	for chunk := range chunks {
+		list = append(list, chunk)
 	}
 
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
-	return lines, nil
+	return list, nil
+}
+
+func (a TextAssembler) scan(scanner *bufio.Scanner, lines chan string) {
+	for scanner.Scan() {
+		lines <- scanner.Text()
+	}
+
+	close(lines)
+}
+
+func (a TextAssembler) chunkify(lines chan string, chunks chan []string) {
+	tags := regexp.MustCompile("(MThd)|(MTrk)")
+
+	clone := func(slice []string) []string {
+		chunk := make([]string, len(slice))
+		copy(chunk, slice)
+		return chunk
+	}
+
+	var chunk []string
+	for line := range lines {
+		if strings.Contains(line, "MThd") {
+			chunk = []string{line}
+			break
+		}
+	}
+
+	for line := range lines {
+		if match := tags.FindStringSubmatch(line); match != nil {
+			chunks <- clone(chunk)
+			chunk = []string{line}
+		} else {
+			chunk = append(chunk, line)
+		}
+	}
+
+	if len(chunk) > 0 {
+		chunks <- clone(chunk)
+	}
+
+	close(chunks)
 }
