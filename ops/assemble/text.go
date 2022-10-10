@@ -2,8 +2,8 @@ package assemble
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
+	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,8 +18,8 @@ func NewTextAssembler() TextAssembler {
 	return TextAssembler{}
 }
 
-func (a TextAssembler) Assemble(source []byte) ([]byte, error) {
-	lines, err := a.read(source)
+func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
+	lines, err := a.read(r)
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +67,20 @@ func (a TextAssembler) Assemble(source []byte) ([]byte, error) {
 	return smf.MarshalBinary()
 }
 
-func (a TextAssembler) read(source []byte) ([]string, error) {
-	lines := []string{}
-
-	r := bytes.NewBuffer(source)
+func (a TextAssembler) read(r io.Reader) ([]string, error) {
+	ch := make(chan string)
 	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+
+	go func() {
+		for scanner.Scan() {
+			ch <- scanner.Text()
+		}
+		close(ch)
+	}()
+
+	lines := []string{}
+	for line := range ch {
+		lines = append(lines, line)
 	}
 
 	if err := scanner.Err(); err != nil {

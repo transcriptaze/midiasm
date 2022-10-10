@@ -1,7 +1,9 @@
 package assemble
 
-import ()
+import (
+	"io"
+)
 
 type Assembler interface {
-	Assemble([]byte) ([]byte, error)
+	Assemble(io.Reader) ([]byte, error)
 }

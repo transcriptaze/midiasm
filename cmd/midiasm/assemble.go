@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -55,9 +57,11 @@ func (a Assemble) Help() {
 func (a Assemble) Execute() error {
 	filename := a.flags.Arg(0)
 
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
+	var r io.Reader
+	if b, err := os.ReadFile(filename); err != nil {
 		return err
+	} else {
+		r = bytes.NewBuffer(b)
 	}
 
 	var assembler assemble.Assembler
@@ -70,7 +74,7 @@ func (a Assemble) Execute() error {
 		assembler = assemble.NewTextAssembler()
 	}
 
-	midi, err := assembler.Assemble(bytes)
+	midi, err := assembler.Assemble(r)
 	if err != nil {
 		return err
 	}
