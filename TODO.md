@@ -8,16 +8,16 @@
 - [x] Command skeleton
 - [x] Assemble MThd
 - [ ] Assemble MTrk
-- [ ] Parse MThd
+- [x] Parse MThd
 - [ ] Parse MTrk
 - [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary
 - [ ] VLF: UnmarshalBinary
 - [ ] MetaEvent embedded event
-      - [x] Embed Tag
-      - [] Embed Status
-      - [] Embed Type
+      - [x] Embed tag
+      - [x] Embed status
+      - [x] Embed type
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 
@@ -63,6 +63,7 @@
 ## TODO
 
 - https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
+  - https://stackoverflow.com/questions/46182767/how-to-add-random-number-using-awk-command
 - CSS a la Werkmeister
 
 ### Other
