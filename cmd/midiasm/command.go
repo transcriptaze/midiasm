@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
@@ -62,14 +64,17 @@ func (c *command) flagset(name string) *flag.FlagSet {
 }
 
 func (c *command) decode(filename string) (*midi.SMF, error) {
-	bytes, err := c.read(filename)
-	if err != nil {
+	var r io.Reader
+
+	if b, err := c.read(filename); err != nil {
 		return nil, err
+	} else {
+		r = bytes.NewReader(b)
 	}
 
 	decoder := midifile.NewDecoder()
 
-	if smf, err := decoder.Decode(bytes); err != nil {
+	if smf, err := decoder.Decode(r); err != nil {
 		return nil, err
 	} else if smf == nil {
 		return nil, fmt.Errorf("failed to decode MIDI file")

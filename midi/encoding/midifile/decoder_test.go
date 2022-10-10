@@ -1,6 +1,7 @@
 package midifile
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 
@@ -140,10 +141,10 @@ func TestDecodeFormat1(t *testing.T) {
 	testDecode(t, SMF1, &MTHD1, MTRK1)
 }
 
-func testDecode(t *testing.T, bytes []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
+func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 	decoder := NewDecoder()
 
-	smf, err := decoder.Decode(bytes)
+	smf, err := decoder.Decode(bytes.NewReader(b))
 	if err != nil {
 		t.Fatalf("unexpected error decoding valid MIDI file: %v", err)
 	}

@@ -1,6 +1,7 @@
 package disassemble
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -52,7 +53,7 @@ func TestDisassembleSMF(t *testing.T) {
       00 FF 2F 00                           tick:1020       delta:0          2F EndOfTrack
 `
 
-	bytes := []byte{
+	midi := []byte{
 		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0,
 
 		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21,
@@ -96,7 +97,7 @@ func TestDisassembleSMF(t *testing.T) {
 		0x00, 0xff, 0x2f, 0x00,
 	}
 
-	smf, err := midifile.NewDecoder().Decode(bytes)
+	smf, err := midifile.NewDecoder().Decode(bytes.NewReader(midi))
 	if err != nil {
 		t.Fatalf("Error unmarshaling SMF: %v", err)
 	}
@@ -160,7 +161,7 @@ func TestDisassembleWithLoadedTemplate(t *testing.T) {
       00 FF 2F 00                           tick:1020       delta:0          2F EndOfTrack
 `
 
-	bytes := []byte{
+	midi := []byte{
 		0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0,
 		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x21,
 		0x00, 0xff, 0x03, 0x09, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31,
@@ -206,7 +207,7 @@ func TestDisassembleWithLoadedTemplate(t *testing.T) {
   }
 }`
 
-	smf, err := midifile.NewDecoder().Decode(bytes)
+	smf, err := midifile.NewDecoder().Decode(bytes.NewReader(midi))
 	if err != nil {
 		t.Fatalf("Error unmarshaling SMF: %v", err)
 	}

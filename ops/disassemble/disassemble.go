@@ -143,13 +143,13 @@ func (p *Disassemble) LoadTemplates(r io.Reader) error {
 	return nil
 }
 
-func (p *Disassemble) Print(object interface{}, template string, w io.Writer) error {
+func (p *Disassemble) Print(smf any, template string, w io.Writer) error {
 	tmpl := p.root.Lookup(template)
 	if tmpl == nil {
 		return fmt.Errorf("'%s' does not match any defined template", template)
 	}
 
-	return tmpl.Execute(w, object)
+	return tmpl.Execute(w, smf)
 }
 
 func ellipsize(v interface{}, length int) string {
