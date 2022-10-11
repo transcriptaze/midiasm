@@ -8,7 +8,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 )
 
-// FIXME MThd suddenly got one space shorter
 func TestDisassembleSMF(t *testing.T) {
 	const expected string = `4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length:6, format:1, tracks:2, metrical time:480 ppqn
 
@@ -118,7 +117,6 @@ func TestDisassembleSMF(t *testing.T) {
 	}
 }
 
-// FIXME MThd suddenly got one space shorter
 func TestDisassembleWithLoadedTemplate(t *testing.T) {
 	const expected string = `4D 54 68 64 00 00 00 06 00 01 00 02 01 E0   MThd length:6, format:1, tracks:2, metrical time:480 ppqn
 

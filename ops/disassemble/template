@@ -1,0 +1,85 @@
+{{define "document"}}
+{{- template "MThd" .MThd}}
+{{- range .Tracks}}
+{{- template "MTrk" . }}
+{{- end}}
+{{- end}}
+
+
+{{define "MThd" -}}
+{{pad 42 (ellipsize .Bytes 42) }}  {{.Tag}} length:{{.Length}}, format:{{.Format}}, tracks:{{.Tracks}}, {{if not .SMPTETimeCode }}metrical time:{{.PPQN}} ppqn{{else}}SMPTE:{{.FPS}} fps,{{.SubFrames}} sub-frames{{end}}
+{{end}}
+
+{{define "MTrk" }}
+{{pad 42 (ellipsize .Bytes 24) }}  {{.Tag}} {{.TrackNumber}} length:{{.Length}}
+{{range .Events}}{{template "event" .}}{{end}}
+{{- end}}
+
+{{define "event"}}{{template "hex" .Bytes}}  tick:{{.Tick | pad 9}}  delta:{{pad 9 .Delta}}  {{template "events" .Event}}{{end}}
+
+{{define "events"}}
+{{- if eq .Tag "SequenceNumber"              }}{{template "sequenceno"             .}}
+{{- else if eq .Tag "Text"                   }}{{template "text"                   .}}
+{{- else if eq .Tag "Copyright"              }}{{template "copyright"              .}}
+{{- else if eq .Tag "TrackName"              }}{{template "trackname"              .}}
+{{- else if eq .Tag "InstrumentName"         }}{{template "instrumentname"         .}}
+{{- else if eq .Tag "Lyric"                  }}{{template "lyric"                  .}}
+{{- else if eq .Tag "Marker"                 }}{{template "marker"                 .}}
+{{- else if eq .Tag "CuePoint"               }}{{template "cuepoint"               .}}
+{{- else if eq .Tag "ProgramName"            }}{{template "programname"            .}}
+{{- else if eq .Tag "DeviceName"             }}{{template "devicename"             .}}
+{{- else if eq .Tag "MIDIChannelPrefix"      }}{{template "midichannelprefix"      .}}
+{{- else if eq .Tag "MIDIPort"               }}{{template "midiport"               .}}
+{{- else if eq .Tag "EndOfTrack"             }}{{template "endoftrack"             .}}
+{{- else if eq .Tag "Tempo"                  }}{{template "tempo"                  .}}
+{{- else if eq .Tag "SMPTEOffset"            }}{{template "smpteoffset"            .}}
+{{- else if eq .Tag "TimeSignature"          }}{{template "timesignature"          .}}
+{{- else if eq .Tag "KeySignature"           }}{{template "keysignature"           .}}
+{{- else if eq .Tag "SequencerSpecificEvent" }}{{template "sequencerspecificevent" .}}
+{{- else if eq .Tag "NoteOff"                }}{{template "noteoff"                .}}
+{{- else if eq .Tag "NoteOn"                 }}{{template "noteon"                 .}}
+{{- else if eq .Tag "PolyphonicPressure"     }}{{template "polyphonicpressure"     .}}
+{{- else if eq .Tag "Controller"             }}{{template "controller"             .}}
+{{- else if eq .Tag "ProgramChange"          }}{{template "programchange"          .}}
+{{- else if eq .Tag "ChannelPressure"        }}{{template "channelpressure"        .}}
+{{- else if eq .Tag "PitchBend"              }}{{template "pitchbend"              .}}
+{{- else if eq .Tag "SysExMessage"           }}{{template "sysexmessage"           .}}
+{{- else if eq .Tag "SysExContinuation"      }}{{template "sysexcontinuation"      .}}
+{{- else if eq .Tag "SysExEscape"            }}{{template "sysexescape"            .}}
+{{- else                                     }}{{template "unknown"                .}}
+{{end}}
+{{end}}
+
+{{define "sequenceno"             }}{{.Type}} {{pad 22 .Tag}} {{.SequenceNumber}}{{end}}
+{{define "text"                   }}{{.Type}} {{pad 22 .Tag}} {{.Text}}{{end}}
+{{define "copyright"              }}{{.Type}} {{pad 22 .Tag}} {{.Copyright}}{{end}}
+{{define "trackname"              }}{{.Type}} {{pad 22 .Tag}} {{.Name}}{{end}}
+{{define "instrumentname"         }}{{.Type}} {{pad 22 .Tag}} {{.Name}}{{end}}
+{{define "lyric"                  }}{{.Type}} {{pad 22 .Tag}} {{.Lyric}}{{end}}
+{{define "marker"                 }}{{.Type}} {{pad 22 .Tag}} {{.Marker}}{{end}}
+{{define "cuepoint"               }}{{.Type}} {{pad 22 .Tag}} {{.CuePoint}}{{end}}
+{{define "programname"            }}{{.Type}} {{pad 22 .Tag}} {{.Name}}{{end}}
+{{define "devicename"             }}{{.Type}} {{pad 22 .Tag}} {{.Name}}{{end}}
+{{define "midichannelprefix"      }}{{.Type}} {{pad 22 .Tag}} {{.Channel}}{{end}}
+{{define "midiport"               }}{{.Type}} {{pad 22 .Tag}} {{.Port}}{{end}}
+{{define "endoftrack"             }}{{.Type}} {{    .Tag   }}{{end}}
+{{define "tempo"                  }}{{.Type}} {{pad 22 .Tag}} tempo:{{.Tempo}}{{end}}
+{{define "smpteoffset"            }}{{.Type}} {{pad 22 .Tag}} {{.Hour}} {{.Minute}} {{.Second}} {{.FrameRate}} {{.Frames}} {{.FractionalFrames}}{{end}}
+{{define "timesignature"          }}{{.Type}} {{pad 22 .Tag}} {{.Numerator}}/{{.Denominator}}, {{.TicksPerClick }} ticks per click, {{.ThirtySecondsPerQuarter}}/32 per quarter{{end}}
+{{define "keysignature"           }}{{.Type}} {{pad 22 .Tag}} {{.Key}}{{end}}
+{{define "sequencerspecificevent" }}{{.Type}} {{pad 22 .Tag}} {{.Manufacturer.Name}}, {{.Data}}{{end}}
+
+{{define "noteoff"            }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}{{end}}
+{{define "noteon"             }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} note:{{.Note.Name}}, velocity:{{.Velocity}}{{end}}
+{{define "polyphonicpressure" }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} pressure:{{.Pressure}}{{end}}
+{{define "controller"         }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} {{.Controller.ID}}/{{.Controller.Name}}, value:{{.Value}}{{end}}
+{{define "programchange"      }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} bank:{{.Bank}}, program:{{.Program }}{{end}}
+{{define "channelpressure"    }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} pressure:{{.Pressure}}{{end}}
+{{define "pitchbend"          }}{{.Status}} {{pad 22 .Tag}} channel:{{pad 2 .Channel}} bend:{{.Bend}}{{end}}
+
+{{define "sysexmessage"      }}{{.Status}} {{pad 22 .Tag}} {{.Manufacturer.Name}}, {{.Data}}{{end}}
+{{define "sysexcontinuation" }}{{.Status}} {{pad 22 .Tag}} {{.Data}}{{end}}
+{{define "sysexescape"       }}{{.Status}} {{pad 22 .Tag}} {{.Data}}{{end}}
+
+{{define "unknown" }}?? {{.Tag}}{{end}}
+{{define "hex"     }}{{pad 42 (ellipsize (valign . 3) 42) }}{{end}}
