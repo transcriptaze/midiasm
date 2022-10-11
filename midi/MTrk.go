@@ -47,6 +47,22 @@ func (v vlq) MarshalBinary() ([]byte, error) {
 	return buffer, nil
 }
 
+func NewMTrk() (*MTrk, error) {
+	mtrk := MTrk{
+		Tag:    "MTrk",
+		Length: 0,
+		Events: []*events.Event{},
+	}
+
+	if bytes, err := mtrk.MarshalBinary(); err != nil {
+		return nil, err
+	} else {
+		mtrk.Bytes = bytes
+	}
+
+	return &mtrk, nil
+}
+
 func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 	var b bytes.Buffer
 

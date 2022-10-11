@@ -24,34 +24,28 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	// ... MThd
+	// ... parse chunks
 
-	var mthd *midi.MThd
+	smf := midi.SMF{}
 
 	for _, chunk := range chunks {
 		for _, line := range chunk {
-			if strings.Contains(line, "MThd") {
-				var format uint16
-				var ppqn uint16
-
-				if match := regexp.MustCompile(`format:(0|1|2)`).FindStringSubmatch(line); match == nil || len(match) < 2 {
-					return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
-				} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+			switch {
+			case strings.Contains(line, "MThd"):
+				if mthd, err := a.parseMThd(chunk); err != nil {
 					return nil, err
 				} else {
-					format = uint16(v)
+					smf.MThd = mthd
 				}
 
-				if match := regexp.MustCompile(`metrical(?:[ -])?time:([0-9]+)\s*ppqn`).FindStringSubmatch(line); match == nil || len(match) < 2 {
-					return nil, fmt.Errorf("missing 'metrical-time' field in MThd")
-				} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+				break
+
+			case strings.Contains(line, "MTrk"):
+				if mtrk, err := a.parseMTrk(chunk); err != nil {
 					return nil, err
 				} else {
-					ppqn = uint16(v)
-				}
-
-				if mthd, err = midi.NewMThd(format, 0, ppqn); err != nil {
-					return nil, err
+					smf.MThd.Tracks += 1
+					smf.Tracks = append(smf.Tracks, mtrk)
 				}
 
 				break
@@ -59,12 +53,7 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 		}
 	}
 
-	tracks := make([]*midi.MTrk, 0)
-
-	smf := midi.SMF{
-		MThd:   mthd,
-		Tracks: tracks,
-	}
+	// ... 'k, done
 
 	return smf.MarshalBinary()
 }
@@ -128,4 +117,51 @@ func (a TextAssembler) chunkify(lines chan string, chunks chan []string) {
 	}
 
 	close(chunks)
+}
+
+func (a TextAssembler) parseMThd(chunk []string) (*midi.MThd, error) {
+	for _, line := range chunk {
+		if strings.Contains(line, "MThd") {
+			var format uint16
+			var ppqn uint16
+
+			if match := regexp.MustCompile(`format:(0|1|2)`).FindStringSubmatch(line); match == nil || len(match) < 2 {
+				return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
+			} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+				return nil, err
+			} else {
+				format = uint16(v)
+			}
+
+			if match := regexp.MustCompile(`metrical(?:[ -])?time:([0-9]+)\s*ppqn`).FindStringSubmatch(line); match == nil || len(match) < 2 {
+				return nil, fmt.Errorf("missing 'metrical-time' field in MThd")
+			} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
+				return nil, err
+			} else {
+				ppqn = uint16(v)
+			}
+
+			if mthd, err := midi.NewMThd(format, 0, ppqn); err != nil {
+				return nil, err
+			} else {
+				return mthd, nil
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("invalid MThd")
+}
+
+func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
+	for _, line := range chunk {
+		if strings.Contains(line, "MTrk") {
+			if mtrk, err := midi.NewMTrk(); err != nil {
+				return nil, err
+			} else {
+				return mtrk, nil
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("invalid MTrk")
 }

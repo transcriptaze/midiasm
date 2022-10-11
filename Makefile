@@ -42,10 +42,11 @@ release: build-all
 
 debug: build
 # 	go test -v ./ops/assemble -run TestTextAssemble
-	go test -v ./midi/encoding/midifile -run TestDecodeFormat0
+	go debug github.com/transcriptaze/midiasm -- 
 
 delve: build
-	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0
+# 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0
+	dlv debug github.com/transcriptaze/midiasm/cmd/midiasm -- assemble --debug --verbose --out tmp/example.mid examples/example.txt
 
 help: build
 	$(CMD) help
