@@ -6,10 +6,7 @@
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 
 ### Assembler
-- [x] Command skeleton
-- [x] Assemble MThd
 - [ ] Assemble MTrk
-- [x] Parse MThd
 - [ ] Parse MTrk
 - [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary

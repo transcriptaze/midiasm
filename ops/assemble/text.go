@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
 )
 
 type TextAssembler struct {
@@ -153,15 +155,51 @@ func (a TextAssembler) parseMThd(chunk []string) (*midi.MThd, error) {
 }
 
 func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
-	for _, line := range chunk {
+	ch := make(chan string)
+	closed := make(chan bool, 1)
+
+	defer func() {
+		closed <- true
+	}()
+
+	go func() {
+		for _, line := range chunk {
+			select {
+			case ch <- line:
+			case <-closed:
+				break
+			}
+		}
+
+		close(ch)
+	}()
+
+	var mtrk *midi.MTrk
+	for line := range ch {
 		if strings.Contains(line, "MTrk") {
-			if mtrk, err := midi.NewMTrk(); err != nil {
+			if v, err := midi.NewMTrk(); err != nil {
 				return nil, err
 			} else {
-				return mtrk, nil
+				mtrk = v
+				break
 			}
 		}
 	}
 
-	return nil, fmt.Errorf("invalid MTrk")
+	for line := range ch {
+		switch {
+		case strings.Contains(line, "TrackName"):
+			var trackname metaevent.TrackName
+			if err := trackname.UnmarshalText([]byte(line)); err != nil {
+				return nil, err
+			} else {
+				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &trackname, nil))
+			}
+		}
+	}
+	for line := range ch {
+		println(line)
+	}
+
+	return mtrk, nil
 }

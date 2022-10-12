@@ -66,13 +66,13 @@ func NewMTrk() (*MTrk, error) {
 func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 	var b bytes.Buffer
 
-	if _, err = b.Write([]byte(chunk.Tag)); err != nil {
-		return
-	}
+	// if _, err = b.Write([]byte(chunk.Tag)); err != nil {
+	// 	return
+	// }
 
-	if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
-		return
-	}
+	// if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
+	// 	return
+	// }
 
 	for _, event := range chunk.Events {
 		var v []byte
@@ -93,7 +93,16 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 		}
 	}
 
-	encoded = b.Bytes()
+	chunk.Length = uint32(b.Len())
+	tag := make([]byte, 4)
+	length := make([]byte, 4)
+
+	copy(tag, []byte(chunk.Tag))
+	binary.BigEndian.PutUint32(length, chunk.Length)
+
+	encoded = append([]byte{}, tag...)
+	encoded = append(encoded, length...)
+	encoded = append(encoded, b.Bytes()...)
 
 	return
 }

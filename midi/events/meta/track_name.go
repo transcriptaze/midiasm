@@ -2,6 +2,8 @@ package metaevent
 
 import (
 	"bytes"
+	"regexp"
+	"strings"
 )
 
 type TrackName struct {
@@ -48,4 +50,20 @@ func (e TrackName) MarshalBinary() (encoded []byte, err error) {
 	encoded = b.Bytes()
 
 	return
+}
+
+func (e *TrackName) UnmarshalText(text []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.Type = 0x03
+
+	re := regexp.MustCompile(`(?i)TrackName\s+(.*)`)
+
+	if match := re.FindSubmatch(text); match != nil && len(match) > 1 {
+		e.Name = strings.TrimSpace(string(match[1]))
+	}
+
+	return nil
 }
