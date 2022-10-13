@@ -134,7 +134,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return NewMIDIPort(data)
 
 	case 0x51:
-		return NewTempo(data)
+		return NewTempo(tick, delta, data)
 
 	case 0x54:
 		return NewSMPTEOffset(data)

@@ -5,18 +5,14 @@ import (
 	"math"
 	"regexp"
 	"strconv"
-
-	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Tempo struct {
-	Tag    string
-	Status types.Status
-	Type   types.MetaEventType
-	Tempo  uint32
+	event
+	Tempo uint32
 }
 
-func NewTempo(bytes []byte) (*Tempo, error) {
+func NewTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 	if len(bytes) != 3 {
 		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(bytes))
 	}
@@ -28,10 +24,17 @@ func NewTempo(bytes []byte) (*Tempo, error) {
 	}
 
 	return &Tempo{
-		Tag:    "Tempo",
-		Status: 0xff,
-		Type:   0x51,
-		Tempo:  tempo,
+		event: event{
+			tick:  tick,
+			delta: delta,
+			bytes: concat([]byte{0x00, 0xff, 0x51, 0x03}, bytes),
+
+			Tag:    "Tempo",
+			Status: 0xff,
+			Type:   0x51,
+		},
+
+		Tempo: tempo,
 	}, nil
 }
 
@@ -55,9 +58,9 @@ func (t Tempo) MarshalBinary() (encoded []byte, err error) {
 }
 
 func (t *Tempo) UnmarshalText(bytes []byte) error {
-	//	e.tick = 0
-	//	e.delta = 0
-	//	e.bytes = []byte{}
+	t.tick = 0
+	t.delta = 0
+	t.bytes = []byte{}
 	t.Status = 0xff
 	t.Tag = "Tempo"
 	t.Type = 0x51

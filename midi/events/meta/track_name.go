@@ -11,20 +11,20 @@ type TrackName struct {
 	Name string
 }
 
-func NewTrackName(tick uint64, delta uint32, name []byte) *TrackName {
-	N, _ := vlq{uint32(len(name))}.MarshalBinary()
+func NewTrackName(tick uint64, delta uint32, bytes []byte) *TrackName {
+	N, _ := vlq{uint32(len(bytes))}.MarshalBinary()
 
 	return &TrackName{
 		event: event{
 			tick:  tick,
 			delta: delta,
-			bytes: concat([]byte{0x00, 0xff, 0x03}, N, []byte(name)),
+			bytes: concat([]byte{0x00, 0xff, 0x03}, N, []byte(bytes)),
 
 			Tag:    "TrackName",
 			Status: 0xff,
 			Type:   0x03,
 		},
-		Name: string(name),
+		Name: string(bytes),
 	}
 }
 

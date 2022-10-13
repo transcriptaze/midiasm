@@ -11,16 +11,11 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-var tempo = events.NewEvent(
-	0,
-	0,
-	&metaevent.Tempo{
-		Tag:    "Tempo",
-		Status: 0xff,
-		Type:   types.MetaEventType(0x51),
-		Tempo:  500000,
-	},
-	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
+var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
+
+func init() {
+	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
+}
 
 var smpteOffset = events.NewEvent(
 	0,
