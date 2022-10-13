@@ -57,6 +57,7 @@ func (e *TrackName) UnmarshalText(text []byte) error {
 	e.delta = 0
 	e.bytes = []byte{}
 	e.Status = 0xff
+	e.Tag = "TrackName"
 	e.Type = 0x03
 
 	re := regexp.MustCompile(`(?i)TrackName\s+(.*)`)
