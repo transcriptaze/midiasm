@@ -52,7 +52,7 @@ func (e TrackName) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (e *TrackName) UnmarshalText(text []byte) error {
+func (e *TrackName) UnmarshalText(bytes []byte) error {
 	e.tick = 0
 	e.delta = 0
 	e.bytes = []byte{}
@@ -61,9 +61,10 @@ func (e *TrackName) UnmarshalText(text []byte) error {
 	e.Type = 0x03
 
 	re := regexp.MustCompile(`(?i)TrackName\s+(.*)`)
+	text := string(bytes)
 
-	if match := re.FindSubmatch(text); match != nil && len(match) > 1 {
-		e.Name = strings.TrimSpace(string(match[1]))
+	if match := re.FindStringSubmatch(text); match != nil && len(match) > 1 {
+		e.Name = strings.TrimSpace(match[1])
 	}
 
 	return nil

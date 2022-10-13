@@ -195,6 +195,14 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 			} else {
 				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &trackname, nil))
 			}
+
+		case strings.Contains(line, "Tempo"):
+			var tempo metaevent.Tempo
+			if err := tempo.UnmarshalText([]byte(line)); err != nil {
+				return nil, err
+			} else {
+				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &tempo, nil))
+			}
 		}
 	}
 	for line := range ch {

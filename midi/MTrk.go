@@ -66,14 +66,6 @@ func NewMTrk() (*MTrk, error) {
 func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 	var b bytes.Buffer
 
-	// if _, err = b.Write([]byte(chunk.Tag)); err != nil {
-	// 	return
-	// }
-
-	// if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
-	// 	return
-	// }
-
 	for _, event := range chunk.Events {
 		var v []byte
 		delta := vlq{event.Delta()}
@@ -85,6 +77,13 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 
 		switch e := event.Event.(type) {
 		case *metaevent.TrackName:
+			if v, err = e.MarshalBinary(); err != nil {
+				return
+			} else if _, err = b.Write(v); err != nil {
+				return
+			}
+
+		case *metaevent.Tempo:
 			if v, err = e.MarshalBinary(); err != nil {
 				return
 			} else if _, err = b.Write(v); err != nil {

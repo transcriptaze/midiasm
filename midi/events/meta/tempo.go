@@ -3,6 +3,8 @@ package metaevent
 import (
 	"fmt"
 	"math"
+	"regexp"
+	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/types"
 )
@@ -37,4 +39,39 @@ func (t Tempo) String() string {
 	bpm := uint(math.Round(60.0 * 1000000.0 / float64(t.Tempo)))
 
 	return fmt.Sprintf("%v", bpm)
+}
+
+func (t Tempo) MarshalBinary() (encoded []byte, err error) {
+	encoded = make([]byte, 6)
+
+	encoded[0] = byte(t.Status)
+	encoded[1] = byte(t.Type)
+	encoded[2] = byte(3)
+	encoded[3] = byte(t.Tempo >> 16 & 0xff)
+	encoded[4] = byte(t.Tempo >> 8 & 0xff)
+	encoded[5] = byte(t.Tempo >> 0 & 0xff)
+
+	return
+}
+
+func (t *Tempo) UnmarshalText(bytes []byte) error {
+	//	e.tick = 0
+	//	e.delta = 0
+	//	e.bytes = []byte{}
+	t.Status = 0xff
+	t.Tag = "Tempo"
+	t.Type = 0x51
+
+	re := regexp.MustCompile(`(?i)Tempo\s+tempo:([0-9]+)`)
+	text := string(bytes)
+
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
+		return fmt.Errorf("invalid Tempo event (%v)", text)
+	} else if v, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+		return err
+	} else {
+		t.Tempo = uint32(v)
+	}
+
+	return nil
 }
