@@ -12,6 +12,8 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
+var trackname = events.NewEvent(0, 0, nil, []byte{})
+
 var keysignatureFSM = events.NewEvent(
 	0,
 	0,
@@ -135,6 +137,10 @@ var noteOffCS3Alias = events.NewEvent(
 	[]byte{0x00, 0x81, 0x31, 0x64},
 )
 
+func init() {
+	trackname.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
+}
+
 func TestMTrkMarshalTrack0(t *testing.T) {
 	expected := []byte{
 		0x4d, 0x54, 0x72, 0x6b, // MTrk
@@ -153,11 +159,7 @@ func TestMTrkMarshalTrack0(t *testing.T) {
 		Tag:    "MTrk",
 		Length: 24,
 		Events: []*events.Event{
-			events.NewEvent(
-				0,
-				0,
-				metaevent.NewTrackName(0, 0, []byte("Example 1")),
-				[]byte{}),
+			trackname,
 		},
 	}
 

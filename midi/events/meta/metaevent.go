@@ -107,7 +107,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return NewCopyright(data)
 
 	case 0x03:
-		return NewTrackName(tick, delta, data), nil
+		return NewTrackName(tick, delta, data)
 
 	case 0x04:
 		return NewInstrumentName(data)
@@ -146,7 +146,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return NewKeySignature(ctx, data)
 
 	case 0x2f:
-		return NewEndOfTrack(data)
+		return NewEndOfTrack(tick, delta, data)
 
 	case 0x7f:
 		return NewSequencerSpecificEvent(data)

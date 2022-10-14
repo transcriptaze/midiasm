@@ -11,7 +11,7 @@ type TrackName struct {
 	Name string
 }
 
-func NewTrackName(tick uint64, delta uint32, bytes []byte) *TrackName {
+func NewTrackName(tick uint64, delta uint32, bytes []byte) (*TrackName, error) {
 	N, _ := vlq{uint32(len(bytes))}.MarshalBinary()
 
 	return &TrackName{
@@ -25,7 +25,7 @@ func NewTrackName(tick uint64, delta uint32, bytes []byte) *TrackName {
 			Type:   0x03,
 		},
 		Name: string(bytes),
-	}
+	}, nil
 }
 
 func (e TrackName) MarshalBinary() (encoded []byte, err error) {

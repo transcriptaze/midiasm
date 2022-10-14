@@ -203,6 +203,14 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 			} else {
 				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &tempo, nil))
 			}
+
+		case strings.Contains(line, "EndOfTrack"):
+			var endOfTrack metaevent.EndOfTrack
+			if err := endOfTrack.UnmarshalText([]byte(line)); err != nil {
+				return nil, err
+			} else {
+				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &endOfTrack, nil))
+			}
 		}
 	}
 	for line := range ch {

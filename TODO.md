@@ -13,9 +13,9 @@
 - [ ] VLF: TestMarshalBinary
 - [ ] VLF: UnmarshalBinary
 - [ ] MetaEvent embedded event
-      - [x] Embed tag
-      - [x] Embed status
-      - [x] Embed type
+      - [ ] Migrate remaining events
+- [ ] Validate
+      - [ ] EndOfTrack
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 
@@ -63,6 +63,7 @@
 - https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
   - https://stackoverflow.com/questions/46182767/how-to-add-random-number-using-awk-command
 - CSS a la Werkmeister
+- M-IDE
 
 ### Other
 
@@ -87,3 +88,4 @@
 19. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)
 20. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
 21. [go-jq](https://github.com/itchyny/gojq)
+22. [Katai struct](https://kaitai.io/)

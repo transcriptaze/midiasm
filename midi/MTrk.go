@@ -76,6 +76,13 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 		}
 
 		switch e := event.Event.(type) {
+		case *metaevent.EndOfTrack:
+			if v, err = e.MarshalBinary(); err != nil {
+				return
+			} else if _, err = b.Write(v); err != nil {
+				return
+			}
+
 		case *metaevent.TrackName:
 			if v, err = e.MarshalBinary(); err != nil {
 				return

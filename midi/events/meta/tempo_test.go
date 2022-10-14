@@ -5,8 +5,31 @@ import (
 	"testing"
 )
 
+func TestNewTemp(t *testing.T) {
+	expected := Tempo{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			Tag:    "Tempo",
+			Status: 0xff,
+			Type:   0x51,
+			bytes:  []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+		},
+		Tempo: 500000,
+	}
+
+	evt, err := NewTempo(2400, 480, []byte{0x07, 0xa1, 0x20})
+	if err != nil {
+		t.Fatalf("error encoding Tempo (%v)", err)
+	}
+
+	if !reflect.DeepEqual(*evt, expected) {
+		t.Errorf("incorrect Tempo\n   expected:%+v\n   got:     %+v", expected, *evt)
+	}
+}
+
 func TestTempoMarshalBinary(t *testing.T) {
-	tempo := Tempo{
+	evt := Tempo{
 		event: event{
 			tick:   2400,
 			delta:  480,
@@ -20,7 +43,7 @@ func TestTempoMarshalBinary(t *testing.T) {
 
 	expected := []byte{0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}
 
-	encoded, err := tempo.MarshalBinary()
+	encoded, err := evt.MarshalBinary()
 	if err != nil {
 		t.Fatalf("error encoding Tempo (%v)", err)
 	}
@@ -44,14 +67,14 @@ func TestTempoUnmarshalText(t *testing.T) {
 		Tempo: 500000,
 	}
 
-	tempo := Tempo{}
+	evt := Tempo{}
 
-	if err := tempo.UnmarshalText([]byte(text)); err != nil {
+	if err := evt.UnmarshalText([]byte(text)); err != nil {
 		t.Fatalf("error unmarshalling Tempo (%v)", err)
 	}
 
-	if !reflect.DeepEqual(tempo, expected) {
-		t.Errorf("incorrectly unmarshalled Tempo\n   expected:%+v\n   got:     %+v", expected, tempo)
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled Tempo\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
 }

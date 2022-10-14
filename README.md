@@ -220,4 +220,6 @@ Command line:
 1. [(github) mido](https://github.com/mido/mido)
 2. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
 3. [Werkmeister](https://werckme.github.io/werckmeister)
+4. [pymidi](https://pypi.org/project/py-midi)
+
 
