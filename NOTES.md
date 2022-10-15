@@ -8,3 +8,4 @@
 
 6. https://www.twilio.com/blog/working-with-midi-data-in-python-using-mido
 7. https://diyelectromusic.wordpress.com/2022/10/10/the-lo-fi-orchestral-tubular-bells/
+8. [What is a good midi to famicon converter?](https://softwarerecs.stackexchange.com/questions/84269/what-is-a-good-midi-to-famicon-converter)

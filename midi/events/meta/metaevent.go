@@ -11,9 +11,10 @@ import (
 )
 
 type event struct {
-	tick   uint64
-	delta  uint32
-	bytes  []byte
+	tick  uint64
+	delta uint32
+	bytes []byte
+
 	Tag    string
 	Status types.Status
 	Type   types.MetaEventType

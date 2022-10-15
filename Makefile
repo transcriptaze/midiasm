@@ -41,8 +41,7 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-# 	go test -v ./ops/assemble -run TestTextAssemble
-	go debug github.com/transcriptaze/midiasm -- 
+	go test -v ./midi/events/midi/... -run TestProgramChangeMarshalBinary
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

@@ -108,7 +108,7 @@ func TestDisassembleSMF(t *testing.T) {
 		t.Fatalf("Unexpected error initialising 'print' operation (%v)", err)
 	}
 
-	disassemble.Print(&smf, "document", &s)
+	disassemble.Print(smf, "document", &s)
 
 	if s.String() != expected {
 		l, ls, p, q := diff(expected, s.String())
@@ -223,11 +223,11 @@ func TestDisassembleWithLoadedTemplate(t *testing.T) {
 		t.Fatalf("Unexpected error loading 'print' templates (%v)", err)
 	}
 
-	disassemble.Print(&smf, "document", &s)
+	disassemble.Print(smf, "document", &s)
 
 	if s.String() != expected {
 		l, ls, p, q := diff(expected, s.String())
-		t.Errorf("Output does not match expected:\n%s\n>> line %d:\n>> %s\n--------\n   %s\n   %s\n--------\n", s.String(), l, ls, p, q)
+		t.Errorf("Output does not match expected:\n%s\n>> line %d:\n>> %s\n--------\n   %v\n   %v\n--------\n", s.String(), l, ls, p, q)
 		diff(expected, s.String())
 	}
 }

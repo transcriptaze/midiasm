@@ -96,6 +96,13 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 			} else if _, err = b.Write(v); err != nil {
 				return
 			}
+
+		case *midievent.ProgramChange:
+			if v, err = e.MarshalBinary(); err != nil {
+				return
+			} else if _, err = b.Write(v); err != nil {
+				return
+			}
 		}
 	}
 
@@ -216,7 +223,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	ctx.RunningStatus = status
 
-	e, err := midievent.Parse(rr, status, ctx)
+	e, err := midievent.Parse(uint64(tick)+uint64(delta), delta, rr, status, ctx)
 
 	return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
 }

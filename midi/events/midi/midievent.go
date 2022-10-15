@@ -8,13 +8,35 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
+type event struct {
+	tick  uint64
+	delta uint32
+	bytes []byte
+
+	Tag     string
+	Status  types.Status
+	Channel types.Channel
+}
+
+func (e event) Tick() uint64 {
+	return e.tick
+}
+
+func (e event) Delta() uint32 {
+	return e.delta
+}
+
+func (e event) Bytes() []byte {
+	return e.bytes
+}
+
 type Note struct {
 	Value byte
 	Name  string
 	Alias string
 }
 
-func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(tick uint64, delta uint32, r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
 	switch status & 0xF0 {
 	case 0x80:
 		return NewNoteOff(ctx, r, status)
@@ -29,7 +51,7 @@ func Parse(r io.ByteReader, status types.Status, ctx *context.Context) (interfac
 		return NewController(ctx, r, status)
 
 	case 0xC0:
-		return NewProgramChange(ctx, r, status)
+		return NewProgramChange(ctx, tick, delta, r, status)
 
 	case 0xD0:
 		return NewChannelPressure(r, status)

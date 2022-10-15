@@ -12,6 +12,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
 type TextAssembler struct {
@@ -207,9 +208,10 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 	}
 
 	g := map[string]func() E{
-		"TrackName":  func() E { return &metaevent.TrackName{} },
-		"Tempo":      func() E { return &metaevent.Tempo{} },
-		"EndOfTrack": func() E { return &metaevent.EndOfTrack{} },
+		"TrackName":     func() E { return &metaevent.TrackName{} },
+		"Tempo":         func() E { return &metaevent.Tempo{} },
+		"EndOfTrack":    func() E { return &metaevent.EndOfTrack{} },
+		"ProgramChange": func() E { return &midievent.ProgramChange{} },
 	}
 
 	for line := range lines {
