@@ -7,3 +7,4 @@
 5. https://github.com/maziac/binary-file-viewer
 
 6. https://www.twilio.com/blog/working-with-midi-data-in-python-using-mido
+7. https://diyelectromusic.wordpress.com/2022/10/10/the-lo-fi-orchestral-tubular-bells/

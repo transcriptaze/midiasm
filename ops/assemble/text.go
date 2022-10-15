@@ -2,6 +2,7 @@ package assemble
 
 import (
 	"bufio"
+	"encoding"
 	"fmt"
 	"io"
 	"regexp"
@@ -155,7 +156,7 @@ func (a TextAssembler) parseMThd(chunk []string) (*midi.MThd, error) {
 }
 
 func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
-	ch := make(chan string)
+	lines := make(chan string)
 	closed := make(chan bool, 1)
 
 	defer func() {
@@ -165,17 +166,19 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 	go func() {
 		for _, line := range chunk {
 			select {
-			case ch <- line:
+			case lines <- line:
 			case <-closed:
 				break
 			}
 		}
 
-		close(ch)
+		close(lines)
 	}()
 
+	// ... make MTrk
 	var mtrk *midi.MTrk
-	for line := range ch {
+
+	for line := range lines {
 		if strings.Contains(line, "MTrk") {
 			if v, err := midi.NewMTrk(); err != nil {
 				return nil, err
@@ -186,36 +189,41 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		}
 	}
 
-	for line := range ch {
-		switch {
-		case strings.Contains(line, "TrackName"):
-			var trackname metaevent.TrackName
-			if err := trackname.UnmarshalText([]byte(line)); err != nil {
-				return nil, err
-			} else {
-				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &trackname, nil))
-			}
+	if mtrk == nil {
+		return nil, fmt.Errorf("missing MTrk")
+	}
 
-		case strings.Contains(line, "Tempo"):
-			var tempo metaevent.Tempo
-			if err := tempo.UnmarshalText([]byte(line)); err != nil {
-				return nil, err
-			} else {
-				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &tempo, nil))
-			}
+	// ... extract events
+	type E encoding.TextUnmarshaler
 
-		case strings.Contains(line, "EndOfTrack"):
-			var endOfTrack metaevent.EndOfTrack
-			if err := endOfTrack.UnmarshalText([]byte(line)); err != nil {
-				return nil, err
-			} else {
-				mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, &endOfTrack, nil))
+	f := func(line string, e E) error {
+		if err := e.UnmarshalText([]byte(line)); err != nil {
+			return err
+		} else {
+			mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, e, nil))
+		}
+
+		return nil
+	}
+
+	g := map[string]func() E{
+		"TrackName":  func() E { return &metaevent.TrackName{} },
+		"Tempo":      func() E { return &metaevent.Tempo{} },
+		"EndOfTrack": func() E { return &metaevent.EndOfTrack{} },
+	}
+
+	for line := range lines {
+		for k, v := range g {
+			if strings.Contains(line, k) {
+				e := v()
+				if err := f(line, e); err != nil {
+					return nil, err
+				} else if _, ok := e.(*metaevent.EndOfTrack); ok {
+					return mtrk, nil
+				}
 			}
 		}
 	}
-	for line := range ch {
-		println(line)
-	}
 
-	return mtrk, nil
+	return mtrk, fmt.Errorf("missing EndOfTrack")
 }
