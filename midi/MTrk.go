@@ -97,6 +97,13 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 				return
 			}
 
+		case *metaevent.TimeSignature:
+			if v, err = e.MarshalBinary(); err != nil {
+				return
+			} else if _, err = b.Write(v); err != nil {
+				return
+			}
+
 		case *midievent.ProgramChange:
 			if v, err = e.MarshalBinary(); err != nil {
 				return
