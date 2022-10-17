@@ -7,13 +7,23 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
-		"KeySignature",
-		0xff,
-		0x59, 0, 0, "C major"}
+		event: event{
+			tick:   0,
+			delta:  0,
+			Tag:    "KeySignature",
+			Status: 0xff,
+			Type:   0x59,
+			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00},
+		},
+		Accidentals: 0,
+		KeyType:     types.Major,
+		Key:         "C major",
+	}
 
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0xff, 0x59, 0x02, 0x00, 0x00}))
@@ -43,9 +53,18 @@ func TestParseCMajorKeySignature(t *testing.T) {
 
 func TestParseCMinorKeySignature(t *testing.T) {
 	expected := KeySignature{
-		"KeySignature",
-		0xff,
-		0x59, -3, 1, "C minor"}
+		event: event{
+			tick:   0,
+			delta:  0,
+			Tag:    "KeySignature",
+			Status: 0xff,
+			Type:   0x59,
+			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01},
+		},
+		Accidentals: -3,
+		KeyType:     types.Minor,
+		Key:         "C minor",
+	}
 
 	ctx := context.Context{}
 	r := bufio.NewReader(bytes.NewReader([]byte{0xff, 0x59, 0x02, 0xfd, 0x01}))
@@ -71,4 +90,59 @@ func TestParseCMinorKeySignature(t *testing.T) {
 	if !reflect.DeepEqual(ctx.Scale(), context.Flats) {
 		t.Errorf("Context scale not set to 'flats':%v", ctx)
 	}
+}
+
+func TestKeySignatureMarshalBinary(t *testing.T) {
+	evt := KeySignature{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			Tag:    "KeySignature",
+			Status: 0xff,
+			Type:   0x59,
+			bytes:  []byte{},
+		},
+		Accidentals: -3,
+		KeyType:     types.Minor,
+		Key:         "C minor",
+	}
+
+	expected := []byte{0xff, 0x59, 0x02, 0xfd, 0x01}
+
+	encoded, err := evt.MarshalBinary()
+	if err != nil {
+		t.Fatalf("error encoding KeySignature (%v)", err)
+	}
+
+	if !reflect.DeepEqual(encoded, expected) {
+		t.Errorf("incorrectly encoded KeySignature\n   expected:%+v\n   got:     %+v", expected, encoded)
+	}
+}
+
+func TestKeySignatureUnmarshalText(t *testing.T) {
+	text := "      00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           B minor"
+	expected := KeySignature{
+		event: event{
+			tick:   0,
+			delta:  0,
+			Tag:    "KeySignature",
+			Status: 0xff,
+			Type:   0x59,
+			bytes:  []byte{},
+		},
+		Accidentals: 2,
+		KeyType:     1,
+		Key:         "B minor",
+	}
+
+	evt := KeySignature{}
+
+	if err := evt.UnmarshalText([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling KeySignature (%v)", err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled KeySignature\n   expected:%#v\n   got:     %#v", expected, evt)
+	}
+
 }

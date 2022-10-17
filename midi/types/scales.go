@@ -55,14 +55,15 @@ const (
 	Minor KeyType = 1
 )
 
+func (k KeyType) String() string {
+	return []string{"major", "minor"}[k]
+}
+
 func (s Scale) Transpose(steps int) Scale {
 	notes := make([]Note, len(s.Notes))
 	for ix, n := range s.Notes {
 		notes[ix] = transpose(n, steps)
 	}
-
-	// fmt.Printf(">>>>>>>>> SCALE: %+v\n", s.Notes)
-	// fmt.Printf(">>>>>>>>> NOTES: %+v\n", notes)
 
 	var scales []Scale
 

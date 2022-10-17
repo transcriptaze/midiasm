@@ -237,18 +237,7 @@ var didgeridoo = events.NewEvent(
 	},
 	[]byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f})
 
-var aMinor = events.NewEvent(
-	0,
-	0,
-	&metaevent.KeySignature{
-		Tag:         "KeySignature",
-		Status:      0xff,
-		Type:        types.MetaEventType(0x59),
-		Accidentals: 0,
-		KeyType:     1,
-		Key:         "A minor",
-	},
-	[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
+var aMinor = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
 
 var motu = events.NewEvent(
 	0,
@@ -340,4 +329,6 @@ func init() {
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
 
 	acousticGuitar.Event, _ = metaevent.NewTrackName(0, 0, []byte("Acoustic Guitar"))
+
+	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
 }

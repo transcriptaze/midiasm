@@ -3,6 +3,7 @@ package midi
 import (
 	"bufio"
 	"bytes"
+	"encoding"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -66,6 +67,16 @@ func NewMTrk() (*MTrk, error) {
 func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 	var b bytes.Buffer
 
+	f := func(e encoding.BinaryMarshaler) error {
+		if v, err := e.MarshalBinary(); err != nil {
+			return err
+		} else if _, err = b.Write(v); err != nil {
+			return err
+		} else {
+			return nil
+		}
+	}
+
 	for _, event := range chunk.Events {
 		var v []byte
 		delta := vlq{event.Delta()}
@@ -75,39 +86,8 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 			return
 		}
 
-		switch e := event.Event.(type) {
-		case *metaevent.EndOfTrack:
-			if v, err = e.MarshalBinary(); err != nil {
-				return
-			} else if _, err = b.Write(v); err != nil {
-				return
-			}
-
-		case *metaevent.TrackName:
-			if v, err = e.MarshalBinary(); err != nil {
-				return
-			} else if _, err = b.Write(v); err != nil {
-				return
-			}
-
-		case *metaevent.Tempo:
-			if v, err = e.MarshalBinary(); err != nil {
-				return
-			} else if _, err = b.Write(v); err != nil {
-				return
-			}
-
-		case *metaevent.TimeSignature:
-			if v, err = e.MarshalBinary(); err != nil {
-				return
-			} else if _, err = b.Write(v); err != nil {
-				return
-			}
-
-		case *midievent.ProgramChange:
-			if v, err = e.MarshalBinary(); err != nil {
-				return
-			} else if _, err = b.Write(v); err != nil {
+		if e, ok := event.Event.(encoding.BinaryMarshaler); ok {
+			if err = f(e); err != nil {
 				return
 			}
 		}

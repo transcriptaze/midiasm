@@ -144,7 +144,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return NewTimeSignature(tick, delta, data)
 
 	case 0x59:
-		return NewKeySignature(ctx, data)
+		return NewKeySignature(ctx, tick, delta, data)
 
 	case 0x2f:
 		return NewEndOfTrack(tick, delta, data)

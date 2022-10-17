@@ -13,32 +13,8 @@ import (
 )
 
 var trackname = events.NewEvent(0, 0, nil, []byte{})
-
-var keysignatureFSM = events.NewEvent(
-	0,
-	0,
-	&metaevent.KeySignature{
-		Tag:         "KeySignature",
-		Status:      0xff,
-		Type:        types.MetaEventType(0x59),
-		Accidentals: 6,
-		KeyType:     0,
-		Key:         "F♯ major",
-	},
-	[]byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
-
-var keysignatureEFm = events.NewEvent(
-	0,
-	0,
-	&metaevent.KeySignature{
-		Tag:         "KeySignature",
-		Status:      0xff,
-		Type:        types.MetaEventType(0x59),
-		Accidentals: -6,
-		KeyType:     1,
-		Key:         "E♭ minor",
-	},
-	[]byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
+var keysignatureFSM = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
+var keysignatureEFm = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
 
 var noteOnC3v72 = events.NewEvent(
 	0,
@@ -139,6 +115,8 @@ var noteOffCS3Alias = events.NewEvent(
 
 func init() {
 	trackname.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
+	keysignatureFSM.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x06, 0x00})
+	keysignatureEFm.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0xfa, 0x01})
 }
 
 func TestMTrkMarshalTrack0(t *testing.T) {

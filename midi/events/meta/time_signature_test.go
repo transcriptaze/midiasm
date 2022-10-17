@@ -52,7 +52,7 @@ func TestTimeSignatureMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTimeSignaturUnmarshalText(t *testing.T) {
+func TestTimeSignatureUnmarshalText(t *testing.T) {
 	text := "      00 FF 58 04 04 02 18 08               tick:0          delta:0          58 TimeSignature          3/4, 24 ticks per click, 8/32 per quarter"
 	expected := TimeSignature{
 		event: event{
