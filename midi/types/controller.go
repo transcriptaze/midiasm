@@ -86,8 +86,8 @@ var controllers = map[byte]Controller{
 	// RPNs / NRPNs
 	96:  Controller{96, "Data Increment"},
 	97:  Controller{97, "Data Decrement"},
-	98:  Controller{98, "Non Registered Parameter Number (LSB)"},
-	99:  Controller{99, "Non Registered Parameter Number (MSB)"},
+	98:  Controller{98, "Non-Registered Parameter Number (LSB)"},
+	99:  Controller{99, "Non-Registered Parameter Number (MSB)"},
 	100: Controller{100, "Registered Parameter Number (LSB)"},
 	101: Controller{101, "Registered Parameter Number (MSB)"},
 

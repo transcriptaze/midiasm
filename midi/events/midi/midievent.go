@@ -48,7 +48,7 @@ func Parse(tick uint64, delta uint32, r io.ByteReader, status types.Status, ctx 
 		return NewPolyphonicPressure(r, status)
 
 	case 0xB0:
-		return NewController(ctx, r, status)
+		return NewController(ctx, tick, delta, r, status)
 
 	case 0xC0:
 		return NewProgramChange(ctx, tick, delta, r, status)

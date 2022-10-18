@@ -12,9 +12,15 @@ import (
 
 func TestController(t *testing.T) {
 	expected := Controller{
-		Tag:        "Controller",
-		Status:     0xb7,
-		Channel:    7,
+		event: event{
+			tick:  2400,
+			delta: 480,
+			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+
+			Tag:     "Controller",
+			Status:  0xb7,
+			Channel: 7,
+		},
 		Controller: types.Controller{84, "Portamento Control"},
 		Value:      29,
 	}
@@ -22,7 +28,7 @@ func TestController(t *testing.T) {
 	ctx := context.NewContext()
 	r := bufio.NewReader(bytes.NewReader([]byte{0x54, 0x1d}))
 
-	event, err := Parse(0, 0, r, 0xb7, ctx)
+	event, err := Parse(2400, 480, r, 0xb7, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected Controller event parse error: %v", err)
 	} else if event == nil {
@@ -53,5 +59,32 @@ func TestProgramBank(t *testing.T) {
 
 	if ctx.ProgramBank[3] != 673 {
 		t.Errorf("Invalid ProgramBank in context\n  expected:%v\n  got:     %#v", 673, ctx.ProgramBank[3])
+	}
+}
+
+func TestControllerMarshalBinary(t *testing.T) {
+	evt := Controller{
+		event: event{
+			tick:  2400,
+			delta: 480,
+			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+
+			Tag:     "Controller",
+			Status:  0xb7,
+			Channel: 7,
+		},
+		Controller: types.Controller{84, "Portamento Control"},
+		Value:      29,
+	}
+
+	expected := []byte{0xb7, 0x54, 0x1d}
+
+	encoded, err := evt.MarshalBinary()
+	if err != nil {
+		t.Fatalf("error encoding Controller (%v)", err)
+	}
+
+	if !reflect.DeepEqual(encoded, expected) {
+		t.Errorf("incorrectly encoded Controller\n   expected:%+v\n   got:     %+v", expected, encoded)
 	}
 }

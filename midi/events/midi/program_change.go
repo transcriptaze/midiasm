@@ -44,7 +44,10 @@ func NewProgramChange(ctx *context.Context, tick uint64, delta uint32, r io.Byte
 }
 
 func (p ProgramChange) MarshalBinary() (encoded []byte, err error) {
-	encoded = []byte{byte(0xc0 | p.Channel), byte(p.Program)}
+	encoded = []byte{
+		byte(0xc0 | p.Channel),
+		byte(p.Program),
+	}
 
 	return
 }

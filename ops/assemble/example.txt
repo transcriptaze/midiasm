@@ -10,10 +10,10 @@
       00 C0 19                              tick:0          delta:0          C0 ProgramChange          channel:0  bank:0, program:25
       00 FF 58 04 04 02 18 08               tick:0          delta:0          58 TimeSignature          4/4, 24 ticks per click, 8/32 per quarter
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
-      00 90 30 48                           tick:0          delta:0          90 NoteOn                 channel:0  note:C3, velocity:72
       00 B0 65 00                           tick:0          delta:0          B0 Controller             channel:0  101/Registered Parameter Number (MSB), value:0
       00 B0 64 00                           tick:0          delta:0          B0 Controller             channel:0  100/Registered Parameter Number (LSB), value:0
       00 B0 06 06                           tick:0          delta:0          B0 Controller             channel:0  6/Data Entry (MSB), value:6
+      00 90 30 48                           tick:0          delta:0          90 NoteOn                 channel:0  note:C3, velocity:72
    83 60 80 30 40                           tick:480        delta:480        80 NoteOff                channel:0  note:C3, velocity:64
       00 90 32 48                           tick:480        delta:0          90 NoteOn                 channel:0  note:D3, velocity:72
    83 60 80 32 40                           tick:960        delta:480        80 NoteOff                channel:0  note:D3, velocity:64

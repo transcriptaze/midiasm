@@ -1,6 +1,7 @@
 package midi
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"testing"
@@ -29,50 +30,55 @@ var smpteOffset = events.NewEvent(
 	},
 	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 
-var programBankMSB = events.NewEvent(
-	0,
-	0,
-	&midievent.Controller{
-		Tag:        "Controller",
-		Status:     0xb7,
-		Channel:    types.Channel(7),
-		Controller: types.Controller{0, "Bank Select (MSB)"},
-		Value:      0x05,
-	},
-	[]byte{0x00, 0xb7, 0x00, 0x05})
+var programBankMSB = events.NewEvent(0, 0, nil, []byte{0x00, 0xb7, 0x00, 0x05})
+var programBankLSB = events.NewEvent(0, 0, nil, []byte{0x00, 0xb7, 0x20, 0x21})
+var programBankMSBCh3 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb3, 0x00, 0x05})
+var programBankLSBCh5 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb5, 0x20, 0x21})
 
-var programBankLSB = events.NewEvent(
-	0,
-	0,
-	&midievent.Controller{
-		Tag:        "Controller",
-		Status:     0xb7,
-		Channel:    types.Channel(7),
-		Controller: types.Controller{32, "Bank Select (LSB)"},
-	},
-	[]byte{0x00, 0xb7, 0x20, 0x21})
+// var programBankMSB = events.NewEvent(
+// 	0,
+// 	0,
+// 	&midievent.Controller{
+// 		Tag:        "Controller",
+// 		Status:     0xb7,
+// 		Channel:    types.Channel(7),
+// 		Controller: types.Controller{0, "Bank Select (MSB)"},
+// 		Value:      0x05,
+// 	},
+// 	[]byte{0x00, 0xb7, 0x00, 0x05})
 
-var programBankMSBCh3 = events.NewEvent(
-	0,
-	0,
-	&midievent.Controller{
-		Tag:        "Controller",
-		Status:     0xb3,
-		Channel:    types.Channel(3),
-		Controller: types.Controller{0, "Bank Select (MSB)"},
-	},
-	[]byte{0x00, 0xb3, 0x00, 0x05})
+// var programBankLSB = events.NewEvent(
+// 	0,
+// 	0,
+// 	&midievent.Controller{
+// 		Tag:        "Controller",
+// 		Status:     0xb7,
+// 		Channel:    types.Channel(7),
+// 		Controller: types.Controller{32, "Bank Select (LSB)"},
+// 	},
+// 	[]byte{0x00, 0xb7, 0x20, 0x21})
 
-var programBankLSBCh5 = events.NewEvent(
-	0,
-	0,
-	&midievent.Controller{
-		Tag:        "Controller",
-		Status:     0xb5,
-		Channel:    types.Channel(5),
-		Controller: types.Controller{32, "Bank Select (LSB)"},
-	},
-	[]byte{0x00, 0xb5, 0x20, 0x21})
+// var programBankMSBCh3 = events.NewEvent(
+// 	0,
+// 	0,
+// 	&midievent.Controller{
+// 		Tag:        "Controller",
+// 		Status:     0xb3,
+// 		Channel:    types.Channel(3),
+// 		Controller: types.Controller{0, "Bank Select (MSB)"},
+// 	},
+// 	[]byte{0x00, 0xb3, 0x00, 0x05})
+
+// var programBankLSBCh5 = events.NewEvent(
+// 	0,
+// 	0,
+// 	&midievent.Controller{
+// 		Tag:        "Controller",
+// 		Status:     0xb5,
+// 		Channel:    types.Channel(5),
+// 		Controller: types.Controller{32, "Bank Select (LSB)"},
+// 	},
+// 	[]byte{0x00, 0xb5, 0x20, 0x21})
 
 var noteOn = events.NewEvent(
 	0,
@@ -109,6 +115,10 @@ var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 func init() {
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
+	programBankMSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb7)
+	programBankLSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb7)
+	programBankMSBCh3.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb3)
+	programBankLSBCh5.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb5)
 }
 
 // 0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0, 0x4d, 0x54
