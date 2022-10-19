@@ -88,3 +88,30 @@ func TestControllerMarshalBinary(t *testing.T) {
 		t.Errorf("incorrectly encoded Controller\n   expected:%+v\n   got:     %+v", expected, encoded)
 	}
 }
+
+func TestControllerUnmarshalText(t *testing.T) {
+	text := "      00 B0 65 09                           tick:0          delta:0          B7 Controller             channel:7  101/Registered Parameter Number (MSB), value:9"
+	expected := Controller{
+		event: event{
+			tick:    0,
+			delta:   0,
+			Tag:     "Controller",
+			Status:  0xb7,
+			Channel: 7,
+			bytes:   []byte{0x00, 0xb7, 0x65, 0x09},
+		},
+		Controller: types.Controller{101, "Registered Parameter Number (MSB)"},
+		Value:      0x09,
+	}
+
+	evt := Controller{}
+
+	if err := evt.UnmarshalText([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling Controller (%v)", err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled Controller\n   expected:%+v\n   got:     %+v", expected, evt)
+	}
+
+}

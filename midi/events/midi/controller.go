@@ -3,6 +3,8 @@ package midievent
 import (
 	"fmt"
 	"io"
+	"regexp"
+	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/types"
@@ -62,4 +64,34 @@ func (c Controller) MarshalBinary() (encoded []byte, err error) {
 	}
 
 	return
+}
+
+func (c *Controller) UnmarshalText(bytes []byte) error {
+	c.tick = 0
+	c.delta = 0
+	c.bytes = []byte{}
+	c.Tag = "Controller"
+
+	re := regexp.MustCompile(`(?i)Controller.*\s+channel:([0-9]+)\s+([0-9]+)(?:.*)?value:([0-9]+)`)
+	text := string(bytes)
+
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+		return fmt.Errorf("invalid Controller event (%v)", text)
+	} else if channel, err := strconv.ParseUint(match[1], 10, 8); err != nil {
+		return err
+	} else if controller, err := strconv.ParseUint(match[2], 10, 8); err != nil {
+		return err
+	} else if value, err := strconv.ParseUint(match[3], 10, 8); err != nil {
+		return err
+	} else if channel > 15 {
+		return fmt.Errorf("invalid Controller channel (%v)", channel)
+	} else {
+		c.bytes = []byte{0x00, byte(0xb0 | uint8(channel&0x0f)), uint8(controller), uint8(value)}
+		c.Status = types.Status(0xb0 | uint8(channel&0x0f))
+		c.Channel = types.Channel(channel)
+		c.Controller = types.LookupController(uint8(controller))
+		c.Value = uint8(value)
+	}
+
+	return nil
 }
