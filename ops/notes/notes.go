@@ -126,7 +126,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					note := Note{
 						Channel:       v.Channel,
 						Note:          transpose(v.Note.Value, x.Transpose),
-						FormattedNote: ctx.FormatNote(transpose(v.Note.Value, x.Transpose)),
+						FormattedNote: midievent.FormatNote(ctx, transpose(v.Note.Value, x.Transpose)),
 						Velocity:      v.Velocity,
 						Start:         t,
 						StartTick:     tick,

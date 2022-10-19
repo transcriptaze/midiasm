@@ -1,12 +1,11 @@
 package midievent
 
 import (
-	"bufio"
-	"bytes"
 	"reflect"
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 )
 
 func TestParseNoteOffInMajorKey(t *testing.T) {
@@ -22,7 +21,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
+	r := IO.BytesReader([]byte{0x31, 0x48})
 
 	event, err := Parse(0, 0, r, 0x81, ctx)
 	if err != nil {
@@ -56,7 +55,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext().UseFlats()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x31, 0x48}))
+	r := IO.BytesReader([]byte{0x31, 0x48})
 
 	event, err := Parse(0, 0, r, 0x81, ctx)
 	if err != nil {

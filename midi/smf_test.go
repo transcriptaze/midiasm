@@ -9,6 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -80,20 +81,7 @@ var programBankLSBCh5 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb5, 0x20, 0x21
 // 	},
 // 	[]byte{0x00, 0xb5, 0x20, 0x21})
 
-var noteOn = events.NewEvent(
-	0,
-	0,
-	&midievent.NoteOn{
-		Tag:     "NoteOn",
-		Status:  0x97,
-		Channel: types.Channel(7),
-		Note: midievent.Note{
-			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
-		},
-	},
-	[]byte{0x00, 0x30, 0x40})
+var noteOn = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
 
 var noteOff = events.NewEvent(
 	0,
@@ -118,7 +106,8 @@ func init() {
 	programBankMSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb7)
 	programBankLSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb7)
 	programBankMSBCh3.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb3)
-	programBankLSBCh5.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb5)
+	programBankLSBCh5.Event, _ = midievent.NewController(nil, 0, 0, IO.BytesReader([]byte{0x20, 0x21}), 0xb5)
+	noteOn.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.BytesReader([]byte{0x00, 0x30, 0x40}), 0x90) // ? running status
 }
 
 // 0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0, 0x4d, 0x54

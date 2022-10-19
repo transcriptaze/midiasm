@@ -40,7 +40,7 @@ func NewNoteOff(ctx *context.Context, r io.ByteReader, status types.Status) (*No
 		Note: Note{
 			Value: note,
 			Name:  ctx.GetNoteOff(channel, note),
-			Alias: ctx.FormatNote(note),
+			Alias: FormatNote(ctx, note),
 		},
 		Velocity: velocity,
 	}, nil
@@ -64,6 +64,6 @@ func (n *NoteOff) Transpose(ctx *context.Context, steps int) {
 	n.Note = Note{
 		Value: note,
 		Name:  ctx.GetNoteOff(n.Channel, note),
-		Alias: ctx.FormatNote(note),
+		Alias: FormatNote(ctx, note),
 	}
 }

@@ -2,9 +2,9 @@ package midievent
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -36,13 +36,13 @@ type Note struct {
 	Alias string
 }
 
-func Parse(tick uint64, delta uint32, r io.ByteReader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
 	switch status & 0xF0 {
 	case 0x80:
 		return NewNoteOff(ctx, r, status)
 
 	case 0x90:
-		return NewNoteOn(ctx, r, status)
+		return NewNoteOn(ctx, tick, delta, r, status)
 
 	case 0xA0:
 		return NewPolyphonicPressure(r, status)

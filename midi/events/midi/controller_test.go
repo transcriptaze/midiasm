@@ -1,12 +1,11 @@
 package midievent
 
 import (
-	"bufio"
-	"bytes"
 	"reflect"
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -26,7 +25,7 @@ func TestController(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x54, 0x1d}))
+	r := IO.BytesReader([]byte{0x54, 0x1d})
 
 	event, err := Parse(2400, 480, r, 0xb7, ctx)
 	if err != nil {
@@ -47,7 +46,7 @@ func TestController(t *testing.T) {
 
 func TestProgramBank(t *testing.T) {
 	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x00, 0x05, 0x20, 0x21}))
+	r := IO.BytesReader([]byte{0x00, 0x05, 0x20, 0x21})
 
 	if _, err := Parse(0, 0, r, 0xb3, ctx); err != nil {
 		t.Fatalf("Unexpected MIDI event parse error: %v", err)

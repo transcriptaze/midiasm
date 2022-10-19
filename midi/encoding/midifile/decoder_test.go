@@ -9,6 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -255,37 +256,8 @@ var motu = events.NewEvent(
 	},
 	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
 
-var noteOnCS3 = events.NewEvent(
-	0,
-	0,
-	&midievent.NoteOn{
-		Tag:     "NoteOn",
-		Status:  0x91,
-		Channel: types.Channel(0x01),
-		Note: midievent.Note{
-			Value: 49,
-			Name:  "C♯3",
-			Alias: "C♯3",
-		},
-		Velocity: 72,
-	},
-	[]byte{0x00, 0x91, 0x31, 0x48})
-
-var noteOnC4 = events.NewEvent(
-	0,
-	0,
-	&midievent.NoteOn{
-		Tag:     "NoteOn",
-		Status:  0x91,
-		Channel: types.Channel(0x01),
-		Note: midievent.Note{
-			Value: 60,
-			Name:  "C4",
-			Alias: "C4",
-		},
-		Velocity: 76,
-	},
-	[]byte{0x00, 0x3c, 0x4c})
+var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
+var noteOnC4 = events.NewEvent(0, 0, nil, []byte{0x00, 0x3c, 0x4c})
 
 var noteOffCS3 = events.NewEvent(
 	0,
@@ -327,8 +299,9 @@ func init() {
 	example1.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
-
 	acousticGuitar.Event, _ = metaevent.NewTrackName(0, 0, []byte("Acoustic Guitar"))
-
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
+
+	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
+	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
 }

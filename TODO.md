@@ -7,6 +7,7 @@
 
 ### Assembler
 - [ ] Assemble MTrk
+      - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
 - [ ] Parse MTrk
 - [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary

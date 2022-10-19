@@ -81,7 +81,7 @@ loop:
 		for ix, note := range notes {
 			m := scale.Notes[ix]
 
-			if note.ord == m.ord {
+			if note.Ord == m.Ord {
 				continue
 			}
 
@@ -117,7 +117,7 @@ loop:
 
 func transpose(note Note, steps int) Note {
 	for ix, n := range SCALE {
-		if n.ord == note.ord {
+		if n.Ord == note.Ord {
 			ix = (ix + steps)
 			for ix < 0 {
 				ix += 12

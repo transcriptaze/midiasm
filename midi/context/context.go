@@ -46,10 +46,10 @@ type Context struct {
 
 // Ref. https://computermusicresource.com/midikeys.html
 func SetMiddleC(c types.MiddleC) {
-	middleC = c
+	MiddleC = c
 }
 
-var middleC = types.C3
+var MiddleC = types.C3
 
 func NewContext() *Context {
 	return &Context{
@@ -77,19 +77,6 @@ func (ctx *Context) UseFlats() *Context {
 	return ctx
 }
 
-func (ctx *Context) FormatNote(n byte) string {
-	var note = ctx.scale[n%12]
-	var octave int
-
-	if middleC == types.C4 {
-		octave = int(n/12) - 2
-	} else {
-		octave = int(n/12) - 1
-	}
-
-	return fmt.Sprintf("%s%d", note, octave)
-}
-
 func (ctx *Context) GetNoteOff(ch types.Channel, n byte) string {
 	key := uint16(ch)
 	key <<= 8
@@ -108,4 +95,23 @@ func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
 	key |= uint16(n)
 
 	ctx.notes[key] = ctx.FormatNote(n)
+}
+
+func (ctx *Context) FormatNote(n byte) string {
+	scale := Sharps
+
+	if ctx != nil {
+		scale = ctx.scale
+	}
+
+	var note = scale[n%12]
+	var octave int
+
+	if MiddleC == types.C4 {
+		octave = int(n/12) - 2
+	} else {
+		octave = int(n/12) - 1
+	}
+
+	return fmt.Sprintf("%s%d", note, octave)
 }

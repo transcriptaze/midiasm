@@ -215,6 +215,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		"EndOfTrack":    func() E { return &metaevent.EndOfTrack{} },
 		"ProgramChange": func() E { return &midievent.ProgramChange{} },
 		"Controller":    func() E { return &midievent.Controller{} },
+		"NoteOn":        func() E { return &midievent.NoteOn{} },
 	}
 
 	for line := range lines {

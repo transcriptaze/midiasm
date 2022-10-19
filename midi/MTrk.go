@@ -13,6 +13,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/events/sysex"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -160,9 +161,9 @@ func (t *MTrk) Transpose(steps int) {
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {
-	var buffer bytes.Buffer
+	// var buffer bytes.Buffer
 
-	rr := reader{r, &buffer}
+	rr := IO.NewReader(r)
 
 	delta, err := events.VLQ(rr)
 	if err != nil {
@@ -181,7 +182,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		e, err := metaevent.Parse(ctx, rr, uint64(tick)+uint64(delta), delta)
 
-		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
+		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
 	}
 
 	// ... SysEx event
@@ -192,7 +193,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		e, err := sysex.Parse(rr, types.Status(b), ctx)
 
-		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
+		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
 	}
 
 	// ... MIDI event
@@ -212,5 +213,5 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	e, err := midievent.Parse(uint64(tick)+uint64(delta), delta, rr, status, ctx)
 
-	return events.NewEvent(uint64(tick)+uint64(delta), delta, e, buffer.Bytes()), err
+	return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
 }

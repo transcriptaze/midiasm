@@ -1,12 +1,11 @@
 package midievent
 
 import (
-	"bufio"
-	"bytes"
 	"reflect"
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 )
 
 func TestProgramChange(t *testing.T) {
@@ -24,7 +23,7 @@ func TestProgramChange(t *testing.T) {
 		Program: 13,
 	}
 
-	r := bufio.NewReader(bytes.NewReader([]byte{0x0d}))
+	r := IO.BytesReader([]byte{0x0d})
 
 	ctx := context.NewContext()
 	ctx.ProgramBank[7] = 673
