@@ -3,6 +3,7 @@ package metaevent
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi/context"
@@ -121,17 +122,20 @@ func (k *KeySignature) UnmarshalText(bytes []byte) error {
 	k.Tag = "KeySignature"
 	k.Type = 0x59
 
-	re := regexp.MustCompile(`(?i)KeySignature\s+([ABCDEFG][♯♭]?)\s+(major|minor)`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)KeySignature\s+([ABCDEFG][♯♭]?)\s+(major|minor)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
 		return fmt.Errorf("invalid KeySignature event (%v)", text)
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+		return err
 	} else {
+		k.delta = uint32(delta)
 		k.Accidentals = 0
 		k.KeyType = 0
 		k.Key = ""
 
-		key := strings.ToLower(fmt.Sprintf("%v %v", match[1], match[2]))
+		key := strings.ToLower(fmt.Sprintf("%v %v", match[2], match[3]))
 
 		for _, scale := range types.MAJOR_SCALES {
 			if strings.ToLower(scale.Name) == key {

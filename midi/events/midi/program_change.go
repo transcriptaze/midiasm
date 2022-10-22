@@ -58,20 +58,23 @@ func (p *ProgramChange) UnmarshalText(bytes []byte) error {
 	p.bytes = []byte{}
 	p.Tag = "ProgramChange"
 
-	re := regexp.MustCompile(`(?i)ProgramChange\s+channel:([0-9]+)\s+bank:([0-9]+),\s*program:([0-9]+)`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)ProgramChange\s+channel:([0-9]+)\s+bank:([0-9]+),\s*program:([0-9]+)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
 		return fmt.Errorf("invalid ProgramChange event (%v)", text)
-	} else if channel, err := strconv.ParseUint(match[1], 10, 8); err != nil {
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 		return err
-	} else if bank, err := strconv.ParseUint(match[2], 10, 16); err != nil {
+	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
-	} else if program, err := strconv.ParseUint(match[3], 10, 8); err != nil {
+	} else if bank, err := strconv.ParseUint(match[3], 10, 16); err != nil {
+		return err
+	} else if program, err := strconv.ParseUint(match[4], 10, 8); err != nil {
 		return err
 	} else if channel > 15 {
 		return fmt.Errorf("invalid ProgramChange channel (%v)", channel)
 	} else {
+		p.delta = uint32(delta)
 		p.bytes = []byte{0x00, byte(0xc0 | uint8(channel&0x0f)), byte(program)}
 		p.Status = types.Status(0xc0 | uint8(channel&0x0f))
 		p.Channel = types.Channel(channel)

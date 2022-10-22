@@ -3,6 +3,7 @@ package metaevent
 import (
 	"bytes"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -60,11 +61,16 @@ func (e *TrackName) UnmarshalText(bytes []byte) error {
 	e.Tag = "TrackName"
 	e.Type = 0x03
 
-	re := regexp.MustCompile(`(?i)TrackName\s+(.*)`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TrackName\s+(.*)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match != nil && len(match) > 1 {
-		e.Name = strings.TrimSpace(match[1])
+	if match := re.FindStringSubmatch(text); match != nil && len(match) > 2 {
+		if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+			return err
+		} else {
+			e.delta = uint32(delta)
+			e.Name = strings.TrimSpace(match[2])
+		}
 	}
 
 	return nil

@@ -63,11 +63,11 @@ func TestTrackNameMarshalBinary(t *testing.T) {
 }
 
 func TestTrackNameUnmarshalText(t *testing.T) {
-	text := "      00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:0          03 TrackName              Railroad Traque"
+	text := "      00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:480        03 TrackName              Railroad Traque"
 	expected := TrackName{
 		event: event{
 			tick:   0,
-			delta:  0,
+			delta:  480,
 			Tag:    "TrackName",
 			Status: 0xff,
 			Type:   0x03,

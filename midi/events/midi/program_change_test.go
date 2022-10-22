@@ -73,11 +73,11 @@ func TestProgramChangeMarshalBinary(t *testing.T) {
 }
 
 func TestProgramChangeUnmarshalText(t *testing.T) {
-	text := "      00 C7 19                              tick:0          delta:0          C7 ProgramChange          channel:7  bank:3, program:25"
+	text := "      00 C7 19                              tick:0          delta:480        C7 ProgramChange          channel:7  bank:3, program:25"
 	expected := ProgramChange{
 		event: event{
 			tick:    0,
-			delta:   0,
+			delta:   480,
 			Tag:     "ProgramChange",
 			Status:  0xc7,
 			Channel: 7,

@@ -54,11 +54,11 @@ func TestTempoMarshalBinary(t *testing.T) {
 }
 
 func TestTempoUnmarshalText(t *testing.T) {
-	text := "      00 FF 51 03 07 A1 20                  tick:0          delta:0          51 Tempo                  tempo:500000"
+	text := "      00 FF 51 03 07 A1 20                  tick:0          delta:480        51 Tempo                  tempo:500000"
 	expected := Tempo{
 		event: event{
 			tick:   0,
-			delta:  0,
+			delta:  480,
 			Tag:    "Tempo",
 			Status: 0xff,
 			Type:   0x51,

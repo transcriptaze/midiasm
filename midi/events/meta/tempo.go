@@ -65,14 +65,17 @@ func (t *Tempo) UnmarshalText(bytes []byte) error {
 	t.Tag = "Tempo"
 	t.Type = 0x51
 
-	re := regexp.MustCompile(`(?i)Tempo\s+tempo:([0-9]+)`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Tempo\s+tempo:([0-9]+)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Tempo event (%v)", text)
-	} else if v, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+		return err
+	} else if v, err := strconv.ParseUint(match[2], 10, 32); err != nil {
 		return err
 	} else {
+		t.delta = uint32(delta)
 		t.Tempo = uint32(v)
 	}
 

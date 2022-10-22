@@ -89,11 +89,11 @@ func TestControllerMarshalBinary(t *testing.T) {
 }
 
 func TestControllerUnmarshalText(t *testing.T) {
-	text := "      00 B0 65 09                           tick:0          delta:0          B7 Controller             channel:7  101/Registered Parameter Number (MSB), value:9"
+	text := "      00 B0 65 09                           tick:0          delta:480        B7 Controller             channel:7  101/Registered Parameter Number (MSB), value:9"
 	expected := Controller{
 		event: event{
 			tick:    0,
-			delta:   0,
+			delta:   480,
 			Tag:     "Controller",
 			Status:  0xb7,
 			Channel: 7,

@@ -78,20 +78,23 @@ func (t *TimeSignature) UnmarshalText(bytes []byte) error {
 	t.Tag = "TimeSignature"
 	t.Type = 0x58
 
-	re := regexp.MustCompile(`(?i)TimeSignature\s+([0-9]+)/([1-9][0-9]*),\s* ([0-9]+) ticks per click,\s*([1-9][0-8]*)/32 per quarter`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TimeSignature\s+([0-9]+)/([1-9][0-9]*),\s* ([0-9]+) ticks per click,\s*([1-9][0-8]*)/32 per quarter`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 6 {
 		return fmt.Errorf("invalid TimeSignature event (%v)", text)
-	} else if numerator, err := strconv.ParseUint(match[1], 10, 8); err != nil {
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 		return err
-	} else if denominator, err := strconv.ParseUint(match[2], 10, 8); err != nil {
+	} else if numerator, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
-	} else if ticks, err := strconv.ParseUint(match[3], 10, 8); err != nil {
+	} else if denominator, err := strconv.ParseUint(match[3], 10, 8); err != nil {
 		return err
-	} else if beats, err := strconv.ParseUint(match[4], 10, 8); err != nil {
+	} else if ticks, err := strconv.ParseUint(match[4], 10, 8); err != nil {
+		return err
+	} else if beats, err := strconv.ParseUint(match[5], 10, 8); err != nil {
 		return err
 	} else {
+		t.delta = uint32(delta)
 		t.Numerator = uint8(numerator)
 		t.Denominator = uint8(denominator)
 		t.TicksPerClick = uint8(ticks)

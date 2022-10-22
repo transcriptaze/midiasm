@@ -52,11 +52,11 @@ func TestEndOfTrackMarshalBinary(t *testing.T) {
 }
 
 func TestEndOfTrackUnmarshalText(t *testing.T) {
-	text := "      00 FF 2F 00                           tick:0          delta:0          2F EndOfTrack"
+	text := "      00 FF 2F 00                           tick:0          delta:480        2F EndOfTrack"
 	expected := EndOfTrack{
 		event: event{
 			tick:   0,
-			delta:  0,
+			delta:  480,
 			Tag:    "EndOfTrack",
 			Status: 0xff,
 			Type:   0x2f,

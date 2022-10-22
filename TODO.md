@@ -10,6 +10,7 @@
 
 - [ ] Assemble MTrk
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
+      - [ ] Split parameters up into seperate regex's
 - [ ] Parse MTrk
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary

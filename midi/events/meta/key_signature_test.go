@@ -120,11 +120,11 @@ func TestKeySignatureMarshalBinary(t *testing.T) {
 }
 
 func TestKeySignatureUnmarshalText(t *testing.T) {
-	text := "      00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           B minor"
+	text := "      00 FF 59 02 00 01                     tick:0          delta:480        59 KeySignature           B minor"
 	expected := KeySignature{
 		event: event{
 			tick:   0,
-			delta:  0,
+			delta:  480,
 			Tag:    "KeySignature",
 			Status: 0xff,
 			Type:   0x59,

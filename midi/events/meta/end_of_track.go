@@ -3,6 +3,7 @@ package metaevent
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 )
 
 type EndOfTrack struct {
@@ -45,11 +46,15 @@ func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
 	e.Tag = "EndOfTrack"
 	e.Type = 0x2f
 
-	re := regexp.MustCompile(`(?i)EndOfTrack`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)EndOfTrack`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 1 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
 		return fmt.Errorf("invalid EndOfTrack event (%v)", text)
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+		return err
+	} else {
+		e.delta = uint32(delta)
 	}
 
 	return nil

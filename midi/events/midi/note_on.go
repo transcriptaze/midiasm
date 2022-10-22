@@ -95,22 +95,25 @@ func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	n.bytes = []byte{}
 	n.Tag = "NoteOn"
 
-	re := regexp.MustCompile(`(?i)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
 		return fmt.Errorf("invalid NoteOn event (%v)", text)
-	} else if channel, err := strconv.ParseUint(match[1], 10, 8); err != nil {
+	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 		return err
-	} else if note, err := ParseNote(nil, match[2]); err != nil {
+	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
-	} else if velocity, err := strconv.ParseUint(match[3], 10, 8); err != nil {
+	} else if note, err := ParseNote(nil, match[3]); err != nil {
+		return err
+	} else if velocity, err := strconv.ParseUint(match[4], 10, 8); err != nil {
 		return err
 	} else if channel > 15 {
 		return fmt.Errorf("invalid NoteOn channel (%v)", channel)
 	} else if velocity > 127 {
 		return fmt.Errorf("invalid NoteOn velocity (%v)", channel)
 	} else {
+		n.delta = uint32(delta)
 		n.bytes = []byte{0x00, byte(0x90 | uint8(channel&0x0f)), note.Value, byte(velocity)}
 		n.Status = types.Status(0x90 | uint8(channel&0x0f))
 		n.Channel = types.Channel(channel)
