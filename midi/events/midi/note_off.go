@@ -14,7 +14,23 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func NewNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOff, error) {
+func NewNoteOff(tick uint64, delta uint32, channel uint8, note Note, velocity uint8, bytes ...byte) *NoteOff {
+	return &NoteOff{
+		event: event{
+			tick:  tick,
+			delta: delta,
+			bytes: bytes,
+
+			Tag:     "NoteOff",
+			Status:  types.Status(0x80 | channel),
+			Channel: types.Channel(channel),
+		},
+		Note:     note,
+		Velocity: velocity,
+	}
+}
+
+func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOff, error) {
 	if status&0xf0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}

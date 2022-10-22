@@ -182,7 +182,7 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 		} else {
 			for j, e := range mtrk.Events {
 				if !reflect.DeepEqual(e, tracks[i].Events[j]) {
-					t.Errorf("MTrk[%d]: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", i, track.Events[j], e)
+					t.Errorf("MTrk[%d]: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", i, tracks[i].Events[j], e)
 				}
 			}
 		}
@@ -258,7 +258,12 @@ var motu = events.NewEvent(
 
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
 var noteOnC4 = events.NewEvent(0, 0, nil, []byte{0x00, 0x3c, 0x4c})
-var noteOffCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x81, 0x31, 0x64})
+
+var noteOffCS3 = events.NewEvent(
+	0,
+	0,
+	midievent.NewNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+	[]byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
@@ -289,5 +294,4 @@ func init() {
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
-	noteOffCS3.Event, _ = midievent.NewNoteOff(nil, 0, 0, IO.TestReader([]byte{0x00, 0x81}, []byte{0x31, 0x64}), 0x81)
 }

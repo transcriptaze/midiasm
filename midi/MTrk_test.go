@@ -20,7 +20,12 @@ var noteOnC3v0 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x00})
 var noteOnC3v64 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
 var noteOnC3v32 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x20})
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
-var noteOffCS3Alias = events.NewEvent(0, 0, nil, []byte{0x00, 0x81, 0x31, 0x64})
+
+var noteOffCS3Alias = events.NewEvent(
+	0,
+	0,
+	midievent.NewNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+	[]byte{0x00, 0x81, 0x31, 0x64})
 
 func init() {
 	trackname.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
@@ -32,8 +37,6 @@ func init() {
 	noteOnC3v64.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x30, 0x40}), 0x91) // running status
 	noteOnC3v32.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x30, 0x20}), 0x91) // running status
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
-
-	noteOffCS3Alias.Event, _ = midievent.NewNoteOff(nil, 0, 0, IO.TestReader([]byte{0x00, 0x81}, []byte{0x31, 0x64}), 0x81)
 }
 
 func TestMTrkMarshalTrack0(t *testing.T) {
@@ -71,7 +74,6 @@ func TestMTrkMarshalTrack0(t *testing.T) {
 }
 
 func TestUnmarshalNoteAlias(t *testing.T) {
-	t.Skip() // FIXME can't do note off aliases until MTrk parser is reworked
 	bytes := []byte{
 		0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x14,
 		0x00, 0xff, 0x59, 0x02, 0x06, 0x00,
