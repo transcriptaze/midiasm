@@ -82,22 +82,7 @@ var programBankLSBCh5 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb5, 0x20, 0x21
 // 	[]byte{0x00, 0xb5, 0x20, 0x21})
 
 var noteOn = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
-
-var noteOff = events.NewEvent(
-	0,
-	0,
-	&midievent.NoteOff{
-		Tag:     "NoteO.n",
-		Status:  0x87,
-		Channel: types.Channel(7),
-		Note: midievent.Note{
-			Value: 48,
-			Name:  "C2",
-			Alias: "C2",
-		},
-	},
-	[]byte{0x00, 0x30, 0x40})
-
+var noteOff = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
 var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
@@ -108,6 +93,8 @@ func init() {
 	programBankMSBCh3.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb3)
 	programBankLSBCh5.Event, _ = midievent.NewController(nil, 0, 0, IO.BytesReader([]byte{0x20, 0x21}), 0xb5)
 	noteOn.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.BytesReader([]byte{0x00, 0x30, 0x40}), 0x90) // ? running status
+	noteOff.Event, _ = midievent.NewNoteOff(nil, 0, 0, IO.BytesReader([]byte{0x00, 0x30, 0x40}), 0x80)
+
 }
 
 // 0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0, 0x4d, 0x54

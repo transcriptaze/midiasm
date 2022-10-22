@@ -258,22 +258,7 @@ var motu = events.NewEvent(
 
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
 var noteOnC4 = events.NewEvent(0, 0, nil, []byte{0x00, 0x3c, 0x4c})
-
-var noteOffCS3 = events.NewEvent(
-	0,
-	0,
-	&midievent.NoteOff{
-		Tag:     "NoteOff",
-		Status:  0x81,
-		Channel: types.Channel(0x01),
-		Note: midievent.Note{
-			Value: 49,
-			Name:  "C♯3",
-			Alias: "C♯3",
-		},
-		Velocity: 100,
-	},
-	[]byte{0x00, 0x81, 0x31, 0x64})
+var noteOffCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
@@ -304,4 +289,5 @@ func init() {
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
+	noteOffCS3.Event, _ = midievent.NewNoteOff(nil, 0, 0, IO.TestReader([]byte{0x00, 0x81}, []byte{0x31, 0x64}), 0x81)
 }

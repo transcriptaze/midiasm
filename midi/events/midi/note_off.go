@@ -2,26 +2,24 @@ package midievent
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type NoteOff struct {
-	Tag      string
-	Status   types.Status
-	Channel  types.Channel
+	event
 	Note     Note
 	Velocity byte
 }
 
-func NewNoteOff(ctx *context.Context, r io.ByteReader, status types.Status) (*NoteOff, error) {
-	if status&0xF0 != 0x80 {
+func NewNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOff, error) {
+	if status&0xf0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
 
-	channel := types.Channel(status & 0x0F)
+	channel := types.Channel(status & 0x0f)
 
 	note, err := r.ReadByte()
 	if err != nil {
@@ -34,12 +32,18 @@ func NewNoteOff(ctx *context.Context, r io.ByteReader, status types.Status) (*No
 	}
 
 	return &NoteOff{
-		Tag:     "NoteOff",
-		Status:  status,
-		Channel: channel,
+		event: event{
+			tick:  tick,
+			delta: delta,
+			bytes: r.Bytes(),
+
+			Tag:     "NoteOff",
+			Status:  status,
+			Channel: channel,
+		},
 		Note: Note{
 			Value: note,
-			Name:  ctx.GetNoteOff(channel, note),
+			Name:  GetNoteOff(ctx, channel, note),
 			Alias: FormatNote(ctx, note),
 		},
 		Velocity: velocity,
@@ -66,4 +70,12 @@ func (n *NoteOff) Transpose(ctx *context.Context, steps int) {
 		Name:  ctx.GetNoteOff(n.Channel, note),
 		Alias: FormatNote(ctx, note),
 	}
+}
+
+func GetNoteOff(ctx *context.Context, ch types.Channel, n byte) string {
+	if ctx != nil {
+		return ctx.GetNoteOff(ch, n)
+	}
+
+	return FormatNote(ctx, n)
 }

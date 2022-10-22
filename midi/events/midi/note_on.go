@@ -122,12 +122,11 @@ func (n *NoteOn) UnmarshalText(bytes []byte) error {
 }
 
 func FormatNote(ctx *context.Context, n byte) string {
-	scale := context.Sharps
-
 	if ctx != nil {
-		scale = ctx.Scale()
+		return ctx.FormatNote(n)
 	}
 
+	var scale = context.Sharps
 	var note = scale[n%12]
 	var octave int
 

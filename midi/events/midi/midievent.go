@@ -39,7 +39,7 @@ type Note struct {
 func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
 	switch status & 0xF0 {
 	case 0x80:
-		return NewNoteOff(ctx, r, status)
+		return NewNoteOff(ctx, tick, delta, r, status)
 
 	case 0x90:
 		return NewNoteOn(ctx, tick, delta, r, status)

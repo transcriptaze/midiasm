@@ -10,9 +10,14 @@ import (
 
 func TestParseNoteOffInMajorKey(t *testing.T) {
 	expected := NoteOff{
-		"NoteOff",
-		0x81,
-		1,
+		event{
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{0x00, 0x81, 0x31, 0x48},
+			Tag:     "NoteOff",
+			Status:  0x81,
+			Channel: 1,
+		},
 		Note{
 			Value: 49,
 			Name:  "C♯3",
@@ -21,7 +26,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.BytesReader([]byte{0x31, 0x48})
+	r := IO.TestReader([]byte{0x00, 0x81}, []byte{0x31, 0x48})
 
 	event, err := Parse(0, 0, r, 0x81, ctx)
 	if err != nil {
@@ -44,9 +49,15 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 
 func TestParseNoteOffInMinorKey(t *testing.T) {
 	expected := NoteOff{
-		"NoteOff",
-		0x81,
-		1,
+		event{
+			tick:  0,
+			delta: 0,
+			bytes: []byte{0x00, 0x31, 0x48},
+
+			Tag:     "NoteOff",
+			Status:  0x81,
+			Channel: 1,
+		},
 		Note{
 			Value: 49,
 			Name:  "D♭3",
@@ -55,7 +66,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext().UseFlats()
-	r := IO.BytesReader([]byte{0x31, 0x48})
+	r := IO.TestReader([]byte{0x00}, []byte{0x31, 0x48})
 
 	event, err := Parse(0, 0, r, 0x81, ctx)
 	if err != nil {
