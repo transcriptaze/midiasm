@@ -123,7 +123,7 @@ func TestNoteOffUnmarshalText(t *testing.T) {
 	expected := NoteOff{
 		event: event{
 			tick:    0,
-			delta:   0,
+			delta:   480,
 			Tag:     "NoteOff",
 			Status:  0x87,
 			Channel: 7,
