@@ -121,7 +121,7 @@ func TestNoteOnMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestNoteUnmarshalText(t *testing.T) {
+func TestNoteOnUnmarshalText(t *testing.T) {
 	text := "      00 97 30 48                           tick:0          delta:0          97 NoteOn                 channel:7  note:C3, velocity:72"
 	expected := NoteOn{
 		event: event{

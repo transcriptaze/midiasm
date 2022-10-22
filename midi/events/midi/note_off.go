@@ -2,6 +2,8 @@ package midievent
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
@@ -86,6 +88,48 @@ func (n *NoteOff) Transpose(ctx *context.Context, steps int) {
 		Name:  ctx.GetNoteOff(n.Channel, note),
 		Alias: FormatNote(ctx, note),
 	}
+}
+
+func (n NoteOff) MarshalBinary() (encoded []byte, err error) {
+	encoded = []byte{
+		byte(0x80 | n.Channel),
+		n.Note.Value,
+		n.Velocity,
+	}
+
+	return
+}
+
+func (n *NoteOff) UnmarshalText(bytes []byte) error {
+	n.tick = 0
+	n.delta = 0
+	n.bytes = []byte{}
+	n.Tag = "NoteOff"
+
+	re := regexp.MustCompile(`(?i)NoteOff\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
+	text := string(bytes)
+
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+		return fmt.Errorf("invalid NoteOff event (%v)", text)
+	} else if channel, err := strconv.ParseUint(match[1], 10, 8); err != nil {
+		return err
+	} else if note, err := ParseNote(nil, match[2]); err != nil {
+		return err
+	} else if velocity, err := strconv.ParseUint(match[3], 10, 8); err != nil {
+		return err
+	} else if channel > 15 {
+		return fmt.Errorf("invalid NoteOff channel (%v)", channel)
+	} else if velocity > 127 {
+		return fmt.Errorf("invalid NoteOff velocity (%v)", channel)
+	} else {
+		n.bytes = []byte{0x00, byte(0x80 | uint8(channel&0x0f)), note.Value, byte(velocity)}
+		n.Status = types.Status(0x80 | uint8(channel&0x0f))
+		n.Channel = types.Channel(channel)
+		n.Note = note
+		n.Velocity = uint8(velocity)
+	}
+
+	return nil
 }
 
 func GetNoteOff(ctx *context.Context, ch types.Channel, n byte) string {
