@@ -34,7 +34,7 @@ func NewProgramChange(ctx *context.Context, tick uint64, delta uint32, r io.Byte
 			delta: delta,
 			bytes: []byte{0x00, byte(status), program},
 
-			Tag:     "ProgramChange",
+			tag:     types.TagProgramChange,
 			Status:  status,
 			Channel: types.Channel(channel),
 		},
@@ -56,7 +56,7 @@ func (p *ProgramChange) UnmarshalText(bytes []byte) error {
 	p.tick = 0
 	p.delta = 0
 	p.bytes = []byte{}
-	p.Tag = "ProgramChange"
+	p.tag = types.TagProgramChange
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)ProgramChange\s+channel:([0-9]+)\s+bank:([0-9]+),\s*program:([0-9]+)`)
 	text := string(bytes)

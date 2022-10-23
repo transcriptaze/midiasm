@@ -3,6 +3,8 @@ package metaevent
 import (
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseTimeSignature(t *testing.T) {
@@ -29,7 +31,7 @@ func TestTimeSignatureMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "TimeSignature",
+			tag:    types.TagTimeSignature,
 			Status: 0xff,
 			Type:   0x58,
 			bytes:  []byte{},
@@ -58,7 +60,7 @@ func TestTimeSignatureUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			Tag:    "TimeSignature",
+			tag:    types.TagTimeSignature,
 			Status: 0xff,
 			Type:   0x58,
 			bytes:  []byte{},

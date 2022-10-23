@@ -5,6 +5,8 @@ import (
 	"math"
 	"regexp"
 	"strconv"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Tempo struct {
@@ -25,11 +27,10 @@ func NewTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 
 	return &Tempo{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			bytes: concat([]byte{0x00, 0xff, 0x51, 0x03}, bytes),
-
-			Tag:    "Tempo",
+			tick:   tick,
+			delta:  delta,
+			bytes:  concat([]byte{0x00, 0xff, 0x51, 0x03}, bytes),
+			tag:    types.TagTempo,
 			Status: 0xff,
 			Type:   0x51,
 		},
@@ -61,8 +62,8 @@ func (t *Tempo) UnmarshalText(bytes []byte) error {
 	t.tick = 0
 	t.delta = 0
 	t.bytes = []byte{}
+	t.tag = types.TagTempo
 	t.Status = 0xff
-	t.Tag = "Tempo"
 	t.Type = 0x51
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Tempo\s+tempo:([0-9]+)`)

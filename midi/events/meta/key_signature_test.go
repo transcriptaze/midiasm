@@ -15,7 +15,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  0,
-			Tag:    "KeySignature",
+			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00},
@@ -56,7 +56,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  0,
-			Tag:    "KeySignature",
+			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01},
@@ -97,7 +97,7 @@ func TestKeySignatureMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "KeySignature",
+			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{},
@@ -125,7 +125,7 @@ func TestKeySignatureUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			Tag:    "KeySignature",
+			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{},

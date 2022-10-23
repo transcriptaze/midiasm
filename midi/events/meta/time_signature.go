@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type TimeSignature struct {
@@ -30,11 +32,10 @@ func NewTimeSignature(tick uint64, delta uint32, bytes []byte) (*TimeSignature, 
 
 	return &TimeSignature{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			bytes: concat([]byte{0x00, 0xff, 0x58, 0x04}, bytes),
-
-			Tag:    "TimeSignature",
+			tick:   tick,
+			delta:  delta,
+			bytes:  concat([]byte{0x00, 0xff, 0x58, 0x04}, bytes),
+			tag:    types.TagTimeSignature,
 			Status: 0xff,
 			Type:   0x58,
 		},
@@ -75,7 +76,7 @@ func (t *TimeSignature) UnmarshalText(bytes []byte) error {
 	t.delta = 0
 	t.bytes = []byte{}
 	t.Status = 0xff
-	t.Tag = "TimeSignature"
+	t.tag = types.TagTimeSignature
 	t.Type = 0x58
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TimeSignature\s+([0-9]+)/([1-9][0-9]*),\s* ([0-9]+) ticks per click,\s*([1-9][0-8]*)/32 per quarter`)

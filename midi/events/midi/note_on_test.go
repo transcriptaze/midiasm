@@ -6,16 +6,16 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseNoteOnInMajorKey(t *testing.T) {
 	expected := NoteOn{
 		event: event{
-			tick:  2400,
-			delta: 480,
-			bytes: []byte{0x00, 0x91, 0x31, 0x48},
-
-			Tag:     "NoteOn",
+			tick:    2400,
+			delta:   480,
+			bytes:   []byte{0x00, 0x91, 0x31, 0x48},
+			tag:     types.TagNoteOn,
 			Status:  0x91,
 			Channel: 1,
 		},
@@ -56,7 +56,7 @@ func TestParseNoteOnInMinorKey(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0x91, 0x31, 0x48},
 
-			Tag:     "NoteOn",
+			tag:     types.TagNoteOn,
 			Status:  0x91,
 			Channel: 1,
 		},
@@ -93,11 +93,10 @@ func TestParseNoteOnInMinorKey(t *testing.T) {
 func TestNoteOnMarshalBinary(t *testing.T) {
 	evt := NoteOn{
 		event: event{
-			tick:  2400,
-			delta: 480,
-			bytes: []byte{0x00, 0x97, 0x31, 0x48},
-
-			Tag:     "NoteOn",
+			tick:    2400,
+			delta:   480,
+			bytes:   []byte{0x00, 0x97, 0x31, 0x48},
+			tag:     types.TagNoteOn,
 			Status:  0x97,
 			Channel: 7,
 		},
@@ -127,7 +126,7 @@ func TestNoteOnUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			Tag:     "NoteOn",
+			tag:     types.TagNoteOn,
 			Status:  0x97,
 			Channel: 7,
 			bytes:   []byte{0x00, 0x97, 0x30, 0x48},

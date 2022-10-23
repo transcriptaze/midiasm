@@ -13,7 +13,7 @@ type event struct {
 	delta uint32
 	bytes []byte
 
-	Tag     string
+	tag     types.Tag
 	Status  types.Status
 	Channel types.Channel
 }
@@ -28,6 +28,10 @@ func (e event) Delta() uint32 {
 
 func (e event) Bytes() []byte {
 	return e.bytes
+}
+
+func (e event) Tag() string {
+	return fmt.Sprintf("%v", e.tag)
 }
 
 type Note struct {

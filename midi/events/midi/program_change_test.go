@@ -6,16 +6,16 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestProgramChange(t *testing.T) {
 	expected := ProgramChange{
 		event: event{
-			tick:  12345,
-			delta: 5432,
-			bytes: []byte{0x00, 0xc7, 0x0d},
-
-			Tag:     "ProgramChange",
+			tick:    12345,
+			delta:   5432,
+			bytes:   []byte{0x00, 0xc7, 0x0d},
+			tag:     types.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 		},
@@ -48,11 +48,10 @@ func TestProgramChange(t *testing.T) {
 func TestProgramChangeMarshalBinary(t *testing.T) {
 	evt := ProgramChange{
 		event: event{
-			tick:  2400,
-			delta: 480,
-			bytes: []byte{0x00, 0xc7, 25},
-
-			Tag:     "ProgramChange",
+			tick:    2400,
+			delta:   480,
+			bytes:   []byte{0x00, 0xc7, 25},
+			tag:     types.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 		},
@@ -78,7 +77,7 @@ func TestProgramChangeUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			Tag:     "ProgramChange",
+			tag:     types.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 			bytes:   []byte{0x00, 0xc7, 0x19},

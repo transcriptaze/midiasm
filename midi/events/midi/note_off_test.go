@@ -6,6 +6,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseNoteOffInMajorKey(t *testing.T) {
@@ -14,7 +15,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 			tick:    0,
 			delta:   0,
 			bytes:   []byte{0x00, 0x81, 0x31, 0x48},
-			Tag:     "NoteOff",
+			tag:     types.TagNoteOff,
 			Status:  0x81,
 			Channel: 1,
 		},
@@ -50,11 +51,10 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 func TestParseNoteOffInMinorKey(t *testing.T) {
 	expected := NoteOff{
 		event{
-			tick:  0,
-			delta: 0,
-			bytes: []byte{0x00, 0x31, 0x48},
-
-			Tag:     "NoteOff",
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{0x00, 0x31, 0x48},
+			tag:     types.TagNoteOff,
 			Status:  0x81,
 			Channel: 1,
 		},
@@ -94,7 +94,7 @@ func TestNoteOffMarshalBinary(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0x87, 0x31, 0x48},
 
-			Tag:     "NoteOff",
+			tag:     types.TagNoteOff,
 			Status:  0x87,
 			Channel: 7,
 		},
@@ -124,7 +124,7 @@ func TestNoteOffUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			Tag:     "NoteOff",
+			tag:     types.TagNoteOff,
 			Status:  0x87,
 			Channel: 7,
 			bytes:   []byte{0x00, 0x87, 0x30, 0x40},

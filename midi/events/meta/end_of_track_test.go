@@ -3,6 +3,8 @@ package metaevent
 import (
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestNewEndOfTrack(t *testing.T) {
@@ -10,7 +12,7 @@ func TestNewEndOfTrack(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "EndOfTrack",
+			tag:    types.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{0x00, 0xff, 0x2f, 0x00},
@@ -32,7 +34,7 @@ func TestEndOfTrackMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  0,
-			Tag:    "EndOfTrack",
+			tag:    types.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},
@@ -57,7 +59,7 @@ func TestEndOfTrackUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			Tag:    "EndOfTrack",
+			tag:    types.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},

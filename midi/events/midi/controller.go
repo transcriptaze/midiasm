@@ -47,7 +47,7 @@ func NewController(ctx *context.Context, tick uint64, delta uint32, r io.ByteRea
 			delta: delta,
 			bytes: []byte{0x00, byte(status), controller, value},
 
-			Tag:     "Controller",
+			tag:     types.TagController,
 			Status:  status,
 			Channel: types.Channel(channel),
 		},
@@ -70,7 +70,7 @@ func (c *Controller) UnmarshalText(bytes []byte) error {
 	c.tick = 0
 	c.delta = 0
 	c.bytes = []byte{}
-	c.Tag = "Controller"
+	c.tag = types.TagController
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Controller.*\s+channel:([0-9]+)\s+([0-9]+)(?:.*)?value:([0-9]+)`)
 	text := string(bytes)

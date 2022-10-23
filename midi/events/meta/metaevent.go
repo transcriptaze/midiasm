@@ -11,11 +11,10 @@ import (
 )
 
 type event struct {
-	tick  uint64
-	delta uint32
-	bytes []byte
-
-	Tag    string
+	tick   uint64
+	delta  uint32
+	bytes  []byte
+	tag    types.Tag
 	Status types.Status
 	Type   types.MetaEventType
 }
@@ -30,6 +29,10 @@ func (e event) Delta() uint32 {
 
 func (e event) Bytes() []byte {
 	return e.bytes
+}
+
+func (e event) Tag() string {
+	return fmt.Sprintf("%v", e.tag)
 }
 
 type vlq struct {

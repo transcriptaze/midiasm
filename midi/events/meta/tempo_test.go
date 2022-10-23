@@ -3,6 +3,8 @@ package metaevent
 import (
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestNewTemp(t *testing.T) {
@@ -10,7 +12,7 @@ func TestNewTemp(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "Tempo",
+			tag:    types.TagTempo,
 			Status: 0xff,
 			Type:   0x51,
 			bytes:  []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
@@ -33,7 +35,7 @@ func TestTempoMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "Tempo",
+			tag:    types.TagTempo,
 			Status: 0xff,
 			Type:   0x51,
 			bytes:  []byte{},
@@ -59,7 +61,7 @@ func TestTempoUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			Tag:    "Tempo",
+			tag:    types.TagTempo,
 			Status: 0xff,
 			Type:   0x51,
 			bytes:  []byte{},

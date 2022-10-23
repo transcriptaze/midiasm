@@ -16,7 +16,7 @@ func TestController(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
 
-			Tag:     "Controller",
+			tag:     types.TagController,
 			Status:  0xb7,
 			Channel: 7,
 		},
@@ -67,8 +67,8 @@ func TestControllerMarshalBinary(t *testing.T) {
 			tick:  2400,
 			delta: 480,
 			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+			tag:   types.TagController,
 
-			Tag:     "Controller",
 			Status:  0xb7,
 			Channel: 7,
 		},
@@ -94,7 +94,7 @@ func TestControllerUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			Tag:     "Controller",
+			tag:     types.TagController,
 			Status:  0xb7,
 			Channel: 7,
 			bytes:   []byte{0x00, 0xb7, 0x65, 0x09},

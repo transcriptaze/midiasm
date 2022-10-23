@@ -57,11 +57,10 @@ func NewKeySignature(ctx *context.Context, tick uint64, delta uint32, bytes []by
 
 	return &KeySignature{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			bytes: concat([]byte{0x00, 0xff, 0x59, 0x02}, bytes),
-
-			Tag:    "KeySignature",
+			tick:   tick,
+			delta:  delta,
+			bytes:  concat([]byte{0x00, 0xff, 0x59, 0x02}, bytes),
+			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 		},
@@ -119,7 +118,7 @@ func (k *KeySignature) UnmarshalText(bytes []byte) error {
 	k.delta = 0
 	k.bytes = []byte{}
 	k.Status = 0xff
-	k.Tag = "KeySignature"
+	k.tag = types.TagKeySignature
 	k.Type = 0x59
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)KeySignature\s+([ABCDEFG][♯♭]?)\s+(major|minor)`)

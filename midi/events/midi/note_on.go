@@ -44,7 +44,7 @@ func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, sta
 			delta: delta,
 			bytes: r.Bytes(),
 
-			Tag:     "NoteOn",
+			tag:     types.TagNoteOn,
 			Status:  status,
 			Channel: channel,
 		},
@@ -93,7 +93,7 @@ func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	n.tick = 0
 	n.delta = 0
 	n.bytes = []byte{}
-	n.Tag = "NoteOn"
+	n.tag = types.TagNoteOn
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)

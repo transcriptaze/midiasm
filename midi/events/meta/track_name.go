@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type TrackName struct {
@@ -17,11 +19,10 @@ func NewTrackName(tick uint64, delta uint32, bytes []byte) (*TrackName, error) {
 
 	return &TrackName{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			bytes: concat([]byte{0x00, 0xff, 0x03}, N, []byte(bytes)),
-
-			Tag:    "TrackName",
+			tick:   tick,
+			delta:  delta,
+			bytes:  concat([]byte{0x00, 0xff, 0x03}, N, []byte(bytes)),
+			tag:    types.TagTrackName,
 			Status: 0xff,
 			Type:   0x03,
 		},
@@ -57,8 +58,8 @@ func (e *TrackName) UnmarshalText(bytes []byte) error {
 	e.tick = 0
 	e.delta = 0
 	e.bytes = []byte{}
+	e.tag = types.TagTrackName
 	e.Status = 0xff
-	e.Tag = "TrackName"
 	e.Type = 0x03
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TrackName\s+(.*)`)

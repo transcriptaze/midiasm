@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 type EndOfTrack struct {
@@ -17,11 +19,10 @@ func NewEndOfTrack(tick uint64, delta uint32, bytes []byte) (*EndOfTrack, error)
 
 	return &EndOfTrack{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			bytes: []byte{0x00, 0xff, 0x2f, 0x00},
-
-			Tag:    "EndOfTrack",
+			tick:   tick,
+			delta:  delta,
+			bytes:  []byte{0x00, 0xff, 0x2f, 0x00},
+			tag:    types.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 		},
@@ -43,7 +44,7 @@ func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
 	e.delta = 0
 	e.bytes = []byte{}
 	e.Status = 0xff
-	e.Tag = "EndOfTrack"
+	e.tag = types.TagEndOfTrack
 	e.Type = 0x2f
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)EndOfTrack`)

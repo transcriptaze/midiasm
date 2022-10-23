@@ -3,6 +3,8 @@ package metaevent
 import (
 	"reflect"
 	"testing"
+
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestNewTrackName(t *testing.T) {
@@ -10,7 +12,7 @@ func TestNewTrackName(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "TrackName",
+			tag:    types.TagTrackName,
 			Status: 0xff,
 			Type:   0x03,
 			bytes: []byte{
@@ -38,7 +40,7 @@ func TestTrackNameMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			Tag:    "TrackName",
+			tag:    types.TagTrackName,
 			Status: 0xff,
 			Type:   0x03,
 			bytes:  []byte{},
@@ -68,7 +70,7 @@ func TestTrackNameUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			Tag:    "TrackName",
+			tag:    types.TagTrackName,
 			Status: 0xff,
 			Type:   0x03,
 			bytes:  []byte{},
