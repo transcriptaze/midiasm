@@ -1,5 +1,10 @@
 package types
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Tag int
 
 const (
@@ -33,6 +38,36 @@ const (
 	TagSysExMessage
 )
 
+var tags = map[Tag]string{
+	TagCopyright:          "Copyright",
+	TagCuePoint:           "CuePoint",
+	TagDeviceName:         "DeviceName",
+	TagEndOfTrack:         "EndOfTrack",
+	TagInstrumentName:     "InstrumentName",
+	TagKeySignature:       "KeySignature",
+	TagLyric:              "Lyric",
+	TagMarker:             "Marker",
+	TagMIDIChannelPrefix:  "MIDIChannelPrefix",
+	TagMIDIPort:           "MIDIPort",
+	TagProgramName:        "ProgramName",
+	TagSequenceNumber:     "SequenceNumber",
+	TagSMPTEOffset:        "SMPTEOffset",
+	TagTempo:              "Tempo",
+	TagText:               "Text",
+	TagTimeSignature:      "TimeSignature",
+	TagTrackName:          "TrackName",
+	TagChannelPressure:    "ChannelPressure",
+	TagController:         "Controller",
+	TagNoteOff:            "NoteOff",
+	TagNoteOn:             "NoteOn",
+	TagPitchBend:          "PitchBend",
+	TagPolyphonicPressure: "PolyphonicPressure",
+	TagProgramChange:      "ProgramChange",
+	TagSysExContinuation:  "SysExContinuation",
+	TagSysExEscape:        "SysExEscape",
+	TagSysExMessage:       "SysExMessage",
+}
+
 func (t Tag) String() string {
 	return []string{
 		"",
@@ -64,4 +99,18 @@ func (t Tag) String() string {
 		"SysExEscape",
 		"SysExMessage",
 	}[t]
+}
+
+func (t *Tag) UnmarshalText(bytes []byte) error {
+	text := string(bytes)
+
+	for k, v := range tags {
+		if strings.Contains(text, v) {
+			*t = k
+			return nil
+		}
+	}
+
+	return fmt.Errorf("No matching tag")
+
 }

@@ -9,7 +9,6 @@ type Hex []byte
 type Status byte
 type MetaEventType byte
 type TrackNumber uint
-type Channel byte
 
 func (bytes Hex) String() string {
 	hex := ""
@@ -30,8 +29,4 @@ func (t MetaEventType) String() string {
 
 func (t TrackNumber) String() string {
 	return fmt.Sprintf("%-2d", t)
-}
-
-func (c Channel) String() string {
-	return fmt.Sprintf("%d", byte(c))
 }

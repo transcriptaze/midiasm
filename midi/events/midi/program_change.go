@@ -31,7 +31,7 @@ func NewProgramChange(ctx *context.Context, tick uint64, delta uint32, r io.Byte
 	return &ProgramChange{
 		event: event{
 			tick:  tick,
-			delta: delta,
+			delta: types.Delta(delta),
 			bytes: []byte{0x00, byte(status), program},
 
 			tag:     types.TagProgramChange,
@@ -74,7 +74,7 @@ func (p *ProgramChange) UnmarshalText(bytes []byte) error {
 	} else if channel > 15 {
 		return fmt.Errorf("invalid ProgramChange channel (%v)", channel)
 	} else {
-		p.delta = uint32(delta)
+		p.delta = types.Delta(delta)
 		p.bytes = []byte{0x00, byte(0xc0 | uint8(channel&0x0f)), byte(program)}
 		p.Status = types.Status(0xc0 | uint8(channel&0x0f))
 		p.Channel = types.Channel(channel)

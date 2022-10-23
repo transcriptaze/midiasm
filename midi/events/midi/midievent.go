@@ -10,7 +10,7 @@ import (
 
 type event struct {
 	tick  uint64
-	delta uint32
+	delta types.Delta
 	bytes []byte
 
 	tag     types.Tag
@@ -23,7 +23,7 @@ func (e event) Tick() uint64 {
 }
 
 func (e event) Delta() uint32 {
-	return e.delta
+	return uint32(e.delta)
 }
 
 func (e event) Bytes() []byte {

@@ -41,7 +41,7 @@ func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, sta
 	return &NoteOn{
 		event: event{
 			tick:  tick,
-			delta: delta,
+			delta: types.Delta(delta),
 			bytes: r.Bytes(),
 
 			tag:     types.TagNoteOn,
@@ -91,32 +91,36 @@ func (n NoteOn) MarshalBinary() (encoded []byte, err error) {
 
 func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	n.tick = 0
-	n.delta = 0
 	n.bytes = []byte{}
-	n.tag = types.TagNoteOn
+
+	if err := n.tag.UnmarshalText(bytes); err != nil {
+		return err
+	} else if n.tag != types.TagNoteOn {
+		return fmt.Errorf("Invalid tag - expected %v", types.TagNoteOn)
+	}
+
+	if err := n.Channel.UnmarshalText(bytes); err != nil {
+		return err
+	}
+
+	if err := n.delta.UnmarshalText(bytes); err != nil {
+		return err
+	}
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
 		return fmt.Errorf("invalid NoteOn event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
-		return err
-	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
-		return err
 	} else if note, err := ParseNote(nil, match[3]); err != nil {
 		return err
 	} else if velocity, err := strconv.ParseUint(match[4], 10, 8); err != nil {
 		return err
-	} else if channel > 15 {
-		return fmt.Errorf("invalid NoteOn channel (%v)", channel)
 	} else if velocity > 127 {
-		return fmt.Errorf("invalid NoteOn velocity (%v)", channel)
+		return fmt.Errorf("invalid NoteOn velocity (%v)", velocity)
 	} else {
-		n.delta = uint32(delta)
-		n.bytes = []byte{0x00, byte(0x90 | uint8(channel&0x0f)), note.Value, byte(velocity)}
-		n.Status = types.Status(0x90 | uint8(channel&0x0f))
-		n.Channel = types.Channel(channel)
+		n.bytes = []byte{0x00, byte(0x90 | uint8(n.Channel&0x0f)), note.Value, byte(velocity)}
+		n.Status = types.Status(0x90 | uint8(n.Channel&0x0f))
 		n.Note = note
 		n.Velocity = uint8(velocity)
 	}

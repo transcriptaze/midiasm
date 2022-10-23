@@ -47,3 +47,47 @@ func TestTagStringer(t *testing.T) {
 	}
 
 }
+
+func TestTagUnmarshalText(t *testing.T) {
+	tests := []struct {
+		text     string
+		expected Tag
+	}{
+		{"Copyright", TagCopyright},
+		{"CuePoint", TagCuePoint},
+		{"DeviceName", TagDeviceName},
+		{"EndOfTrack", TagEndOfTrack},
+		{"InstrumentName", TagInstrumentName},
+		{"KeySignature", TagKeySignature},
+		{"Lyric", TagLyric},
+		{"Marker", TagMarker},
+		{"MIDIChannelPrefix", TagMIDIChannelPrefix},
+		{"MIDIPort", TagMIDIPort},
+		{"ProgramName", TagProgramName},
+		{"SequenceNumber", TagSequenceNumber},
+		{"SMPTEOffset", TagSMPTEOffset},
+		{"Tempo", TagTempo},
+		{"Text", TagText},
+		{"TimeSignature", TagTimeSignature},
+		{"TrackName", TagTrackName},
+		{"ChannelPressure", TagChannelPressure},
+		{"Controller", TagController},
+		{"NoteOff", TagNoteOff},
+		{"NoteOn", TagNoteOn},
+		{"PitchBend", TagPitchBend},
+		{"PolyphonicPressure", TagPolyphonicPressure},
+		{"ProgramChange", TagProgramChange},
+		{"SysExContinuation", TagSysExContinuation},
+		{"SysExEscape", TagSysExEscape},
+		{"SysExMessage", TagSysExMessage},
+	}
+
+	for _, test := range tests {
+		var tag Tag
+		if err := tag.UnmarshalText([]byte(test.text)); err != nil {
+			t.Fatalf("Error unmarshalling %v (%v)", test.text, err)
+		} else if tag != test.expected {
+			t.Errorf("Incorrect tag for %q - expected:%v, got:%v", test.text, test.expected, tag)
+		}
+	}
+}

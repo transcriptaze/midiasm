@@ -20,7 +20,7 @@ func NewNoteOff(tick uint64, delta uint32, channel uint8, note Note, velocity ui
 	return &NoteOff{
 		event: event{
 			tick:  tick,
-			delta: delta,
+			delta: types.Delta(delta),
 			bytes: bytes,
 
 			tag:     types.TagNoteOff,
@@ -52,7 +52,7 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Read
 	return &NoteOff{
 		event: event{
 			tick:  tick,
-			delta: delta,
+			delta: types.Delta(delta),
 			bytes: r.Bytes(),
 			tag:   types.TagNoteOff,
 
@@ -124,7 +124,7 @@ func (n *NoteOff) UnmarshalText(bytes []byte) error {
 	} else if velocity > 127 {
 		return fmt.Errorf("invalid NoteOff velocity (%v)", channel)
 	} else {
-		n.delta = uint32(delta)
+		n.delta = types.Delta(delta)
 		n.bytes = []byte{0x00, byte(0x80 | uint8(channel&0x0f)), note.Value, byte(velocity)}
 		n.Status = types.Status(0x80 | uint8(channel&0x0f))
 		n.Channel = types.Channel(channel)

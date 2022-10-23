@@ -44,7 +44,7 @@ func NewController(ctx *context.Context, tick uint64, delta uint32, r io.ByteRea
 	return &Controller{
 		event: event{
 			tick:  tick,
-			delta: delta,
+			delta: types.Delta(delta),
 			bytes: []byte{0x00, byte(status), controller, value},
 
 			tag:     types.TagController,
@@ -88,7 +88,7 @@ func (c *Controller) UnmarshalText(bytes []byte) error {
 	} else if channel > 15 {
 		return fmt.Errorf("invalid Controller channel (%v)", channel)
 	} else {
-		c.delta = uint32(delta)
+		c.delta = types.Delta(delta)
 		c.bytes = []byte{0x00, byte(0xb0 | uint8(channel&0x0f)), uint8(controller), uint8(value)}
 		c.Status = types.Status(0xb0 | uint8(channel&0x0f))
 		c.Channel = types.Channel(channel)
