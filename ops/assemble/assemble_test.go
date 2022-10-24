@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-//go:embed example.txt
+//go:embed test-files/example.txt
 var text []byte
 
-//go:embed example.mid
+//go:embed test-files/example.mid
 var smf []byte
 
 func TestTextAssemble(t *testing.T) {

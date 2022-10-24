@@ -1,5 +1,7 @@
 # TODO
 
+- [x] Move TimeSignature in reference-01.mid to track 0
+
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal
 - (?) SMF: JsonMarshal/Unmarshal
@@ -37,7 +39,6 @@
 ### Disassembler
 
 - [ ] Document custom templates
-- [ ] Move TimeSignature in reference-01.mid to track 0
 - [ ] Format 2
 - [ ] Coloured output (Charm/BubbleTea ?)
 - [ ] Add outstanding events to TestDecode

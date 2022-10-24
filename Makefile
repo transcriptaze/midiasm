@@ -41,7 +41,7 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-	go test -v ./midi/... -run TestUnmarshalNoteAlias
+	$(CMD) --debug --verbose --C4 examples/reference-01.mid
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0
