@@ -2,6 +2,9 @@
 
 - [x] Move TimeSignature in reference-01.mid to track 0
 
+- [ ] MIDI file grammar
+      - (?) ASN.1
+      - (?) EBNF
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal
 - (?) SMF: JsonMarshal/Unmarshal
@@ -11,6 +14,7 @@
 - [ ] VLQ: TestMarshalBinary
 
 - [ ] Assemble MTrk
+      - [ ] Ignore comments
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
       - [ ] Split parameters up into seperate regex's
 - [ ] Parse MTrk

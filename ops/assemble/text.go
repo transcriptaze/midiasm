@@ -35,6 +35,9 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	for _, chunk := range chunks {
 		for _, line := range chunk {
 			switch {
+			case strings.HasPrefix(line, "%%"):
+				// comment - ignore
+
 			case strings.Contains(line, "MThd"):
 				if mthd, err := a.parseMThd(chunk); err != nil {
 					return nil, err
