@@ -5,6 +5,8 @@
 - [ ] MIDI file grammar
       - (?) ASN.1
       - (?) EBNF
+      - (?) Grammar stack
+      - (?) Treesitter
 - [ ] Optimise parsing
 - (?) SMF: TextMarshal/Unmarshal
 - (?) SMF: JsonMarshal/Unmarshal
@@ -14,7 +16,7 @@
 - [ ] VLQ: TestMarshalBinary
 
 - [ ] Assemble MTrk
-      - [ ] Ignore comments
+      - [x] Ignore comments
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
       - [ ] Split parameters up into seperate regex's
 - [ ] Parse MTrk

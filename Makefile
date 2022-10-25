@@ -41,7 +41,8 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-	$(CMD) --debug --verbose --C4 examples/reference-01.mid
+# 	$(CMD) --debug --verbose --C4 examples/reference-01.mid
+	go test ./ops/assemble/... -run TestTextReference
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

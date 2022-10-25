@@ -223,6 +223,10 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 	}
 
 	for line := range lines {
+		if strings.HasPrefix(line, "%%") {
+			continue
+		}
+
 		for k, v := range g {
 			if strings.Contains(line, k) {
 				e := v()
