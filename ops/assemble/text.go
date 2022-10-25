@@ -215,6 +215,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		"Tempo":         func() E { return &metaevent.Tempo{} },
 		"TimeSignature": func() E { return &metaevent.TimeSignature{} },
 		"KeySignature":  func() E { return &metaevent.KeySignature{} },
+		"SMPTEOffset":   func() E { return &metaevent.SMPTEOffset{} },
 		"EndOfTrack":    func() E { return &metaevent.EndOfTrack{} },
 		"ProgramChange": func() E { return &midievent.ProgramChange{} },
 		"Controller":    func() E { return &midievent.Controller{} },

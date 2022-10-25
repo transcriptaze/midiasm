@@ -10,26 +10,10 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
-
-var smpteOffset = events.NewEvent(
-	0,
-	0,
-	&metaevent.SMPTEOffset{
-		Tag:              "SMPTEOffset",
-		Status:           0xff,
-		Type:             types.MetaEventType(0x54),
-		Hour:             13,
-		Minute:           45,
-		Second:           59,
-		FrameRate:        25,
-		Frames:           7,
-		FractionalFrames: 39,
-	},
-	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
+var smpteOffset = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 
 var programBankMSB = events.NewEvent(0, 0, nil, []byte{0x00, 0xb7, 0x00, 0x05})
 var programBankLSB = events.NewEvent(0, 0, nil, []byte{0x00, 0xb7, 0x20, 0x21})
@@ -89,6 +73,7 @@ var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
+	smpteOffset.Event, _ = metaevent.NewSMPTEOffset(0, 0, 25, 13, 45, 59, 7, 39)
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
 	programBankMSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb7)
 	programBankLSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb7)

@@ -34,7 +34,6 @@ func NewTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 			Status: 0xff,
 			Type:   0x51,
 		},
-
 		Tempo: tempo,
 	}, nil
 }

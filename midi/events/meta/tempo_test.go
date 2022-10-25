@@ -7,7 +7,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestNewTemp(t *testing.T) {
+func TestNewTempo(t *testing.T) {
 	expected := Tempo{
 		event: event{
 			tick:   2400,

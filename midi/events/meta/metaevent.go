@@ -141,7 +141,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return NewTempo(tick, delta, data)
 
 	case 0x54:
-		return NewSMPTEOffset(data)
+		return UnmarshalSMPTEOffset(tick, delta, data)
 
 	case 0x58:
 		return NewTimeSignature(tick, delta, data)

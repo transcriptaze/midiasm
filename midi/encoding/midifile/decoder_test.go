@@ -183,6 +183,7 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 			for j, e := range mtrk.Events {
 				if !reflect.DeepEqual(e, tracks[i].Events[j]) {
 					t.Errorf("MTrk[%d]: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", i, tracks[i].Events[j], e)
+					t.Errorf("\n   expected:%#v\n   got:     %#v", tracks[i].Events[j].Event, e.Event)
 				}
 			}
 		}
@@ -266,28 +267,13 @@ var noteOffCS3 = events.NewEvent(
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
-
-var smpteOffset = events.NewEvent(
-	0,
-	0,
-	&metaevent.SMPTEOffset{
-		Tag:              "SMPTEOffset",
-		Status:           0xff,
-		Type:             types.MetaEventType(0x54),
-		Hour:             13,
-		Minute:           45,
-		Second:           59,
-		FrameRate:        25,
-		Frames:           7,
-		FractionalFrames: 39,
-	},
-	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
-
+var smpteOffset = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
 	example1.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
+	smpteOffset.Event, _ = metaevent.NewSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39)
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
 	acousticGuitar.Event, _ = metaevent.NewTrackName(0, 0, []byte("Acoustic Guitar"))
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
