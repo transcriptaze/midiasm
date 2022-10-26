@@ -56,7 +56,7 @@ func TestSequenceNumberMarshalBinary(t *testing.T) {
 }
 
 func TestSequenceNumberUnmarshalText(t *testing.T) {
-	text := "      00 FF 00 02 00 17                     tick:0          delta:0          00 SequenceNumber         23"
+	text := "      00 FF 00 02 00 17                     tick:0          delta:480        00 SequenceNumber         23"
 	expected := SequenceNumber{
 		event: event{
 			tick:   0,
@@ -66,7 +66,7 @@ func TestSequenceNumberUnmarshalText(t *testing.T) {
 			Type:   0x00,
 			bytes:  []byte{},
 		},
-		Sequence: 23,
+		SequenceNumber: 23,
 	}
 
 	evt := SequenceNumber{}
