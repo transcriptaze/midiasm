@@ -7,11 +7,12 @@
       00 FF 54 05 4D 2D 3B 07 27            tick:0          delta:0          54 SMPTEOffset            13 45 59 25 7 39
       00 FF 2F 00                           tick:0          delta:0          2F EndOfTrack
 
-%% 4D 54 72 6B 00 00 00 F1…                    MTrk 1  length:241
-%%       00 FF 00 02 00 17                     tick:0          delta:0          00 SequenceNumber         23
+4D 54 72 6B 00 00 00 F1…                    MTrk 1  length:241
+      00 FF 00 02 00 17                     tick:0          delta:0          00 SequenceNumber         23
+      00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:0          03 TrackName              Acoustic Guitar
+      00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
 %%       00 FF 01 0D 54 68 69 73 20 61 6E 64…  tick:0          delta:0          01 Text                   This and That
 %%       00 FF 02 04 54 68 65 6D               tick:0          delta:0          02 Copyright              Them
-%%       00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:0          03 TrackName              Acoustic Guitar
 %%       00 FF 04 0A 44 69 64 67 65 72 69 64…  tick:0          delta:0          04 InstrumentName         Didgeridoo
 %%       00 FF 05 08 4C 61 2D 6C 61 2D 6C 61   tick:0          delta:0          05 Lyric                  La-la-la
 %%       00 FF 06 0F 48 65 72 65 20 42 65 20…  tick:0          delta:0          06 Marker                 Here Be Dragons
@@ -20,7 +21,6 @@
 %%       00 FF 09 08 54 68 65 54 68 69 6E 67   tick:0          delta:0          09 DeviceName             TheThing
 %%       00 FF 20 01 0D                        tick:0          delta:0          20 MIDIChannelPrefix      13
 %%       00 FF 21 01 70                        tick:0          delta:0          21 MIDIPort               112
-%%       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
 %%       00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:0          7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E
 %%       00 B0 00 05                           tick:0          delta:0          B0 Controller             channel:0  0/Bank Select (MSB), value:5
 %%       00 B0 20 21                           tick:0          delta:0          B0 Controller             channel:0  32/Bank Select (LSB), value:33
@@ -38,4 +38,4 @@
 %%    81 48 F7 06 43 12 00 43 12 00            tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00
 %%       64 F7 04 43 12 00 F7                  tick:1020       delta:100        F7 SysExContinuation      43 12 00
 %%       00 F7 02 F3 01                        tick:1020       delta:0          F7 SysExEscape            F3 01
-%%       00 FF 2F 00                           tick:1020       delta:0          2F EndOfTrack
+      00 FF 2F 00                           tick:1020       delta:0          2F EndOfTrack

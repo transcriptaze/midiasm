@@ -192,16 +192,7 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 
 // TEST EVENTS
 
-var sequenceNumber = events.NewEvent(
-	0,
-	0,
-	&metaevent.SequenceNumber{
-		Tag:            "SequenceNumber",
-		Status:         0xff,
-		Type:           types.MetaEventType(0x00),
-		SequenceNumber: 23,
-	},
-	[]byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17})
+var sequenceNumber = events.NewEvent(0, 0, factory("SequenceNumber"), []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17})
 
 var text = events.NewEvent(
 	0,
@@ -280,4 +271,15 @@ func init() {
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
+}
+
+func factory(tag string) any {
+	var event any
+
+	switch tag {
+	case "SequenceNumber":
+		event, _ = metaevent.NewSequenceNumber(0, 0, 23)
+	}
+
+	return event
 }

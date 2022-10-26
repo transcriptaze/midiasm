@@ -102,7 +102,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 
 	switch eventType {
 	case 0x00:
-		return NewSequenceNumber(data)
+		return UnmarshalSequenceNumber(tick, delta, data)
 
 	case 0x01:
 		return NewText(data)

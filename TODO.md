@@ -1,7 +1,5 @@
 # TODO
 
-- [x] Move TimeSignature in reference-01.mid to track 0
-
 - [ ] MIDI file grammar
       - (?) ASN.1
       - (?) EBNF

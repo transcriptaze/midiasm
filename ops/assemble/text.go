@@ -211,16 +211,17 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 	}
 
 	g := map[string]func() E{
-		"TrackName":     func() E { return &metaevent.TrackName{} },
-		"Tempo":         func() E { return &metaevent.Tempo{} },
-		"TimeSignature": func() E { return &metaevent.TimeSignature{} },
-		"KeySignature":  func() E { return &metaevent.KeySignature{} },
-		"SMPTEOffset":   func() E { return &metaevent.SMPTEOffset{} },
-		"EndOfTrack":    func() E { return &metaevent.EndOfTrack{} },
-		"ProgramChange": func() E { return &midievent.ProgramChange{} },
-		"Controller":    func() E { return &midievent.Controller{} },
-		"NoteOn":        func() E { return &midievent.NoteOn{} },
-		"NoteOff":       func() E { return &midievent.NoteOff{} },
+		"SequenceNumber": func() E { return &metaevent.SequenceNumber{} },
+		"TrackName":      func() E { return &metaevent.TrackName{} },
+		"Tempo":          func() E { return &metaevent.Tempo{} },
+		"TimeSignature":  func() E { return &metaevent.TimeSignature{} },
+		"KeySignature":   func() E { return &metaevent.KeySignature{} },
+		"SMPTEOffset":    func() E { return &metaevent.SMPTEOffset{} },
+		"EndOfTrack":     func() E { return &metaevent.EndOfTrack{} },
+		"ProgramChange":  func() E { return &midievent.ProgramChange{} },
+		"Controller":     func() E { return &midievent.Controller{} },
+		"NoteOn":         func() E { return &midievent.NoteOn{} },
+		"NoteOff":        func() E { return &midievent.NoteOff{} },
 	}
 
 	for line := range lines {

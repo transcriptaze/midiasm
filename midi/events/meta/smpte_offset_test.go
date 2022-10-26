@@ -35,7 +35,7 @@ func TestUnmarshalSMPTEOffset(t *testing.T) {
 	}
 }
 
-func TestSMPTEMarshalBinary(t *testing.T) {
+func TestSMPTEOffsetMarshalBinary(t *testing.T) {
 	evt := SMPTEOffset{
 		event: event{
 			tick:   2400,
