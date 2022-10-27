@@ -72,6 +72,8 @@
   - https://stackoverflow.com/questions/46182767/how-to-add-random-number-using-awk-command
 - CSS a la Werkmeister
 - M-IDE
+  - https://arcan-fe.com/2022/10/15/whipping-up-a-new-shell-lashcat9/
+  - https://arcan-fe.com/2021/04/12/introducing-pipeworld/
 
 ### Other
 

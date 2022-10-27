@@ -69,8 +69,8 @@ func (s *SequenceNumber) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SequenceNumber\s+([0-9]+)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
-		return fmt.Errorf("invalid SMPTEOffset event (%v)", text)
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+		return fmt.Errorf("invalid SequenceNumber event (%v)", text)
 	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 		return err
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
