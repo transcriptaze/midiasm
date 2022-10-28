@@ -74,6 +74,7 @@
 - M-IDE
   - https://arcan-fe.com/2022/10/15/whipping-up-a-new-shell-lashcat9/
   - https://arcan-fe.com/2021/04/12/introducing-pipeworld/
+- https://music.stackexchange.com/questions/125617/midi-controlled-metronome
 
 ### Other
 

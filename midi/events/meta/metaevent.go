@@ -108,7 +108,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 		return UnmarshalText(tick, delta, data)
 
 	case 0x02:
-		return NewCopyright(data)
+		return UnmarshalCopyright(tick, delta, data)
 
 	case 0x03:
 		return NewTrackName(tick, delta, data)

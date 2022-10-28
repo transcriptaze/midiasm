@@ -44,7 +44,12 @@ func UnmarshalText(tick uint64, delta uint32, bytes []byte) (*Text, error) {
 }
 
 func (t Text) MarshalBinary() (encoded []byte, err error) {
-	return append([]byte{byte(t.Status), byte(t.Type), byte(len(t.Text))}, []byte(t.Text)...), nil
+	return append([]byte{
+		byte(t.Status),
+		byte(t.Type),
+		byte(len(t.Text)),
+	},
+		[]byte(t.Text)...), nil
 }
 
 func (t *Text) UnmarshalText(bytes []byte) error {
