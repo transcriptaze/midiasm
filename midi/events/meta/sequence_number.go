@@ -14,8 +14,8 @@ type SequenceNumber struct {
 	SequenceNumber uint16
 }
 
-func NewSequenceNumber(tick uint64, delta uint32, sequence uint16) (*SequenceNumber, error) {
-	return &SequenceNumber{
+func MakeSequenceNumber(tick uint64, delta uint32, sequence uint16) SequenceNumber {
+	return SequenceNumber{
 		event: event{
 			tick:   tick,
 			delta:  delta,
@@ -25,7 +25,7 @@ func NewSequenceNumber(tick uint64, delta uint32, sequence uint16) (*SequenceNum
 			Type:   types.TypeSequenceNumber,
 		},
 		SequenceNumber: sequence,
-	}, nil
+	}
 }
 
 func UnmarshalSequenceNumber(tick uint64, delta uint32, bytes []byte) (*SequenceNumber, error) {
@@ -34,18 +34,9 @@ func UnmarshalSequenceNumber(tick uint64, delta uint32, bytes []byte) (*Sequence
 	}
 
 	sequence := binary.BigEndian.Uint16(bytes)
+	event := MakeSequenceNumber(tick, delta, sequence)
 
-	return &SequenceNumber{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x00, 0x02}, bytes),
-			tag:    types.TagSequenceNumber,
-			Status: 0xff,
-			Type:   types.TypeSequenceNumber,
-		},
-		SequenceNumber: sequence,
-	}, nil
+	return &event, nil
 }
 
 func (s SequenceNumber) MarshalBinary() (encoded []byte, err error) {

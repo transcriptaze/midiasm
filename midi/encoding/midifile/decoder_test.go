@@ -192,9 +192,28 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 
 // TEST EVENTS
 
-var sequenceNumber = events.NewEvent(0, 0, factory("SequenceNumber"), []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17})
-var text = events.NewEvent(0, 0, factory("Text"), []byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74})
-var copyright = events.NewEvent(0, 0, factory("Copyright"), []byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d})
+type event interface {
+	metaevent.SequenceNumber |
+		metaevent.Text |
+		metaevent.Copyright |
+		metaevent.SMPTEOffset
+}
+
+func makeEvent[E event](e E, bytes []byte) *events.Event {
+	return events.NewEvent(0, 0, &e, bytes)
+}
+
+var sequenceNumber = makeEvent(
+	metaevent.MakeSequenceNumber(0, 0, 23),
+	[]byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17})
+
+var text = makeEvent(
+	metaevent.MakeText(0, 0, "This and That"),
+	[]byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74})
+
+var copyright = makeEvent(
+	metaevent.MakeCopyright(0, 0, "Them"),
+	[]byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d})
 
 var example1 = events.NewEvent(0, 0, nil, []byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31})
 var acousticGuitar = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72})
@@ -238,34 +257,20 @@ var noteOffCS3 = events.NewEvent(
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
-var smpteOffset = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
+
+var smpteOffset = makeEvent(
+	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
+	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
+
 var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
 	example1.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
-	smpteOffset.Event, _ = metaevent.NewSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39)
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
 	acousticGuitar.Event, _ = metaevent.NewTrackName(0, 0, []byte("Acoustic Guitar"))
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
-}
-
-func factory(tag string) any {
-	var event any
-
-	switch tag {
-	case "SequenceNumber":
-		event, _ = metaevent.NewSequenceNumber(0, 0, 23)
-
-	case "Text":
-		event, _ = metaevent.NewText(0, 0, "This and That")
-
-	case "Copyright":
-		event, _ = metaevent.NewCopyright(0, 0, "Them")
-	}
-
-	return event
 }

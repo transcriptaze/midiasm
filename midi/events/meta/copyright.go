@@ -13,8 +13,8 @@ type Copyright struct {
 	Copyright string
 }
 
-func NewCopyright(tick uint64, delta uint32, copyright string) (*Copyright, error) {
-	return &Copyright{
+func MakeCopyright(tick uint64, delta uint32, copyright string) Copyright {
+	return Copyright{
 		event: event{
 			tick:   tick,
 			delta:  delta,
@@ -24,23 +24,14 @@ func NewCopyright(tick uint64, delta uint32, copyright string) (*Copyright, erro
 			Type:   types.TypeCopyright,
 		},
 		Copyright: copyright,
-	}, nil
+	}
 }
 
 func UnmarshalCopyright(tick uint64, delta uint32, bytes []byte) (*Copyright, error) {
 	copyright := string(bytes)
+	event := MakeCopyright(tick, delta, copyright)
 
-	return &Copyright{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x02, byte(len(bytes))}, bytes),
-			tag:    types.TagCopyright,
-			Status: 0xff,
-			Type:   types.TypeCopyright,
-		},
-		Copyright: copyright,
-	}, nil
+	return &event, nil
 }
 
 func (c Copyright) MarshalBinary() (encoded []byte, err error) {

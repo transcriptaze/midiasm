@@ -80,6 +80,32 @@ func (v vlf) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
+// type XXX interface {
+// 	*SequenceNumber | *Text | *Copyright | *SMPTEOffset
+// }
+
+// func XYZ[T XXX](uint64, uint32, []byte) (T, error) {
+// 	return nil, nil
+// }
+
+var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
+	0x00: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalSequenceNumber(tick, delta, bytes)
+	},
+
+	0x01: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalText(tick, delta, bytes)
+	},
+
+	0x02: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalCopyright(tick, delta, bytes)
+	},
+
+	0x54: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalSMPTEOffset(tick, delta, bytes)
+	},
+}
+
 func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (any, error) {
 	status, err := r.ReadByte()
 	if err != nil {
@@ -100,15 +126,19 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 
 	eventType := types.MetaEventType(b & 0x7F)
 
+	if f, ok := factory[eventType]; ok {
+		return f(tick, delta, data)
+	}
+
 	switch eventType {
-	case 0x00:
-		return UnmarshalSequenceNumber(tick, delta, data)
+	// case 0x00:
+	// 	return UnmarshalSequenceNumber(tick, delta, data)
 
-	case 0x01:
-		return UnmarshalText(tick, delta, data)
+	// case 0x01:
+	// 	return UnmarshalText(tick, delta, data)
 
-	case 0x02:
-		return UnmarshalCopyright(tick, delta, data)
+	// case 0x02:
+	// 	return UnmarshalCopyright(tick, delta, data)
 
 	case 0x03:
 		return NewTrackName(tick, delta, data)
@@ -140,8 +170,8 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	case 0x51:
 		return NewTempo(tick, delta, data)
 
-	case 0x54:
-		return UnmarshalSMPTEOffset(tick, delta, data)
+	// case 0x54:
+	// 	return UnmarshalSMPTEOffset(tick, delta, data)
 
 	case 0x58:
 		return NewTimeSignature(tick, delta, data)

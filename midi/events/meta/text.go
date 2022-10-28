@@ -13,8 +13,8 @@ type Text struct {
 	Text string
 }
 
-func NewText(tick uint64, delta uint32, text string) (*Text, error) {
-	return &Text{
+func MakeText(tick uint64, delta uint32, text string) Text {
+	return Text{
 		event: event{
 			tick:   tick,
 			delta:  delta,
@@ -24,23 +24,14 @@ func NewText(tick uint64, delta uint32, text string) (*Text, error) {
 			Type:   types.TypeText,
 		},
 		Text: text,
-	}, nil
+	}
 }
 
 func UnmarshalText(tick uint64, delta uint32, bytes []byte) (*Text, error) {
 	text := string(bytes)
+	event := MakeText(tick, delta, text)
 
-	return &Text{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x01, byte(len(bytes))}, bytes),
-			tag:    types.TagText,
-			Status: 0xff,
-			Type:   types.TypeText,
-		},
-		Text: text,
-	}, nil
+	return &event, nil
 }
 
 func (t Text) MarshalBinary() (encoded []byte, err error) {

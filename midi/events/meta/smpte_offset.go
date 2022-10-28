@@ -18,19 +18,19 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func NewSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, frames, fractionalFrames uint8) (*SMPTEOffset, error) {
+func MakeSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, frames, fractionalFrames uint8) SMPTEOffset {
 	var rr uint8
 
 	if hour > 24 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)
+		panic(fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour))
 	}
 
 	if minute > 59 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset minute (%d): expected a value in the interval [0..59]", minute)
+		panic(fmt.Errorf("Invalid SMPTEOffset minute (%d): expected a value in the interval [0..59]", minute))
 	}
 
 	if second > 59 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset second (%d): expected a value in the interval [0..59]", second)
+		panic(fmt.Errorf("Invalid SMPTEOffset second (%d): expected a value in the interval [0..59]", second))
 	}
 
 	switch frameRate {
@@ -43,18 +43,18 @@ func NewSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, 
 	case 30:
 		rr = 3 << 6
 	default:
-		return nil, fmt.Errorf("Invalid SMPTEOffset frame rate (%02X): expected a value in the set [24,25,29,30]", rr)
+		panic(fmt.Errorf("Invalid SMPTEOffset frame rate (%02X): expected a value in the set [24,25,29,30]", rr))
 	}
 
 	if frames >= frameRate {
-		return nil, fmt.Errorf("Invalid SMPTEOffset frames (%d): expected a value in the interval [0..%d]", frames, frameRate-1)
+		panic(fmt.Errorf("Invalid SMPTEOffset frames (%d): expected a value in the interval [0..%d]", frames, frameRate-1))
 	}
 
 	if fractionalFrames > 100 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractionalFrames)
+		panic(fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractionalFrames))
 	}
 
-	return &SMPTEOffset{
+	return SMPTEOffset{
 		event: event{
 			tick:   tick,
 			delta:  delta,
@@ -69,9 +69,10 @@ func NewSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, 
 		FrameRate:        frameRate,
 		Frames:           frames,
 		FractionalFrames: fractionalFrames,
-	}, nil
+	}
 }
 
+// TODO Maybe rework this as described in https://go.dev/blog/defer-panic-and-recover
 func UnmarshalSMPTEOffset(tick uint64, delta uint32, bytes []byte) (*SMPTEOffset, error) {
 	if len(bytes) != 5 {
 		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(bytes))
@@ -120,22 +121,9 @@ func UnmarshalSMPTEOffset(tick uint64, delta uint32, bytes []byte) (*SMPTEOffset
 		return nil, fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	}
 
-	return &SMPTEOffset{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x54, 0x05}, bytes),
-			tag:    types.TagSMPTEOffset,
-			Status: 0xff,
-			Type:   types.TypeSMPTEOffset,
-		},
-		Hour:             hour,
-		Minute:           minute,
-		Second:           second,
-		FrameRate:        framerate,
-		Frames:           frames,
-		FractionalFrames: fractions,
-	}, nil
+	event := MakeSMPTEOffset(tick, delta, hour, minute, second, framerate, frames, fractions)
+
+	return &event, nil
 }
 
 func (s SMPTEOffset) MarshalBinary() (encoded []byte, err error) {
