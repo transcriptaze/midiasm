@@ -7,7 +7,6 @@ import (
 
 type Hex []byte
 type Status byte
-type MetaEventType byte
 type TrackNumber uint
 
 func (bytes Hex) String() string {
@@ -20,10 +19,6 @@ func (bytes Hex) String() string {
 }
 
 func (t Status) String() string {
-	return fmt.Sprintf("%02X", byte(t))
-}
-
-func (t MetaEventType) String() string {
 	return fmt.Sprintf("%02X", byte(t))
 }
 

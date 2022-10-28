@@ -61,7 +61,7 @@ func NewSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, 
 			bytes:  []byte{0x00, 0xff, 0x54, 0x05, rr | hour&0x1f, minute, second, frames, fractionalFrames},
 			tag:    types.TagSMPTEOffset,
 			Status: 0xff,
-			Type:   0x54,
+			Type:   types.TypeSMPTEOffset,
 		},
 		Hour:             hour,
 		Minute:           minute,
@@ -127,7 +127,7 @@ func UnmarshalSMPTEOffset(tick uint64, delta uint32, bytes []byte) (*SMPTEOffset
 			bytes:  concat([]byte{0x00, 0xff, 0x54, 0x05}, bytes),
 			tag:    types.TagSMPTEOffset,
 			Status: 0xff,
-			Type:   0x54,
+			Type:   types.TypeSMPTEOffset,
 		},
 		Hour:             hour,
 		Minute:           minute,
@@ -171,7 +171,7 @@ func (s *SMPTEOffset) UnmarshalText(bytes []byte) error {
 	s.bytes = []byte{}
 	s.tag = types.TagSMPTEOffset
 	s.Status = 0xff
-	s.Type = 0x54
+	s.Type = types.TypeSMPTEOffset
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SMPTEOffset\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)`)
 	text := string(bytes)

@@ -21,7 +21,7 @@ func NewCopyright(tick uint64, delta uint32, copyright string) (*Copyright, erro
 			bytes:  append([]byte{0x00, 0xff, 0x02, byte(len(copyright))}, []byte(copyright)...),
 			tag:    types.TagCopyright,
 			Status: 0xff,
-			Type:   0x02,
+			Type:   types.TypeCopyright,
 		},
 		Copyright: copyright,
 	}, nil
@@ -37,7 +37,7 @@ func UnmarshalCopyright(tick uint64, delta uint32, bytes []byte) (*Copyright, er
 			bytes:  concat([]byte{0x00, 0xff, 0x02, byte(len(bytes))}, bytes),
 			tag:    types.TagCopyright,
 			Status: 0xff,
-			Type:   0x02,
+			Type:   types.TypeCopyright,
 		},
 		Copyright: copyright,
 	}, nil
@@ -58,7 +58,7 @@ func (c *Copyright) UnmarshalText(bytes []byte) error {
 	c.bytes = []byte{}
 	c.tag = types.TagCopyright
 	c.Status = 0xff
-	c.Type = 0x02
+	c.Type = types.TypeCopyright
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Copyright\s+(.*)`)
 	text := string(bytes)

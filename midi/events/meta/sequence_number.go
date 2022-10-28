@@ -22,7 +22,7 @@ func NewSequenceNumber(tick uint64, delta uint32, sequence uint16) (*SequenceNum
 			bytes:  binary.BigEndian.AppendUint16([]byte{0x00, 0xff, 0x00, 0x02}, sequence),
 			tag:    types.TagSequenceNumber,
 			Status: 0xff,
-			Type:   0x00,
+			Type:   types.TypeSequenceNumber,
 		},
 		SequenceNumber: sequence,
 	}, nil
@@ -42,7 +42,7 @@ func UnmarshalSequenceNumber(tick uint64, delta uint32, bytes []byte) (*Sequence
 			bytes:  concat([]byte{0x00, 0xff, 0x00, 0x02}, bytes),
 			tag:    types.TagSequenceNumber,
 			Status: 0xff,
-			Type:   0x00,
+			Type:   types.TypeSequenceNumber,
 		},
 		SequenceNumber: sequence,
 	}, nil
@@ -64,7 +64,7 @@ func (s *SequenceNumber) UnmarshalText(bytes []byte) error {
 	s.bytes = []byte{}
 	s.tag = types.TagSequenceNumber
 	s.Status = 0xff
-	s.Type = 0x00
+	s.Type = types.TypeSequenceNumber
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SequenceNumber\s+([0-9]+)`)
 	text := string(bytes)

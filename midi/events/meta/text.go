@@ -21,7 +21,7 @@ func NewText(tick uint64, delta uint32, text string) (*Text, error) {
 			bytes:  append([]byte{0x00, 0xff, 0x01, byte(len(text))}, []byte(text)...),
 			tag:    types.TagText,
 			Status: 0xff,
-			Type:   0x01,
+			Type:   types.TypeText,
 		},
 		Text: text,
 	}, nil
@@ -37,7 +37,7 @@ func UnmarshalText(tick uint64, delta uint32, bytes []byte) (*Text, error) {
 			bytes:  concat([]byte{0x00, 0xff, 0x01, byte(len(bytes))}, bytes),
 			tag:    types.TagText,
 			Status: 0xff,
-			Type:   0x01,
+			Type:   types.TypeText,
 		},
 		Text: text,
 	}, nil
@@ -58,7 +58,7 @@ func (t *Text) UnmarshalText(bytes []byte) error {
 	t.bytes = []byte{}
 	t.tag = types.TagText
 	t.Status = 0xff
-	t.Type = 0x01
+	t.Type = types.TypeText
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Text\s+(.*)`)
 	text := string(bytes)
