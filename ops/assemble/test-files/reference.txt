@@ -13,8 +13,8 @@
       00 FF 02 04 54 68 65 6D               tick:0          delta:0          02 Copyright              Them
       00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:0          03 TrackName              Acoustic Guitar
       00 FF 04 0A 44 69 64 67 65 72 69 64…  tick:0          delta:0          04 InstrumentName         Didgeridoo
+      00 FF 05 08 4C 61 2D 6C 61 2D 6C 61   tick:0          delta:0          05 Lyric                  La-la-la
       00 FF 59 02 00 01                     tick:0          delta:0          59 KeySignature           A minor
-%%       00 FF 05 08 4C 61 2D 6C 61 2D 6C 61   tick:0          delta:0          05 Lyric                  La-la-la
 %%       00 FF 06 0F 48 65 72 65 20 42 65 20…  tick:0          delta:0          06 Marker                 Here Be Dragons
 %%       00 FF 07 0C 4D 6F 72 65 20 63 6F 77…  tick:0          delta:0          07 CuePoint               More cowbell
 %%       00 FF 08 06 45 73 63 61 70 65         tick:0          delta:0          08 ProgramName            Escape
