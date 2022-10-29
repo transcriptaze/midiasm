@@ -16,6 +16,8 @@ type event interface {
 	metaevent.SequenceNumber |
 		metaevent.Text |
 		metaevent.Copyright |
+		metaevent.TrackName |
+		metaevent.InstrumentName |
 		metaevent.SMPTEOffset
 }
 

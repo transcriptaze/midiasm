@@ -108,6 +108,10 @@ var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
 		return UnmarshalCopyright(tick, delta, bytes)
 	},
 
+	0x03: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalTrackName(tick, delta, bytes)
+	},
+
 	0x04: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalInstrumentName(tick, delta, bytes)
 	},
@@ -142,9 +146,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	}
 
 	switch eventType {
-	case 0x03:
-		return NewTrackName(tick, delta, data)
-
 	case 0x05:
 		return NewLyric(data)
 

@@ -7,7 +7,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestNewTrackName(t *testing.T) {
+func TestUnmarshalTrackName(t *testing.T) {
 	expected := TrackName{
 		event: event{
 			tick:   2400,
@@ -23,9 +23,7 @@ func TestNewTrackName(t *testing.T) {
 		Name: "Railroad Traque",
 	}
 
-	evt, err := NewTrackName(2400, 480, []byte{
-		0x52, 0x61, 0x69, 0x6c, 0x72, 0x6f, 0x61, 0x64,
-		0x20, 0x54, 0x72, 0x61, 0x71, 0x75, 0x65})
+	evt, err := UnmarshalTrackName(2400, 480, []byte("Railroad Traque"))
 	if err != nil {
 		t.Fatalf("error encoding TrackName (%v)", err)
 	}
@@ -34,6 +32,34 @@ func TestNewTrackName(t *testing.T) {
 		t.Errorf("incorrect TrackName\n   expected:%+v\n   got:     %+v", expected, *evt)
 	}
 }
+
+// func TestMakeTrackName(t *testing.T) {
+// 	expected := TrackName{
+// 		event: event{
+// 			tick:   2400,
+// 			delta:  480,
+// 			tag:    types.TagTrackName,
+// 			Status: 0xff,
+// 			Type:   0x03,
+// 			bytes: []byte{
+// 				0x00, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69, 0x6c,
+// 				0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72, 0x61,
+// 				0x71, 0x75, 0x65},
+// 		},
+// 		Name: "Railroad Traque",
+// 	}
+//
+// 	evt, err := NewTrackName(2400, 480, []byte{
+// 		0x52, 0x61, 0x69, 0x6c, 0x72, 0x6f, 0x61, 0x64,
+// 		0x20, 0x54, 0x72, 0x61, 0x71, 0x75, 0x65})
+// 	if err != nil {
+// 		t.Fatalf("error encoding TrackName (%v)", err)
+// 	}
+//
+// 	if !reflect.DeepEqual(*evt, expected) {
+// 		t.Errorf("incorrect TrackName\n   expected:%+v\n   got:     %+v", expected, *evt)
+// 	}
+// }
 
 func TestTrackNameMarshalBinary(t *testing.T) {
 	evt := TrackName{

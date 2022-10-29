@@ -196,6 +196,7 @@ type event interface {
 	metaevent.SequenceNumber |
 		metaevent.Text |
 		metaevent.Copyright |
+		metaevent.TrackName |
 		metaevent.InstrumentName |
 		metaevent.SMPTEOffset
 }
@@ -216,8 +217,13 @@ var copyright = makeEvent(
 	metaevent.MakeCopyright(0, 0, "Them"),
 	[]byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d})
 
-var example1 = events.NewEvent(0, 0, nil, []byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31})
-var acousticGuitar = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72})
+var example1 = makeEvent(
+	metaevent.MakeTrackName(0, 0, "Example 1"),
+	[]byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31})
+
+var acousticGuitar = makeEvent(
+	metaevent.MakeTrackName(0, 0, "Acoustic Guitar"),
+	[]byte{0x00, 0xff, 0x03, 0x0f, 0x41, 0x63, 0x6f, 0x75, 0x73, 0x74, 0x69, 0x63, 0x20, 0x47, 0x75, 0x69, 0x74, 0x61, 0x72})
 
 var didgeridoo = makeEvent(
 	metaevent.MakeInstrumentName(0, 0, "Didgeridoo"),
@@ -259,10 +265,8 @@ var smpteOffset = makeEvent(
 var endOfTrack = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
-	example1.Event, _ = metaevent.NewTrackName(0, 0, []byte("Example 1"))
 	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
 	endOfTrack.Event, _ = metaevent.NewEndOfTrack(0, 0, []byte{})
-	acousticGuitar.Event, _ = metaevent.NewTrackName(0, 0, []byte("Acoustic Guitar"))
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
