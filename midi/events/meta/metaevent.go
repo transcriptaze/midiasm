@@ -80,12 +80,19 @@ func (v vlf) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-// type XXX interface {
-// 	*SequenceNumber | *Text | *Copyright | *SMPTEOffset
+// type xxx interface {
+// 	*SequenceNumber
 // }
 
-// func XYZ[T XXX](uint64, uint32, []byte) (T, error) {
-// 	return nil, nil
+// func xyz[T xxx](tick uint64, delta uint32, bytes []byte, f func(uint64, uint32, []byte) (T, error)) (any, error) {
+// 	return f(tick, delta, bytes)
+// }
+
+// https://stackoverflow.com/questions/71132124/how-to-solve-interface-method-must-have-no-type-parameters
+// type pqr func[E xxx](uint64,uint32,[]byte) (E,error)
+
+// var factory2 = map[types.MetaEventType]func(uint64, uint32, []byte) (xxx, error){
+// 	0x00: UnmarshalSequenceNumber,
 // }
 
 var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
@@ -99,6 +106,10 @@ var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
 
 	0x02: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalCopyright(tick, delta, bytes)
+	},
+
+	0x04: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalInstrumentName(tick, delta, bytes)
 	},
 
 	0x54: func(tick uint64, delta uint32, bytes []byte) (any, error) {
@@ -131,20 +142,8 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	}
 
 	switch eventType {
-	// case 0x00:
-	// 	return UnmarshalSequenceNumber(tick, delta, data)
-
-	// case 0x01:
-	// 	return UnmarshalText(tick, delta, data)
-
-	// case 0x02:
-	// 	return UnmarshalCopyright(tick, delta, data)
-
 	case 0x03:
 		return NewTrackName(tick, delta, data)
-
-	case 0x04:
-		return NewInstrumentName(data)
 
 	case 0x05:
 		return NewLyric(data)
@@ -169,9 +168,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 
 	case 0x51:
 		return NewTempo(tick, delta, data)
-
-	// case 0x54:
-	// 	return UnmarshalSMPTEOffset(tick, delta, data)
 
 	case 0x58:
 		return NewTimeSignature(tick, delta, data)
