@@ -136,6 +136,10 @@ var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
 		return UnmarshalEndOfTrack(tick, delta, bytes)
 	},
 
+	types.TypeTempo: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalTempo(tick, delta, bytes)
+	},
+
 	types.TypeSMPTEOffset: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSMPTEOffset(tick, delta, bytes)
 	},
@@ -174,9 +178,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 
 	case 0x21:
 		return NewMIDIPort(data)
-
-	case 0x51:
-		return NewTempo(tick, delta, data)
 
 	case 0x58:
 		return NewTimeSignature(tick, delta, data)

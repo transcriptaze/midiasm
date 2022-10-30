@@ -199,6 +199,7 @@ type event interface {
 		metaevent.TrackName |
 		metaevent.InstrumentName |
 		metaevent.EndOfTrack |
+		metaevent.Tempo |
 		metaevent.SMPTEOffset
 }
 
@@ -257,7 +258,9 @@ var noteOffCS3 = events.NewEvent(
 	midievent.NewNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
-var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
+var tempo = makeEvent(
+	metaevent.MakeTempo(0, 0, 500000),
+	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
 var smpteOffset = makeEvent(
 	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
@@ -268,7 +271,6 @@ var endOfTrack = makeEvent(
 	[]byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
-	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
 
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)

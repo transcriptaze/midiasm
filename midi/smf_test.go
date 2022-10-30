@@ -19,6 +19,7 @@ type event interface {
 		metaevent.TrackName |
 		metaevent.InstrumentName |
 		metaevent.EndOfTrack |
+		metaevent.Tempo |
 		metaevent.SMPTEOffset
 }
 
@@ -26,7 +27,9 @@ func makeEvent[E event](e E, bytes []byte) *events.Event {
 	return events.NewEvent(0, 0, &e, bytes)
 }
 
-var tempo = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
+var tempo = makeEvent(
+	metaevent.MakeTempo(0, 0, 50000),
+	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
 var smpteOffset = makeEvent(
 	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
@@ -91,7 +94,6 @@ var endOfTrack = makeEvent(
 	[]byte{0x00, 0xff, 0x2f, 0x00})
 
 func init() {
-	tempo.Event, _ = metaevent.NewTempo(0, 0, []byte{0x07, 0xa1, 0x20})
 	programBankMSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb7)
 	programBankLSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb7)
 	programBankMSBCh3.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb3)

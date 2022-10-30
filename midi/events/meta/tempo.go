@@ -14,7 +14,21 @@ type Tempo struct {
 	Tempo uint32
 }
 
-func NewTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
+func MakeTempo(tick uint64, delta uint32, tempo uint32) Tempo {
+	return Tempo{
+		event: event{
+			tick:   tick,
+			delta:  delta,
+			bytes:  append([]byte{0x00, 0xff, 0x51, 03}, byte(tempo>>16&0x0ff), byte(tempo>>8&0x0ff), byte(tempo>>0&0x0ff)),
+			tag:    types.TagTempo,
+			Status: 0xff,
+			Type:   types.TypeTempo,
+		},
+		Tempo: tempo,
+	}
+}
+
+func UnmarshalTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 	if len(bytes) != 3 {
 		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(bytes))
 	}
@@ -25,17 +39,9 @@ func NewTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 		tempo += uint32(b)
 	}
 
-	return &Tempo{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x51, 0x03}, bytes),
-			tag:    types.TagTempo,
-			Status: 0xff,
-			Type:   0x51,
-		},
-		Tempo: tempo,
-	}, nil
+	event := MakeTempo(tick, delta, tempo)
+
+	return &event, nil
 }
 
 func (t Tempo) String() string {
