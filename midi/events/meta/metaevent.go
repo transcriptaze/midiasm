@@ -128,6 +128,10 @@ var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
 		return UnmarshalCuePoint(tick, delta, bytes)
 	},
 
+	types.TypeProgramName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalProgramName(tick, delta, bytes)
+	},
+
 	types.TypeEndOfTrack: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalEndOfTrack(tick, delta, bytes)
 	},
@@ -162,9 +166,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	}
 
 	switch eventType {
-	case 0x08:
-		return NewProgramName(data)
-
 	case 0x09:
 		return NewDeviceName(data)
 
