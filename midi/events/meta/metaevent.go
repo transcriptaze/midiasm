@@ -96,28 +96,32 @@ func (v vlf) MarshalBinary() (encoded []byte, err error) {
 // }
 
 var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
-	0x00: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeSequenceNumber: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSequenceNumber(tick, delta, bytes)
 	},
 
-	0x01: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeText: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalText(tick, delta, bytes)
 	},
 
-	0x02: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeCopyright: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalCopyright(tick, delta, bytes)
 	},
 
-	0x03: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeTrackName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalTrackName(tick, delta, bytes)
 	},
 
-	0x04: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeInstrumentName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalInstrumentName(tick, delta, bytes)
 	},
 
-	0x05: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeLyric: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalLyric(tick, delta, bytes)
+	},
+
+	types.TypeMarker: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalMarker(tick, delta, bytes)
 	},
 
 	0x54: func(tick uint64, delta uint32, bytes []byte) (any, error) {
@@ -150,9 +154,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	}
 
 	switch eventType {
-	case 0x06:
-		return NewMarker(data)
-
 	case 0x07:
 		return NewCuePoint(data)
 
