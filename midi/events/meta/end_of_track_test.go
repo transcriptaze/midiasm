@@ -7,7 +7,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestNewEndOfTrack(t *testing.T) {
+func TestUnmarshalEndOfTrack(t *testing.T) {
 	expected := EndOfTrack{
 		event: event{
 			tick:   2400,
@@ -19,7 +19,7 @@ func TestNewEndOfTrack(t *testing.T) {
 		},
 	}
 
-	evt, err := NewEndOfTrack(2400, 480, []byte{})
+	evt, err := UnmarshalEndOfTrack(2400, 480, []byte{})
 	if err != nil {
 		t.Fatalf("error encoding EndOfTrack (%v)", err)
 	}

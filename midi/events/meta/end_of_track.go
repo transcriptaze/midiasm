@@ -12,31 +12,31 @@ type EndOfTrack struct {
 	event
 }
 
-func NewEndOfTrack(tick uint64, delta uint32, bytes []byte) (*EndOfTrack, error) {
-	if len(bytes) != 0 {
-		return nil, fmt.Errorf("Invalid EndOfTrack length (%d): expected '0'", len(bytes))
-	}
-
-	return &EndOfTrack{
+func MakeEndOfTrack(tick uint64, delta uint32) EndOfTrack {
+	return EndOfTrack{
 		event: event{
 			tick:   tick,
 			delta:  delta,
 			bytes:  []byte{0x00, 0xff, 0x2f, 0x00},
 			tag:    types.TagEndOfTrack,
 			Status: 0xff,
-			Type:   0x2f,
+			Type:   types.TypeEndOfTrack,
 		},
-	}, nil
+	}
+}
+
+func UnmarshalEndOfTrack(tick uint64, delta uint32, bytes []byte) (*EndOfTrack, error) {
+	event := MakeEndOfTrack(tick, delta)
+
+	return &event, nil
 }
 
 func (e EndOfTrack) MarshalBinary() (encoded []byte, err error) {
-	encoded = make([]byte, 3)
-
-	encoded[0] = byte(e.Status)
-	encoded[1] = byte(e.Type)
-	encoded[2] = byte(0)
-
-	return
+	return []byte{
+		byte(e.Status),
+		byte(e.Type),
+		byte(0),
+	}, nil
 }
 
 func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
