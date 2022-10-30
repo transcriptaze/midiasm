@@ -124,11 +124,15 @@ var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
 		return UnmarshalMarker(tick, delta, bytes)
 	},
 
+	types.TypeCuePoint: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+		return UnmarshalCuePoint(tick, delta, bytes)
+	},
+
 	types.TypeEndOfTrack: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalEndOfTrack(tick, delta, bytes)
 	},
 
-	0x54: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeSMPTEOffset: func(tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSMPTEOffset(tick, delta, bytes)
 	},
 }
@@ -158,9 +162,6 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	}
 
 	switch eventType {
-	case 0x07:
-		return NewCuePoint(data)
-
 	case 0x08:
 		return NewProgramName(data)
 
