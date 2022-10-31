@@ -11,16 +11,18 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-type Decoder struct {
+type Decoder interface {
+	Decode(reader io.Reader) (*midi.SMF, error)
 }
 
-func NewDecoder() *Decoder {
-	decoder := Decoder{}
-
-	return &decoder
+type decoder struct {
 }
 
-func (d *Decoder) Decode(reader io.Reader) (*midi.SMF, error) {
+func NewDecoder() Decoder {
+	return &decoder{}
+}
+
+func (d *decoder) Decode(reader io.Reader) (*midi.SMF, error) {
 	smf := midi.SMF{}
 	chunks := make(chan []byte)
 	errors := make(chan error)
@@ -79,7 +81,7 @@ loop:
 	return &smf, nil
 }
 
-func (d *Decoder) read(reader io.Reader, chunks chan []byte, errors chan error) {
+func (d *decoder) read(reader io.Reader, chunks chan []byte, errors chan error) {
 	defer close(chunks)
 
 	r := bufio.NewReader(reader)
