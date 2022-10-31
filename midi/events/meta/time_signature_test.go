@@ -7,24 +7,50 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestParseTimeSignature(t *testing.T) {
-	event, err := NewTimeSignature(2400, 480, []byte{3, 3, 24, 8})
+func TestUnmarshalTimeSignature(t *testing.T) {
+	expected := TimeSignature{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    types.TagTimeSignature,
+			Status: 0xff,
+			Type:   0x58,
+			bytes:  []byte{0x00, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08},
+		},
+		Numerator:               3,
+		Denominator:             4,
+		TicksPerClick:           24,
+		ThirtySecondsPerQuarter: 8,
+	}
+
+	evt, err := UnmarshalTimeSignature(2400, 480, []byte{0x03, 0x02, 0x18, 0x08})
 	if err != nil {
-		t.Fatalf("TimeSignature parse error: %v", err)
+		t.Fatalf("error unmarshalling TimeSignature (%v)", err)
 	}
 
-	if event == nil {
-		t.Fatalf("TimeSignature parse error - returned %v", event)
-	}
-
-	if event.Numerator != 3 {
-		t.Errorf("Invalid TimeSignature numerator - expected:%v, got: %v", 3, event.Numerator)
-	}
-
-	if event.Denominator != 8 {
-		t.Errorf("Invalid TimeSignature denominator - expected:%v, got: %v", 8, event.Denominator)
+	if !reflect.DeepEqual(*evt, expected) {
+		t.Errorf("incorrect TimeSignature\n   expected:%+v\n   got:     %+v", expected, *evt)
 	}
 }
+
+// func TestParseTimeSignature(t *testing.T) {
+// 	event, err := NewTimeSignature(2400, 480, []byte{3, 3, 24, 8})
+// 	if err != nil {
+// 		t.Fatalf("TimeSignature parse error: %v", err)
+// 	}
+
+// 	if event == nil {
+// 		t.Fatalf("TimeSignature parse error - returned %v", event)
+// 	}
+
+// 	if event.Numerator != 3 {
+// 		t.Errorf("Invalid TimeSignature numerator - expected:%v, got: %v", 3, event.Numerator)
+// 	}
+
+// 	if event.Denominator != 8 {
+// 		t.Errorf("Invalid TimeSignature denominator - expected:%v, got: %v", 8, event.Denominator)
+// 	}
+// }
 
 func TestTimeSignatureMarshalBinary(t *testing.T) {
 	evt := TimeSignature{

@@ -22,7 +22,7 @@ func TestUnmarshalTempo(t *testing.T) {
 
 	evt, err := UnmarshalTempo(2400, 480, []byte{0x07, 0xa1, 0x20})
 	if err != nil {
-		t.Fatalf("error encoding Tempo (%v)", err)
+		t.Fatalf("error unmarshalling Tempo (%v)", err)
 	}
 
 	if !reflect.DeepEqual(*evt, expected) {
