@@ -75,26 +75,26 @@ func NewMThd(format uint16, tracks uint16, division uint16) (*MThd, error) {
 	return &mthd, nil
 }
 
-func (chunk MThd) MarshalBinary() (encoded []byte, err error) {
+func (mthd MThd) MarshalBinary() (encoded []byte, err error) {
 	var b bytes.Buffer
 
-	if _, err = b.Write([]byte(chunk.Tag)); err != nil {
+	if _, err = b.Write([]byte(mthd.Tag)); err != nil {
 		return
 	}
 
-	if err = binary.Write(&b, binary.BigEndian, chunk.Length); err != nil {
+	if err = binary.Write(&b, binary.BigEndian, mthd.Length); err != nil {
 		return
 	}
 
-	if err = binary.Write(&b, binary.BigEndian, chunk.Format); err != nil {
+	if err = binary.Write(&b, binary.BigEndian, mthd.Format); err != nil {
 		return
 	}
 
-	if err = binary.Write(&b, binary.BigEndian, chunk.Tracks); err != nil {
+	if err = binary.Write(&b, binary.BigEndian, mthd.Tracks); err != nil {
 		return
 	}
 
-	if err = binary.Write(&b, binary.BigEndian, chunk.Division); err != nil {
+	if err = binary.Write(&b, binary.BigEndian, mthd.Division); err != nil {
 		return
 	}
 

@@ -32,10 +32,26 @@ func TestEncodeMThdOnly(t *testing.T) {
 	}
 
 	if err := NewEncoder(&w).Encode(smf); err != nil {
-		t.Fatalf("Unexpected error, got %v", err)
+		t.Fatalf("Unexpected error (%v)", err)
 	}
 
 	if !reflect.DeepEqual(w.Bytes(), expected) {
 		t.Errorf("Incorrectly encoded\n   expected:%v\n   got:     %v", hex.Dump(expected), hex.Dump(w.Bytes()))
+	}
+}
+
+func TestEncodeInvalidMThd(t *testing.T) {
+	w := bytes.Buffer{}
+	mthd, _ := midi.NewMThd(1, 0, 480)
+	track1, _ := midi.NewMTrk()
+	track2, _ := midi.NewMTrk()
+
+	smf := midi.SMF{
+		MThd:   mthd,
+		Tracks: []*midi.MTrk{track1, track2},
+	}
+
+	if err := NewEncoder(&w).Encode(smf); err == nil {
+		t.Fatalf("Expected error, got %v", err)
 	}
 }

@@ -33,12 +33,7 @@ func NewMTrk() (*MTrk, error) {
 		Tag:    "MTrk",
 		Length: 0,
 		Events: []*events.Event{},
-	}
-
-	if bytes, err := mtrk.MarshalBinary(); err != nil {
-		return nil, err
-	} else {
-		mtrk.Bytes = bytes
+		Bytes:  []byte{0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x00},
 	}
 
 	return &mtrk, nil

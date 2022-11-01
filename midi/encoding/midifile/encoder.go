@@ -26,6 +26,10 @@ func (e *encoder) Encode(smf midi.SMF) error {
 		return fmt.Errorf("Missing MThd")
 	}
 
+	if int(smf.MThd.Tracks) != len(smf.Tracks) {
+		return fmt.Errorf("MThd has incorrect number of tracks")
+	}
+
 	if bytes, err := smf.MThd.MarshalBinary(); err != nil {
 		return err
 	} else if _, err := e.w.Write(bytes); err != nil {
