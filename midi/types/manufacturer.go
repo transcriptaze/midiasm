@@ -44,6 +44,16 @@ func LookupManufacturer(id []byte) Manufacturer {
 	return manufacturer
 }
 
+func FindManufacturer(s string) (Manufacturer, error) {
+	for _, m := range manufacturers {
+		if s == m.Name {
+			return m, nil
+		}
+	}
+
+	return Manufacturer{}, fmt.Errorf("Unrecognised manufacturer %q", s)
+}
+
 func LoadManufacturers(r io.Reader) (map[string]Manufacturer, error) {
 	conf := struct {
 		Manufacturers []Manufacturer `json:"manufacturers"`

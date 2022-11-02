@@ -198,9 +198,10 @@ type event interface {
 		metaevent.Copyright |
 		metaevent.TrackName |
 		metaevent.InstrumentName |
-		metaevent.EndOfTrack |
 		metaevent.Tempo |
-		metaevent.SMPTEOffset
+		metaevent.SMPTEOffset |
+		metaevent.EndOfTrack |
+		metaevent.SequencerSpecificEvent
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -233,20 +234,14 @@ var didgeridoo = makeEvent(
 
 var aMinor = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
 
-var motu = events.NewEvent(
+var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	0,
 	0,
-	&metaevent.SequencerSpecificEvent{
-		Tag:    "SequencerSpecificEvent",
-		Status: 0xff,
-		Type:   types.MetaEventType(0x7f),
-		Manufacturer: types.Manufacturer{
-			ID:     []byte{0x00, 0x00, 0x3b},
-			Region: "American",
-			Name:   "Mark Of The Unicorn (MOTU)",
-		},
-		Data: []byte{0x3a, 0x4c, 0x5e},
-	},
+	types.Manufacturer{
+		ID:     []byte{0x00, 0x00, 0x3b},
+		Region: "American",
+		Name:   "Mark Of The Unicorn (MOTU)"},
+	[]byte{0x3a, 0x4c, 0x5e}),
 	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
 
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
@@ -272,7 +267,6 @@ var endOfTrack = makeEvent(
 
 func init() {
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
-
 	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
 }

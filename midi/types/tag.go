@@ -9,23 +9,25 @@ type Tag int
 
 const (
 	TagUnknown Tag = iota
+	TagSequenceNumber
+	TagText
 	TagCopyright
-	TagCuePoint
-	TagDeviceName
-	TagEndOfTrack
+	TagTrackName
 	TagInstrumentName
-	TagKeySignature
 	TagLyric
 	TagMarker
+	TagCuePoint
+	TagProgramName
+	TagDeviceName
 	TagMIDIChannelPrefix
 	TagMIDIPort
-	TagProgramName
-	TagSequenceNumber
-	TagSMPTEOffset
 	TagTempo
-	TagText
+	TagSMPTEOffset
 	TagTimeSignature
-	TagTrackName
+	TagKeySignature
+	TagEndOfTrack
+	TagSequencerSpecificEvent
+
 	TagChannelPressure
 	TagController
 	TagNoteOff
@@ -39,23 +41,25 @@ const (
 )
 
 var tags = map[Tag]string{
-	TagCopyright:          "Copyright",
-	TagCuePoint:           "CuePoint",
-	TagDeviceName:         "DeviceName",
-	TagEndOfTrack:         "EndOfTrack",
-	TagInstrumentName:     "InstrumentName",
-	TagKeySignature:       "KeySignature",
-	TagLyric:              "Lyric",
-	TagMarker:             "Marker",
-	TagMIDIChannelPrefix:  "MIDIChannelPrefix",
-	TagMIDIPort:           "MIDIPort",
-	TagProgramName:        "ProgramName",
-	TagSequenceNumber:     "SequenceNumber",
-	TagSMPTEOffset:        "SMPTEOffset",
-	TagTempo:              "Tempo",
-	TagText:               "Text",
-	TagTimeSignature:      "TimeSignature",
-	TagTrackName:          "TrackName",
+	TagSequenceNumber:         "SequenceNumber",
+	TagText:                   "Text",
+	TagCopyright:              "Copyright",
+	TagTrackName:              "TrackName",
+	TagInstrumentName:         "InstrumentName",
+	TagLyric:                  "Lyric",
+	TagMarker:                 "Marker",
+	TagCuePoint:               "CuePoint",
+	TagProgramName:            "ProgramName",
+	TagDeviceName:             "DeviceName",
+	TagMIDIChannelPrefix:      "MIDIChannelPrefix",
+	TagMIDIPort:               "MIDIPort",
+	TagTempo:                  "Tempo",
+	TagSMPTEOffset:            "SMPTEOffset",
+	TagTimeSignature:          "TimeSignature",
+	TagKeySignature:           "KeySignature",
+	TagEndOfTrack:             "EndOfTrack",
+	TagSequencerSpecificEvent: "SequencerSpecificEvent",
+
 	TagChannelPressure:    "ChannelPressure",
 	TagController:         "Controller",
 	TagNoteOff:            "NoteOff",
@@ -71,23 +75,24 @@ var tags = map[Tag]string{
 func (t Tag) String() string {
 	return []string{
 		"",
+		"SequenceNumber",
+		"Text",
 		"Copyright",
-		"CuePoint",
-		"DeviceName",
-		"EndOfTrack",
+		"TrackName",
 		"InstrumentName",
-		"KeySignature",
 		"Lyric",
 		"Marker",
+		"CuePoint",
+		"ProgramName",
+		"DeviceName",
 		"MIDIChannelPrefix",
 		"MIDIPort",
-		"ProgramName",
-		"SequenceNumber",
-		"SMPTEOffset",
 		"Tempo",
-		"Text",
+		"SMPTEOffset",
 		"TimeSignature",
-		"TrackName",
+		"KeySignature",
+		"EndOfTrack",
+		"SequencerSpecificEvent",
 		"ChannelPressure",
 		"Controller",
 		"NoteOff",
