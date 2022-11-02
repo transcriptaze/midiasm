@@ -13,25 +13,11 @@ type MIDIChannelPrefix struct {
 	Channel uint8
 }
 
-// func NewMIDIChannelPrefix(bytes []byte) (*MIDIChannelPrefix, error) {
-// 	if len(bytes) != 1 {
-// 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(bytes))
-// 	}
-
-// 	channel := int8(bytes[0])
-// 	if channel < 0 || channel > 15 {
-// 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
-// 	}
-
-// 	return &MIDIChannelPrefix{
-// 		Tag:     "MIDIChannelPrefix",
-// 		Status:  0xff,
-// 		Type:    0x20,
-// 		Channel: channel,
-// 	}, nil
-// }
-
 func MakeMIDIChannelPrefix(tick uint64, delta uint32, channel uint8) MIDIChannelPrefix {
+	if channel > 15 {
+		panic(fmt.Sprintf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel))
+	}
+
 	return MIDIChannelPrefix{
 		event: event{
 			tick:   tick,
@@ -50,10 +36,13 @@ func UnmarshalMIDIChannelPrefix(tick uint64, delta uint32, bytes []byte) (*MIDIC
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(bytes))
 	}
 
-	channel := bytes[0]
-	event := MakeMIDIChannelPrefix(tick, delta, channel)
+	if channel := bytes[0]; channel > 15 {
+		return nil, fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
+	} else {
+		event := MakeMIDIChannelPrefix(tick, delta, channel)
 
-	return &event, nil
+		return &event, nil
+	}
 }
 
 func (m MIDIChannelPrefix) MarshalBinary() (encoded []byte, err error) {
