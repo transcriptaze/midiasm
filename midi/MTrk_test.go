@@ -24,10 +24,8 @@ var noteOnC3v64 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
 var noteOnC3v32 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x20})
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
 
-var noteOffCS3Alias = events.NewEvent(
-	0,
-	0,
-	midievent.NewNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+var noteOffCS3Alias = makeEvent(
+	midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100),
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 func init() {

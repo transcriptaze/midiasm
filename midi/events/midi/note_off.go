@@ -16,16 +16,24 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func NewNoteOff(tick uint64, delta uint32, channel uint8, note Note, velocity uint8, bytes ...byte) *NoteOff {
-	return &NoteOff{
+func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8) NoteOff {
+	if channel > 15 {
+		panic(fmt.Sprintf("invalid channel (%v)", channel))
+	}
+
+	if velocity > 127 {
+		panic(fmt.Sprintf("invalid velocity (%v)", velocity))
+	}
+
+	return NoteOff{
 		event: event{
 			tick:  tick,
 			delta: types.Delta(delta),
-			bytes: bytes,
+			bytes: []byte{0x00, byte(0x80 | channel), note.Value, velocity},
 
 			tag:     types.TagNoteOff,
 			Status:  types.Status(0x80 | channel),
-			Channel: types.Channel(channel),
+			Channel: channel,
 		},
 		Note:     note,
 		Velocity: velocity,
@@ -37,35 +45,29 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Read
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
 
-	channel := types.Channel(status & 0x0f)
+	var channel = types.Channel(status & 0x0f)
+	var note Note
+	var velocity uint8
 
-	note, err := r.ReadByte()
-	if err != nil {
+	if n, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else {
+		note.Value = n
+		note.Name = GetNoteOff(ctx, channel, n)
+		note.Alias = FormatNote(ctx, n)
 	}
 
-	velocity, err := r.ReadByte()
-	if err != nil {
+	if v, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else if v > 127 {
+		return nil, fmt.Errorf("invalid NoteOn velocity (%v)", v)
+	} else {
+		velocity = v
 	}
 
-	return &NoteOff{
-		event: event{
-			tick:  tick,
-			delta: types.Delta(delta),
-			bytes: r.Bytes(),
-			tag:   types.TagNoteOff,
+	event := MakeNoteOff(tick, delta, channel, note, velocity)
 
-			Status:  status,
-			Channel: channel,
-		},
-		Note: Note{
-			Value: note,
-			Name:  GetNoteOff(ctx, channel, note),
-			Alias: FormatNote(ctx, note),
-		},
-		Velocity: velocity,
-	}, nil
+	return &event, nil
 }
 
 func (n *NoteOff) Transpose(ctx *context.Context, steps int) {

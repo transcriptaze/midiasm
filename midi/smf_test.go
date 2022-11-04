@@ -20,7 +20,8 @@ type event interface {
 		metaevent.InstrumentName |
 		metaevent.EndOfTrack |
 		metaevent.Tempo |
-		metaevent.SMPTEOffset
+		metaevent.SMPTEOffset |
+		midievent.NoteOff
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -87,7 +88,9 @@ var programBankLSBCh5 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb5, 0x20, 0x21
 
 var noteOn = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
 
-var noteOff = events.NewEvent(0, 0, midievent.NewNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64), []byte{0x00, 0x30, 0x40})
+var noteOff = makeEvent(
+	midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64),
+	[]byte{0x00, 0x30, 0x40})
 
 var endOfTrack = makeEvent(
 	metaevent.MakeEndOfTrack(0, 0),

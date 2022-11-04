@@ -49,7 +49,7 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 		return NewNoteOn(ctx, tick, delta, r, status)
 
 	case 0xA0:
-		return NewPolyphonicPressure(r, status)
+		return UnmarshalPolyphonicPressure(ctx, tick, delta, r, status)
 
 	case 0xB0:
 		return NewController(ctx, tick, delta, r, status)

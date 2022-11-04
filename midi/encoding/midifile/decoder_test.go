@@ -201,7 +201,8 @@ type event interface {
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
 		metaevent.EndOfTrack |
-		metaevent.SequencerSpecificEvent
+		metaevent.SequencerSpecificEvent |
+		midievent.NoteOff
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -247,10 +248,8 @@ var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
 var noteOnC4 = events.NewEvent(0, 0, nil, []byte{0x00, 0x3c, 0x4c})
 
-var noteOffCS3 = events.NewEvent(
-	0,
-	0,
-	midievent.NewNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+var noteOffCS3 = makeEvent(
+	midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100),
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = makeEvent(
