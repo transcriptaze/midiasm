@@ -21,6 +21,7 @@ type event interface {
 		metaevent.EndOfTrack |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
+		midievent.NoteOn |
 		midievent.NoteOff
 }
 
@@ -86,7 +87,9 @@ var programBankLSBCh5 = events.NewEvent(0, 0, nil, []byte{0x00, 0xb5, 0x20, 0x21
 // 	},
 // 	[]byte{0x00, 0xb5, 0x20, 0x21})
 
-var noteOn = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
+var noteOn = makeEvent(
+	midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
+	[]byte{0x00, 0x30, 0x40})
 
 var noteOff = makeEvent(
 	midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64),
@@ -101,7 +104,6 @@ func init() {
 	programBankLSB.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x20, 0x21}), 0xb7)
 	programBankMSBCh3.Event, _ = midievent.NewController(nil, 0, 0, bytes.NewBuffer([]byte{0x00, 0x05}), 0xb3)
 	programBankLSBCh5.Event, _ = midievent.NewController(nil, 0, 0, IO.BytesReader([]byte{0x20, 0x21}), 0xb5)
-	noteOn.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.BytesReader([]byte{0x00, 0x30, 0x40}), 0x90) // ? running status
 }
 
 // 0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x01, 0xe0, 0x4d, 0x54

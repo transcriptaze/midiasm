@@ -16,7 +16,7 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8) NoteOff {
+func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8, bytes ...byte) NoteOff {
 	if channel > 15 {
 		panic(fmt.Sprintf("invalid channel (%v)", channel))
 	}
@@ -29,7 +29,7 @@ func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, ve
 		event: event{
 			tick:  tick,
 			delta: types.Delta(delta),
-			bytes: []byte{0x00, byte(0x80 | channel), note.Value, velocity},
+			bytes: bytes,
 
 			tag:     types.TagNoteOff,
 			Status:  types.Status(0x80 | channel),
@@ -65,7 +65,7 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Read
 		velocity = v
 	}
 
-	event := MakeNoteOff(tick, delta, channel, note, velocity)
+	event := MakeNoteOff(tick, delta, channel, note, velocity, r.Bytes()...)
 
 	return &event, nil
 }

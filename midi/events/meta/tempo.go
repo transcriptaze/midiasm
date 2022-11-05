@@ -14,12 +14,12 @@ type Tempo struct {
 	Tempo uint32
 }
 
-func MakeTempo(tick uint64, delta uint32, tempo uint32) Tempo {
+func MakeTempo(tick uint64, delta uint32, tempo uint32, bytes ...byte) Tempo {
 	return Tempo{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x51, 03}, byte(tempo>>16&0x0ff), byte(tempo>>8&0x0ff), byte(tempo>>0&0x0ff)),
+			bytes:  bytes,
 			tag:    types.TagTempo,
 			Status: 0xff,
 			Type:   types.TypeTempo,
@@ -39,7 +39,7 @@ func UnmarshalTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
 		tempo += uint32(b)
 	}
 
-	event := MakeTempo(tick, delta, tempo)
+	event := MakeTempo(tick, delta, tempo, append([]byte{0x00, 0xff, 0x51, 0x03}, bytes...)...)
 
 	return &event, nil
 }

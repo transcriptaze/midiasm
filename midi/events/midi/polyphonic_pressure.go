@@ -15,7 +15,7 @@ type PolyphonicPressure struct {
 	Pressure byte
 }
 
-func MakePolyphonicPressure(tick uint64, delta uint32, channel types.Channel, pressure uint8) PolyphonicPressure {
+func MakePolyphonicPressure(tick uint64, delta uint32, channel types.Channel, pressure uint8, bytes ...byte) PolyphonicPressure {
 	if channel > 15 {
 		panic(fmt.Sprintf("invalid channel (%v)", channel))
 	}
@@ -28,7 +28,7 @@ func MakePolyphonicPressure(tick uint64, delta uint32, channel types.Channel, pr
 		event: event{
 			tick:    tick,
 			delta:   types.Delta(delta),
-			bytes:   []byte{0x00, byte(0xa0 | channel), pressure},
+			bytes:   bytes,
 			tag:     types.TagPolyphonicPressure,
 			Status:  types.Status(0xa0 | channel),
 			Channel: channel,
@@ -53,7 +53,7 @@ func UnmarshalPolyphonicPressure(ctx *context.Context, tick uint64, delta uint32
 		pressure = v
 	}
 
-	event := MakePolyphonicPressure(tick, delta, channel, pressure)
+	event := MakePolyphonicPressure(tick, delta, channel, pressure, r.Bytes()...)
 
 	return &event, nil
 }

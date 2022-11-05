@@ -9,7 +9,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -202,6 +201,7 @@ type event interface {
 		metaevent.SMPTEOffset |
 		metaevent.EndOfTrack |
 		metaevent.SequencerSpecificEvent |
+		midievent.NoteOn |
 		midievent.NoteOff
 }
 
@@ -245,15 +245,20 @@ var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	[]byte{0x3a, 0x4c, 0x5e}),
 	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
 
-var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
-var noteOnC4 = events.NewEvent(0, 0, nil, []byte{0x00, 0x3c, 0x4c})
+var noteOnCS3 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
+	[]byte{0x00, 0x91, 0x31, 0x48})
+
+var noteOnC4 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{60, "C4", "C4"}, 76, []byte{0x00, 0x3c, 0x4c}...),
+	[]byte{0x00, 0x3c, 0x4c})
 
 var noteOffCS3 = makeEvent(
-	midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100),
+	midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 var tempo = makeEvent(
-	metaevent.MakeTempo(0, 0, 500000),
+	metaevent.MakeTempo(0, 0, 500000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
 	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
 
 var smpteOffset = makeEvent(
@@ -266,6 +271,4 @@ var endOfTrack = makeEvent(
 
 func init() {
 	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
-	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
-	noteOnC4.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x3c, 0x4c}), 0x91)
 }

@@ -16,46 +16,104 @@ type NoteOn struct {
 	Velocity byte
 }
 
-func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOn, error) {
+func MakeNoteOn(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8, bytes ...byte) NoteOn {
+	if channel > 15 {
+		panic(fmt.Sprintf("invalid channel (%v)", channel))
+	}
+
+	if velocity > 127 {
+		panic(fmt.Sprintf("invalid velocity (%v)", velocity))
+	}
+
+	return NoteOn{
+		event: event{
+			tick:  tick,
+			delta: types.Delta(delta),
+			bytes: bytes,
+
+			tag:     types.TagNoteOn,
+			Status:  types.Status(0x90 | channel),
+			Channel: channel,
+		},
+		Note:     note,
+		Velocity: velocity,
+	}
+}
+
+func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOn, error) {
 	if status&0xf0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
 
-	channel := types.Channel(status & 0x0f)
+	var channel = types.Channel(status & 0x0f)
+	var note Note
+	var velocity uint8
 
-	note, err := r.ReadByte()
-	if err != nil {
+	if n, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else {
+		note.Value = n
+		note.Name = FormatNote(ctx, n)
+		note.Alias = FormatNote(ctx, n)
+
+		if ctx != nil {
+			ctx.PutNoteOn(channel, n)
+		}
 	}
 
-	velocity, err := r.ReadByte()
-	if err != nil {
+	if v, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else if v > 127 {
+		return nil, fmt.Errorf("invalid NoteOn velocity (%v)", v)
+	} else {
+		velocity = v
 	}
 
-	formatted := FormatNote(ctx, note)
-	if ctx != nil {
-		ctx.PutNoteOn(channel, note)
-	}
+	event := MakeNoteOn(tick, delta, channel, note, velocity, r.Bytes()...)
 
-	return &NoteOn{
-		event: event{
-			tick:  tick,
-			delta: types.Delta(delta),
-			bytes: r.Bytes(),
-
-			tag:     types.TagNoteOn,
-			Status:  status,
-			Channel: channel,
-		},
-		Note: Note{
-			Value: note,
-			Name:  formatted,
-			Alias: formatted,
-		},
-		Velocity: velocity,
-	}, nil
+	return &event, nil
 }
+
+// func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOn, error) {
+// 	if status&0xf0 != 0x90 {
+// 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
+// 	}
+
+// 	channel := types.Channel(status & 0x0f)
+
+// 	note, err := r.ReadByte()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	velocity, err := r.ReadByte()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	formatted := FormatNote(ctx, note)
+// 	if ctx != nil {
+// 		ctx.PutNoteOn(channel, note)
+// 	}
+
+// 	return &NoteOn{
+// 		event: event{
+// 			tick:  tick,
+// 			delta: types.Delta(delta),
+// 			bytes: r.Bytes(),
+
+// 			tag:     types.TagNoteOn,
+// 			Status:  status,
+// 			Channel: channel,
+// 		},
+// 		Note: Note{
+// 			Value: note,
+// 			Name:  formatted,
+// 			Alias: formatted,
+// 		},
+// 		Velocity: velocity,
+// 	}, nil
+// }
 
 func (n *NoteOn) Transpose(ctx *context.Context, steps int) {
 	v := int(n.Note.Value) + steps

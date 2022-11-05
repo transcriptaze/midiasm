@@ -9,7 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestPolyphonicPressure(t *testing.T) {
+func TestParsePolyphonicPressure(t *testing.T) {
 	expected := PolyphonicPressure{
 		event: event{
 			tick:  2400,
@@ -24,7 +24,7 @@ func TestPolyphonicPressure(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.BytesReader([]byte{0x64})
+	r := IO.TestReader([]byte{0x00, 0xa7}, []byte{0x64})
 
 	event, err := Parse(2400, 480, r, 0xa7, ctx)
 	if err != nil {

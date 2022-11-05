@@ -9,7 +9,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/io"
 )
 
 var trackname = makeEvent(
@@ -18,25 +17,34 @@ var trackname = makeEvent(
 
 var keysignatureFSM = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
 var keysignatureEFm = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
-var noteOnC3v72 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x30, 0x48})
-var noteOnC3v0 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x00})
-var noteOnC3v64 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x40})
-var noteOnC3v32 = events.NewEvent(0, 0, nil, []byte{0x00, 0x30, 0x20})
-var noteOnCS3 = events.NewEvent(0, 0, nil, []byte{0x00, 0x91, 0x31, 0x48})
+
+var noteOnC3v72 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 48, Name: "C3", Alias: "C3"}, 72, []byte{0x00, 0x91, 0x30, 0x48}...),
+	[]byte{0x00, 0x91, 0x30, 0x48})
+
+var noteOnC3v0 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 48, Name: "C3", Alias: "C3"}, 0, []byte{0x00, 0x30, 0x00}...),
+	[]byte{0x00, 0x30, 0x00})
+
+var noteOnC3v64 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 48, Name: "C3", Alias: "C3"}, 64, []byte{0x00, 0x30, 0x40}...),
+	[]byte{0x00, 0x30, 0x40})
+
+var noteOnC3v32 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 48, Name: "C3", Alias: "C3"}, 32, []byte{0x00, 0x30, 0x20}...),
+	[]byte{0x00, 0x30, 0x20})
+
+var noteOnCS3 = makeEvent(
+	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
+	[]byte{0x00, 0x91, 0x31, 0x48})
 
 var noteOffCS3Alias = makeEvent(
-	midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100),
+	midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x0, 0x81, 0x31, 0x64}...),
 	[]byte{0x00, 0x81, 0x31, 0x64})
 
 func init() {
 	keysignatureFSM.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x06, 0x00})
 	keysignatureEFm.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0xfa, 0x01})
-
-	noteOnC3v72.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x30, 0x48}), 0x91)
-	noteOnC3v0.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x30, 0x00}), 0x91)  // running status
-	noteOnC3v64.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x30, 0x40}), 0x91) // running status
-	noteOnC3v32.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00}, []byte{0x30, 0x20}), 0x91) // running status
-	noteOnCS3.Event, _ = midievent.NewNoteOn(nil, 0, 0, IO.TestReader([]byte{0x00, 0x91}, []byte{0x31, 0x48}), 0x91)
 }
 
 func TestMTrkMarshalTrack0(t *testing.T) {
@@ -107,6 +115,7 @@ func TestUnmarshalNoteAlias(t *testing.T) {
 	for i, e := range expected.Events {
 		if !reflect.DeepEqual(e, mtrk.Events[i]) {
 			t.Errorf("MTrk: incorrectly unmarshaled event\n   expected:%#v\n   got:     %#v", e, mtrk.Events[i])
+			t.Errorf("\n   expected:%#v\n   got:     %#v", e.Event, mtrk.Events[i].Event)
 		}
 	}
 }
