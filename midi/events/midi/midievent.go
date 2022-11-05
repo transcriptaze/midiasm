@@ -58,7 +58,7 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 		return NewProgramChange(ctx, tick, delta, r, status)
 
 	case 0xD0:
-		return NewChannelPressure(r, status)
+		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
 
 	case 0xE0:
 		return NewPitchBend(r, status)
