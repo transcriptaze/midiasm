@@ -21,6 +21,7 @@ type event interface {
 		metaevent.EndOfTrack |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
+		metaevent.KeySignature |
 		midievent.NoteOn |
 		midievent.NoteOff
 }

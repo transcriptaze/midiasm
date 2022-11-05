@@ -17,7 +17,23 @@ type KeySignature struct {
 	Key         string
 }
 
-func NewKeySignature(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (*KeySignature, error) {
+func MakeKeySignature(tick uint64, delta uint32, accidentals int8, keyType types.KeyType, key string, bytes ...byte) KeySignature {
+	return KeySignature{
+		event: event{
+			tick:   tick,
+			delta:  delta,
+			bytes:  bytes,
+			tag:    types.TagKeySignature,
+			Status: 0xff,
+			Type:   0x59,
+		},
+		Accidentals: accidentals,
+		KeyType:     keyType,
+		Key:         key,
+	}
+}
+
+func UnmarshalKeySignature(tick uint64, delta uint32, bytes []byte) (*KeySignature, error) {
 	if len(bytes) != 2 {
 		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(bytes))
 	}
@@ -47,27 +63,9 @@ func NewKeySignature(ctx *context.Context, tick uint64, delta uint32, bytes []by
 		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0,1]", keyType)
 	}
 
-	if ctx != nil {
-		if accidentals < 0 {
-			ctx.UseFlats()
-		} else {
-			ctx.UseSharps()
-		}
-	}
+	event := MakeKeySignature(tick, delta, accidentals, keyType, key, append([]byte{0x00, 0xff, 0x59, 0x02}, bytes...)...)
 
-	return &KeySignature{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x59, 0x02}, bytes),
-			tag:    types.TagKeySignature,
-			Status: 0xff,
-			Type:   0x59,
-		},
-		Accidentals: accidentals,
-		KeyType:     types.KeyType(keyType),
-		Key:         key,
-	}, nil
+	return &event, nil
 }
 
 func (k *KeySignature) Transpose(ctx *context.Context, steps int) {

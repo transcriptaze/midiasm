@@ -95,72 +95,88 @@ func (v vlf) MarshalBinary() (encoded []byte, err error) {
 // 	0x00: UnmarshalSequenceNumber,
 // }
 
-var factory = map[types.MetaEventType]func(uint64, uint32, []byte) (any, error){
-	types.TypeSequenceNumber: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+var factory = map[types.MetaEventType]func(*context.Context, uint64, uint32, []byte) (any, error){
+	types.TypeSequenceNumber: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSequenceNumber(tick, delta, bytes)
 	},
 
-	types.TypeText: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeText: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalText(tick, delta, bytes)
 	},
 
-	types.TypeCopyright: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeCopyright: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalCopyright(tick, delta, bytes)
 	},
 
-	types.TypeTrackName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeTrackName: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalTrackName(tick, delta, bytes)
 	},
 
-	types.TypeInstrumentName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeInstrumentName: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalInstrumentName(tick, delta, bytes)
 	},
 
-	types.TypeLyric: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeLyric: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalLyric(tick, delta, bytes)
 	},
 
-	types.TypeMarker: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeMarker: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalMarker(tick, delta, bytes)
 	},
 
-	types.TypeCuePoint: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeCuePoint: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalCuePoint(tick, delta, bytes)
 	},
 
-	types.TypeProgramName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeProgramName: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalProgramName(tick, delta, bytes)
 	},
 
-	types.TypeDeviceName: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeDeviceName: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalDeviceName(tick, delta, bytes)
 	},
 
-	types.TypeMIDIChannelPrefix: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeMIDIChannelPrefix: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalMIDIChannelPrefix(tick, delta, bytes)
 	},
 
-	types.TypeMIDIPort: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeMIDIPort: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalMIDIPort(tick, delta, bytes)
 	},
 
-	types.TypeEndOfTrack: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeEndOfTrack: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalEndOfTrack(tick, delta, bytes)
 	},
 
-	types.TypeTempo: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeTempo: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalTempo(tick, delta, bytes)
 	},
 
-	types.TypeSMPTEOffset: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeSMPTEOffset: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSMPTEOffset(tick, delta, bytes)
 	},
 
-	types.TypeTimeSignature: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeKeySignature: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
+		if ks, err := UnmarshalKeySignature(tick, delta, bytes); err != nil {
+			return ks, err
+		} else {
+			if ctx != nil {
+				if ks.Accidentals < 0 {
+					ctx.UseFlats()
+				} else {
+					ctx.UseSharps()
+				}
+			}
+
+			return ks, nil
+		}
+	},
+
+	types.TypeTimeSignature: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalTimeSignature(tick, delta, bytes)
 	},
 
-	types.TypeSequencerSpecificEvent: func(tick uint64, delta uint32, bytes []byte) (any, error) {
+	types.TypeSequencerSpecificEvent: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
 		return UnmarshalSequencerSpecificEvent(tick, delta, bytes)
 	},
 }
@@ -186,12 +202,7 @@ func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (an
 	eventType := types.MetaEventType(b & 0x7F)
 
 	if f, ok := factory[eventType]; ok {
-		return f(tick, delta, data)
-	}
-
-	switch eventType {
-	case 0x59:
-		return NewKeySignature(ctx, tick, delta, data)
+		return f(ctx, tick, delta, data)
 	}
 
 	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)

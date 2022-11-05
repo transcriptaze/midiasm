@@ -201,6 +201,7 @@ type event interface {
 		metaevent.SMPTEOffset |
 		metaevent.EndOfTrack |
 		metaevent.SequencerSpecificEvent |
+		metaevent.KeySignature |
 		midievent.NoteOn |
 		midievent.NoteOff
 }
@@ -233,7 +234,9 @@ var didgeridoo = makeEvent(
 	metaevent.MakeInstrumentName(0, 0, "Didgeridoo"),
 	[]byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f})
 
-var aMinor = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
+var aMinor = makeEvent(
+	metaevent.MakeKeySignature(0, 0, 0, types.Minor, "A minor", []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
+	[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
 
 var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	0,
@@ -268,7 +271,3 @@ var smpteOffset = makeEvent(
 var endOfTrack = makeEvent(
 	metaevent.MakeEndOfTrack(0, 0),
 	[]byte{0x00, 0xff, 0x2f, 0x00})
-
-func init() {
-	aMinor.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x00, 0x01})
-}

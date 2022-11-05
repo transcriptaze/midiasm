@@ -9,14 +9,20 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 var trackname = makeEvent(
 	metaevent.MakeTrackName(0, 0, "Example 1"),
 	[]byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31})
 
-var keysignatureFSM = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
-var keysignatureEFm = events.NewEvent(0, 0, nil, []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
+var keysignatureFSM = makeEvent(
+	metaevent.MakeKeySignature(0, 0, 6, types.Major, "F♯ major", []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00}...),
+	[]byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00})
+
+var keysignatureEFm = makeEvent(
+	metaevent.MakeKeySignature(0, 0, -6, types.Minor, "E♭ minor", []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01}...),
+	[]byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01})
 
 var noteOnC3v72 = makeEvent(
 	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 48, Name: "C3", Alias: "C3"}, 72, []byte{0x00, 0x91, 0x30, 0x48}...),
@@ -41,11 +47,6 @@ var noteOnCS3 = makeEvent(
 var noteOffCS3Alias = makeEvent(
 	midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x0, 0x81, 0x31, 0x64}...),
 	[]byte{0x00, 0x81, 0x31, 0x64})
-
-func init() {
-	keysignatureFSM.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0x06, 0x00})
-	keysignatureEFm.Event, _ = metaevent.NewKeySignature(nil, 0, 0, []byte{0xfa, 0x01})
-}
 
 func TestMTrkMarshalTrack0(t *testing.T) {
 	expected := []byte{
