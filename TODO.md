@@ -17,6 +17,7 @@
       - [x] Ignore comments
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
       - [ ] Split parameters up into seperate regex's
+      - [ ] Encode delta value in all UnmarshalText (and unit test) - a lá PitchBend
 - [ ] Parse MTrk
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary

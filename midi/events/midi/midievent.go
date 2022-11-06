@@ -61,7 +61,7 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
 
 	case 0xE0:
-		return NewPitchBend(r, status)
+		return UnmarshalPitchBend(ctx, tick, delta, r, status)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
