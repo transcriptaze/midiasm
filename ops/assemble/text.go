@@ -2,6 +2,7 @@ package assemble
 
 import (
 	"bufio"
+	"bytes"
 	"encoding"
 	"fmt"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
@@ -62,7 +64,14 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 
 	// ... 'k, done
 
-	return smf.MarshalBinary()
+	var b bytes.Buffer
+	var e = midifile.NewEncoder(&b)
+
+	if err := e.Encode(smf); err != nil {
+		return nil, err
+	} else {
+		return b.Bytes(), nil
+	}
 }
 
 func (a TextAssembler) read(r io.Reader) ([][]string, error) {

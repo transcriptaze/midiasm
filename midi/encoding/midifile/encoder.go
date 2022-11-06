@@ -36,5 +36,13 @@ func (e *encoder) Encode(smf midi.SMF) error {
 		return err
 	}
 
+	for _, track := range smf.Tracks {
+		if bytes, err := track.MarshalBinary(); err != nil {
+			return err
+		} else if _, err := e.w.Write(bytes); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
