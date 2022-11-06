@@ -6,7 +6,6 @@ import (
 )
 
 type Hex []byte
-type Status byte
 type TrackNumber uint
 
 func (bytes Hex) String() string {
@@ -16,10 +15,6 @@ func (bytes Hex) String() string {
 	}
 
 	return strings.TrimSpace(hex)
-}
-
-func (t Status) String() string {
-	return fmt.Sprintf("%02X", byte(t))
 }
 
 func (t TrackNumber) String() string {

@@ -129,7 +129,7 @@ func TestNoteOffUnmarshalText(t *testing.T) {
 			tag:     types.TagNoteOff,
 			Status:  0x87,
 			Channel: 7,
-			bytes:   []byte{0x00, 0x87, 0x30, 0x40},
+			bytes:   []byte{},
 		},
 		Note: Note{
 			Value: 48,

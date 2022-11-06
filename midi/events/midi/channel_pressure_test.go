@@ -78,7 +78,7 @@ func TestChannelPressureUnmarshalText(t *testing.T) {
 			tag:     types.TagChannelPressure,
 			Status:  0xd7,
 			Channel: 7,
-			bytes:   []byte{0x00, 0xd7, 0x64},
+			bytes:   []byte{},
 		},
 		Pressure: 100,
 	}

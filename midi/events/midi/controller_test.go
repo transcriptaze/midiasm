@@ -97,7 +97,7 @@ func TestControllerUnmarshalText(t *testing.T) {
 			tag:     types.TagController,
 			Status:  0xb7,
 			Channel: 7,
-			bytes:   []byte{0x00, 0xb7, 0x65, 0x09},
+			bytes:   []byte{},
 		},
 		Controller: types.Controller{101, "Registered Parameter Number (MSB)"},
 		Value:      0x09,

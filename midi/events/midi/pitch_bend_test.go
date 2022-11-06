@@ -76,7 +76,7 @@ func TestPitchBendUnmarshalText(t *testing.T) {
 			tag:     types.TagPitchBend,
 			Status:  0xe7,
 			Channel: 7,
-			bytes:   []byte{0x81, 0x70, 0xe7, 0x00, 0x08},
+			bytes:   []byte{},
 		},
 		Bend: 8,
 	}

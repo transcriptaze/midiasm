@@ -78,7 +78,7 @@ func TestPolyphonicPressureUnmarshalText(t *testing.T) {
 			tag:     types.TagPolyphonicPressure,
 			Status:  0xa7,
 			Channel: 7,
-			bytes:   []byte{0x00, 0xa7, 0x64},
+			bytes:   []byte{},
 		},
 		Pressure: 100,
 	}

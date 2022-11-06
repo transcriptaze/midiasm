@@ -7,7 +7,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type NoteOn struct {
@@ -16,7 +16,7 @@ type NoteOn struct {
 	Velocity byte
 }
 
-func MakeNoteOn(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8, bytes ...byte) NoteOn {
+func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, velocity uint8, bytes ...byte) NoteOn {
 	if channel > 15 {
 		panic(fmt.Sprintf("invalid channel (%v)", channel))
 	}
@@ -28,11 +28,11 @@ func MakeNoteOn(tick uint64, delta uint32, channel types.Channel, note Note, vel
 	return NoteOn{
 		event: event{
 			tick:  tick,
-			delta: types.Delta(delta),
+			delta: lib.Delta(delta),
 			bytes: bytes,
 
-			tag:     types.TagNoteOn,
-			Status:  types.Status(0x90 | channel),
+			tag:     lib.TagNoteOn,
+			Status:  lib.Status(0x90 | channel),
 			Channel: channel,
 		},
 		Note:     note,
@@ -40,12 +40,12 @@ func MakeNoteOn(tick uint64, delta uint32, channel types.Channel, note Note, vel
 	}
 }
 
-func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOn, error) {
+func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOn, error) {
 	if status&0xf0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
 
-	var channel = types.Channel(status & 0x0f)
+	var channel = lib.Channel(status & 0x0f)
 	var note Note
 	var velocity uint8
 
@@ -74,12 +74,12 @@ func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reade
 	return &event, nil
 }
 
-// func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOn, error) {
+// func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOn, error) {
 // 	if status&0xf0 != 0x90 {
 // 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 // 	}
 
-// 	channel := types.Channel(status & 0x0f)
+// 	channel := lib.Channel(status & 0x0f)
 
 // 	note, err := r.ReadByte()
 // 	if err != nil {
@@ -99,10 +99,10 @@ func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reade
 // 	return &NoteOn{
 // 		event: event{
 // 			tick:  tick,
-// 			delta: types.Delta(delta),
+// 			delta: lib.Delta(delta),
 // 			bytes: r.Bytes(),
 
-// 			tag:     types.TagNoteOn,
+// 			tag:     lib.TagNoteOn,
 // 			Status:  status,
 // 			Channel: channel,
 // 		},
@@ -149,27 +149,20 @@ func (n NoteOn) MarshalBinary() (encoded []byte, err error) {
 
 func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	n.tick = 0
+	n.delta = 0
 	n.bytes = []byte{}
-
-	if err := n.tag.UnmarshalText(bytes); err != nil {
-		return err
-	} else if n.tag != types.TagNoteOn {
-		return fmt.Errorf("Invalid tag - expected %v", types.TagNoteOn)
-	}
-
-	if err := n.Channel.UnmarshalText(bytes); err != nil {
-		return err
-	}
-
-	if err := n.delta.UnmarshalText(bytes); err != nil {
-		return err
-	}
+	n.tag = lib.TagNoteOn
+	n.Status = 0x90
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
 		return fmt.Errorf("invalid NoteOn event (%v)", text)
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
+		return err
+	} else if channel, err := lib.ParseChannel(match[2]); err != nil {
+		return err
 	} else if note, err := ParseNote(nil, match[3]); err != nil {
 		return err
 	} else if velocity, err := strconv.ParseUint(match[4], 10, 8); err != nil {
@@ -177,8 +170,9 @@ func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	} else if velocity > 127 {
 		return fmt.Errorf("invalid NoteOn velocity (%v)", velocity)
 	} else {
-		n.bytes = []byte{0x00, byte(0x90 | uint8(n.Channel&0x0f)), note.Value, byte(velocity)}
-		n.Status = types.Status(0x90 | uint8(n.Channel&0x0f))
+		n.delta = delta
+		n.Status = or(n.Status, channel)
+		n.Channel = channel
 		n.Note = note
 		n.Velocity = uint8(velocity)
 	}
@@ -195,7 +189,7 @@ func FormatNote(ctx *context.Context, n byte) string {
 	var note = scale[n%12]
 	var octave int
 
-	if context.MiddleC == types.C4 {
+	if context.MiddleC == lib.C4 {
 		octave = int(n/12) - 2
 	} else {
 		octave = int(n/12) - 1
@@ -209,7 +203,7 @@ func ParseNote(ctx *context.Context, s string) (Note, error) {
 
 	if match := re.FindStringSubmatch(s); match == nil || len(match) != 3 {
 		return Note{}, fmt.Errorf("invalid note (%v)", s)
-	} else if note, err := types.LookupNote(match[1]); err != nil {
+	} else if note, err := lib.LookupNote(match[1]); err != nil {
 		return Note{}, err
 	} else if octave, err := strconv.ParseInt(match[2], 10, 8); err != nil {
 		return Note{}, err

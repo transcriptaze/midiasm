@@ -7,7 +7,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type NoteOff struct {
@@ -16,7 +16,7 @@ type NoteOff struct {
 	Velocity byte
 }
 
-func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, velocity uint8, bytes ...byte) NoteOff {
+func MakeNoteOff(tick uint64, delta uint32, channel lib.Channel, note Note, velocity uint8, bytes ...byte) NoteOff {
 	if channel > 15 {
 		panic(fmt.Sprintf("invalid channel (%v)", channel))
 	}
@@ -28,11 +28,11 @@ func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, ve
 	return NoteOff{
 		event: event{
 			tick:  tick,
-			delta: types.Delta(delta),
+			delta: lib.Delta(delta),
 			bytes: bytes,
 
-			tag:     types.TagNoteOff,
-			Status:  types.Status(0x80 | channel),
+			tag:     lib.TagNoteOff,
+			Status:  lib.Status(0x80 | channel),
 			Channel: channel,
 		},
 		Note:     note,
@@ -40,12 +40,12 @@ func MakeNoteOff(tick uint64, delta uint32, channel types.Channel, note Note, ve
 	}
 }
 
-func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*NoteOff, error) {
+func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOff, error) {
 	if status&0xf0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
 
-	var channel = types.Channel(status & 0x0f)
+	var channel = lib.Channel(status & 0x0f)
 	var note Note
 	var velocity uint8
 
@@ -106,30 +106,28 @@ func (n *NoteOff) UnmarshalText(bytes []byte) error {
 	n.tick = 0
 	n.delta = 0
 	n.bytes = []byte{}
-	n.tag = types.TagNoteOff
+	n.tag = lib.TagNoteOff
+	n.Status = 0x80
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOff\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 5 {
 		return fmt.Errorf("invalid NoteOff event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
-	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
+	} else if channel, err := lib.ParseChannel(match[2]); err != nil {
 		return err
 	} else if note, err := ParseNote(nil, match[3]); err != nil {
 		return err
 	} else if velocity, err := strconv.ParseUint(match[4], 10, 8); err != nil {
 		return err
-	} else if channel > 15 {
-		return fmt.Errorf("invalid NoteOff channel (%v)", channel)
 	} else if velocity > 127 {
 		return fmt.Errorf("invalid NoteOff velocity (%v)", channel)
 	} else {
-		n.delta = types.Delta(delta)
-		n.bytes = []byte{0x00, byte(0x80 | uint8(channel&0x0f)), note.Value, byte(velocity)}
-		n.Status = types.Status(0x80 | uint8(channel&0x0f))
-		n.Channel = types.Channel(channel)
+		n.delta = delta
+		n.Status = or(n.Status, channel)
+		n.Channel = channel
 		n.Note = note
 		n.Velocity = uint8(velocity)
 	}
@@ -137,7 +135,7 @@ func (n *NoteOff) UnmarshalText(bytes []byte) error {
 	return nil
 }
 
-func GetNoteOff(ctx *context.Context, ch types.Channel, n byte) string {
+func GetNoteOff(ctx *context.Context, ch lib.Channel, n byte) string {
 	if ctx != nil {
 		return ctx.GetNoteOff(ch, n)
 	}

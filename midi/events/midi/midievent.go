@@ -5,17 +5,17 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type event struct {
 	tick  uint64
-	delta types.Delta
+	delta lib.Delta
 	bytes []byte
 
-	tag     types.Tag
-	Status  types.Status
-	Channel types.Channel
+	tag     lib.Tag
+	Status  lib.Status
+	Channel lib.Channel
 }
 
 func (e event) Tick() uint64 {
@@ -34,35 +34,46 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
+func (e event) MarshalBinary() ([]byte, error) {
+	status := byte(e.Status & 0xf0)
+	channel := byte(e.Channel & 0x0f)
+
+	if delta, err := e.delta.MarshalBinary(); err != nil {
+		return nil, err
+	} else {
+		return append(delta, status|channel), nil
+	}
+}
+
 type Note struct {
 	Value byte
 	Name  string
 	Alias string
 }
 
-var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, types.Status) (any, error){
-	0x80: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Status) (any, error){
+	0x80: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalNoteOff(ctx, tick, delta, r, status)
 	},
 
-	0x90: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+	0x90: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalNoteOn(ctx, tick, delta, r, status)
 	},
 
-	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalPolyphonicPressure(ctx, tick, delta, r, status)
 	},
 
-	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
 	},
 
-	0xE0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+	0xE0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalPitchBend(ctx, tick, delta, r, status)
 	},
 }
 
-func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(tick uint64, delta uint32, r IO.Reader, status lib.Status, ctx *context.Context) (interface{}, error) {
 	eventType := byte(status & 0xf0)
 
 	if f, ok := factory[eventType]; ok {
@@ -78,4 +89,8 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
+}
+
+func or(status lib.Status, channel lib.Channel) lib.Status {
+	return lib.Status(byte(status&0xf0) | byte(channel&0x0f))
 }

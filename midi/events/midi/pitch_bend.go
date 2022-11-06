@@ -7,7 +7,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type PitchBend struct {
@@ -15,7 +15,7 @@ type PitchBend struct {
 	Bend uint16
 }
 
-func MakePitchBend(tick uint64, delta uint32, channel types.Channel, bend uint16, bytes ...byte) PitchBend {
+func MakePitchBend(tick uint64, delta uint32, channel lib.Channel, bend uint16, bytes ...byte) PitchBend {
 	if channel > 15 {
 		panic(fmt.Sprintf("invalid channel (%v)", channel))
 	}
@@ -23,22 +23,22 @@ func MakePitchBend(tick uint64, delta uint32, channel types.Channel, bend uint16
 	return PitchBend{
 		event: event{
 			tick:    tick,
-			delta:   types.Delta(delta),
+			delta:   lib.Delta(delta),
 			bytes:   bytes,
-			tag:     types.TagPitchBend,
-			Status:  types.Status(0xe0 | channel),
+			tag:     lib.TagPitchBend,
+			Status:  lib.Status(0xe0 | channel),
 			Channel: channel,
 		},
 		Bend: bend,
 	}
 }
 
-func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (*PitchBend, error) {
+func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*PitchBend, error) {
 	if status&0xf0 != 0xe0 {
 		return nil, fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
 	}
 
-	channel := types.Channel(status & 0x0f)
+	channel := lib.Channel(status & 0x0f)
 	bend := uint16(0)
 
 	for i := 0; i < 2; i++ {
@@ -69,38 +69,25 @@ func (b *PitchBend) UnmarshalText(bytes []byte) error {
 	b.tick = 0
 	b.delta = 0
 	b.bytes = []byte{}
-	b.tag = types.TagPitchBend
+	b.tag = lib.TagPitchBend
+	b.Status = 0xe0
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)PitchBend\s+channel:([0-9]+)\s+bend:([0-9]+)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
 		return fmt.Errorf("invalid PitchBend event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
-	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
+	} else if channel, err := lib.ParseChannel(match[2]); err != nil {
 		return err
-	} else if channel > 15 {
-		return fmt.Errorf("invalid PitchBend channel (%v)", channel)
 	} else if bend, err := strconv.ParseUint(match[3], 10, 16); err != nil {
 		return err
 	} else {
-		b.delta = types.Delta(delta)
-		b.bytes = []byte{}
-		b.Status = types.Status(0xe0 | uint8(channel&0x0f))
-		b.Channel = types.Channel(channel)
+		b.delta = delta
+		b.Status = or(b.Status, channel)
+		b.Channel = channel
 		b.Bend = uint16(bend)
-
-		if bytes, err := b.delta.MarshalBinary(); err != nil {
-			return err
-		} else {
-			b.bytes = append(b.bytes, bytes...)
-			if bytes, err = b.MarshalBinary(); err != nil {
-				return err
-			} else {
-				b.bytes = append(b.bytes, bytes...)
-			}
-		}
 	}
 
 	return nil

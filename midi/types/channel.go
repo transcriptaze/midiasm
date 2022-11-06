@@ -8,6 +8,16 @@ import (
 
 type Channel uint8
 
+func ParseChannel(s string) (Channel, error) {
+	if channel, err := strconv.ParseUint(s, 10, 8); err != nil {
+		return 0, err
+	} else if channel > 15 {
+		return 0, fmt.Errorf("invalid channel (%v)", channel)
+	} else {
+		return Channel(channel), nil
+	}
+}
+
 func (c Channel) String() string {
 	return fmt.Sprintf("%d", byte(c))
 }
