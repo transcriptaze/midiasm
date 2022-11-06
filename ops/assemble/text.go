@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
+	"github.com/transcriptaze/midiasm/midi/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"

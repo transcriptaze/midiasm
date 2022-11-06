@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
+	"github.com/transcriptaze/midiasm/midi/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 

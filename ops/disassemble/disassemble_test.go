@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/encoding/midifile"
+	"github.com/transcriptaze/midiasm/midi/encoding/midi"
 )
 
 //go:embed test-files/reference.txt
