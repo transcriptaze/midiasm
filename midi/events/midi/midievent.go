@@ -40,28 +40,41 @@ type Note struct {
 	Alias string
 }
 
-func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
-	switch status & 0xF0 {
-	case 0x80:
+var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, types.Status) (any, error){
+	0x80: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
 		return UnmarshalNoteOff(ctx, tick, delta, r, status)
+	},
 
-	case 0x90:
+	0x90: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
 		return UnmarshalNoteOn(ctx, tick, delta, r, status)
+	},
 
-	case 0xA0:
+	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
 		return UnmarshalPolyphonicPressure(ctx, tick, delta, r, status)
+	},
 
+	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
+	},
+
+	0xE0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status types.Status) (any, error) {
+		return UnmarshalPitchBend(ctx, tick, delta, r, status)
+	},
+}
+
+func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
+	eventType := byte(status & 0xf0)
+
+	if f, ok := factory[eventType]; ok {
+		return f(ctx, tick, delta, r, status)
+	}
+
+	switch status & 0xF0 {
 	case 0xB0:
 		return NewController(ctx, tick, delta, r, status)
 
 	case 0xC0:
 		return NewProgramChange(ctx, tick, delta, r, status)
-
-	case 0xD0:
-		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
-
-	case 0xE0:
-		return UnmarshalPitchBend(ctx, tick, delta, r, status)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
