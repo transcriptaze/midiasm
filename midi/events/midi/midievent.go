@@ -61,15 +61,19 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalPolyphonicPressure(ctx, tick, delta, r, status)
+		return UnmarshalPolyphonicPressure(tick, delta, r, status)
+	},
+
+	0xB0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
+		return UnmarshalController(ctx, tick, delta, r, status)
 	},
 
 	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalChannelPressure(ctx, tick, delta, r, status)
+		return UnmarshalChannelPressure(tick, delta, r, status)
 	},
 
 	0xE0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalPitchBend(ctx, tick, delta, r, status)
+		return UnmarshalPitchBend(tick, delta, r, status)
 	},
 }
 
@@ -81,9 +85,6 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status lib.Status, ctx *conte
 	}
 
 	switch status & 0xF0 {
-	case 0xB0:
-		return NewController(ctx, tick, delta, r, status)
-
 	case 0xC0:
 		return NewProgramChange(ctx, tick, delta, r, status)
 	}

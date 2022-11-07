@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] NoteOn with 0 velocity -> NoteOff
+
 - [ ] MIDI file grammar
       - (?) ASN.1
       - (?) EBNF

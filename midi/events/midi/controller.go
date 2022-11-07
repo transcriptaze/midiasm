@@ -2,11 +2,11 @@ package midievent
 
 import (
 	"fmt"
-	"io"
 	"regexp"
 	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -16,44 +16,59 @@ type Controller struct {
 	Value      byte
 }
 
-func NewController(ctx *context.Context, tick uint64, delta uint32, r io.ByteReader, status lib.Status) (*Controller, error) {
-	if status&0xF0 != 0xB0 {
+func MakeController(tick uint64, delta uint32, channel lib.Channel, controller lib.Controller, value byte, bytes ...byte) Controller {
+	if channel > 15 {
+		panic(fmt.Sprintf("invalid channel (%v)", channel))
+	}
+
+	return Controller{
+		event: event{
+			tick:    tick,
+			delta:   lib.Delta(delta),
+			bytes:   bytes,
+			tag:     lib.TagController,
+			Status:  or(0xb0, channel),
+			Channel: channel,
+		},
+		Controller: controller,
+		Value:      value,
+	}
+}
+
+func UnmarshalController(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*Controller, error) {
+	if status&0xf0 != 0xb0 {
 		return nil, fmt.Errorf("Invalid Controller status (%v): expected 'Bx'", status)
 	}
 
-	channel := uint8(status & 0x0f)
+	var channel = lib.Channel(status & 0x0f)
+	var controller byte
+	var value byte
 
-	controller, err := r.ReadByte()
-	if err != nil {
+	if c, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else {
+		controller = c
 	}
 
-	value, err := r.ReadByte()
-	if err != nil {
+	if v, err := r.ReadByte(); err != nil {
 		return nil, err
+	} else {
+		value = v
 	}
 
 	if ctx != nil && controller == 0x00 {
-		ctx.ProgramBank[channel] = (ctx.ProgramBank[channel] & 0x003f) | ((uint16(value) & 0x003f) << 7)
+		c := uint8(channel)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((uint16(value) & 0x003f) << 7)
 	}
 
 	if ctx != nil && controller == 0x20 {
-		ctx.ProgramBank[channel] = (ctx.ProgramBank[channel] & (0x003f << 7)) | (uint16(value) & 0x003f)
+		c := uint8(channel)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (uint16(value) & 0x003f)
 	}
 
-	return &Controller{
-		event: event{
-			tick:  tick,
-			delta: lib.Delta(delta),
-			bytes: []byte{0x00, byte(status), controller, value},
+	event := MakeController(tick, delta, channel, lib.LookupController(controller), value, r.Bytes()...)
 
-			tag:     lib.TagController,
-			Status:  status,
-			Channel: lib.Channel(channel),
-		},
-		Controller: lib.LookupController(controller),
-		Value:      value,
-	}, nil
+	return &event, nil
 }
 
 func (c Controller) MarshalBinary() (encoded []byte, err error) {

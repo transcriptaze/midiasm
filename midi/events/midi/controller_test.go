@@ -9,7 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestController(t *testing.T) {
+func TestParseController(t *testing.T) {
 	expected := Controller{
 		event: event{
 			tick:  2400,
@@ -25,7 +25,7 @@ func TestController(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.BytesReader([]byte{0x54, 0x1d})
+	r := IO.TestReader([]byte{0x00, 0xb7}, []byte{0x54, 0x1d})
 
 	event, err := Parse(2400, 480, r, 0xb7, ctx)
 	if err != nil {
