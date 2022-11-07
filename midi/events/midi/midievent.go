@@ -68,6 +68,10 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 		return UnmarshalController(ctx, tick, delta, r, status)
 	},
 
+	0xC0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
+		return UnmarshalProgramChange(ctx, tick, delta, r, status)
+	},
+
 	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
 		return UnmarshalChannelPressure(tick, delta, r, status)
 	},
@@ -82,11 +86,6 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status lib.Status, ctx *conte
 
 	if f, ok := factory[eventType]; ok {
 		return f(ctx, tick, delta, r, status)
-	}
-
-	switch status & 0xF0 {
-	case 0xC0:
-		return NewProgramChange(ctx, tick, delta, r, status)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)

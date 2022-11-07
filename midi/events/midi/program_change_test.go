@@ -23,7 +23,7 @@ func TestProgramChange(t *testing.T) {
 		Program: 13,
 	}
 
-	r := IO.BytesReader([]byte{0x0d})
+	r := IO.TestReader([]byte{0x00, 0xc7}, []byte{0x0d})
 
 	ctx := context.NewContext()
 	ctx.ProgramBank[7] = 673
@@ -80,7 +80,7 @@ func TestProgramChangeUnmarshalText(t *testing.T) {
 			tag:     types.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
-			bytes:   []byte{0x00, 0xc7, 0x19},
+			bytes:   []byte{},
 		},
 		Bank:    3,
 		Program: 25,
