@@ -65,7 +65,23 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0xB0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalController(ctx, tick, delta, r, status)
+		evt, err := UnmarshalController(tick, delta, r, status)
+
+		if err == nil {
+			if ctx != nil && evt.Controller.ID == 0x00 {
+				c := uint8(evt.Channel)
+				v := uint16(evt.Value)
+				ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
+			}
+
+			if ctx != nil && evt.Controller.ID == 0x20 {
+				c := uint8(evt.Channel)
+				v := uint16(evt.Value)
+				ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
+			}
+		}
+
+		return evt, err
 	},
 
 	0xC0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {

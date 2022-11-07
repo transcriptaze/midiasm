@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -35,7 +34,7 @@ func MakeController(tick uint64, delta uint32, channel lib.Channel, controller l
 	}
 }
 
-func UnmarshalController(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*Controller, error) {
+func UnmarshalController(tick uint64, delta uint32, r IO.Reader, status lib.Status) (*Controller, error) {
 	if status&0xf0 != 0xb0 {
 		return nil, fmt.Errorf("Invalid Controller status (%v): expected 'Bx'", status)
 	}
@@ -54,16 +53,6 @@ func UnmarshalController(ctx *context.Context, tick uint64, delta uint32, r IO.R
 		return nil, err
 	} else {
 		value = v
-	}
-
-	if ctx != nil && controller == 0x00 {
-		c := uint8(channel)
-		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((uint16(value) & 0x003f) << 7)
-	}
-
-	if ctx != nil && controller == 0x20 {
-		c := uint8(channel)
-		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (uint16(value) & 0x003f)
 	}
 
 	event := MakeController(tick, delta, channel, lib.LookupController(controller), value, r.Bytes()...)
