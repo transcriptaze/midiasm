@@ -15,23 +15,6 @@ type SequencerSpecificEvent struct {
 	Data         types.Hex
 }
 
-// func NewSequencerSpecificEvent(bytes []byte) (*SequencerSpecificEvent, error) {
-// 	id := bytes[0:1]
-// 	data := bytes[1:]
-// 	if bytes[0] == 0x00 {
-// 		id = bytes[0:3]
-// 		data = bytes[3:]
-// 	}
-
-// 	return &SequencerSpecificEvent{
-// 		Tag:          "SequencerSpecificEvent",
-// 		Status:       0xff,
-// 		Type:         0x7f,
-// 		Manufacturer: types.LookupManufacturer(id),
-// 		Data:         data,
-// 	}, nil
-// }
-
 func MakeSequencerSpecificEvent(tick uint64, delta uint32, manufacturer types.Manufacturer, data []byte) SequencerSpecificEvent {
 	return SequencerSpecificEvent{
 		event: event{

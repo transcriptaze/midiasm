@@ -67,9 +67,10 @@ var tags = map[Tag]string{
 	TagPitchBend:          "PitchBend",
 	TagPolyphonicPressure: "PolyphonicPressure",
 	TagProgramChange:      "ProgramChange",
-	TagSysExContinuation:  "SysExContinuation",
-	TagSysExEscape:        "SysExEscape",
-	TagSysExMessage:       "SysExMessage",
+
+	TagSysExMessage:      "SysExMessage",
+	TagSysExContinuation: "SysExContinuation",
+	TagSysExEscape:       "SysExEscape",
 }
 
 func (t Tag) String() string {

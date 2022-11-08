@@ -165,7 +165,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		rr.ReadByte()
 
-		e, err := sysex.Parse(rr, types.Status(b), ctx)
+		e, err := sysex.Parse(uint64(tick)+uint64(delta), delta, rr, types.Status(b), ctx)
 
 		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
 	}

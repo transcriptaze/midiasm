@@ -15,6 +15,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 )
 
 type TextAssembler struct {
@@ -245,6 +246,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		"PolyphonicPressure":     func() E { return &midievent.PolyphonicPressure{} },
 		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
 		"PitchBend":              func() E { return &midievent.PitchBend{} },
+		"SysExMessage":           func() E { return &sysex.SysExSingleMessage{} },
 	}
 
 	for line := range lines {

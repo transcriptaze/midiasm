@@ -1,22 +1,38 @@
 package sysex
 
 import (
+	"encoding/hex"
 	"fmt"
-	"io"
+	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type SysExSingleMessage struct {
-	Tag          string
-	Status       types.Status
+	event
 	Manufacturer types.Manufacturer
 	Data         types.Hex
 }
 
-func NewSysExSingleMessage(ctx *context.Context, r io.ByteReader, status types.Status) (*SysExSingleMessage, error) {
+func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer types.Manufacturer, data types.Hex, bytes ...byte) SysExSingleMessage {
+	return SysExSingleMessage{
+		event: event{
+			tick:   tick,
+			delta:  lib.Delta(delta),
+			bytes:  bytes,
+			tag:    lib.TagSysExMessage,
+			Status: 0xf0,
+		},
+		Manufacturer: manufacturer,
+		Data:         data,
+	}
+}
+
+func UnmarshalSysExSingleMessage(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*SysExSingleMessage, error) {
 	if status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExSingleMessage event type (%02x): expected 'F0'", status)
 	}
@@ -31,12 +47,8 @@ func NewSysExSingleMessage(ctx *context.Context, r io.ByteReader, status types.S
 	}
 
 	id := bytes[0:1]
+	manufacturer := types.LookupManufacturer(id)
 	data := bytes[1:]
-
-	if bytes[0] == 0x00 {
-		id = bytes[0:3]
-		data = bytes[3:]
-	}
 
 	terminator := data[len(data)-1]
 	if terminator == 0xf7 {
@@ -45,10 +57,56 @@ func NewSysExSingleMessage(ctx *context.Context, r io.ByteReader, status types.S
 		ctx.Casio = true
 	}
 
-	return &SysExSingleMessage{
-		Tag:          "SysExMessage",
-		Status:       status,
-		Manufacturer: types.LookupManufacturer(id),
-		Data:         data,
-	}, nil
+	event := MakeSysExSingleMessage(tick, delta, manufacturer, data, r.Bytes()...)
+
+	return &event, nil
+}
+
+// TODO encode as VLF
+// TODO encode Casio
+func (s SysExSingleMessage) MarshalBinary() ([]byte, error) {
+	encoded := []byte{byte(s.Status)}
+	encoded = append(encoded, 0)
+	encoded = append(encoded, s.Manufacturer.ID...)
+	encoded = append(encoded, s.Data...)
+	encoded = append(encoded, 0xf7)
+
+	encoded[1] = byte(len(encoded) - 2)
+
+	return encoded, nil
+}
+
+func (s *SysExSingleMessage) UnmarshalText(bytes []byte) error {
+	s.tick = 0
+	s.delta = 0
+	s.bytes = []byte{}
+	s.tag = lib.TagSysExMessage
+	s.Status = 0xf0
+
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SysExMessage\s+(.*?),(.*)`)
+	text := string(bytes)
+
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+		return fmt.Errorf("invalid SysExMessage event (%v)", text)
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
+		return err
+	} else if manufacturer, err := lib.FindManufacturer(match[2]); err != nil {
+		return err
+	} else {
+		data := []byte{}
+		if len(match) > 3 {
+			s := regexp.MustCompile(`\s+`).ReplaceAllString(match[3], "")
+			if d, err := hex.DecodeString(s); err != nil {
+				return err
+			} else {
+				data = d
+			}
+		}
+
+		s.delta = delta
+		s.Manufacturer = manufacturer
+		s.Data = data
+	}
+
+	return nil
 }

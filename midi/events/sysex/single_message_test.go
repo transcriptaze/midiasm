@@ -1,20 +1,20 @@
 package sysex
 
 import (
-	"bufio"
-	"bytes"
 	"reflect"
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseSingleMessage(t *testing.T) {
 	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
+	// r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
+	r := IO.TestReader([]byte{}, []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7})
 
-	event, err := Parse(reader{r}, 0xf0, ctx)
+	event, err := Parse(0, 0, r, 0xf0, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx single message parse error: %v", err)
 	}
@@ -49,9 +49,10 @@ func TestParseSingleMessage(t *testing.T) {
 
 func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}))
+	// r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}))
+	r := IO.TestReader([]byte{}, []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43})
 
-	event, err := Parse(reader{r}, 0xf0, ctx)
+	event, err := Parse(0, 0, r, 0xf0, ctx)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx single message parse error: %v", err)
 	}
@@ -82,4 +83,63 @@ func TestParseSingleMessageWithoutTerminatingF7(t *testing.T) {
 	if !ctx.Casio {
 		t.Errorf("context Casio flag should be set")
 	}
+}
+
+func TestSysExSingleMessageMarshalBinary(t *testing.T) {
+	evt := SysExSingleMessage{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    types.TagSysExMessage,
+			Status: 0xf0,
+		},
+		Manufacturer: types.Manufacturer{
+			ID:     []byte{0x7e},
+			Region: "Special Purpose",
+			Name:   "Non-RealTime Extensions",
+		},
+		Data: types.Hex{0x00, 0x09, 0x01},
+	}
+
+	expected := []byte{0xf0, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
+
+	encoded, err := evt.MarshalBinary()
+	if err != nil {
+		t.Fatalf("error encoding SysExSingleMessage (%v)", err)
+	}
+
+	if !reflect.DeepEqual(encoded, expected) {
+		t.Errorf("incorrectly encoded SysExSingleMessage\n   expected:%+v\n   got:     %+v", expected, encoded)
+	}
+}
+
+func TestSysExSingleMessageUnmarshalText(t *testing.T) {
+	text := "      00 F0 05 7E 00 09 01 F7               tick:720        delta:480         F0 SysExMessage           Non-RealTime Extensions, 00 09 01"
+	expected := SysExSingleMessage{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    types.TagSysExMessage,
+			Status: 0xf0,
+			bytes:  []byte{},
+		},
+		Manufacturer: types.Manufacturer{
+			ID:     []byte{0x7e},
+			Region: "Special Purpose",
+			Name:   "Non-RealTime Extensions",
+		},
+		Data: types.Hex{0x00, 0x09, 0x01},
+	}
+
+	evt := SysExSingleMessage{}
+
+	if err := evt.UnmarshalText([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling SysExSingleMessage (%v)", err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled SysExSingleMessage\n   expected:%+v\n   got:     %+v", expected, evt)
+	}
+
 }
