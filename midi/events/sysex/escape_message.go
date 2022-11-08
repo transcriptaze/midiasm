@@ -1,21 +1,35 @@
 package sysex
 
 import (
+	"encoding/hex"
 	"fmt"
-	"io"
+	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/io"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type SysExEscapeMessage struct {
-	Tag    string
-	Status types.Status
-	Data   types.Hex
+	event
+	Data lib.Hex
 }
 
-func NewSysExEscapeMessage(ctx *context.Context, r io.ByteReader, status types.Status) (*SysExEscapeMessage, error) {
+func MakeSysExEscapeMessage(tick uint64, delta uint32, data lib.Hex, bytes ...byte) SysExEscapeMessage {
+	return SysExEscapeMessage{
+		event: event{
+			tick:   tick,
+			delta:  lib.Delta(delta),
+			bytes:  bytes,
+			tag:    lib.TagSysExEscape,
+			Status: 0xf7,
+		},
+		Data: data,
+	}
+}
+
+func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*SysExEscapeMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
@@ -29,9 +43,47 @@ func NewSysExEscapeMessage(ctx *context.Context, r io.ByteReader, status types.S
 		return nil, err
 	}
 
-	return &SysExEscapeMessage{
-		Tag:    "SysExEscape",
-		Status: status,
-		Data:   data,
-	}, nil
+	event := MakeSysExEscapeMessage(tick, delta, data, r.Bytes()...)
+
+	return &event, nil
+}
+
+// TODO encode as VLF
+func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
+	return append([]byte{
+		byte(s.Status),
+		byte(len(s.Data)),
+	}, s.Data...), nil
+}
+
+func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
+	s.tick = 0
+	s.delta = 0
+	s.bytes = []byte{}
+	s.tag = lib.TagSysExEscape
+	s.Status = 0xf7
+
+	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SysExEscape\s+(.*)`)
+	text := string(bytes)
+
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+		return fmt.Errorf("invalid SysExEscape event (%v)", text)
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
+		return err
+	} else {
+		data := []byte{}
+		if len(match) > 2 {
+			s := regexp.MustCompile(`\s+`).ReplaceAllString(match[2], "")
+			if d, err := hex.DecodeString(s); err != nil {
+				return err
+			} else {
+				data = d
+			}
+		}
+
+		s.delta = delta
+		s.Data = data
+	}
+
+	return nil
 }

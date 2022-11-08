@@ -61,7 +61,7 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 		if ctx.Casio {
 			return NewSysExContinuationMessage(ctx, r, status)
 		} else {
-			return NewSysExEscapeMessage(ctx, r, status)
+			return UnmarshalSysExEscapeMessage(ctx, tick, delta, r, status)
 		}
 	}
 

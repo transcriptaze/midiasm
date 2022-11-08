@@ -247,6 +247,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
 		"PitchBend":              func() E { return &midievent.PitchBend{} },
 		"SysExMessage":           func() E { return &sysex.SysExSingleMessage{} },
+		"SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
 	}
 
 	for line := range lines {
