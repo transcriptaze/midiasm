@@ -35,7 +35,7 @@
    83 60 80 30 40                           tick:720        delta:480        80 NoteOff                channel:0  note:C3, velocity:64
       00 F0 05 7E 00 09 01 F7               tick:720        delta:0          F0 SysExMessage           Non-RealTime Extensions, 00 09 01
 %%       00 F0 03 43 12 00                     tick:720        delta:0          F0 SysExMessage           Yamaha, 12 00
-%%    81 48 F7 06 43 12 00 43 12 00            tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00
+   81 48 F7 06 43 12 00 43 12 00            tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00
 %%       64 F7 04 43 12 00 F7                  tick:1020       delta:100        F7 SysExContinuation      43 12 00
       00 F7 02 F3 01                        tick:1020       delta:0          F7 SysExEscape            F3 01
       00 FF 2F 00                           tick:1020       delta:0          2F EndOfTrack

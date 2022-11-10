@@ -60,6 +60,7 @@
 
 ### Notes 
 
+- (?) [sync/errgroup](https://pkg.go.dev/golang.org/x/sync/errgroup) for validation 
 - [ ] --compact format (JSON): puts notes on one line
 - [ ] Configurable formats
 - [ ] Check loss of precision
@@ -103,3 +104,5 @@
 20. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
 21. [go-jq](https://github.com/itchyny/gojq)
 22. [Katai struct](https://kaitai.io/)
+23. [PotLuck](https://www.inkandswitch.com/potluck)
+    - [LAPIS](http://groups.csail.mit.edu/graphics/lapis/doc/papers.html)

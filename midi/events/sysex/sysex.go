@@ -59,11 +59,21 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 
 	case 0xf7:
 		if ctx.Casio {
-			return NewSysExContinuationMessage(ctx, r, status)
+			return UnmarshalSysExContinuationMessage(ctx, tick, delta, r, status)
 		} else {
 			return UnmarshalSysExEscapeMessage(ctx, tick, delta, r, status)
 		}
 	}
 
 	return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
+}
+
+func concat(list ...[]byte) []byte {
+	bytes := []byte{}
+
+	for _, b := range list {
+		bytes = append(bytes, b...)
+	}
+
+	return bytes
 }

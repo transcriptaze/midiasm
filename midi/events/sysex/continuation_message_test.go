@@ -13,8 +13,6 @@ func TestParseContinuationMessage(t *testing.T) {
 	ctx := context.NewContext()
 	ctx.Casio = true
 
-	// r := bufio.NewReader(bytes.NewReader([]byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}))
-
 	r := IO.TestReader([]byte{}, []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7})
 
 	event, err := Parse(0, 0, r, 0xf7, ctx)
@@ -39,4 +37,53 @@ func TestParseContinuationMessage(t *testing.T) {
 	if ctx.Casio {
 		t.Errorf("context Casio flag not reset")
 	}
+}
+
+func TestSysExContinuationMessageMarshalBinary(t *testing.T) {
+	evt := SysExContinuationMessage{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    types.TagSysExContinuation,
+			Status: 0xf7,
+		},
+		Data: types.Hex{0x7e, 0x00, 0x09, 0x01},
+	}
+
+	expected := []byte{0xf7, 0x04, 0x7e, 0x00, 0x09, 0x01}
+
+	encoded, err := evt.MarshalBinary()
+	if err != nil {
+		t.Fatalf("error encoding SysExContinuationMessage (%v)", err)
+	}
+
+	if !reflect.DeepEqual(encoded, expected) {
+		t.Errorf("incorrectly encoded SysExContinuationMessage\n   expected:%+v\n   got:     %+v", expected, encoded)
+	}
+}
+
+func TestSysExContinuationMessageUnmarshalText(t *testing.T) {
+	text := "   81 48 F7 06 43 12 00 43 12 00            tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00"
+	expected := SysExContinuationMessage{
+		event: event{
+			tick:   0,
+			delta:  200,
+			tag:    types.TagSysExContinuation,
+			Status: 0xf7,
+			bytes:  []byte{},
+		},
+		Data: types.Hex{0x43, 0x12, 0x00, 0x43, 0x12, 0x00},
+	}
+
+	evt := SysExContinuationMessage{}
+
+	if err := evt.UnmarshalText([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling SysExContinuationMessage (%v)", err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled SysExContinuationMessage\n   expected:%+v\n   got:     %+v", expected, evt)
+	}
+
 }
