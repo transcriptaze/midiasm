@@ -65,16 +65,20 @@ func UnmarshalSysExSingleMessage(ctx *context.Context, tick uint64, delta uint32
 func (s SysExSingleMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 
-	data := []byte{}
-	data = append(data, s.Manufacturer.ID...)
-	data = append(data, s.Data...)
-	data = append(data, 0xf7)
+	vlf := []byte{}
+	vlf = append(vlf, s.Manufacturer.ID...)
+	vlf = append(vlf, s.Data...)
+	vlf = append(vlf, 0xf7)
 
-	encoded := []byte{}
-	encoded = append(encoded, status)
-	encoded = append(encoded, vlf2bin(data)...)
+	if data, err := lib.VLF(vlf).MarshalBinary(); err != nil {
+		return nil, err
+	} else {
+		encoded := []byte{}
+		encoded = append(encoded, status)
+		encoded = append(encoded, data...)
 
-	return encoded, nil
+		return encoded, nil
+	}
 }
 
 func (s *SysExSingleMessage) UnmarshalText(bytes []byte) error {

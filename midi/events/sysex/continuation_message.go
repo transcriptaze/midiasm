@@ -55,14 +55,18 @@ func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta 
 func (s SysExContinuationMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 
-	data := []byte{}
-	data = append(data, s.Data...)
+	vlf := []byte{}
+	vlf = append(vlf, s.Data...)
 
-	encoded := []byte{}
-	encoded = append(encoded, status)
-	encoded = append(encoded, vlf2bin(data)...)
+	if data, err := lib.VLF(vlf).MarshalBinary(); err != nil {
+		return nil, err
+	} else {
+		encoded := []byte{}
+		encoded = append(encoded, status)
+		encoded = append(encoded, data...)
 
-	return encoded, nil
+		return encoded, nil
+	}
 }
 
 func (s *SysExContinuationMessage) UnmarshalText(bytes []byte) error {

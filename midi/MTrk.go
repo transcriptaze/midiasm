@@ -14,14 +14,14 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/events/sysex"
 	"github.com/transcriptaze/midiasm/midi/io"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type MTrk struct {
 	Tag         string
-	TrackNumber types.TrackNumber
+	TrackNumber lib.TrackNumber
 	Length      uint32
-	Bytes       types.Hex `json:"-"`
+	Bytes       lib.Hex `json:"-"`
 
 	Events []*events.Event
 
@@ -54,7 +54,7 @@ func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
 
 	for _, event := range chunk.Events {
 		var v []byte
-		delta := vlq{event.Delta()}
+		delta := lib.VLQ(event.Delta())
 		if v, err = delta.MarshalBinary(); err != nil {
 			return
 		} else if _, err = b.Write(v); err != nil {
@@ -165,7 +165,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 		rr.ReadByte()
 
-		e, err := sysex.Parse(uint64(tick)+uint64(delta), delta, rr, types.Status(b), ctx)
+		e, err := sysex.Parse(uint64(tick)+uint64(delta), delta, rr, lib.Status(b), ctx)
 
 		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
 	}
@@ -175,7 +175,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", b&0xF0)
 	}
 
-	status := types.Status(b)
+	status := lib.Status(b)
 
 	if b < 0x80 {
 		status = ctx.RunningStatus

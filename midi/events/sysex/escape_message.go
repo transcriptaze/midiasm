@@ -51,14 +51,18 @@ func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32
 func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 
-	data := []byte{}
-	data = append(data, s.Data...)
+	vlf := []byte{}
+	vlf = append(vlf, s.Data...)
 
-	encoded := []byte{}
-	encoded = append(encoded, status)
-	encoded = append(encoded, vlf2bin(data)...)
+	if data, err := lib.VLF(vlf).MarshalBinary(); err != nil {
+		return nil, err
+	} else {
+		encoded := []byte{}
+		encoded = append(encoded, status)
+		encoded = append(encoded, data...)
 
-	return encoded, nil
+		return encoded, nil
+	}
 }
 
 func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
