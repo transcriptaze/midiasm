@@ -1,7 +1,6 @@
 package sysex
 
 import (
-	"encoding/hex"
 	"fmt"
 	"regexp"
 
@@ -70,17 +69,9 @@ func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
 		return fmt.Errorf("invalid SysExEscape event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
+	} else if data, err := lib.ParseHex(match[2]); err != nil {
+		return err
 	} else {
-		data := []byte{}
-		if len(match) > 2 {
-			s := regexp.MustCompile(`\s+`).ReplaceAllString(match[2], "")
-			if d, err := hex.DecodeString(s); err != nil {
-				return err
-			} else {
-				data = d
-			}
-		}
-
 		s.delta = delta
 		s.Data = data
 	}

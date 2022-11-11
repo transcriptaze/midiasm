@@ -1,7 +1,6 @@
 package sysex
 
 import (
-	"encoding/hex"
 	"fmt"
 	"regexp"
 
@@ -92,17 +91,9 @@ func (s *SysExSingleMessage) UnmarshalText(bytes []byte) error {
 		return err
 	} else if manufacturer, err := lib.FindManufacturer(match[2]); err != nil {
 		return err
+	} else if data, err := lib.ParseHex(match[3]); err != nil {
+		return err
 	} else {
-		data := []byte{}
-		if len(match) > 3 {
-			s := regexp.MustCompile(`\s+`).ReplaceAllString(match[3], "")
-			if d, err := hex.DecodeString(s); err != nil {
-				return err
-			} else {
-				data = d
-			}
-		}
-
 		s.delta = delta
 		s.Manufacturer = manufacturer
 		s.Data = data

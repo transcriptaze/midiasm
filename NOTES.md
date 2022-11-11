@@ -10,3 +10,5 @@
 7. https://diyelectromusic.wordpress.com/2022/10/10/the-lo-fi-orchestral-tubular-bells/
 8. [What is a good midi to famicon converter?](https://softwarerecs.stackexchange.com/questions/84269/what-is-a-good-midi-to-famicon-converter)
 9. [Web editors](https://www.hiro.so/blog/write-clarity-smart-contracts-with-zero-installations-how-we-built-an-in-browser-language-server-using-wasm)
+10. https://github.com/Fabien-Chouteau/MIDI_signal_flow
+11. https://github.com/Fabien-Chouteau/MIDIVisualizer
