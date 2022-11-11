@@ -51,13 +51,18 @@ func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta 
 	return &event, nil
 }
 
-// TODO encode as VLF
+// TODO encode Casio terminator
 func (s SysExContinuationMessage) MarshalBinary() ([]byte, error) {
-	bytes := concat(
-		[]byte{byte(s.Status), byte(len(s.Data))},
-		s.Data)
+	status := byte(s.Status)
 
-	return bytes, nil
+	data := []byte{}
+	data = append(data, s.Data...)
+
+	encoded := []byte{}
+	encoded = append(encoded, status)
+	encoded = append(encoded, vlf2bin(data)...)
+
+	return encoded, nil
 }
 
 func (s *SysExContinuationMessage) UnmarshalText(bytes []byte) error {

@@ -61,16 +61,18 @@ func UnmarshalSysExSingleMessage(ctx *context.Context, tick uint64, delta uint32
 	return &event, nil
 }
 
-// TODO encode as VLF
 // TODO encode Casio
 func (s SysExSingleMessage) MarshalBinary() ([]byte, error) {
-	encoded := []byte{byte(s.Status)}
-	encoded = append(encoded, 0)
-	encoded = append(encoded, s.Manufacturer.ID...)
-	encoded = append(encoded, s.Data...)
-	encoded = append(encoded, 0xf7)
+	status := byte(s.Status)
 
-	encoded[1] = byte(len(encoded) - 2)
+	data := []byte{}
+	data = append(data, s.Manufacturer.ID...)
+	data = append(data, s.Data...)
+	data = append(data, 0xf7)
+
+	encoded := []byte{}
+	encoded = append(encoded, status)
+	encoded = append(encoded, vlf2bin(data)...)
 
 	return encoded, nil
 }

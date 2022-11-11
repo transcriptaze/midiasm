@@ -49,10 +49,16 @@ func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32
 
 // TODO encode as VLF
 func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
-	return append([]byte{
-		byte(s.Status),
-		byte(len(s.Data)),
-	}, s.Data...), nil
+	status := byte(s.Status)
+
+	data := []byte{}
+	data = append(data, s.Data...)
+
+	encoded := []byte{}
+	encoded = append(encoded, status)
+	encoded = append(encoded, vlf2bin(data)...)
+
+	return encoded, nil
 }
 
 func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {

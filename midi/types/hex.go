@@ -26,3 +26,7 @@ func (bytes Hex) String() string {
 
 	return strings.TrimSpace(s)
 }
+
+func (h Hex) MarshalBinary() ([]byte, error) {
+	return vlf2bin([]byte(h)), nil
+}
