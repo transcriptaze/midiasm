@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 )
 
@@ -17,6 +18,26 @@ func ParseDelta(s string) (Delta, error) {
 	} else {
 		return Delta(delta), nil
 	}
+}
+
+func DecodeDelta(r io.ByteReader) (Delta, error) {
+	vlq := uint32(0)
+
+	for {
+		b, err := r.ReadByte()
+		if err != nil {
+			return 0, err
+		}
+
+		vlq <<= 7
+		vlq += uint32(b & 0x7f)
+
+		if b&0x80 == 0 {
+			break
+		}
+	}
+
+	return Delta(vlq), nil
 }
 
 func (d Delta) MarshalBinary() ([]byte, error) {

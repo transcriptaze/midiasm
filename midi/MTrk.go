@@ -3,7 +3,6 @@ package midi
 import (
 	"bufio"
 	"bytes"
-	"encoding"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -37,49 +36,6 @@ func NewMTrk() (*MTrk, error) {
 	}
 
 	return &mtrk, nil
-}
-
-func (chunk MTrk) MarshalBinary() (encoded []byte, err error) {
-	var b bytes.Buffer
-
-	f := func(e encoding.BinaryMarshaler) error {
-		if v, err := e.MarshalBinary(); err != nil {
-			return err
-		} else if _, err = b.Write(v); err != nil {
-			return err
-		} else {
-			return nil
-		}
-	}
-
-	for _, event := range chunk.Events {
-		var v []byte
-		delta := lib.VLQ(event.Delta())
-		if v, err = delta.MarshalBinary(); err != nil {
-			return
-		} else if _, err = b.Write(v); err != nil {
-			return
-		}
-
-		if e, ok := event.Event.(encoding.BinaryMarshaler); ok {
-			if err = f(e); err != nil {
-				return
-			}
-		}
-	}
-
-	chunk.Length = uint32(b.Len())
-	tag := make([]byte, 4)
-	length := make([]byte, 4)
-
-	copy(tag, []byte(chunk.Tag))
-	binary.BigEndian.PutUint32(length, chunk.Length)
-
-	encoded = append([]byte{}, tag...)
-	encoded = append(encoded, length...)
-	encoded = append(encoded, b.Bytes()...)
-
-	return
 }
 
 func (chunk *MTrk) UnmarshalBinary(data []byte) error {

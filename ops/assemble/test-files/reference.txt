@@ -30,7 +30,7 @@
       00 D0 07                              tick:0          delta:0          D0 ChannelPressure        channel:0  pressure:7
       00 90 30 48                           tick:0          delta:0          90 NoteOn                 channel:0  note:C3, velocity:72
       00 92 31 48                           tick:0          delta:0          92 NoteOn                 channel:2  note:C♯3, velocity:72
-%%       00 30 64                              tick:0          delta:0          92 NoteOn                 channel:2  note:C3, velocity:100
+      00 30 64                              tick:0          delta:0          92 NoteOn                 channel:2  note:C3, velocity:100
    81 70 E0 00 08                           tick:240        delta:240        E0 PitchBend              channel:0  bend:8
    83 60 80 30 40                           tick:720        delta:480        80 NoteOff                channel:0  note:C3, velocity:64
       00 F0 05 7E 00 09 01 F7               tick:720        delta:0          F0 SysExMessage           Non-RealTime Extensions, 00 09 01
