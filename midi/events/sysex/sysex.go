@@ -52,9 +52,9 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 	switch status {
 	case 0xf0:
 		if ctx.Casio {
-			return nil, fmt.Errorf("Invalid SysExSingleMessage event data: F0 start byte without terminating F7")
+			return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 		} else {
-			return UnmarshalSysExSingleMessage(ctx, tick, delta, r, status)
+			return UnmarshalSysExMessage(ctx, tick, delta, r, status)
 		}
 
 	case 0xf7:

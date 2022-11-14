@@ -42,6 +42,7 @@ release: build-all
 
 debug: build
 # 	$(CMD) --debug --verbose --C4 examples/reference-01.mid
+# 	go test ./midi/events/sysex/... -run TestParseSysExSingleMessage
 	go test ./ops/assemble/... -run TestTextReference
 
 delve: build

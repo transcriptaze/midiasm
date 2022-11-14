@@ -246,7 +246,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		"PolyphonicPressure":     func() E { return &midievent.PolyphonicPressure{} },
 		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
 		"PitchBend":              func() E { return &midievent.PitchBend{} },
-		"SysExMessage":           func() E { return &sysex.SysExSingleMessage{} },
+		"SysExMessage":           func() E { return &sysex.SysExMessage{} },
 		"SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },
 		"SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
 	}
@@ -262,11 +262,27 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 				if err := f(line, e); err != nil {
 					return nil, err
 				} else if _, ok := e.(*metaevent.EndOfTrack); ok {
-					return mtrk, nil
+					return fixups(mtrk)
 				}
 			}
 		}
 	}
 
 	return mtrk, fmt.Errorf("missing EndOfTrack")
+}
+
+func fixups(mtrk *midi.MTrk) (*midi.MTrk, error) {
+	for ix := range mtrk.Events[1:] {
+		previous := mtrk.Events[ix]
+		event := mtrk.Events[ix+1]
+
+		if message, ok := previous.Event.(*sysex.SysExMessage); ok {
+			if _, ok := event.Event.(*sysex.SysExContinuationMessage); !ok {
+
+				message.Single = true
+			}
+		}
+	}
+
+	return mtrk, nil
 }
