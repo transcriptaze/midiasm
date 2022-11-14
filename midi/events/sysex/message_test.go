@@ -118,7 +118,7 @@ func TestSysExMessageMarshalBinary(t *testing.T) {
 }
 
 func TestSysExSingleMessageMarshalBinary(t *testing.T) {
-	evt := SysExSingleMessage{
+	evt := SysExMessage{
 		event: event{
 			tick:   2400,
 			delta:  480,
@@ -131,7 +131,8 @@ func TestSysExSingleMessageMarshalBinary(t *testing.T) {
 			Region: "Special Purpose",
 			Name:   "Non-RealTime Extensions",
 		},
-		Data: types.Hex{0x00, 0x09, 0x01},
+		Data:   types.Hex{0x00, 0x09, 0x01},
+		Single: true,
 	}
 
 	expected := []byte{0xf0, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
