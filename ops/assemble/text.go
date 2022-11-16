@@ -32,7 +32,6 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	}
 
 	// ... parse chunks
-
 	smf := midi.SMF{}
 
 	for _, chunk := range chunks {
