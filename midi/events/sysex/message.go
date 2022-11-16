@@ -77,7 +77,6 @@ func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, r IO
 	}
 }
 
-// TODO encode Casio
 func (s SysExMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 

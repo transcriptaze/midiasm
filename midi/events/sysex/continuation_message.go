@@ -13,6 +13,7 @@ import (
 type SysExContinuationMessage struct {
 	event
 	Data lib.Hex
+	End  bool
 }
 
 func MakeSysExContinuationMessage(tick uint64, delta uint32, data lib.Hex, bytes ...byte) SysExContinuationMessage {
@@ -25,6 +26,21 @@ func MakeSysExContinuationMessage(tick uint64, delta uint32, data lib.Hex, bytes
 			Status: 0xf7,
 		},
 		Data: data,
+		End:  false,
+	}
+}
+
+func MakeSysExContinuationEndMessage(tick uint64, delta uint32, data lib.Hex, bytes ...byte) SysExContinuationMessage {
+	return SysExContinuationMessage{
+		event: event{
+			tick:   tick,
+			delta:  lib.Delta(delta),
+			bytes:  bytes,
+			tag:    lib.TagSysExContinuation,
+			Status: 0xf7,
+		},
+		Data: data,
+		End:  true,
 	}
 }
 
@@ -51,12 +67,15 @@ func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta 
 	return &event, nil
 }
 
-// TODO encode Casio terminator
 func (s SysExContinuationMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 
 	vlf := []byte{}
 	vlf = append(vlf, s.Data...)
+
+	if s.End {
+		vlf = append(vlf, 0xf7)
+	}
 
 	if data, err := lib.VLF(vlf).MarshalBinary(); err != nil {
 		return nil, err

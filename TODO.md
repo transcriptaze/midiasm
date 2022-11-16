@@ -2,6 +2,11 @@
 
 - [ ] Optimise parsing
 - [x] Fix Mutate hack
+- [ ] (maybe) Remove superfluous Event struct
+      - (?) or just move bytes and tick back into it so it doesn't clutter event struct
+      - (?) bytes are only really used for disassemble
+      - (?) tick is used for disassemble and notes
+      - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
 
 - [ ] NoteOn with 0 velocity -> NoteOff
 
@@ -16,8 +21,8 @@
 ### Assembler
 
 - [ ] Assemble MTrk
-      - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
       - [ ] JSON
+      - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
 
 - [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary
@@ -27,7 +32,7 @@
 
 ### Transpose
 
-- [ ] Transpose while decoding - otherwise lose track of stuff 
+- [ ] Transpose while decoding - otherwise lose track of stuff like note format
       - (!) or - only keep actual MIDI stuff and generate interpretation on the fly for e.g. disassemble
 
 
