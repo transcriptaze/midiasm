@@ -3,8 +3,8 @@ package transpose
 import (
 	"bytes"
 
+	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
