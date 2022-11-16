@@ -8,26 +8,22 @@
       - (?) Grammar stack
       - (?) Treesitter
 - [ ] Optimise parsing
-- (?) SMF: TextMarshal/Unmarshal
-- (?) SMF: JsonMarshal/Unmarshal
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 
 ### Assembler
 - [ ] VLQ: TestMarshalBinary
 
 - [ ] Assemble MTrk
-      - [x] Ignore comments
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
-      - [ ] Split parameters up into seperate regex's
-      - [ ] Encode delta value in all UnmarshalText (and unit test) - a lá PitchBend
-- [ ] Parse MTrk
+      - [x] Split parameters up into seperate regex's
+- [x] Parse MTrk
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary
 - [ ] VLF: UnmarshalBinary
-- [ ] MetaEvent embedded event
-      - [ ] Migrate remaining events
-- [ ] Validate
-      - [ ] EndOfTrack
+- [x] MetaEvent embedded event
+      - [x] Migrate remaining events
+- [x] Validate
+      - [x] EndOfTrack
 
 ### Transpose
       - [ ] Transpose while decoding - otherwise lose track of stuff 
@@ -106,3 +102,4 @@
 22. [Katai struct](https://kaitai.io/)
 23. [PotLuck](https://www.inkandswitch.com/potluck)
     - [LAPIS](http://groups.csail.mit.edu/graphics/lapis/doc/papers.html)
+24. https://futureofcoding.org/catalog/

@@ -1,20 +1,17 @@
 package metaevent
 
 import (
-	"bufio"
-	"bytes"
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
-func TestParseCMajorKeySignature(t *testing.T) {
+func TestUnmarshalCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		event: event{
-			tick:   0,
-			delta:  0,
+			tick:   2400,
+			delta:  480,
 			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
@@ -25,37 +22,23 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		Key:         "C major",
 	}
 
-	ctx := context.NewContext()
-	r := bufio.NewReader(bytes.NewReader([]byte{0xff, 0x59, 0x02, 0x00, 0x00}))
-
-	event, err := Parse(ctx, r, 0, 0)
+	event, err := UnmarshalKeySignature(2400, 480, []byte{0x00, 0x00})
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
-	}
-
-	if event == nil {
+	} else if event == nil {
 		t.Fatalf("Unexpected KeySignature event parse error - returned %v", event)
-	}
-
-	event, ok := event.(*KeySignature)
-	if !ok {
-		t.Fatalf("KeySignature event parse error - returned %T", event)
 	}
 
 	if !reflect.DeepEqual(event, &expected) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
 	}
-
-	if !reflect.DeepEqual(ctx.Scale(), context.Sharps) {
-		t.Errorf("Context scale not set to 'sharps':%v", ctx)
-	}
 }
 
-func TestParseCMinorKeySignature(t *testing.T) {
+func TestUnmarshalCMinorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		event: event{
-			tick:   0,
-			delta:  0,
+			tick:   2400,
+			delta:  480,
 			tag:    types.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
@@ -66,10 +49,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		Key:         "C minor",
 	}
 
-	ctx := context.Context{}
-	r := bufio.NewReader(bytes.NewReader([]byte{0xff, 0x59, 0x02, 0xfd, 0x01}))
-
-	event, err := Parse(&ctx, r, 0, 0)
+	event, err := UnmarshalKeySignature(2400, 480, []byte{0xfd, 0x01})
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
@@ -78,17 +58,8 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		t.Fatalf("Unexpected KeySignature event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*KeySignature)
-	if !ok {
-		t.Fatalf("KeySignature event parse error - returned %T", event)
-	}
-
 	if !reflect.DeepEqual(event, &expected) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
-	}
-
-	if !reflect.DeepEqual(ctx.Scale(), context.Flats) {
-		t.Errorf("Context scale not set to 'flats':%v", ctx)
 	}
 }
 

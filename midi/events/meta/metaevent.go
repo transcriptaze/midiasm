@@ -2,10 +2,8 @@ package metaevent
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/events"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -33,21 +31,6 @@ func (e event) Bytes() []byte {
 func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
-
-// type xxx interface {
-// 	*SequenceNumber
-// }
-
-// func xyz[T xxx](tick uint64, delta uint32, bytes []byte, f func(uint64, uint32, []byte) (T, error)) (any, error) {
-// 	return f(tick, delta, bytes)
-// }
-
-// https://stackoverflow.com/questions/71132124/how-to-solve-interface-method-must-have-no-type-parameters
-// type pqr func[E xxx](uint64,uint32,[]byte) (E,error)
-
-// var factory2 = map[lib.MetaEventType]func(uint64, uint32, []byte) (xxx, error){
-// 	0x00: UnmarshalSequenceNumber,
-// }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, uint32, []byte) (any, error){
 	lib.TypeSequenceNumber: func(ctx *context.Context, tick uint64, delta uint32, bytes []byte) (any, error) {
@@ -135,24 +118,7 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, uint32, []byt
 	},
 }
 
-func Parse(ctx *context.Context, r io.ByteReader, tick uint64, delta uint32) (any, error) {
-	status, err := r.ReadByte()
-	if err != nil {
-		return nil, err
-	} else if status != 0xFF {
-		return nil, fmt.Errorf("Invalid MetaEvent tag (%v): expected 'FF'", status)
-	}
-
-	b, err := r.ReadByte()
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
-
+func Parse(ctx *context.Context, tick uint64, delta uint32, status byte, b byte, data []byte) (any, error) {
 	eventType := lib.MetaEventType(b & 0x7F)
 
 	if f, ok := factory[eventType]; ok {

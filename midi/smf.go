@@ -1,7 +1,6 @@
 package midi
 
 import (
-	// "bytes"
 	"fmt"
 	"strings"
 
