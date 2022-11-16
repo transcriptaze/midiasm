@@ -1,6 +1,7 @@
 package events
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/transcriptaze/midiasm/midi/types"
@@ -13,16 +14,12 @@ type IEvent interface {
 }
 
 type Event struct {
-	tick  uint64
-	delta uint32
 	Event any
 	bytes types.Hex `json:"-"`
 }
 
 func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
 	return &Event{
-		tick:  tick,
-		delta: delta,
 		Event: evt,
 		bytes: bytes,
 	}
@@ -33,7 +30,7 @@ func (e Event) Tick() uint64 {
 		return v.Tick()
 	}
 
-	return e.tick
+	panic(fmt.Sprintf("Invalid event (%v) - missing 'tick'", e))
 }
 
 func (e Event) Delta() uint32 {
@@ -41,7 +38,7 @@ func (e Event) Delta() uint32 {
 		return v.Delta()
 	}
 
-	return e.delta
+	panic(fmt.Sprintf("Invalid event (%v) - missing 'delta'", e))
 }
 
 func (e Event) Bytes() types.Hex {

@@ -1,5 +1,8 @@
 # TODO
 
+- [ ] Optimise parsing
+- [ ] Fix Mutate hack
+
 - [ ] NoteOn with 0 velocity -> NoteOff
 
 - [ ] MIDI file grammar
@@ -7,26 +10,25 @@
       - (?) EBNF
       - (?) Grammar stack
       - (?) Treesitter
-- [ ] Optimise parsing
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 
+
 ### Assembler
-- [ ] VLQ: TestMarshalBinary
 
 - [ ] Assemble MTrk
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
-      - [x] Split parameters up into seperate regex's
-- [x] Parse MTrk
+      - [ ] JSON
+
+- [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary
 - [ ] VLF: UnmarshalBinary
-- [x] MetaEvent embedded event
-      - [x] Migrate remaining events
-- [x] Validate
-      - [x] EndOfTrack
+
 
 ### Transpose
-      - [ ] Transpose while decoding - otherwise lose track of stuff 
+
+- [ ] Transpose while decoding - otherwise lose track of stuff 
+
 
 ### Click Track
 
