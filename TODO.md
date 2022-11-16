@@ -1,7 +1,7 @@
 # TODO
 
 - [ ] Optimise parsing
-- [ ] Fix Mutate hack
+- [x] Fix Mutate hack
 
 - [ ] NoteOn with 0 velocity -> NoteOff
 
@@ -28,6 +28,7 @@
 ### Transpose
 
 - [ ] Transpose while decoding - otherwise lose track of stuff 
+      - (!) or - only keep actual MIDI stuff and generate interpretation on the fly for e.g. disassemble
 
 
 ### Click Track

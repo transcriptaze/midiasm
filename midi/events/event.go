@@ -15,13 +15,11 @@ type IEvent interface {
 
 type Event struct {
 	Event any
-	bytes types.Hex `json:"-"`
 }
 
 func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
 	return &Event{
 		Event: evt,
-		bytes: bytes,
 	}
 }
 
@@ -46,7 +44,7 @@ func (e Event) Bytes() types.Hex {
 		return v.Bytes()
 	}
 
-	return e.bytes
+	panic(fmt.Sprintf("Invalid event (%v) - missing 'bytes'", e))
 }
 
 func VLF(r io.ByteReader) ([]byte, error) {
