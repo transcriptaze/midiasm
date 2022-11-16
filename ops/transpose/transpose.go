@@ -2,29 +2,42 @@ package transpose
 
 import (
 	"bytes"
-	"encoding/binary"
 
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/encoding/midi"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
 type Transpose struct {
 }
 
 func (t *Transpose) Execute(smf *midi.SMF, steps int) ([]byte, error) {
-	var b bytes.Buffer
-
-	b.Write(smf.MThd.Bytes)
-
-	for _, track := range smf.Tracks {
-		track.Transpose(steps)
-
-		b.Write([]byte(track.Tag))
-		binary.Write(&b, binary.BigEndian, track.Length)
-
-		for _, event := range track.Events {
-			b.Write(event.Bytes())
-		}
+	for _, mtrk := range smf.Tracks {
+		transpose(mtrk, steps)
 	}
 
-	return b.Bytes(), nil
+	var b bytes.Buffer
+	var e = midifile.NewEncoder(&b)
+
+	if err := e.Encode(*smf); err != nil {
+		return nil, err
+	} else {
+		return b.Bytes(), nil
+	}
+}
+
+func transpose(mtrk *midi.MTrk, steps int) {
+	for _, event := range mtrk.Events {
+		switch v := event.Event.(type) {
+		case *metaevent.KeySignature:
+			v.Transpose(mtrk.Context, steps)
+
+		case *midievent.NoteOn:
+			v.Transpose(mtrk.Context, steps)
+
+		case *midievent.NoteOff:
+			v.Transpose(mtrk.Context, steps)
+		}
+	}
 }

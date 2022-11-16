@@ -72,24 +72,6 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (t *MTrk) Transpose(steps int) {
-	for _, event := range t.Events {
-		switch v := event.Event.(type) {
-		case *metaevent.KeySignature:
-			v.Transpose(t.Context, steps)
-			event.Mutate(-2, byte(v.Accidentals))
-
-		case *midievent.NoteOn:
-			v.Transpose(t.Context, steps)
-			event.Mutate(-2, v.Note.Value)
-
-		case *midievent.NoteOff:
-			v.Transpose(t.Context, steps)
-			event.Mutate(-2, v.Note.Value)
-		}
-	}
-}
-
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {
 	// var buffer bytes.Buffer
 

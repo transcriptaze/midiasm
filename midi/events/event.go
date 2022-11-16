@@ -49,11 +49,6 @@ func (e Event) Bytes() types.Hex {
 	return e.bytes
 }
 
-// FIXME: temporary hack while reworking Event as embedded struct
-func (e *Event) Mutate(offset int, b byte) {
-	e.bytes[len(e.bytes)+offset] = b
-}
-
 func VLF(r io.ByteReader) ([]byte, error) {
 	N, err := VLQ(r)
 	if err != nil {
