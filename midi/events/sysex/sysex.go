@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/context"
+	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 	lib "github.com/transcriptaze/midiasm/midi/types"
@@ -44,36 +45,30 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (interface{}, error) {
+func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (any, error) {
 	if status != 0xF0 && status != 0xF7 {
-		return nil, fmt.Errorf("Invalid SysEx tag (%v): expected 'F0' or 'F7'", status)
+		return nil, fmt.Errorf("Invalid SysEx status (%v): expected 'F0' or 'F7'", status)
 	}
 
-	switch status {
-	case 0xf0:
-		if ctx.Casio {
-			return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
-		} else {
-			return UnmarshalSysExMessage(ctx, tick, delta, r, status)
-		}
-
-	case 0xf7:
-		if ctx.Casio {
-			return UnmarshalSysExContinuationMessage(ctx, tick, delta, r, status)
-		} else {
-			return UnmarshalSysExEscapeMessage(ctx, tick, delta, r, status)
-		}
+	data, err := events.VLF(r)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
-}
+	switch {
+	case status == 0xf0 && ctx.Casio:
+		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 
-func concat(list ...[]byte) []byte {
-	bytes := []byte{}
+	case status == 0xf0:
+		return UnmarshalSysExMessage(ctx, tick, delta, status, data, r.Bytes()...)
 
-	for _, b := range list {
-		bytes = append(bytes, b...)
+	case status == 0xf7 && ctx.Casio:
+		return UnmarshalSysExContinuationMessage(ctx, tick, delta, status, data, r.Bytes()...)
+
+	case status == 0xf7:
+		return UnmarshalSysExEscapeMessage(ctx, tick, delta, status, data, r.Bytes()...)
+
+	default:
+		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
 	}
-
-	return bytes
 }

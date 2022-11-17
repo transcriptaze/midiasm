@@ -5,8 +5,6 @@ import (
 	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -44,25 +42,21 @@ func MakeSysExContinuationEndMessage(tick uint64, delta uint32, data lib.Hex, by
 	}
 }
 
-func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*SysExContinuationMessage, error) {
+func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExContinuationMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
 
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(data) > 0 {
-		terminator := data[len(data)-1]
+	data := bytes
+	if len(bytes) > 0 {
+		terminator := bytes[len(data)-1]
 		if terminator == 0xf7 {
-			data = data[:len(data)-1]
+			data = bytes[:len(data)-1]
 			ctx.Casio = false
 		}
 	}
 
-	event := MakeSysExContinuationMessage(tick, delta, data, r.Bytes()...)
+	event := MakeSysExContinuationMessage(tick, delta, data, src...)
 
 	return &event, nil
 }

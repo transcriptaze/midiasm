@@ -5,8 +5,6 @@ import (
 	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -28,7 +26,7 @@ func MakeSysExEscapeMessage(tick uint64, delta uint32, data lib.Hex, bytes ...by
 	}
 }
 
-func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*SysExEscapeMessage, error) {
+func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExEscapeMessage, error) {
 	if status != 0xf7 {
 		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
@@ -37,17 +35,13 @@ func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32
 		return nil, fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
-	}
+	data := bytes
 
-	event := MakeSysExEscapeMessage(tick, delta, data, r.Bytes()...)
+	event := MakeSysExEscapeMessage(tick, delta, data, src...)
 
 	return &event, nil
 }
 
-// TODO encode as VLF
 func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
 	status := byte(s.Status)
 

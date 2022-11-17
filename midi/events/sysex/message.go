@@ -5,8 +5,6 @@ import (
 	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -48,14 +46,9 @@ func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer types.Manufa
 	}
 }
 
-func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*SysExMessage, error) {
+func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExMessage, error) {
 	if status != 0xf0 {
 		return nil, fmt.Errorf("Invalid SysExMessage event type (%02x): expected 'F0'", status)
-	}
-
-	bytes, err := events.VLF(r)
-	if err != nil {
-		return nil, err
 	}
 
 	if len(bytes) == 0 {
@@ -68,11 +61,11 @@ func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, r IO
 
 	if data[len(data)-1] != 0xf7 {
 		ctx.Casio = true
-		event := MakeSysExMessage(tick, delta, manufacturer, data, r.Bytes()...)
+		event := MakeSysExMessage(tick, delta, manufacturer, data, src...)
 		return &event, nil
 	} else {
 		data = data[:len(data)-1]
-		event := MakeSysExSingleMessage(tick, delta, manufacturer, data, r.Bytes()...)
+		event := MakeSysExSingleMessage(tick, delta, manufacturer, data, src...)
 		return &event, nil
 	}
 }
