@@ -14,8 +14,14 @@ type JSONAssembler struct {
 }
 
 type mthd struct {
+	Tag    *string `json:"tag,omitempty"`
 	Format *uint16 `json:"format,omitempty"`
 	PPQN   *uint16 `json:"PPQN,omitempty"`
+}
+
+type mtrk struct {
+	Tag         *string `json:"tag,omitempty"`
+	TrackNumber *uint16 `json:"tracknumber,omitempty"`
 }
 
 func NewJSONAssembler() JSONAssembler {
@@ -24,7 +30,8 @@ func NewJSONAssembler() JSONAssembler {
 
 func (a JSONAssembler) Assemble(r io.Reader) ([]byte, error) {
 	src := struct {
-		MThd mthd `json:"header"`
+		Header mthd   `json:"header"`
+		Tracks []mtrk `json:"tracks"`
 	}{}
 
 	decoder := json.NewDecoder(r)
@@ -33,10 +40,23 @@ func (a JSONAssembler) Assemble(r io.Reader) ([]byte, error) {
 	}
 
 	smf := midi.SMF{}
-	if mthd, err := a.parseMThd(src.MThd); err != nil {
+
+	// ... header
+	if mthd, err := a.parseMThd(src.Header); err != nil {
 		return nil, err
 	} else {
 		smf.MThd = mthd
+	}
+
+	// ... tracks
+
+	for _, t := range src.Tracks {
+		if mtrk, err := a.parseMTrk(t); err != nil {
+			return nil, err
+		} else {
+			smf.Tracks = append(smf.Tracks, mtrk)
+			smf.MThd.Tracks += 1
+		}
 	}
 
 	// ... assemble into MIDI file
@@ -54,19 +74,37 @@ func (a JSONAssembler) parseMThd(h mthd) (*midi.MThd, error) {
 	var format uint16
 	var ppqn uint16
 
-	if h.Format == nil {
-		return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
+	if h.Tag == nil || *h.Tag != "MThd" {
+		return nil, fmt.Errorf("missing or invalid 'MThd' tag in header")
+	} else if h.Format == nil {
+		return nil, fmt.Errorf("missing or invalid 'format' field in header")
 	} else if *h.Format != 0 && *h.Format != 1 && *h.Format != 2 {
-		return nil, fmt.Errorf("invalid 'format' (%v) in MThd", h.Format)
+		return nil, fmt.Errorf("invalid 'format' (%v) in header", h.Format)
 	} else {
 		format = *h.Format
 	}
 
 	if h.PPQN == nil {
-		return nil, fmt.Errorf("missing 'metrical-time' field in MThd")
+		return nil, fmt.Errorf("missing 'metrical-time' field in header")
 	} else {
 		ppqn = *h.PPQN
 	}
 
 	return midi.NewMThd(format, 0, ppqn)
+}
+
+func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
+	var mtrk *midi.MTrk
+
+	if track.Tag == nil || *track.Tag != "MTrk" {
+		return nil, fmt.Errorf("missing or invalid 'MTrk' tag in track")
+	} else if v, err := midi.NewMTrk(); err != nil {
+		return nil, err
+	} else if v == nil {
+		return nil, fmt.Errorf("error creating 'MTrk' for tracks")
+	} else {
+		mtrk = v
+	}
+
+	return mtrk, nil
 }

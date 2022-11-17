@@ -1,7 +1,6 @@
 # TODO
 
 - [ ] Optimise parsing
-- [x] Fix Mutate hack
 - [ ] (maybe) Remove superfluous Event struct
       - (?) or just move bytes and tick back into it so it doesn't clutter event struct
       - (?) bytes are only really used for disassemble
