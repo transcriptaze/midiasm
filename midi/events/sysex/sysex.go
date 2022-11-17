@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -45,14 +43,9 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *context.Context) (any, error) {
+func Parse(ctx *context.Context, tick uint64, delta uint32, status types.Status, data []byte, bytes ...byte) (any, error) {
 	if status != 0xF0 && status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx status (%v): expected 'F0' or 'F7'", status)
-	}
-
-	data, err := events.VLF(r)
-	if err != nil {
-		return nil, err
 	}
 
 	switch {
@@ -60,13 +53,13 @@ func Parse(tick uint64, delta uint32, r IO.Reader, status types.Status, ctx *con
 		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 
 	case status == 0xf0:
-		return UnmarshalSysExMessage(ctx, tick, delta, status, data, r.Bytes()...)
+		return UnmarshalSysExMessage(ctx, tick, delta, status, data, bytes...)
 
 	case status == 0xf7 && ctx.Casio:
-		return UnmarshalSysExContinuationMessage(ctx, tick, delta, status, data, r.Bytes()...)
+		return UnmarshalSysExContinuationMessage(ctx, tick, delta, status, data, bytes...)
 
 	case status == 0xf7:
-		return UnmarshalSysExEscapeMessage(ctx, tick, delta, status, data, r.Bytes()...)
+		return UnmarshalSysExEscapeMessage(ctx, tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)

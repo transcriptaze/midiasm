@@ -5,15 +5,14 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseEscapeMessage(t *testing.T) {
 	ctx := context.NewContext()
-	r := IO.TestReader([]byte{}, []byte{0x02, 0xf3, 0x01})
+	bytes := []byte{0x02, 0xf3, 0x01}
 
-	event, err := Parse(0, 0, r, 0xf7, ctx)
+	event, err := Parse(ctx, 0, 0, 0xf7, bytes[1:], bytes...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx escape message parse error: %v", err)
 	}

@@ -109,11 +109,15 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	if b == 0xf0 || b == 0xf7 {
 		ctx.RunningStatus = 0x00
 
-		rr.ReadByte()
+		if status, err := rr.ReadByte(); err != nil {
+			return nil, err
+		} else if data, err := events.VLF(rr); err != nil {
+			return nil, err
+		} else {
+			e, err := sysex.Parse(ctx, uint64(tick)+uint64(delta), delta, lib.Status(status), data, rr.Bytes()...)
 
-		e, err := sysex.Parse(uint64(tick)+uint64(delta), delta, rr, lib.Status(b), ctx)
-
-		return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
+			return events.NewEvent(uint64(tick)+uint64(delta), delta, e, rr.Bytes()), err
+		}
 	}
 
 	// ... MIDI event
