@@ -27,7 +27,7 @@ type event interface {
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
-	return events.NewEvent(0, 0, &e, bytes)
+	return events.NewEvent(&e)
 }
 
 var tempo = makeEvent(

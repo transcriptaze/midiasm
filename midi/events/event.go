@@ -17,7 +17,7 @@ type Event struct {
 	Event any
 }
 
-func NewEvent(tick uint64, delta uint32, evt any, bytes []byte) *Event {
+func NewEvent(evt any) *Event {
 	return &Event{
 		Event: evt,
 	}

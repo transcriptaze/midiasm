@@ -213,7 +213,7 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 		if err := e.UnmarshalText([]byte(line)); err != nil {
 			return err
 		} else {
-			mtrk.Events = append(mtrk.Events, events.NewEvent(0, 0, e, nil))
+			mtrk.Events = append(mtrk.Events, events.NewEvent(e))
 		}
 
 		return nil
