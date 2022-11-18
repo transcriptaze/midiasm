@@ -46,6 +46,9 @@
       - [ ] Configurable kick/snare/etc
 
 
+### Export
+- [ ] Don't export context
+
 ### Disassembler
 
 - [ ] Document custom templates

@@ -269,29 +269,3 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 
 	return mtrk, fmt.Errorf("missing EndOfTrack")
 }
-
-func fixups(mtrk *midi.MTrk) (*midi.MTrk, error) {
-	for ix := range mtrk.Events[1:] {
-		previous := mtrk.Events[ix]
-		event := mtrk.Events[ix+1]
-
-		if message, ok := previous.Event.(*sysex.SysExMessage); ok {
-			if _, ok := event.Event.(*sysex.SysExContinuationMessage); !ok {
-				message.Single = true
-			}
-		}
-	}
-
-	for ix := range mtrk.Events[1:] {
-		previous := mtrk.Events[ix]
-		event := mtrk.Events[ix+1]
-
-		if message, ok := previous.Event.(*sysex.SysExContinuationMessage); ok {
-			if _, ok := event.Event.(*sysex.SysExContinuationMessage); !ok {
-				message.End = true
-			}
-		}
-	}
-
-	return mtrk, nil
-}

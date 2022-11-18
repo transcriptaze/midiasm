@@ -8,6 +8,8 @@ import (
 
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
 )
 
 type JSONAssembler struct {
@@ -22,6 +24,9 @@ type mthd struct {
 type mtrk struct {
 	Tag         *string `json:"tag,omitempty"`
 	TrackNumber *uint16 `json:"tracknumber,omitempty"`
+	Events      []struct {
+		Event json.RawMessage `json:"event"`
+	} `json:"events"`
 }
 
 func NewJSONAssembler() JSONAssembler {
@@ -96,6 +101,7 @@ func (a JSONAssembler) parseMThd(h mthd) (*midi.MThd, error) {
 func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 	var mtrk *midi.MTrk
 
+	// ... MTrk header
 	if track.Tag == nil || *track.Tag != "MTrk" {
 		return nil, fmt.Errorf("missing or invalid 'MTrk' tag in track")
 	} else if v, err := midi.NewMTrk(); err != nil {
@@ -106,5 +112,42 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		mtrk = v
 	}
 
-	return mtrk, nil
+	// ... events
+	type E json.Unmarshaler
+
+	f := func(bytes []byte, e E) error {
+		if err := e.UnmarshalJSON(bytes); err != nil {
+			return err
+		} else {
+			mtrk.Events = append(mtrk.Events, events.NewEvent(e))
+		}
+
+		return nil
+	}
+
+	g := map[string]func() E{
+		"EndOfTrack": func() E { return &metaevent.EndOfTrack{} },
+	}
+
+	for _, e := range track.Events {
+		t := struct {
+			Tag string `json:"tag"`
+		}{}
+
+		if err := json.Unmarshal(e.Event, &t); err != nil {
+			return nil, err
+		}
+
+		if v, ok := g[t.Tag]; ok {
+			event := v()
+			if err := f(e.Event, event); err != nil {
+				return nil, err
+			} else if _, ok := event.(*metaevent.EndOfTrack); ok {
+				return fixups(mtrk)
+			}
+		}
+	}
+
+	return mtrk, fmt.Errorf("missing EndOfTrack")
+
 }
