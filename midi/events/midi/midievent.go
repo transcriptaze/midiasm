@@ -53,7 +53,13 @@ type Note struct {
 
 var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Status) (any, error){
 	0x80: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalNoteOff(ctx, tick, delta, r, status)
+		if note, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else if velocity, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			return UnmarshalNoteOff(ctx, tick, delta, status, []byte{note, velocity}, r.Bytes()...)
+		}
 	},
 
 	0x90: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {

@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -40,32 +39,30 @@ func MakeNoteOff(tick uint64, delta uint32, channel lib.Channel, note Note, velo
 	}
 }
 
-func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOff, error) {
+func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOff, error) {
 	if status&0xf0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
 
-	var channel = lib.Channel(status & 0x0f)
-	var note Note
-	var velocity uint8
-
-	if n, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else {
-		note.Value = n
-		note.Name = GetNoteOff(ctx, channel, n)
-		note.Alias = FormatNote(ctx, n)
+	if len(data) < 2 {
+		return nil, fmt.Errorf("Invalid NoteOff data (%v): expected note and velocity", data)
 	}
 
-	if v, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else if v > 127 {
-		return nil, fmt.Errorf("invalid NoteOn velocity (%v)", v)
+	var channel = lib.Channel(status & 0x0f)
+	var note = Note{
+		Value: data[0],
+		Name:  GetNoteOff(ctx, channel, data[0]),
+		Alias: FormatNote(ctx, data[0]),
+	}
+	var velocity uint8
+
+	if v := data[1]; v > 127 {
+		return nil, fmt.Errorf("Invalid NoteOn velocity (%v)", v)
 	} else {
 		velocity = v
 	}
 
-	event := MakeNoteOff(tick, delta, channel, note, velocity, r.Bytes()...)
+	event := MakeNoteOff(tick, delta, channel, note, velocity, bytes...)
 
 	return &event, nil
 }
