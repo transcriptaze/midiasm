@@ -63,7 +63,13 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0x90: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalNoteOn(ctx, tick, delta, r, status)
+		if note, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else if velocity, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			return UnmarshalNoteOn(ctx, tick, delta, status, []byte{note, velocity}, r.Bytes()...)
+		}
 	},
 
 	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {

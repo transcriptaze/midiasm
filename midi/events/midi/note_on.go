@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -40,80 +39,37 @@ func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, veloc
 	}
 }
 
-func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOn, error) {
+func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOn, error) {
 	if status&0xf0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
 
-	var channel = lib.Channel(status & 0x0f)
-	var note Note
-	var velocity uint8
-
-	if n, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else {
-		note.Value = n
-		note.Name = FormatNote(ctx, n)
-		note.Alias = FormatNote(ctx, n)
-
-		if ctx != nil {
-			ctx.PutNoteOn(channel, n)
-		}
+	if len(data) < 2 {
+		return nil, fmt.Errorf("Invalid NoteOff data (%v): expected note and velocity", data)
 	}
 
-	if v, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else if v > 127 {
-		return nil, fmt.Errorf("invalid NoteOn velocity (%v)", v)
+	var channel = lib.Channel(status & 0x0f)
+	var note = Note{
+		Value: data[0],
+		Name:  FormatNote(ctx, data[0]),
+		Alias: FormatNote(ctx, data[0]),
+	}
+	var velocity uint8
+
+	if v := data[1]; v > 127 {
+		return nil, fmt.Errorf("Invalid NoteOn velocity (%v)", v)
 	} else {
 		velocity = v
 	}
 
-	event := MakeNoteOn(tick, delta, channel, note, velocity, r.Bytes()...)
+	if ctx != nil {
+		ctx.PutNoteOn(channel, note.Value)
+	}
+
+	event := MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
 
 	return &event, nil
 }
-
-// func NewNoteOn(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*NoteOn, error) {
-// 	if status&0xf0 != 0x90 {
-// 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
-// 	}
-
-// 	channel := lib.Channel(status & 0x0f)
-
-// 	note, err := r.ReadByte()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	velocity, err := r.ReadByte()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	formatted := FormatNote(ctx, note)
-// 	if ctx != nil {
-// 		ctx.PutNoteOn(channel, note)
-// 	}
-
-// 	return &NoteOn{
-// 		event: event{
-// 			tick:  tick,
-// 			delta: lib.Delta(delta),
-// 			bytes: r.Bytes(),
-
-// 			tag:     lib.TagNoteOn,
-// 			Status:  status,
-// 			Channel: channel,
-// 		},
-// 		Note: Note{
-// 			Value: note,
-// 			Name:  formatted,
-// 			Alias: formatted,
-// 		},
-// 		Velocity: velocity,
-// 	}, nil
-// }
 
 func (n *NoteOn) Transpose(ctx *context.Context, steps int) {
 	v := int(n.Note.Value) + steps
