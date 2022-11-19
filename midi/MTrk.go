@@ -17,14 +17,12 @@ import (
 )
 
 type MTrk struct {
-	Tag         string
-	TrackNumber lib.TrackNumber
-	Length      uint32
-	Bytes       lib.Hex `json:"-"`
-
-	Events []*events.Event
-
-	Context *context.Context
+	Tag         string           `json:"tag"`
+	TrackNumber lib.TrackNumber  `json:"track-number"`
+	Length      uint32           `json:"-"`
+	Bytes       lib.Hex          `json:"-"`
+	Events      []*events.Event  `json:"events"`
+	Context     *context.Context `json:"-"`
 }
 
 func NewMTrk() (*MTrk, error) {

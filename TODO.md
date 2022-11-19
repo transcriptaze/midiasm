@@ -47,7 +47,7 @@
 
 
 ### Export
-- [ ] Don't export context
+- [x] Don't export context
 
 ### Disassembler
 

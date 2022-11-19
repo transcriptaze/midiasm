@@ -8,7 +8,7 @@
   "tracks": [
     {
       "tag": "MTrk",
-      "tracknumber": 0,
+      "track-number": 0,
       "events": [
         {
           "event": {

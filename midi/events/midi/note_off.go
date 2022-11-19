@@ -57,7 +57,7 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status li
 	var velocity uint8
 
 	if v := data[1]; v > 127 {
-		return nil, fmt.Errorf("Invalid NoteOn velocity (%v)", v)
+		return nil, fmt.Errorf("Invalid NoteOff velocity (%v)", v)
 	} else {
 		velocity = v
 	}
