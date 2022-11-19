@@ -77,3 +77,51 @@ func TestEndOfTrackUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestEndOfTrackMarshalJSON(t *testing.T) {
+	evt := EndOfTrack{
+		event: event{
+			tick:   2400,
+			delta:  0,
+			tag:    types.TagEndOfTrack,
+			Status: 0xff,
+			Type:   0x2f,
+			bytes:  []byte{},
+		},
+	}
+
+	expected := `{"tag":"EndOfTrack","delta":0,"status":255,"type":47}`
+
+	encoded, err := evt.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding EndOfTrack (%v)", err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded EndOfTrack\n   expected:%v\n   got:     %v", expected, string(encoded))
+	}
+}
+
+func TestEndOfTrackUnmarshalJSON(t *testing.T) {
+	text := `{"tag":"EndOfTrack","delta":480,"status":255,"type":47}`
+	expected := EndOfTrack{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    types.TagEndOfTrack,
+			Status: 0xff,
+			Type:   0x2f,
+			bytes:  []byte{},
+		},
+	}
+
+	evt := EndOfTrack{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling EndOfTrack (%v)", err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled EndOfTrack\n   expected:%+v\n   got:     %+v", expected, evt)
+	}
+}

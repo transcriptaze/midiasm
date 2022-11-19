@@ -2,6 +2,8 @@ package metaevent
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -80,6 +82,50 @@ func (t *TrackName) UnmarshalText(bytes []byte) error {
 			t.delta = uint32(delta)
 			t.Name = strings.TrimSpace(match[2])
 		}
+	}
+
+	return nil
+}
+
+func (e TrackName) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string `json:"tag"`
+		Delta  uint32 `json:"delta"`
+		Status byte   `json:"status"`
+		Type   byte   `json:"type"`
+		Name   string `json:"name"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Name:   e.Name,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *TrackName) UnmarshalJSON(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagTrackName
+	e.Type = 0x03
+
+	t := struct {
+		Tag   string `json:"tag"`
+		Delta uint32 `json:"delta"`
+		Name  string `json:"name"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if t.Tag != "TrackName" {
+		return fmt.Errorf("invalid EndOfTrack event (%v)", string(bytes))
+	} else {
+		e.delta = t.Delta
+		e.Name = t.Name
 	}
 
 	return nil

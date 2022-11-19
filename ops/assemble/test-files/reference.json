@@ -1,17 +1,26 @@
 {
   "header": {
-    "Tag": "MThd",
-    "Format": 1,
-    "Tracks": 0,
+    "tag": "MThd",
+    "format": 1,
+    "tracks": 0,
     "PPQN": 480
   },
   "tracks": [
     {
-      "Tag": "MTrk",
-      "TrackNumber": 0,
-      "Events": [
+      "tag": "MTrk",
+      "tracknumber": 0,
+      "events": [
         {
-          "Event": {
+          "event": {
+            "tag": "TrackName",
+            "delta": 0,
+            "status": 255,
+            "type": 3,
+            "name": "Reference-1"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

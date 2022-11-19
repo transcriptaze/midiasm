@@ -33,7 +33,7 @@
 
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
       - (!) or - only keep actual MIDI stuff and generate interpretation on the fly for e.g. disassemble
-
+- https://github.com/dolmen-go/goproc
 
 ### Click Track
 
