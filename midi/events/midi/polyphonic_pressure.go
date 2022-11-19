@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -36,23 +35,19 @@ func MakePolyphonicPressure(tick uint64, delta uint32, channel lib.Channel, pres
 	}
 }
 
-func UnmarshalPolyphonicPressure(tick uint64, delta uint32, r IO.Reader, status lib.Status) (*PolyphonicPressure, error) {
+func UnmarshalPolyphonicPressure(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*PolyphonicPressure, error) {
 	if status&0xf0 != 0xa0 {
 		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%v): expected 'Ax'", status)
 	}
 
-	var channel = lib.Channel(status & 0x0f)
-	var pressure uint8
-
-	if v, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else if v > 127 {
-		return nil, fmt.Errorf("invalid PolyphonicPressure pressure (%v)", v)
-	} else {
-		pressure = v
+	if len(data) < 1 {
+		return nil, fmt.Errorf("Invalid PolyphonicPressure data (%v): expected pressure", data)
 	}
 
-	event := MakePolyphonicPressure(tick, delta, channel, pressure, r.Bytes()...)
+	var channel = lib.Channel(status & 0x0f)
+	var pressure = data[0]
+
+	event := MakePolyphonicPressure(tick, delta, channel, pressure, bytes...)
 
 	return &event, nil
 }

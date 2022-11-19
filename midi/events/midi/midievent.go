@@ -73,7 +73,11 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0xA0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalPolyphonicPressure(tick, delta, r, status)
+		if pressure, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			return UnmarshalPolyphonicPressure(tick, delta, status, []byte{pressure}, r.Bytes()...)
+		}
 	},
 
 	0xB0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
