@@ -1,12 +1,13 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Tempo struct {
@@ -20,9 +21,9 @@ func MakeTempo(tick uint64, delta uint32, tempo uint32, bytes ...byte) Tempo {
 			tick:   tick,
 			delta:  delta,
 			bytes:  bytes,
-			tag:    types.TagTempo,
+			tag:    lib.TagTempo,
 			Status: 0xff,
-			Type:   types.TypeTempo,
+			Type:   lib.TypeTempo,
 		},
 		Tempo: tempo,
 	}
@@ -63,13 +64,13 @@ func (t Tempo) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (t *Tempo) UnmarshalText(bytes []byte) error {
-	t.tick = 0
-	t.delta = 0
-	t.bytes = []byte{}
-	t.tag = types.TagTempo
-	t.Status = 0xff
-	t.Type = 0x51
+func (e *Tempo) UnmarshalText(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.tag = lib.TagTempo
+	e.Status = 0xff
+	e.Type = 0x51
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Tempo\s+tempo:([0-9]+)`)
 	text := string(bytes)
@@ -81,8 +82,52 @@ func (t *Tempo) UnmarshalText(bytes []byte) error {
 	} else if v, err := strconv.ParseUint(match[2], 10, 32); err != nil {
 		return err
 	} else {
-		t.delta = uint32(delta)
-		t.Tempo = uint32(v)
+		e.delta = uint32(delta)
+		e.Tempo = uint32(v)
+	}
+
+	return nil
+}
+
+func (e Tempo) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string `json:"tag"`
+		Delta  uint32 `json:"delta"`
+		Status byte   `json:"status"`
+		Type   byte   `json:"type"`
+		Tempo  uint32 `json:"tempo"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Tempo:  e.Tempo,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *Tempo) UnmarshalJSON(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagTempo
+	e.Type = lib.TypeTempo
+
+	t := struct {
+		Tag   string `json:"tag"`
+		Delta uint32 `json:"delta"`
+		Tempo uint32 `json:"tempo"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if t.Tag != "Tempo" {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.delta = t.Delta
+		e.Tempo = t.Tempo
 	}
 
 	return nil

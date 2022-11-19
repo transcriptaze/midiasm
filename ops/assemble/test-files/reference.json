@@ -21,6 +21,14 @@
         },
         {
           "event": {
+            "tag": "Tempo",
+            "status": 255,
+            "type": 81,
+            "tempo": 500000
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

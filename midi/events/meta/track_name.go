@@ -64,23 +64,25 @@ func (t TrackName) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (t *TrackName) UnmarshalText(bytes []byte) error {
-	t.tick = 0
-	t.delta = 0
-	t.bytes = []byte{}
-	t.tag = lib.TagTrackName
-	t.Status = 0xff
-	t.Type = 0x03
+func (e *TrackName) UnmarshalText(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.tag = lib.TagTrackName
+	e.Status = 0xff
+	e.Type = lib.TypeTrackName
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TrackName\s+(.*)`)
 	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match != nil && len(match) > 2 {
+	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, text)
+	} else {
 		if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 			return err
 		} else {
-			t.delta = uint32(delta)
-			t.Name = strings.TrimSpace(match[2])
+			e.delta = uint32(delta)
+			e.Name = strings.TrimSpace(match[2])
 		}
 	}
 
@@ -111,7 +113,7 @@ func (e *TrackName) UnmarshalJSON(bytes []byte) error {
 	e.bytes = []byte{}
 	e.Status = 0xff
 	e.tag = lib.TagTrackName
-	e.Type = 0x03
+	e.Type = lib.TypeTrackName
 
 	t := struct {
 		Tag   string `json:"tag"`
@@ -122,7 +124,7 @@ func (e *TrackName) UnmarshalJSON(bytes []byte) error {
 	if err := json.Unmarshal(bytes, &t); err != nil {
 		return err
 	} else if t.Tag != "TrackName" {
-		return fmt.Errorf("invalid EndOfTrack event (%v)", string(bytes))
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
 		e.delta = t.Delta
 		e.Name = t.Name
