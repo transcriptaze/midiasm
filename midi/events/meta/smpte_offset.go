@@ -1,11 +1,12 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type SMPTEOffset struct {
@@ -59,9 +60,9 @@ func MakeSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate,
 			tick:   tick,
 			delta:  delta,
 			bytes:  []byte{0x00, 0xff, 0x54, 0x05, rr | hour&0x1f, minute, second, frames, fractionalFrames},
-			tag:    types.TagSMPTEOffset,
+			tag:    lib.TagSMPTEOffset,
 			Status: 0xff,
-			Type:   types.TypeSMPTEOffset,
+			Type:   lib.TypeSMPTEOffset,
 		},
 		Hour:             hour,
 		Minute:           minute,
@@ -153,13 +154,13 @@ func (s SMPTEOffset) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (s *SMPTEOffset) UnmarshalText(bytes []byte) error {
-	s.tick = 0
-	s.delta = 0
-	s.bytes = []byte{}
-	s.tag = types.TagSMPTEOffset
-	s.Status = 0xff
-	s.Type = types.TypeSMPTEOffset
+func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.tag = lib.TagSMPTEOffset
+	e.Status = 0xff
+	e.Type = lib.TypeSMPTEOffset
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SMPTEOffset\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)`)
 	text := string(bytes)
@@ -185,13 +186,77 @@ func (s *SMPTEOffset) UnmarshalText(bytes []byte) error {
 	} else if fractions > 100 {
 		return fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	} else {
-		s.delta = uint32(delta)
-		s.Hour = uint8(hour)
-		s.Minute = uint8(minute)
-		s.Second = uint8(second)
-		s.FrameRate = uint8(frameRate)
-		s.Frames = uint8(frames)
-		s.FractionalFrames = uint8(fractions)
+		e.delta = uint32(delta)
+		e.Hour = uint8(hour)
+		e.Minute = uint8(minute)
+		e.Second = uint8(second)
+		e.FrameRate = uint8(frameRate)
+		e.Frames = uint8(frames)
+		e.FractionalFrames = uint8(fractions)
+	}
+
+	return nil
+}
+
+func (e SMPTEOffset) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag              string `json:"tag"`
+		Delta            uint32 `json:"delta"`
+		Status           byte   `json:"status"`
+		Type             byte   `json:"type"`
+		Hour             uint8  `json:"hour"`
+		Minute           uint8  `json:"minute"`
+		Second           uint8  `json:"second"`
+		FrameRate        uint8  `json:"frame-rate"`
+		Frames           uint8  `json:"frames"`
+		FractionalFrames uint8  `json:"fractional-frames"`
+	}{
+		Tag:              fmt.Sprintf("%v", e.tag),
+		Delta:            e.delta,
+		Status:           byte(e.Status),
+		Type:             byte(e.Type),
+		Hour:             e.Hour,
+		Minute:           e.Minute,
+		Second:           e.Second,
+		FrameRate:        e.FrameRate,
+		Frames:           e.Frames,
+		FractionalFrames: e.FractionalFrames,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SMPTEOffset) UnmarshalJSON(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagSMPTEOffset
+	e.Type = lib.TypeSMPTEOffset
+
+	t := struct {
+		Tag              string `json:"tag"`
+		Delta            uint32 `json:"delta"`
+		Hour             uint8  `json:"hour"`
+		Minute           uint8  `json:"minute"`
+		Second           uint8  `json:"second"`
+		FrameRate        uint8  `json:"frame-rate"`
+		Frames           uint8  `json:"frames"`
+		FractionalFrames uint8  `json:"fractional-frames"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if t.Tag != fmt.Sprintf("%v", lib.TagSMPTEOffset) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.delta = t.Delta
+		e.Hour = t.Hour
+		e.Minute = t.Minute
+		e.Second = t.Second
+		e.FrameRate = t.FrameRate
+		e.Frames = t.Frames
+		e.FractionalFrames = t.FractionalFrames
 	}
 
 	return nil

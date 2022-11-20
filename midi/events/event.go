@@ -21,13 +21,23 @@ type IEvent interface {
 	Bytes() []byte
 }
 
+// type Event[E TEvent] struct {
+// 	Event E
+// }
+
+// func NewEvent[E TEvent](e E) *Event[E] {
+// 	return &Event[E]{
+// 		Event: e,
+// 	}
+// }
+
 type Event struct {
 	Event any
 }
 
-func NewEvent(evt any) *Event {
+func NewEvent(e any) *Event {
 	return &Event{
-		Event: evt,
+		Event: e,
 	}
 }
 

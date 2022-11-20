@@ -40,6 +40,19 @@
         },
         {
           "event": {
+            "tag": "SMPTEOffset",
+            "status": 255,
+            "type": 84,
+            "hour": 13,
+            "minute": 45,
+            "second": 59,
+            "frame-rate": 25,
+            "frames": 7,
+            "fractional-frames": 39
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

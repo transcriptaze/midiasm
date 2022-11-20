@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalSMPTEOffset(t *testing.T) {
@@ -12,7 +12,7 @@ func TestUnmarshalSMPTEOffset(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSMPTEOffset,
+			tag:    lib.TagSMPTEOffset,
 			Status: 0xff,
 			Type:   0x54,
 			bytes:  []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
@@ -40,7 +40,7 @@ func TestSMPTEOffsetMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSMPTEOffset,
+			tag:    lib.TagSMPTEOffset,
 			Status: 0xff,
 			Type:   0x54,
 			bytes:  []byte{},
@@ -71,7 +71,7 @@ func TestSMPTEOffsetUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagSMPTEOffset,
+			tag:    lib.TagSMPTEOffset,
 			Status: 0xff,
 			Type:   0x54,
 			bytes:  []byte{},
@@ -94,4 +94,36 @@ func TestSMPTEOffsetUnmarshalText(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled SMPTEOffset\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestSMPTEOffetMarshalJSON(t *testing.T) {
+	tag := lib.TagSMPTEOffset
+
+	evt := SMPTEOffset{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagSMPTEOffset,
+			Status: 0xff,
+			Type:   lib.TypeSMPTEOffset,
+			bytes:  []byte{},
+		},
+		Hour:             13,
+		Minute:           45,
+		Second:           59,
+		FrameRate:        25,
+		Frames:           7,
+		FractionalFrames: 39,
+	}
+
+	expected := `{"tag":"SMPTEOffset","delta":480,"status":255,"type":84,"hour":13,"minute":45,"second":59,"frame-rate":25,"frames":7,"fractional-frames":39}`
+
+	encoded, err := evt.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding %v (%v)", tag, err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", tag, expected, string(encoded))
+	}
 }
