@@ -109,7 +109,11 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0xC0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalProgramChange(ctx, tick, delta, r, status)
+		if program, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			return UnmarshalProgramChange(ctx, tick, delta, status, []byte{program}, r.Bytes()...)
+		}
 	},
 
 	0xD0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {

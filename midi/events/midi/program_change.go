@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -35,26 +34,24 @@ func MakeProgramChange(tick uint64, delta uint32, channel lib.Channel, bank uint
 	}
 }
 
-func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (*ProgramChange, error) {
+func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ProgramChange, error) {
 	if status&0xf0 != 0xc0 {
-		return nil, fmt.Errorf("Invalid ProgramChange status (%v): expected 'Cx'", status)
+		return nil, fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
+	}
+
+	if len(data) < 1 {
+		return nil, fmt.Errorf("Invalid %v data (%v): expected note and velocity", lib.TagProgramChange, data)
 	}
 
 	var channel = lib.Channel(status & 0x0f)
 	var bank uint16
-	var program uint8
+	var program = data[0]
 
 	if ctx != nil {
 		bank = ctx.ProgramBank[uint8(channel)]
 	}
 
-	if v, err := r.ReadByte(); err != nil {
-		return nil, err
-	} else {
-		program = v
-	}
-
-	event := MakeProgramChange(tick, delta, channel, bank, program, r.Bytes()...)
+	event := MakeProgramChange(tick, delta, channel, bank, program, bytes...)
 
 	return &event, nil
 }
