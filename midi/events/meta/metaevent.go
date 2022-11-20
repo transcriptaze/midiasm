@@ -7,6 +7,27 @@ import (
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
+type TMetaEvent interface {
+	SequenceNumber |
+		Text |
+		Copyright |
+		TrackName |
+		InstrumentName |
+		Lyric |
+		Marker |
+		CuePoint |
+		ProgramName |
+		DeviceName |
+		MIDIChannelPrefix |
+		MIDIPort |
+		EndOfTrack |
+		Tempo |
+		SMPTEOffset |
+		KeySignature |
+		TimeSignature |
+		SequencerSpecificEvent
+}
+
 type event struct {
 	tick   uint64
 	delta  uint32

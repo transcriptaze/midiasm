@@ -8,6 +8,10 @@ import (
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
+type TSysExEvent interface {
+	SysExMessage | SysExContinuationMessage | SysExEscapeMessage
+}
+
 type event struct {
 	tick  uint64
 	delta lib.Delta

@@ -3,9 +3,17 @@ package events
 import (
 	"fmt"
 	"io"
+	"strings"
 
+	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
+
+type TEvent interface {
+	metaevent.TMetaEvent | midievent.TMidiEvent | sysex.TSysExEvent
+}
 
 type IEvent interface {
 	Tick() uint64
@@ -45,6 +53,29 @@ func (e Event) Bytes() types.Hex {
 	}
 
 	panic(fmt.Sprintf("Invalid event (%v) - missing 'bytes'", e))
+}
+
+func IsEndOfTrack(e *Event) bool {
+	_, ok := e.Event.(*metaevent.EndOfTrack)
+
+	return ok
+}
+
+func Clean(e any) string {
+	t := ""
+
+	if evt, ok := e.(*Event); ok {
+		t = fmt.Sprintf("%T", evt.Event)
+	} else {
+		t = fmt.Sprintf("%T", e)
+	}
+
+	t = strings.TrimPrefix(t, "*")
+	t = strings.TrimPrefix(t, "metaevent.")
+	t = strings.TrimPrefix(t, "midievent.")
+	t = strings.TrimPrefix(t, "sysex.")
+
+	return t
 }
 
 func VLF(r io.ByteReader) ([]byte, error) {

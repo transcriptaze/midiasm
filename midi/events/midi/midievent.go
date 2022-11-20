@@ -8,6 +8,10 @@ import (
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
+type TMidiEvent interface {
+	NoteOff | NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
+}
+
 type event struct {
 	tick  uint64
 	delta lib.Delta
