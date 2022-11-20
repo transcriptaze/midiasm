@@ -29,6 +29,17 @@
         },
         {
           "event": {
+            "tag": "TimeSignature",
+            "status": 255,
+            "type": 88,
+            "numerator": 4,
+            "denominator": 4,
+            "ticks-per-click": 24,
+            "thirty-seconds-per-quarter": 8
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

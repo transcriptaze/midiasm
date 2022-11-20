@@ -126,9 +126,10 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 	}
 
 	g := map[string]func() E{
-		"TrackName":  func() E { return &metaevent.TrackName{} },
-		"Tempo":      func() E { return &metaevent.Tempo{} },
-		"EndOfTrack": func() E { return &metaevent.EndOfTrack{} },
+		"TrackName":     func() E { return &metaevent.TrackName{} },
+		"Tempo":         func() E { return &metaevent.Tempo{} },
+		"TimeSignature": func() E { return &metaevent.TimeSignature{} },
+		"EndOfTrack":    func() E { return &metaevent.EndOfTrack{} },
 	}
 
 	for _, e := range track.Events {

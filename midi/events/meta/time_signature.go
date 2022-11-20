@@ -1,11 +1,12 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type TimeSignature struct {
@@ -29,9 +30,9 @@ func MakeTimeSignature(tick uint64, delta uint32, numerator, denominator, ticksP
 			tick:   tick,
 			delta:  delta,
 			bytes:  []byte{0x00, 0xff, 0x58, 0x04, numerator, byte(d), ticksPerClick, thirtySecondsPerQuarter},
-			tag:    types.TagTimeSignature,
+			tag:    lib.TagTimeSignature,
 			Status: 0xff,
-			Type:   0x58,
+			Type:   lib.TypeTimeSignature,
 		},
 		Numerator:               numerator,
 		Denominator:             denominator,
@@ -84,13 +85,13 @@ func (t TimeSignature) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (t *TimeSignature) UnmarshalText(bytes []byte) error {
-	t.tick = 0
-	t.delta = 0
-	t.bytes = []byte{}
-	t.Status = 0xff
-	t.tag = types.TagTimeSignature
-	t.Type = 0x58
+func (e *TimeSignature) UnmarshalText(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagTimeSignature
+	e.Type = lib.TypeTimeSignature
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TimeSignature\s+([0-9]+)/([1-9][0-9]*),\s* ([0-9]+) ticks per click,\s*([1-9][0-8]*)/32 per quarter`)
 	text := string(bytes)
@@ -108,11 +109,67 @@ func (t *TimeSignature) UnmarshalText(bytes []byte) error {
 	} else if beats, err := strconv.ParseUint(match[5], 10, 8); err != nil {
 		return err
 	} else {
-		t.delta = uint32(delta)
-		t.Numerator = uint8(numerator)
-		t.Denominator = uint8(denominator)
-		t.TicksPerClick = uint8(ticks)
-		t.ThirtySecondsPerQuarter = uint8(beats)
+		e.delta = uint32(delta)
+		e.Numerator = uint8(numerator)
+		e.Denominator = uint8(denominator)
+		e.TicksPerClick = uint8(ticks)
+		e.ThirtySecondsPerQuarter = uint8(beats)
+	}
+
+	return nil
+}
+
+func (e TimeSignature) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag                     string `json:"tag"`
+		Delta                   uint32 `json:"delta"`
+		Status                  byte   `json:"status"`
+		Type                    byte   `json:"type"`
+		Numerator               uint8  `json:"numerator"`
+		Denominator             uint8  `json:"denominator"`
+		TicksPerClick           uint8  `json:"ticks-per-click"`
+		ThirtySecondsPerQuarter uint8  `json:"thirty-seconds-per-quarter"`
+	}{
+		Tag:                     fmt.Sprintf("%v", e.tag),
+		Delta:                   e.delta,
+		Status:                  byte(e.Status),
+		Type:                    byte(e.Type),
+		Numerator:               e.Numerator,
+		Denominator:             e.Denominator,
+		TicksPerClick:           e.TicksPerClick,
+		ThirtySecondsPerQuarter: e.ThirtySecondsPerQuarter,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *TimeSignature) UnmarshalJSON(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagTimeSignature
+	e.Type = lib.TypeTimeSignature
+
+	t := struct {
+		Tag                     string `json:"tag"`
+		Delta                   uint32 `json:"delta"`
+		Numerator               uint8  `json:"numerator"`
+		Denominator             uint8  `json:"denominator"`
+		TicksPerClick           uint8  `json:"ticks-per-click"`
+		ThirtySecondsPerQuarter uint8  `json:"thirty-seconds-per-quarter"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if t.Tag != fmt.Sprintf("%v", lib.TagTimeSignature) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.delta = t.Delta
+		e.Numerator = t.Numerator
+		e.Denominator = t.Denominator
+		e.TicksPerClick = t.TicksPerClick
+		e.ThirtySecondsPerQuarter = t.ThirtySecondsPerQuarter
 	}
 
 	return nil
