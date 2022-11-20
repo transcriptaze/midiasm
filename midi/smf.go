@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
@@ -92,17 +91,7 @@ func (smf *SMF) validateFormat1() []ValidationError {
 	if len(smf.Tracks) > 0 {
 		track := smf.Tracks[0]
 		for _, e := range track.Events {
-			event := e.Event
-			switch event.(type) {
-			case
-				*metaevent.Tempo,
-				*metaevent.TimeSignature,
-				*metaevent.TrackName,
-				*metaevent.SMPTEOffset,
-				*metaevent.EndOfTrack,
-				*metaevent.Copyright:
-				continue
-			default:
+			if !events.IsTrack0Event(e) {
 				errors = append(errors, ValidationError(fmt.Errorf("Track 0: unexpected event (%v)", events.Clean(e))))
 			}
 		}
@@ -110,12 +99,7 @@ func (smf *SMF) validateFormat1() []ValidationError {
 
 	for _, track := range smf.Tracks[1:] {
 		for _, e := range track.Events {
-			event := e.Event
-			switch event.(type) {
-			case *metaevent.Tempo:
-				errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, events.Clean(e))))
-
-			case *metaevent.SMPTEOffset:
+			if !events.IsTrack1Event(e) {
 				errors = append(errors, ValidationError(fmt.Errorf("Track %d: unexpected event (%s)", track.TrackNumber, events.Clean(e))))
 			}
 		}

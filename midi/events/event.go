@@ -13,6 +13,19 @@ import (
 
 type TEvent interface {
 	metaevent.TMetaEvent | midievent.TMidiEvent | sysex.TSysExEvent
+
+	Tick() uint64
+	Delta() uint32
+	Bytes() []byte
+}
+
+type TTrack0Event interface {
+	*metaevent.Tempo |
+		*metaevent.TimeSignature |
+		*metaevent.TrackName |
+		*metaevent.SMPTEOffset |
+		*metaevent.EndOfTrack |
+		*metaevent.Copyright
 }
 
 type IEvent interface {
@@ -21,24 +34,18 @@ type IEvent interface {
 	Bytes() []byte
 }
 
-// type Event[E TEvent] struct {
-// 	Event E
-// }
-
-// func NewEvent[E TEvent](e E) *Event[E] {
-// 	return &Event[E]{
-// 		Event: e,
-// 	}
-// }
-
 type Event struct {
-	Event any
+	Event IEvent
 }
 
 func NewEvent(e any) *Event {
-	return &Event{
-		Event: e,
+	if v, ok := e.(IEvent); ok {
+		return &Event{
+			Event: v,
+		}
 	}
+
+	panic(fmt.Sprintf("Invalid event (%v) - missing 'tick'", e))
 }
 
 func (e Event) Tick() uint64 {
@@ -71,6 +78,32 @@ func IsEndOfTrack(e *Event) bool {
 	return ok
 }
 
+func IsTrack0Event(e *Event) bool {
+	switch e.Event.(type) {
+	case
+		*metaevent.Tempo,
+		*metaevent.TimeSignature,
+		*metaevent.TrackName,
+		*metaevent.SMPTEOffset,
+		*metaevent.EndOfTrack,
+		*metaevent.Copyright:
+		return true
+	default:
+		return false
+	}
+}
+
+func IsTrack1Event(e *Event) bool {
+	switch e.Event.(type) {
+	case
+		*metaevent.Tempo,
+		*metaevent.SMPTEOffset:
+		return false
+	default:
+		return true
+	}
+}
+
 func Clean(e any) string {
 	t := ""
 
@@ -87,6 +120,28 @@ func Clean(e any) string {
 
 	return t
 }
+
+// type EventX[E TEvent] struct {
+// 	Event E
+// }
+//
+// func NewEventX[E TEvent](e E) *EventX[E] {
+// 	return &EventX[E]{
+// 		Event: e,
+// 	}
+// }
+//
+// func Tick[E TEvent](e E) uint64 {
+// 	return e.Tick()
+// }
+//
+// func Delta[E TEvent](e E) uint32 {
+// 	return e.Delta()
+// }
+//
+// func Bytes[E TEvent](e E) types.Hex {
+// 	return e.Bytes()
+// }
 
 func VLF(r io.ByteReader) ([]byte, error) {
 	N, err := VLQ(r)
