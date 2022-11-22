@@ -123,7 +123,7 @@ func (e *Tempo) UnmarshalJSON(bytes []byte) error {
 
 	if err := json.Unmarshal(bytes, &t); err != nil {
 		return err
-	} else if t.Tag != "Tempo" {
+	} else if !equal(t.Tag, lib.TagTempo) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
 		e.delta = t.Delta

@@ -2,11 +2,12 @@ package metaevent
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type SequenceNumber struct {
@@ -20,9 +21,9 @@ func MakeSequenceNumber(tick uint64, delta uint32, sequence uint16) SequenceNumb
 			tick:   tick,
 			delta:  delta,
 			bytes:  binary.BigEndian.AppendUint16([]byte{0x00, 0xff, 0x00, 0x02}, sequence),
-			tag:    types.TagSequenceNumber,
+			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
-			Type:   types.TypeSequenceNumber,
+			Type:   lib.TypeSequenceNumber,
 		},
 		SequenceNumber: sequence,
 	}
@@ -49,13 +50,13 @@ func (s SequenceNumber) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (s *SequenceNumber) UnmarshalText(bytes []byte) error {
-	s.tick = 0
-	s.delta = 0
-	s.bytes = []byte{}
-	s.tag = types.TagSequenceNumber
-	s.Status = 0xff
-	s.Type = types.TypeSequenceNumber
+func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.tag = lib.TagSequenceNumber
+	e.Status = 0xff
+	e.Type = lib.TypeSequenceNumber
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SequenceNumber\s+([0-9]+)`)
 	text := string(bytes)
@@ -67,8 +68,52 @@ func (s *SequenceNumber) UnmarshalText(bytes []byte) error {
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
 		return err
 	} else {
-		s.delta = uint32(delta)
-		s.SequenceNumber = uint16(sequence)
+		e.delta = uint32(delta)
+		e.SequenceNumber = uint16(sequence)
+	}
+
+	return nil
+}
+
+func (e SequenceNumber) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag            string `json:"tag"`
+		Delta          uint32 `json:"delta"`
+		Status         byte   `json:"status"`
+		Type           byte   `json:"type"`
+		SequenceNumber uint16 `json:"sequence-number"`
+	}{
+		Tag:            fmt.Sprintf("%v", e.tag),
+		Delta:          e.delta,
+		Status:         byte(e.Status),
+		Type:           byte(e.Type),
+		SequenceNumber: e.SequenceNumber,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
+	e.tick = 0
+	e.delta = 0
+	e.bytes = []byte{}
+	e.Status = 0xff
+	e.tag = lib.TagSequenceNumber
+	e.Type = lib.TypeSequenceNumber
+
+	t := struct {
+		Tag            string `json:"tag"`
+		Delta          uint32 `json:"delta"`
+		SequenceNumber uint16 `json:"sequence-number"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagSequenceNumber) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.delta = t.Delta
+		e.SequenceNumber = t.SequenceNumber
 	}
 
 	return nil

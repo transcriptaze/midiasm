@@ -158,3 +158,7 @@ func concat(list ...[]byte) []byte {
 
 	return bytes
 }
+
+func equal(s string, tag lib.Tag) bool {
+	return s == fmt.Sprintf("%v", tag)
+}

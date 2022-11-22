@@ -60,6 +60,30 @@
           }
         }
       ]
+    },
+
+    {
+      "tag": "MTrk",
+      "track-number": 0,
+      "events": [
+        {
+          "event": {
+            "tag": "SequenceNumber",
+            "delta": 0,
+            "status": 255,
+            "type": 0,
+            "sequence-number": 23
+          }
+        },
+        {
+          "event": {
+            "tag": "EndOfTrack",
+            "delta": 0,
+            "status": 255,
+            "type": 47
+          }
+        }
+      ]
     }
   ]
 }

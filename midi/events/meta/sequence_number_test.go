@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalSequenceNumber(t *testing.T) {
@@ -12,9 +12,9 @@ func TestUnmarshalSequenceNumber(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSequenceNumber,
+			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
-			Type:   0x00,
+			Type:   lib.TypeSequenceNumber,
 			bytes:  []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17},
 		},
 		SequenceNumber: 23,
@@ -35,9 +35,9 @@ func TestSequenceNumberMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSequenceNumber,
+			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
-			Type:   0x00,
+			Type:   lib.TypeSequenceNumber,
 			bytes:  []byte{},
 		},
 		SequenceNumber: 23,
@@ -61,9 +61,9 @@ func TestSequenceNumberUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagSequenceNumber,
+			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
-			Type:   0x00,
+			Type:   lib.TypeSequenceNumber,
 			bytes:  []byte{},
 		},
 		SequenceNumber: 23,
@@ -79,4 +79,58 @@ func TestSequenceNumberUnmarshalText(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled SequenceNumber\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestSequenceNumberMarshalJSON(t *testing.T) {
+	tag := lib.TagSequenceNumber
+
+	evt := SequenceNumber{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagSequenceNumber,
+			Status: 0xff,
+			Type:   lib.TypeSequenceNumber,
+			bytes:  []byte{},
+		},
+		SequenceNumber: 23,
+	}
+
+	expected := `{"tag":"SequenceNumber","delta":480,"status":255,"type":0,"sequence-number":23}`
+
+	encoded, err := evt.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding %v (%v)", tag, err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", tag, expected, string(encoded))
+	}
+}
+
+func TestSequenceNumberUnmarshalJSON(t *testing.T) {
+	text := `{"tag":"SequenceNumber","delta":480,"status":255,"type":0,"sequence-number":23}`
+	tag := lib.TagSequenceNumber
+
+	expected := SequenceNumber{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagSequenceNumber,
+			Status: 0xff,
+			Type:   lib.TypeSequenceNumber,
+			bytes:  []byte{},
+		},
+		SequenceNumber: 23,
+	}
+
+	evt := SequenceNumber{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }
