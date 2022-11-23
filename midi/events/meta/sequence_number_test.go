@@ -88,7 +88,7 @@ func TestSequenceNumberMarshalJSON(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    lib.TagSequenceNumber,
+			tag:    tag,
 			Status: 0xff,
 			Type:   lib.TypeSequenceNumber,
 			bytes:  []byte{},

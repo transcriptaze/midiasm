@@ -14,7 +14,11 @@
       - (?) EBNF
       - (?) Grammar stack
       - (?) Treesitter
+      - (?) https://github.com/codemechanic/midi-sysex-grammar
+      - (?) https://www.synalysis.net/grammars/
+      
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
+- (?) https://openziti.io/golang-aha-moments-generics
 
 
 ### Assembler
@@ -113,3 +117,4 @@
 23. [PotLuck](https://www.inkandswitch.com/potluck)
     - [LAPIS](http://groups.csail.mit.edu/graphics/lapis/doc/papers.html)
 24. https://futureofcoding.org/catalog/
+25. https://github.com/codemechanic/midi-sysex-grammar

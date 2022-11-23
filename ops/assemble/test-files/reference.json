@@ -77,6 +77,14 @@
         },
         {
           "event": {
+            "tag": "Text",
+            "status": 255,
+            "type": 1,
+            "text": "This and That"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

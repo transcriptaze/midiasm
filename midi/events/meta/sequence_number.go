@@ -51,13 +51,6 @@ func (s SequenceNumber) MarshalBinary() (encoded []byte, err error) {
 }
 
 func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.tag = lib.TagSequenceNumber
-	e.Status = 0xff
-	e.Type = lib.TypeSequenceNumber
-
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SequenceNumber\s+([0-9]+)`)
 	text := string(bytes)
 
@@ -68,7 +61,12 @@ func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
 		return err
 	} else {
+		e.tick = 0
 		e.delta = uint32(delta)
+		e.bytes = []byte{}
+		e.tag = lib.TagSequenceNumber
+		e.Status = 0xff
+		e.Type = lib.TypeSequenceNumber
 		e.SequenceNumber = uint16(sequence)
 	}
 
@@ -94,13 +92,6 @@ func (e SequenceNumber) MarshalJSON() (encoded []byte, err error) {
 }
 
 func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagSequenceNumber
-	e.Type = lib.TypeSequenceNumber
-
 	t := struct {
 		Tag            string `json:"tag"`
 		Delta          uint32 `json:"delta"`
@@ -112,7 +103,12 @@ func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagSequenceNumber) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
+		e.tick = 0
 		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagSequenceNumber
+		e.Type = lib.TypeSequenceNumber
 		e.SequenceNumber = t.SequenceNumber
 	}
 
