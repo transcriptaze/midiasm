@@ -207,7 +207,7 @@ type event interface {
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
-	return events.NewEvent(&e)
+	return events.NewEvent(&e, bytes...)
 }
 
 var sequenceNumber = makeEvent(

@@ -64,20 +64,26 @@ type Note struct {
 	Alias string
 }
 
-var factory = map[byte]func(*context.Context, uint64, uint32, lib.Status, []byte, ...byte) (any, error){
-	0x80: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
-		return UnmarshalNoteOff(ctx, tick, delta, status, data, bytes...)
-	},
+func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	return parse(ctx, tick, delta, status, data, bytes...)
+}
 
-	0x90: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	switch status & 0xf0 {
+	case 0x80:
+		e, err := UnmarshalNoteOff(ctx, tick, delta, status, data)
+		if e != nil && err == nil {
+			e.bytes = bytes
+		}
+		return e, err
+
+	case 0x90:
 		return UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...)
-	},
 
-	0xA0: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	case 0xA0:
 		return UnmarshalPolyphonicPressure(tick, delta, status, data, bytes...)
-	},
 
-	0xB0: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	case 0xB0:
 		if evt, err := UnmarshalController(tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
@@ -95,32 +101,19 @@ var factory = map[byte]func(*context.Context, uint64, uint32, lib.Status, []byte
 
 			return evt, err
 		}
-	},
 
-	0xC0: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	case 0xC0:
 		return UnmarshalProgramChange(ctx, tick, delta, status, data, bytes...)
-	},
 
-	0xD0: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	case 0xD0:
 		return UnmarshalChannelPressure(tick, delta, status, data, bytes...)
-	},
 
-	0xE0: func(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	case 0xE0:
 		return UnmarshalPitchBend(tick, delta, status, data, bytes...)
-	},
-}
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (interface{}, error) {
-	eventType := byte(status & 0xf0)
-	// data := make([]byte, EVENTS[eventType])
-
-	// io.ReadFull(&r, data)
-
-	if f, ok := factory[eventType]; ok {
-		return f(ctx, tick, delta, status, data, bytes...)
+	default:
+		return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
 	}
-
-	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
 }
 
 func or(status lib.Status, channel lib.Channel) lib.Status {

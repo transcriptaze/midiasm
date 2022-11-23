@@ -38,7 +38,7 @@ type Event struct {
 	Event IEvent
 }
 
-func NewEvent(e any) *Event {
+func NewEvent(e any, bytes ...byte) *Event {
 	if v, ok := e.(IEvent); ok {
 		return &Event{
 			Event: v,

@@ -26,10 +26,9 @@ func MakeNoteOff(tick uint64, delta uint32, channel lib.Channel, note Note, velo
 
 	return NoteOff{
 		event: event{
-			tick:  tick,
-			delta: lib.Delta(delta),
-			bytes: bytes,
-
+			tick:    tick,
+			delta:   lib.Delta(delta),
+			bytes:   bytes,
 			tag:     lib.TagNoteOff,
 			Status:  lib.Status(0x80 | channel),
 			Channel: channel,
@@ -39,7 +38,7 @@ func MakeNoteOff(tick uint64, delta uint32, channel lib.Channel, note Note, velo
 	}
 }
 
-func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOff, error) {
+func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*NoteOff, error) {
 	if status&0xf0 != 0x80 {
 		return nil, fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
@@ -62,7 +61,7 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status li
 		velocity = v
 	}
 
-	event := MakeNoteOff(tick, delta, channel, note, velocity, bytes...)
+	event := MakeNoteOff(tick, delta, channel, note, velocity)
 
 	return &event, nil
 }
