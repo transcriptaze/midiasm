@@ -88,7 +88,7 @@ func TestTextMarshalJSON(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    tag,
+			tag:    lib.TagText,
 			Status: 0xff,
 			Type:   lib.TypeText,
 			bytes:  []byte{},

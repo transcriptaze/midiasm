@@ -85,6 +85,14 @@
         },
         {
           "event": {
+            "tag": "Copyright",
+            "status": 255,
+            "type": 2,
+            "Copyright": "Them"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
