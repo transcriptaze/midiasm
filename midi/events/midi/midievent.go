@@ -125,7 +125,13 @@ var factory = map[byte]func(*context.Context, uint64, uint32, IO.Reader, lib.Sta
 	},
 
 	0xE0: func(ctx *context.Context, tick uint64, delta uint32, r IO.Reader, status lib.Status) (any, error) {
-		return UnmarshalPitchBend(tick, delta, r, status)
+		if msb, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else if lsb, err := r.ReadByte(); err != nil {
+			return nil, err
+		} else {
+			return UnmarshalPitchBend(tick, delta, status, []byte{msb, lsb}, r.Bytes()...)
+		}
 	},
 }
 
