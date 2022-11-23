@@ -44,6 +44,17 @@ func (r Reader) ReadByte() (byte, error) {
 	return b, r.buffer.WriteByte(b)
 }
 
+func (r Reader) Read(buffer []byte) (int, error) {
+	N, err := r.reader.Read(buffer)
+	if err != nil {
+		return N, err
+	}
+
+	r.buffer.Write(buffer)
+
+	return N, nil
+}
+
 func (r Reader) Peek(n int) ([]byte, error) {
 	return r.reader.Peek(n)
 }

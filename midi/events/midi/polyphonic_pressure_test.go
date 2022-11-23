@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -24,9 +23,8 @@ func TestParsePolyphonicPressure(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.TestReader([]byte{0x00, 0xa7}, []byte{0x64})
 
-	event, err := Parse(2400, 480, r, 0xa7, ctx)
+	event, err := Parse(ctx, 2400, 480, 0xa7, []byte{0x64}, []byte{0x00, 0xa7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected PolyphonicPressure event parse error: %v", err)
 	} else if event == nil {

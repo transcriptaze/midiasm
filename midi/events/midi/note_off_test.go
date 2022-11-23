@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -27,9 +26,8 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.TestReader([]byte{0x00, 0x81}, []byte{0x31, 0x48})
 
-	event, err := Parse(0, 0, r, 0x81, ctx)
+	event, err := Parse(ctx, 0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x81, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}
@@ -68,9 +66,8 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 	}
 
 	ctx := context.NewContext().UseFlats()
-	r := IO.TestReader([]byte{0x00}, []byte{0x31, 0x48})
 
-	event, err := Parse(0, 0, r, 0x81, ctx)
+	event, err := Parse(ctx, 0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}

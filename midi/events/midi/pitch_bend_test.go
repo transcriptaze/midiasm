@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -24,9 +23,8 @@ func TestParsePitchBend(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.TestReader([]byte{0x00, 0xe7}, []byte{0x00, 0x08})
 
-	event, err := Parse(2400, 480, r, 0xe7, ctx)
+	event, err := Parse(ctx, 2400, 480, 0xe7, []byte{0x00, 0x08}, []byte{0x00, 0xe7, 0x00, 0x08}...)
 	if err != nil {
 		t.Fatalf("Unexpected PitchBend event parse error: %v", err)
 	} else if event == nil {

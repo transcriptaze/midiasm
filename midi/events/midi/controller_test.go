@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/types"
 )
 
@@ -25,9 +24,8 @@ func TestParseController(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
-	r := IO.TestReader([]byte{0x00, 0xb7}, []byte{0x54, 0x1d})
 
-	event, err := Parse(2400, 480, r, 0xb7, ctx)
+	event, err := Parse(ctx, 2400, 480, 0xb7, []byte{0x54, 0x1d}, []byte{0x00, 0xb7, 0x54, 0x1d}...)
 	if err != nil {
 		t.Fatalf("Unexpected Controller event parse error: %v", err)
 	} else if event == nil {
@@ -46,13 +44,12 @@ func TestParseController(t *testing.T) {
 
 func TestProgramBank(t *testing.T) {
 	ctx := context.NewContext()
-	r := IO.BytesReader([]byte{0x00, 0x05, 0x20, 0x21})
 
-	if _, err := Parse(0, 0, r, 0xb3, ctx); err != nil {
+	if _, err := Parse(ctx, 0, 0, 0xb3, []byte{0x00, 0x05}); err != nil {
 		t.Fatalf("Unexpected MIDI event parse error: %v", err)
 	}
 
-	if _, err := Parse(0, 0, r, 0xb3, ctx); err != nil {
+	if _, err := Parse(ctx, 0, 0, 0xb3, []byte{0x20, 0x21}); err != nil {
 		t.Fatalf("Unexpected MIDI event parse error: %v", err)
 	}
 

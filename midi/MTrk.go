@@ -133,7 +133,11 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	ctx.RunningStatus = status
 
-	e, err := midievent.Parse(uint64(tick)+uint64(delta), delta, rr, status, ctx)
+	data := make([]byte, midievent.EVENTS[byte(status&0xf0)])
+
+	io.ReadFull(rr, data)
+
+	e, err := midievent.Parse(ctx, uint64(tick)+uint64(delta), delta, status, data, rr.Bytes()...)
 
 	return events.NewEvent(e), err
 }
