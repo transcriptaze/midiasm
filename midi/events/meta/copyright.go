@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -14,7 +13,7 @@ type Copyright struct {
 	Copyright string
 }
 
-func MakeCopyright(tick uint64, delta uint32, copyright string) Copyright {
+func MakeCopyright(tick uint64, delta lib.Delta, copyright string) Copyright {
 	return Copyright{
 		event: event{
 			tick:   tick,
@@ -28,7 +27,7 @@ func MakeCopyright(tick uint64, delta uint32, copyright string) Copyright {
 	}
 }
 
-func UnmarshalCopyright(tick uint64, delta uint32, bytes []byte) (*Copyright, error) {
+func UnmarshalCopyright(tick uint64, delta lib.Delta, bytes []byte) (*Copyright, error) {
 	copyright := string(bytes)
 	event := MakeCopyright(tick, delta, copyright)
 
@@ -50,11 +49,11 @@ func (e *Copyright) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Copyright event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
 		e.tick = 0
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.bytes = []byte{}
 		e.tag = lib.TagCopyright
 		e.Status = 0xff
@@ -67,11 +66,11 @@ func (e *Copyright) UnmarshalText(bytes []byte) error {
 
 func (e Copyright) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag       string `json:"tag"`
-		Delta     uint32 `json:"delta"`
-		Status    byte   `json:"status"`
-		Type      byte   `json:"type"`
-		Copyright string `json:"copyright"`
+		Tag       string    `json:"tag"`
+		Delta     lib.Delta `json:"delta"`
+		Status    byte      `json:"status"`
+		Type      byte      `json:"type"`
+		Copyright string    `json:"copyright"`
 	}{
 		Tag:       fmt.Sprintf("%v", e.tag),
 		Delta:     e.delta,
@@ -85,9 +84,9 @@ func (e Copyright) MarshalJSON() (encoded []byte, err error) {
 
 func (e *Copyright) UnmarshalJSON(bytes []byte) error {
 	t := struct {
-		Tag       string `json:"tag"`
-		Delta     uint32 `json:"delta"`
-		Copyright string `json:"copyright"`
+		Tag       string    `json:"tag"`
+		Delta     lib.Delta `json:"delta"`
+		Copyright string    `json:"copyright"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

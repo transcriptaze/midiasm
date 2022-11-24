@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 
 	lib "github.com/transcriptaze/midiasm/midi/types"
@@ -16,7 +15,7 @@ type TrackName struct {
 	Name string
 }
 
-func MakeTrackName(tick uint64, delta uint32, name string) TrackName {
+func MakeTrackName(tick uint64, delta lib.Delta, name string) TrackName {
 	n := lib.VLF(name)
 	v, _ := n.MarshalBinary()
 
@@ -33,7 +32,7 @@ func MakeTrackName(tick uint64, delta uint32, name string) TrackName {
 	}
 }
 
-func UnmarshalTrackName(tick uint64, delta uint32, bytes []byte) (*TrackName, error) {
+func UnmarshalTrackName(tick uint64, delta lib.Delta, bytes []byte) (*TrackName, error) {
 	name := string(bytes)
 	event := MakeTrackName(tick, delta, name)
 
@@ -77,13 +76,11 @@ func (e *TrackName) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, text)
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
+		return err
 	} else {
-		if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
-			return err
-		} else {
-			e.delta = uint32(delta)
-			e.Name = strings.TrimSpace(match[2])
-		}
+		e.delta = delta
+		e.Name = strings.TrimSpace(match[2])
 	}
 
 	return nil
@@ -91,11 +88,11 @@ func (e *TrackName) UnmarshalText(bytes []byte) error {
 
 func (e TrackName) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag    string `json:"tag"`
-		Delta  uint32 `json:"delta"`
-		Status byte   `json:"status"`
-		Type   byte   `json:"type"`
-		Name   string `json:"name"`
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Name   string    `json:"name"`
 	}{
 		Tag:    fmt.Sprintf("%v", e.tag),
 		Delta:  e.delta,
@@ -109,9 +106,9 @@ func (e TrackName) MarshalJSON() (encoded []byte, err error) {
 
 func (e *TrackName) UnmarshalJSON(bytes []byte) error {
 	t := struct {
-		Tag   string `json:"tag"`
-		Delta uint32 `json:"delta"`
-		Name  string `json:"name"`
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Name  string    `json:"name"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

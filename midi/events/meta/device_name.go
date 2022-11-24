@@ -3,9 +3,8 @@ package metaevent
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type DeviceName struct {
@@ -13,21 +12,21 @@ type DeviceName struct {
 	Name string
 }
 
-func MakeDeviceName(tick uint64, delta uint32, name string) DeviceName {
+func MakeDeviceName(tick uint64, delta lib.Delta, name string) DeviceName {
 	return DeviceName{
 		event: event{
 			tick:   tick,
 			delta:  delta,
 			bytes:  append([]byte{0x00, 0xff, 0x09, byte(len(name))}, []byte(name)...),
-			tag:    types.TagDeviceName,
+			tag:    lib.TagDeviceName,
 			Status: 0xff,
-			Type:   types.TypeDeviceName,
+			Type:   lib.TypeDeviceName,
 		},
 		Name: name,
 	}
 }
 
-func UnmarshalDeviceName(tick uint64, delta uint32, bytes []byte) (*DeviceName, error) {
+func UnmarshalDeviceName(tick uint64, delta lib.Delta, bytes []byte) (*DeviceName, error) {
 	name := string(bytes)
 	event := MakeDeviceName(tick, delta, name)
 
@@ -47,19 +46,19 @@ func (d *DeviceName) UnmarshalText(bytes []byte) error {
 	d.tick = 0
 	d.delta = 0
 	d.bytes = []byte{}
-	d.tag = types.TagDeviceName
+	d.tag = lib.TagDeviceName
 	d.Status = 0xff
-	d.Type = types.TypeDeviceName
+	d.Type = lib.TypeDeviceName
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)DeviceName\s+(.*)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid DeviceName event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		d.delta = uint32(delta)
+		d.delta = delta
 		d.Name = string(match[2])
 	}
 

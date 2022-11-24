@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -14,7 +13,7 @@ type Text struct {
 	Text string
 }
 
-func MakeText(tick uint64, delta uint32, text string) Text {
+func MakeText(tick uint64, delta lib.Delta, text string) Text {
 	return Text{
 		event: event{
 			tick:   tick,
@@ -28,7 +27,7 @@ func MakeText(tick uint64, delta uint32, text string) Text {
 	}
 }
 
-func UnmarshalText(tick uint64, delta uint32, bytes []byte) (*Text, error) {
+func UnmarshalText(tick uint64, delta lib.Delta, bytes []byte) (*Text, error) {
 	text := string(bytes)
 	event := MakeText(tick, delta, text)
 
@@ -50,11 +49,11 @@ func (e *Text) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Text event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
 		e.tick = 0
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.bytes = []byte{}
 		e.tag = lib.TagText
 		e.Status = 0xff
@@ -67,11 +66,11 @@ func (e *Text) UnmarshalText(bytes []byte) error {
 
 func (e Text) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag    string `json:"tag"`
-		Delta  uint32 `json:"delta"`
-		Status byte   `json:"status"`
-		Type   byte   `json:"type"`
-		Text   string `json:"text"`
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Text   string    `json:"text"`
 	}{
 		Tag:    fmt.Sprintf("%v", e.tag),
 		Delta:  e.delta,
@@ -85,9 +84,9 @@ func (e Text) MarshalJSON() (encoded []byte, err error) {
 
 func (e *Text) UnmarshalJSON(bytes []byte) error {
 	t := struct {
-		Tag   string `json:"tag"`
-		Delta uint32 `json:"delta"`
-		Text  string `json:"text"`
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Text  string    `json:"text"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

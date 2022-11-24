@@ -3,9 +3,8 @@ package metaevent
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type Marker struct {
@@ -13,21 +12,21 @@ type Marker struct {
 	Marker string
 }
 
-func MakeMarker(tick uint64, delta uint32, marker string) Marker {
+func MakeMarker(tick uint64, delta lib.Delta, marker string) Marker {
 	return Marker{
 		event: event{
 			tick:   tick,
 			delta:  delta,
 			bytes:  append([]byte{0x00, 0xff, 0x06, byte(len(marker))}, []byte(marker)...),
-			tag:    types.TagMarker,
+			tag:    lib.TagMarker,
 			Status: 0xff,
-			Type:   types.TypeMarker,
+			Type:   lib.TypeMarker,
 		},
 		Marker: marker,
 	}
 }
 
-func UnmarshalMarker(tick uint64, delta uint32, bytes []byte) (*Marker, error) {
+func UnmarshalMarker(tick uint64, delta lib.Delta, bytes []byte) (*Marker, error) {
 	marker := string(bytes)
 	event := MakeMarker(tick, delta, marker)
 
@@ -47,19 +46,19 @@ func (m *Marker) UnmarshalText(bytes []byte) error {
 	m.tick = 0
 	m.delta = 0
 	m.bytes = []byte{}
-	m.tag = types.TagMarker
+	m.tag = lib.TagMarker
 	m.Status = 0xff
-	m.Type = types.TypeMarker
+	m.Type = lib.TypeMarker
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Marker\s+(.*)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Marker event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		m.delta = uint32(delta)
+		m.delta = delta
 		m.Marker = string(match[2])
 	}
 

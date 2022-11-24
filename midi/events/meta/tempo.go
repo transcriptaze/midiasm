@@ -15,7 +15,7 @@ type Tempo struct {
 	Tempo uint32
 }
 
-func MakeTempo(tick uint64, delta uint32, tempo uint32, bytes ...byte) Tempo {
+func MakeTempo(tick uint64, delta lib.Delta, tempo uint32, bytes ...byte) Tempo {
 	return Tempo{
 		event: event{
 			tick:   tick,
@@ -29,7 +29,7 @@ func MakeTempo(tick uint64, delta uint32, tempo uint32, bytes ...byte) Tempo {
 	}
 }
 
-func UnmarshalTempo(tick uint64, delta uint32, bytes []byte) (*Tempo, error) {
+func UnmarshalTempo(tick uint64, delta lib.Delta, bytes []byte) (*Tempo, error) {
 	if len(bytes) != 3 {
 		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(bytes))
 	}
@@ -77,12 +77,12 @@ func (e *Tempo) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Tempo event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if v, err := strconv.ParseUint(match[2], 10, 32); err != nil {
 		return err
 	} else {
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.Tempo = uint32(v)
 	}
 
@@ -91,11 +91,11 @@ func (e *Tempo) UnmarshalText(bytes []byte) error {
 
 func (e Tempo) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag    string `json:"tag"`
-		Delta  uint32 `json:"delta"`
-		Status byte   `json:"status"`
-		Type   byte   `json:"type"`
-		Tempo  uint32 `json:"tempo"`
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Tempo  uint32    `json:"tempo"`
 	}{
 		Tag:    fmt.Sprintf("%v", e.tag),
 		Delta:  e.delta,
@@ -116,9 +116,9 @@ func (e *Tempo) UnmarshalJSON(bytes []byte) error {
 	e.Type = lib.TypeTempo
 
 	t := struct {
-		Tag   string `json:"tag"`
-		Delta uint32 `json:"delta"`
-		Tempo uint32 `json:"tempo"`
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Tempo uint32    `json:"tempo"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

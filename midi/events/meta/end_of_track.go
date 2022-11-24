@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	lib "github.com/transcriptaze/midiasm/midi/types"
 )
@@ -13,7 +12,7 @@ type EndOfTrack struct {
 	event
 }
 
-func MakeEndOfTrack(tick uint64, delta uint32) EndOfTrack {
+func MakeEndOfTrack(tick uint64, delta lib.Delta) EndOfTrack {
 	return EndOfTrack{
 		event: event{
 			tick:   tick,
@@ -26,7 +25,7 @@ func MakeEndOfTrack(tick uint64, delta uint32) EndOfTrack {
 	}
 }
 
-func UnmarshalEndOfTrack(tick uint64, delta uint32, bytes []byte) (*EndOfTrack, error) {
+func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, bytes []byte) (*EndOfTrack, error) {
 	event := MakeEndOfTrack(tick, delta)
 
 	return &event, nil
@@ -53,10 +52,10 @@ func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
 		return fmt.Errorf("invalid EndOfTrack event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.delta = uint32(delta)
+		e.delta = delta
 	}
 
 	return nil
@@ -64,10 +63,10 @@ func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
 
 func (e EndOfTrack) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag    string `json:"tag"`
-		Delta  uint32 `json:"delta"`
-		Status byte   `json:"status"`
-		Type   byte   `json:"type"`
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
 	}{
 		Tag:    fmt.Sprintf("%v", e.tag),
 		Delta:  e.delta,
@@ -87,8 +86,8 @@ func (e *EndOfTrack) UnmarshalJSON(bytes []byte) error {
 	e.Type = 0x2f
 
 	t := struct {
-		Tag   string `json:"tag"`
-		Delta uint32 `json:"delta"`
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

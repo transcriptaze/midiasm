@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type MIDIPort struct {
@@ -13,7 +13,7 @@ type MIDIPort struct {
 	Port uint8
 }
 
-func MakeMIDIPort(tick uint64, delta uint32, port uint8) MIDIPort {
+func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8) MIDIPort {
 	if port > 127 {
 		panic(fmt.Sprintf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port))
 	}
@@ -23,15 +23,15 @@ func MakeMIDIPort(tick uint64, delta uint32, port uint8) MIDIPort {
 			tick:   tick,
 			delta:  delta,
 			bytes:  append([]byte{0x00, 0xff, 0x21, 0x01, port}),
-			tag:    types.TagMIDIPort,
+			tag:    lib.TagMIDIPort,
 			Status: 0xff,
-			Type:   types.TypeMIDIPort,
+			Type:   lib.TypeMIDIPort,
 		},
 		Port: port,
 	}
 }
 
-func UnmarshalMIDIPort(tick uint64, delta uint32, bytes []byte) (*MIDIPort, error) {
+func UnmarshalMIDIPort(tick uint64, delta lib.Delta, bytes []byte) (*MIDIPort, error) {
 	if len(bytes) != 1 {
 		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(bytes))
 	}
@@ -58,23 +58,23 @@ func (m *MIDIPort) UnmarshalText(bytes []byte) error {
 	m.tick = 0
 	m.delta = 0
 	m.bytes = []byte{}
-	m.tag = types.TagMIDIPort
+	m.tag = lib.TagMIDIPort
 	m.Status = 0xff
-	m.Type = types.TypeMIDIPort
+	m.Type = lib.TypeMIDIPort
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)MIDIPort\s+([0-9]+)`)
 	text := string(bytes)
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("Invalid MIDIPort event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if port, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
 	} else if port > 1278 {
 		return fmt.Errorf("Invalid MIDIPort channel (%d): expected a value in the interval [0..127]", port)
 	} else {
-		m.delta = uint32(delta)
+		m.delta = delta
 		m.Port = uint8(port)
 	}
 

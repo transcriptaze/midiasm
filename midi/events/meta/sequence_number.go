@@ -15,7 +15,7 @@ type SequenceNumber struct {
 	SequenceNumber uint16
 }
 
-func MakeSequenceNumber(tick uint64, delta uint32, sequence uint16) SequenceNumber {
+func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16) SequenceNumber {
 	return SequenceNumber{
 		event: event{
 			tick:   tick,
@@ -29,7 +29,7 @@ func MakeSequenceNumber(tick uint64, delta uint32, sequence uint16) SequenceNumb
 	}
 }
 
-func UnmarshalSequenceNumber(tick uint64, delta uint32, bytes []byte) (*SequenceNumber, error) {
+func UnmarshalSequenceNumber(tick uint64, delta lib.Delta, bytes []byte) (*SequenceNumber, error) {
 	if len(bytes) != 2 {
 		return nil, fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(bytes))
 	}
@@ -56,13 +56,13 @@ func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid SequenceNumber event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
 		return err
 	} else {
 		e.tick = 0
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.bytes = []byte{}
 		e.tag = lib.TagSequenceNumber
 		e.Status = 0xff
@@ -75,11 +75,11 @@ func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 
 func (e SequenceNumber) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag            string `json:"tag"`
-		Delta          uint32 `json:"delta"`
-		Status         byte   `json:"status"`
-		Type           byte   `json:"type"`
-		SequenceNumber uint16 `json:"sequence-number"`
+		Tag            string    `json:"tag"`
+		Delta          lib.Delta `json:"delta"`
+		Status         byte      `json:"status"`
+		Type           byte      `json:"type"`
+		SequenceNumber uint16    `json:"sequence-number"`
 	}{
 		Tag:            fmt.Sprintf("%v", e.tag),
 		Delta:          e.delta,
@@ -93,9 +93,9 @@ func (e SequenceNumber) MarshalJSON() (encoded []byte, err error) {
 
 func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
 	t := struct {
-		Tag            string `json:"tag"`
-		Delta          uint32 `json:"delta"`
-		SequenceNumber uint16 `json:"sequence-number"`
+		Tag            string    `json:"tag"`
+		Delta          lib.Delta `json:"delta"`
+		SequenceNumber uint16    `json:"sequence-number"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

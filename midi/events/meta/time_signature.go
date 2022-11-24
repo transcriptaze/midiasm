@@ -17,7 +17,7 @@ type TimeSignature struct {
 	ThirtySecondsPerQuarter uint8
 }
 
-func MakeTimeSignature(tick uint64, delta uint32, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter uint8) TimeSignature {
+func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter uint8) TimeSignature {
 	d := 0
 	dd := uint8(1)
 	for dd < denominator {
@@ -41,7 +41,7 @@ func MakeTimeSignature(tick uint64, delta uint32, numerator, denominator, ticksP
 	}
 }
 
-func UnmarshalTimeSignature(tick uint64, delta uint32, bytes []byte) (*TimeSignature, error) {
+func UnmarshalTimeSignature(tick uint64, delta lib.Delta, bytes []byte) (*TimeSignature, error) {
 	if len(bytes) != 4 {
 		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '4'", len(bytes))
 	}
@@ -98,7 +98,7 @@ func (e *TimeSignature) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 6 {
 		return fmt.Errorf("invalid TimeSignature event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if numerator, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
@@ -109,7 +109,7 @@ func (e *TimeSignature) UnmarshalText(bytes []byte) error {
 	} else if beats, err := strconv.ParseUint(match[5], 10, 8); err != nil {
 		return err
 	} else {
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.Numerator = uint8(numerator)
 		e.Denominator = uint8(denominator)
 		e.TicksPerClick = uint8(ticks)
@@ -121,14 +121,14 @@ func (e *TimeSignature) UnmarshalText(bytes []byte) error {
 
 func (e TimeSignature) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag                     string `json:"tag"`
-		Delta                   uint32 `json:"delta"`
-		Status                  byte   `json:"status"`
-		Type                    byte   `json:"type"`
-		Numerator               uint8  `json:"numerator"`
-		Denominator             uint8  `json:"denominator"`
-		TicksPerClick           uint8  `json:"ticks-per-click"`
-		ThirtySecondsPerQuarter uint8  `json:"thirty-seconds-per-quarter"`
+		Tag                     string    `json:"tag"`
+		Delta                   lib.Delta `json:"delta"`
+		Status                  byte      `json:"status"`
+		Type                    byte      `json:"type"`
+		Numerator               uint8     `json:"numerator"`
+		Denominator             uint8     `json:"denominator"`
+		TicksPerClick           uint8     `json:"ticks-per-click"`
+		ThirtySecondsPerQuarter uint8     `json:"thirty-seconds-per-quarter"`
 	}{
 		Tag:                     fmt.Sprintf("%v", e.tag),
 		Delta:                   e.delta,
@@ -152,12 +152,12 @@ func (e *TimeSignature) UnmarshalJSON(bytes []byte) error {
 	e.Type = lib.TypeTimeSignature
 
 	t := struct {
-		Tag                     string `json:"tag"`
-		Delta                   uint32 `json:"delta"`
-		Numerator               uint8  `json:"numerator"`
-		Denominator             uint8  `json:"denominator"`
-		TicksPerClick           uint8  `json:"ticks-per-click"`
-		ThirtySecondsPerQuarter uint8  `json:"thirty-seconds-per-quarter"`
+		Tag                     string    `json:"tag"`
+		Delta                   lib.Delta `json:"delta"`
+		Numerator               uint8     `json:"numerator"`
+		Denominator             uint8     `json:"denominator"`
+		TicksPerClick           uint8     `json:"ticks-per-click"`
+		ThirtySecondsPerQuarter uint8     `json:"thirty-seconds-per-quarter"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {

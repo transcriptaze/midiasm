@@ -19,7 +19,7 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func MakeSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate, frames, fractionalFrames uint8) SMPTEOffset {
+func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRate, frames, fractionalFrames uint8) SMPTEOffset {
 	var rr uint8
 
 	if hour > 24 {
@@ -74,7 +74,7 @@ func MakeSMPTEOffset(tick uint64, delta uint32, hour, minute, second, frameRate,
 }
 
 // TODO Maybe rework this as described in https://go.dev/blog/defer-panic-and-recover
-func UnmarshalSMPTEOffset(tick uint64, delta uint32, bytes []byte) (*SMPTEOffset, error) {
+func UnmarshalSMPTEOffset(tick uint64, delta lib.Delta, bytes []byte) (*SMPTEOffset, error) {
 	if len(bytes) != 5 {
 		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(bytes))
 	}
@@ -167,7 +167,7 @@ func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
 
 	if match := re.FindStringSubmatch(text); match == nil || len(match) < 8 {
 		return fmt.Errorf("invalid SMPTEOffset event (%v)", text)
-	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
+	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if hour, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
@@ -186,7 +186,7 @@ func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
 	} else if fractions > 100 {
 		return fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	} else {
-		e.delta = uint32(delta)
+		e.delta = delta
 		e.Hour = uint8(hour)
 		e.Minute = uint8(minute)
 		e.Second = uint8(second)
@@ -200,16 +200,16 @@ func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
 
 func (e SMPTEOffset) MarshalJSON() (encoded []byte, err error) {
 	t := struct {
-		Tag              string `json:"tag"`
-		Delta            uint32 `json:"delta"`
-		Status           byte   `json:"status"`
-		Type             byte   `json:"type"`
-		Hour             uint8  `json:"hour"`
-		Minute           uint8  `json:"minute"`
-		Second           uint8  `json:"second"`
-		FrameRate        uint8  `json:"frame-rate"`
-		Frames           uint8  `json:"frames"`
-		FractionalFrames uint8  `json:"fractional-frames"`
+		Tag              string    `json:"tag"`
+		Delta            lib.Delta `json:"delta"`
+		Status           byte      `json:"status"`
+		Type             byte      `json:"type"`
+		Hour             uint8     `json:"hour"`
+		Minute           uint8     `json:"minute"`
+		Second           uint8     `json:"second"`
+		FrameRate        uint8     `json:"frame-rate"`
+		Frames           uint8     `json:"frames"`
+		FractionalFrames uint8     `json:"fractional-frames"`
 	}{
 		Tag:              fmt.Sprintf("%v", e.tag),
 		Delta:            e.delta,
@@ -235,14 +235,14 @@ func (e *SMPTEOffset) UnmarshalJSON(bytes []byte) error {
 	e.Type = lib.TypeSMPTEOffset
 
 	t := struct {
-		Tag              string `json:"tag"`
-		Delta            uint32 `json:"delta"`
-		Hour             uint8  `json:"hour"`
-		Minute           uint8  `json:"minute"`
-		Second           uint8  `json:"second"`
-		FrameRate        uint8  `json:"frame-rate"`
-		Frames           uint8  `json:"frames"`
-		FractionalFrames uint8  `json:"fractional-frames"`
+		Tag              string    `json:"tag"`
+		Delta            lib.Delta `json:"delta"`
+		Hour             uint8     `json:"hour"`
+		Minute           uint8     `json:"minute"`
+		Second           uint8     `json:"second"`
+		FrameRate        uint8     `json:"frame-rate"`
+		Frames           uint8     `json:"frames"`
+		FractionalFrames uint8     `json:"fractional-frames"`
 	}{}
 
 	if err := json.Unmarshal(bytes, &t); err != nil {
