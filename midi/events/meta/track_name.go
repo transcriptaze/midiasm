@@ -108,13 +108,6 @@ func (e TrackName) MarshalJSON() (encoded []byte, err error) {
 }
 
 func (e *TrackName) UnmarshalJSON(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagTrackName
-	e.Type = lib.TypeTrackName
-
 	t := struct {
 		Tag   string `json:"tag"`
 		Delta uint32 `json:"delta"`
@@ -123,10 +116,15 @@ func (e *TrackName) UnmarshalJSON(bytes []byte) error {
 
 	if err := json.Unmarshal(bytes, &t); err != nil {
 		return err
-	} else if t.Tag != "TrackName" {
+	} else if !equal(t.Tag, lib.TagTrackName) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
+		e.tick = 0
 		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagTrackName
+		e.Type = lib.TypeTrackName
 		e.Name = t.Name
 	}
 

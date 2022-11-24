@@ -1,11 +1,12 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 type InstrumentName struct {
@@ -19,9 +20,9 @@ func MakeInstrumentName(tick uint64, delta uint32, name string) InstrumentName {
 			tick:   tick,
 			delta:  delta,
 			bytes:  append([]byte{0x00, 0xff, 0x04, byte(len(name))}, []byte(name)...),
-			tag:    types.TagInstrumentName,
+			tag:    lib.TagInstrumentName,
 			Status: 0xff,
-			Type:   types.TypeInstrumentName,
+			Type:   lib.TypeInstrumentName,
 		},
 		Name: name,
 	}
@@ -43,14 +44,7 @@ func (n InstrumentName) MarshalBinary() (encoded []byte, err error) {
 		[]byte(n.Name)...), nil
 }
 
-func (n *InstrumentName) UnmarshalText(bytes []byte) error {
-	n.tick = 0
-	n.delta = 0
-	n.bytes = []byte{}
-	n.tag = types.TagInstrumentName
-	n.Status = 0xff
-	n.Type = types.TypeInstrumentName
-
+func (e *InstrumentName) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)InstrumentName\s+(.*)`)
 	text := string(bytes)
 
@@ -59,8 +53,55 @@ func (n *InstrumentName) UnmarshalText(bytes []byte) error {
 	} else if delta, err := strconv.ParseUint(match[1], 10, 32); err != nil {
 		return err
 	} else {
-		n.delta = uint32(delta)
-		n.Name = string(match[2])
+		e.tick = 0
+		e.delta = uint32(delta)
+		e.bytes = []byte{}
+		e.tag = lib.TagInstrumentName
+		e.Status = 0xff
+		e.Type = lib.TypeInstrumentName
+		e.Name = string(match[2])
+	}
+
+	return nil
+}
+
+func (e InstrumentName) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string `json:"tag"`
+		Delta  uint32 `json:"delta"`
+		Status byte   `json:"status"`
+		Type   byte   `json:"type"`
+		Name   string `json:"name"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Name:   e.Name,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *InstrumentName) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string `json:"tag"`
+		Delta uint32 `json:"delta"`
+		Name  string `json:"name"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagInstrumentName) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagInstrumentName
+		e.Type = lib.TypeInstrumentName
+		e.Name = t.Name
 	}
 
 	return nil

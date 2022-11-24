@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalTrackName(t *testing.T) {
@@ -12,9 +12,9 @@ func TestUnmarshalTrackName(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagTrackName,
+			tag:    lib.TagTrackName,
 			Status: 0xff,
-			Type:   0x03,
+			Type:   lib.TypeTrackName,
 			bytes: []byte{
 				0x00, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69, 0x6c,
 				0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72, 0x61,
@@ -38,9 +38,9 @@ func TestTrackNameMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagTrackName,
+			tag:    lib.TagTrackName,
 			Status: 0xff,
-			Type:   0x03,
+			Type:   lib.TypeTrackName,
 			bytes:  []byte{},
 		},
 		Name: "Railroad Traque",
@@ -68,9 +68,9 @@ func TestTrackNameUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagTrackName,
+			tag:    lib.TagTrackName,
 			Status: 0xff,
-			Type:   0x03,
+			Type:   lib.TypeTrackName,
 			bytes:  []byte{},
 		},
 		Name: "Railroad Traque",
@@ -89,13 +89,13 @@ func TestTrackNameUnmarshalText(t *testing.T) {
 }
 
 func TestTrackNameMarshalJSON(t *testing.T) {
-	evt := TrackName{
+	e := TrackName{
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagTrackName,
+			tag:    lib.TagTrackName,
 			Status: 0xff,
-			Type:   0x03,
+			Type:   lib.TypeTrackName,
 			bytes:  []byte{},
 		},
 		Name: "Railroad Traque",
@@ -103,25 +103,19 @@ func TestTrackNameMarshalJSON(t *testing.T) {
 
 	expected := `{"tag":"TrackName","delta":480,"status":255,"type":3,"name":"Railroad Traque"}`
 
-	encoded, err := evt.MarshalJSON()
-	if err != nil {
-		t.Fatalf("error encoding TrackName (%v)", err)
-	}
-
-	if string(encoded) != expected {
-		t.Errorf("incorrectly encoded TrackName\n   expected:%+v\n   got:     %+v", expected, string(encoded))
-	}
+	testMarshalJSON(t, lib.TagTrackName, e, expected)
 }
 
 func TestTrackNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagTrackName
 	text := `{"tag":"TrackName","delta":480,"status":255,"type":3,"name":"Railroad Traque"}`
 	expected := TrackName{
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagTrackName,
+			tag:    lib.TagTrackName,
 			Status: 0xff,
-			Type:   0x03,
+			Type:   lib.TypeTrackName,
 			bytes:  []byte{},
 		},
 		Name: "Railroad Traque",
@@ -130,10 +124,10 @@ func TestTrackNameUnmarshalJSON(t *testing.T) {
 	evt := TrackName{}
 
 	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
-		t.Fatalf("error unmarshalling TrackName (%v)", err)
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
 	}
 
 	if !reflect.DeepEqual(evt, expected) {
-		t.Errorf("incorrectly unmarshalled TrackName\n   expected:%+v\n   got:     %+v", expected, evt)
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
 	}
 }

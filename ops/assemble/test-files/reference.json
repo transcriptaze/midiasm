@@ -93,6 +93,24 @@
         },
         {
           "event": {
+            "tag": "TrackName",
+            "delta": 0,
+            "status": 255,
+            "type": 3,
+            "name": "Acoustic Guitar"
+          }
+        },
+        {
+          "event": {
+            "tag": "InstrumentName",
+            "delta": 0,
+            "status": 255,
+            "type": 4,
+            "name": "Didgeridoo"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

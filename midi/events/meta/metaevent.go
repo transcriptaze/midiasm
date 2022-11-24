@@ -28,6 +28,16 @@ type TMetaEvent interface {
 		SequencerSpecificEvent
 }
 
+type TMetaEventX interface {
+	SequenceNumber |
+		Text |
+		Copyright |
+		TrackName |
+		InstrumentName
+
+	MarshalJSON() ([]byte, error)
+}
+
 type event struct {
 	tick   uint64
 	delta  uint32

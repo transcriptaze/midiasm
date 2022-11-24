@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalInstrumentName(t *testing.T) {
@@ -12,9 +12,9 @@ func TestUnmarshalInstrumentName(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagInstrumentName,
+			tag:    lib.TagInstrumentName,
 			Status: 0xff,
-			Type:   0x04,
+			Type:   lib.TypeInstrumentName,
 			bytes:  []byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f},
 		},
 		Name: "Didgeridoo",
@@ -35,9 +35,9 @@ func TestInstrumentNameMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagInstrumentName,
+			tag:    lib.TagInstrumentName,
 			Status: 0xff,
-			Type:   0x04,
+			Type:   lib.TypeInstrumentName,
 			bytes:  []byte{},
 		},
 		Name: "Didgeridoo",
@@ -61,9 +61,9 @@ func TestTextUnmarshalInstrumentName(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagInstrumentName,
+			tag:    lib.TagInstrumentName,
 			Status: 0xff,
-			Type:   0x04,
+			Type:   lib.TypeInstrumentName,
 			bytes:  []byte{},
 		},
 		Name: "Didgeridoo",
@@ -79,4 +79,48 @@ func TestTextUnmarshalInstrumentName(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled InstrumentName\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestInstrumentNameMarshalJSON(t *testing.T) {
+	e := InstrumentName{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagInstrumentName,
+			Status: 0xff,
+			Type:   lib.TypeInstrumentName,
+			bytes:  []byte{},
+		},
+		Name: "Didgeridoo",
+	}
+
+	expected := `{"tag":"InstrumentName","delta":480,"status":255,"type":4,"name":"Didgeridoo"}`
+
+	testMarshalJSON(t, lib.TagInstrumentName, e, expected)
+}
+
+func TestInstrumentNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagInstrumentName
+	text := `{"tag":"InstrumentName","delta":480,"status":255,"type":4,"name":"Didgeridoo"}`
+	expected := InstrumentName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagInstrumentName,
+			Status: 0xff,
+			Type:   lib.TypeInstrumentName,
+			bytes:  []byte{},
+		},
+		Name: "Didgeridoo",
+	}
+
+	evt := InstrumentName{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }

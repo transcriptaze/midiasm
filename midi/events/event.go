@@ -35,7 +35,7 @@ type IEvent interface {
 }
 
 type Event struct {
-	Event IEvent
+	Event IEvent `json:"event"`
 }
 
 func NewEvent(e any, bytes ...byte) *Event {

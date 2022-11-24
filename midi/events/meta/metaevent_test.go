@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestParseCMajorKeySignature(t *testing.T) {
@@ -13,13 +13,13 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00},
 		},
 		Accidentals: 0,
-		KeyType:     types.Major,
+		KeyType:     lib.Major,
 		Key:         "C major",
 	}
 
@@ -48,13 +48,13 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01},
 		},
 		Accidentals: -3,
-		KeyType:     types.Minor,
+		KeyType:     lib.Minor,
 		Key:         "C minor",
 	}
 
@@ -75,5 +75,16 @@ func TestParseCMinorKeySignature(t *testing.T) {
 
 	if !reflect.DeepEqual(ctx.Scale(), context.Flats) {
 		t.Errorf("Context scale not set to 'flats':%v", ctx)
+	}
+}
+
+func testMarshalJSON[E TMetaEventX](t *testing.T, tag lib.Tag, e E, expected string) {
+	encoded, err := e.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding %v (%v)", tag, err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", tag, expected, string(encoded))
 	}
 }
