@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -42,14 +43,7 @@ func (l Lyric) MarshalBinary() (encoded []byte, err error) {
 		[]byte(l.Lyric)...), nil
 }
 
-func (l *Lyric) UnmarshalText(bytes []byte) error {
-	l.tick = 0
-	l.delta = 0
-	l.bytes = []byte{}
-	l.tag = lib.TagLyric
-	l.Status = 0xff
-	l.Type = lib.TypeLyric
-
+func (e *Lyric) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Lyric\s+(.*)`)
 	text := string(bytes)
 
@@ -58,8 +52,55 @@ func (l *Lyric) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		l.delta = delta
-		l.Lyric = string(match[2])
+		e.tick = 0
+		e.delta = delta
+		e.bytes = []byte{}
+		e.tag = lib.TagLyric
+		e.Status = 0xff
+		e.Type = lib.TypeLyric
+		e.Lyric = match[2]
+	}
+
+	return nil
+}
+
+func (e Lyric) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Lyric  string    `json:"lyric"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Lyric:  e.Lyric,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *Lyric) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Lyric string    `json:"lyric"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagLyric) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagLyric
+		e.Type = lib.TypeLyric
+		e.Lyric = t.Lyric
 	}
 
 	return nil

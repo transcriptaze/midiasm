@@ -111,6 +111,14 @@
         },
         {
           "event": {
+            "tag": "Lyric",
+            "delta": 0,
+            "status": 255,
+            "lyric": "La-la-la"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

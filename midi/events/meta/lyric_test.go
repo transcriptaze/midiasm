@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalLyric(t *testing.T) {
@@ -12,7 +12,7 @@ func TestUnmarshalLyric(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagLyric,
+			tag:    lib.TagLyric,
 			Status: 0xff,
 			Type:   0x05,
 			bytes:  []byte{0x00, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61},
@@ -35,7 +35,7 @@ func TestLyricMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagLyric,
+			tag:    lib.TagLyric,
 			Status: 0xff,
 			Type:   0x05,
 			bytes:  []byte{},
@@ -61,7 +61,7 @@ func TestTextUnmarshalLyric(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagLyric,
+			tag:    lib.TagLyric,
 			Status: 0xff,
 			Type:   0x05,
 			bytes:  []byte{},
@@ -79,4 +79,48 @@ func TestTextUnmarshalLyric(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled Lyric\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestLyricMarshalJSON(t *testing.T) {
+	e := Lyric{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagLyric,
+			Status: 0xff,
+			Type:   lib.TypeLyric,
+			bytes:  []byte{},
+		},
+		Lyric: "La-la-la",
+	}
+
+	expected := `{"tag":"Lyric","delta":480,"status":255,"type":5,"lyric":"La-la-la"}`
+
+	testMarshalJSON(t, lib.TagLyric, e, expected)
+}
+
+func TestLyricNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagLyric
+	text := `{"tag":"Lyric","delta":480,"status":255,"type":5,"lyric":"La-la-la"}`
+	expected := Lyric{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagLyric,
+			Status: 0xff,
+			Type:   lib.TypeLyric,
+			bytes:  []byte{},
+		},
+		Lyric: "La-la-la",
+	}
+
+	evt := Lyric{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }

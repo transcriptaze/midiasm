@@ -58,7 +58,7 @@ func (e *InstrumentName) UnmarshalText(bytes []byte) error {
 		e.tag = lib.TagInstrumentName
 		e.Status = 0xff
 		e.Type = lib.TypeInstrumentName
-		e.Name = string(match[2])
+		e.Name = match[2]
 	}
 
 	return nil

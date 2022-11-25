@@ -33,7 +33,8 @@ type TMetaEventX interface {
 		Text |
 		Copyright |
 		TrackName |
-		InstrumentName
+		InstrumentName |
+		Lyric
 
 	MarshalJSON() ([]byte, error)
 }
