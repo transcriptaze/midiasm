@@ -36,13 +36,13 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		t.Fatalf("Unexpected NoteOff event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*NoteOff)
+	event, ok := event.(NoteOff)
 	if !ok {
 		t.Fatalf("NoteOn event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid NoteOff event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid NoteOff event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 

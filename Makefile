@@ -43,7 +43,9 @@ release: build-all
 debug: build
 # 	$(CMD) --debug --verbose --C4 examples/reference-01.mid
 # 	go test ./midi/events/sysex/... -run TestParseSysExSingleMessage
-	go test ./ops/assemble/... -run TestTextReference
+# 	go test ./encoding/midi/... -run TestDecodeFormat1
+	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
+	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

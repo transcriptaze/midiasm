@@ -8,6 +8,7 @@
       - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
 
 - [ ] NoteOn with 0 velocity -> NoteOff
+- [ ] Unit tests for transpose
 
 - [ ] MIDI file grammar
       - (?) ASN.1

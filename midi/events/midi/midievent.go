@@ -71,11 +71,12 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		e, err := UnmarshalNoteOff(ctx, tick, delta, status, data)
-		if e != nil && err == nil {
+		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
+			return nil, err
+		} else {
 			e.bytes = bytes
+			return *e, err
 		}
-		return e, err
 
 	case 0x90:
 		return UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...)

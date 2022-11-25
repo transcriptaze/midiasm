@@ -30,6 +30,10 @@ func makeEvent[E event](e E, bytes ...byte) *events.Event {
 	return events.NewEvent(&e, bytes...)
 }
 
+func makeMidiEvent[E event](e E, bytes ...byte) *events.Event {
+	return events.NewEvent(e, bytes...)
+}
+
 var tempo = makeEvent(
 	metaevent.MakeTempo(0, 0, 50000),
 	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...)
@@ -58,7 +62,7 @@ var noteOn = makeEvent(
 	midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
 	[]byte{0x00, 0x30, 0x40}...)
 
-var noteOff = makeEvent(
+var noteOff = makeMidiEvent(
 	midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64),
 	[]byte{0x00, 0x30, 0x40}...)
 

@@ -28,7 +28,8 @@ func (t *Transpose) Execute(smf *midi.SMF, steps int) ([]byte, error) {
 }
 
 func transpose(mtrk *midi.MTrk, steps int) {
-	for _, event := range mtrk.Events {
+	for i, _ := range mtrk.Events {
+		event := mtrk.Events[i]
 		switch v := event.Event.(type) {
 		case *metaevent.KeySignature:
 			v.Transpose(mtrk.Context, steps)
@@ -38,6 +39,10 @@ func transpose(mtrk *midi.MTrk, steps int) {
 
 		case *midievent.NoteOff:
 			v.Transpose(mtrk.Context, steps)
+
+		case midievent.NoteOff:
+			v.Transpose(mtrk.Context, steps)
+			event.Event = v
 		}
 	}
 }

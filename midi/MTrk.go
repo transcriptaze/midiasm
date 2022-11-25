@@ -71,8 +71,6 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {
-	// var buffer bytes.Buffer
-
 	rr := IO.NewReader(r)
 
 	delta, err := events.VLQ(rr)
