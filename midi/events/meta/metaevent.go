@@ -36,7 +36,8 @@ type TMetaEventX interface {
 		InstrumentName |
 		Lyric |
 		Marker |
-		CuePoint
+		CuePoint |
+		ProgramName
 
 	MarshalJSON() ([]byte, error)
 }

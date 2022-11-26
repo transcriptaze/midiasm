@@ -134,7 +134,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"Lyric":          func() E { return &metaevent.Lyric{} },
 		"Marker":         func() E { return &metaevent.Marker{} },
 		"CuePoint":       func() E { return &metaevent.CuePoint{} },
-		// "ProgramName":            func() E { return &metaevent.ProgramName{} },
+		"ProgramName":    func() E { return &metaevent.ProgramName{} },
 		// "DeviceName":             func() E { return &metaevent.DeviceName{} },
 		// "MIDIChannelPrefix":      func() E { return &metaevent.MIDIChannelPrefix{} },
 		// "MIDIPort":               func() E { return &metaevent.MIDIPort{} },

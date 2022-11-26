@@ -80,3 +80,47 @@ func TestTextUnmarshalProgramName(t *testing.T) {
 	}
 
 }
+
+func TestProgramNameMarshalJSON(t *testing.T) {
+	e := ProgramName{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagProgramName,
+			Status: 0xff,
+			Type:   lib.TypeProgramName,
+			bytes:  []byte{},
+		},
+		Name: "Escape",
+	}
+
+	expected := `{"tag":"ProgramName","delta":480,"status":255,"type":8,"name":"Escape"}`
+
+	testMarshalJSON(t, lib.TagProgramName, e, expected)
+}
+
+func TestProgramNameNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagProgramName
+	text := `{"tag":"ProgramName","delta":480,"status":255,"type":8,"name":"Escape"}`
+	expected := ProgramName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagProgramName,
+			Status: 0xff,
+			Type:   lib.TypeProgramName,
+			bytes:  []byte{},
+		},
+		Name: "Escape",
+	}
+
+	evt := ProgramName{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
+}

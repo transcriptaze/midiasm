@@ -137,6 +137,15 @@
         },
         {
           "event": {
+            "tag": "ProgramName",
+            "delta": 0,
+            "status": 255,
+            "type": 8,
+            "name": "Escape"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
