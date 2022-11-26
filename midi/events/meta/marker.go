@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -42,14 +43,7 @@ func (m Marker) MarshalBinary() (encoded []byte, err error) {
 		[]byte(m.Marker)...), nil
 }
 
-func (m *Marker) UnmarshalText(bytes []byte) error {
-	m.tick = 0
-	m.delta = 0
-	m.bytes = []byte{}
-	m.tag = lib.TagMarker
-	m.Status = 0xff
-	m.Type = lib.TypeMarker
-
+func (e *Marker) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Marker\s+(.*)`)
 	text := string(bytes)
 
@@ -58,8 +52,55 @@ func (m *Marker) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		m.delta = delta
-		m.Marker = string(match[2])
+		e.tick = 0
+		e.delta = delta
+		e.bytes = []byte{}
+		e.tag = lib.TagMarker
+		e.Status = 0xff
+		e.Type = lib.TypeMarker
+		e.Marker = match[2]
+	}
+
+	return nil
+}
+
+func (e Marker) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Marker string    `json:"marker"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Marker: e.Marker,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *Marker) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Marker string    `json:"marker"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagMarker) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagMarker
+		e.Type = lib.TypeMarker
+		e.Marker = t.Marker
 	}
 
 	return nil

@@ -119,6 +119,15 @@
         },
         {
           "event": {
+            "tag": "Marker",
+            "delta": 0,
+            "status": 255,
+            "type": 6,
+            "Marker": "Here Be Dragons"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

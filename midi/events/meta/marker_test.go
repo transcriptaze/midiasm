@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalMarker(t *testing.T) {
@@ -12,9 +12,9 @@ func TestUnmarshalMarker(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMarker,
+			tag:    lib.TagMarker,
 			Status: 0xff,
-			Type:   0x06,
+			Type:   lib.TypeMarker,
 			bytes:  []byte{0x00, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73},
 		},
 		Marker: "Here Be Dragons",
@@ -35,9 +35,9 @@ func TestMarkerMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMarker,
+			tag:    lib.TagMarker,
 			Status: 0xff,
-			Type:   0x06,
+			Type:   lib.TypeMarker,
 			bytes:  []byte{},
 		},
 		Marker: "Here Be Dragons",
@@ -61,9 +61,9 @@ func TestTextUnmarshalMarker(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagMarker,
+			tag:    lib.TagMarker,
 			Status: 0xff,
-			Type:   0x06,
+			Type:   lib.TypeMarker,
 			bytes:  []byte{},
 		},
 		Marker: "Here Be Dragons",
@@ -79,4 +79,48 @@ func TestTextUnmarshalMarker(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled Marker\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestMarkerMarshalJSON(t *testing.T) {
+	e := Marker{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagMarker,
+			Status: 0xff,
+			Type:   lib.TypeMarker,
+			bytes:  []byte{},
+		},
+		Marker: "Here Be Dragons",
+	}
+
+	expected := `{"tag":"Marker","delta":480,"status":255,"type":6,"marker":"Here Be Dragons"}`
+
+	testMarshalJSON(t, lib.TagMarker, e, expected)
+}
+
+func TestMarkerNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagMarker
+	text := `{"tag":"Marker","delta":480,"status":255,"type":6,"marker":"Here Be Dragons"}`
+	expected := Marker{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMarker,
+			Status: 0xff,
+			Type:   lib.TypeMarker,
+			bytes:  []byte{},
+		},
+		Marker: "Here Be Dragons",
+	}
+
+	evt := Marker{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }
