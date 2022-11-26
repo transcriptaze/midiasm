@@ -44,9 +44,9 @@ var noteOnCS3 = makeEvent(
 	midievent.MakeNoteOn(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
 	[]byte{0x00, 0x91, 0x31, 0x48}...)
 
-var noteOffCS3Alias = makeMidiEvent(
-	midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
-	[]byte{0x00, 0x81, 0x31, 0x64}...)
+var noteOffCS3Alias = &events.Event{
+	Event: midievent.MakeNoteOff(0, 0, 1, midievent.Note{Value: 49, Name: "C♯3", Alias: "D♭3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+}
 
 func TestUnmarshalNoteAlias(t *testing.T) {
 	bytes := []byte{

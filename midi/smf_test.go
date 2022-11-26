@@ -22,16 +22,11 @@ type event interface {
 		metaevent.SMPTEOffset |
 		metaevent.KeySignature |
 		midievent.NoteOn |
-		midievent.NoteOff |
 		midievent.Controller
 }
 
 func makeEvent[E event](e E, bytes ...byte) *events.Event {
 	return events.NewEvent(&e, bytes...)
-}
-
-func makeMidiEvent[E event](e E, bytes ...byte) *events.Event {
-	return events.NewEvent(e, bytes...)
 }
 
 var tempo = makeEvent(
@@ -62,9 +57,9 @@ var noteOn = makeEvent(
 	midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
 	[]byte{0x00, 0x30, 0x40}...)
 
-var noteOff = makeMidiEvent(
-	midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64),
-	[]byte{0x00, 0x30, 0x40}...)
+var noteOff = &events.Event{
+	Event: midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
+}
 
 var endOfTrack = makeEvent(
 	metaevent.MakeEndOfTrack(0, 0),

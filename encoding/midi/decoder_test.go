@@ -202,16 +202,11 @@ type event interface {
 		metaevent.EndOfTrack |
 		metaevent.SequencerSpecificEvent |
 		metaevent.KeySignature |
-		midievent.NoteOn |
-		midievent.NoteOff
+		midievent.NoteOn
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
 	return events.NewEvent(&e, bytes...)
-}
-
-func makeMidiEvent[E event](e E, bytes []byte) *events.Event {
-	return events.NewEvent(e, bytes...)
 }
 
 var sequenceNumber = makeEvent(
@@ -260,9 +255,9 @@ var noteOnC4 = makeEvent(
 	midievent.MakeNoteOn(0, 0, 1, midievent.Note{60, "C4", "C4"}, 76, []byte{0x00, 0x3c, 0x4c}...),
 	[]byte{0x00, 0x3c, 0x4c})
 
-var noteOffCS3 = makeMidiEvent(
-	midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
-	[]byte{0x00, 0x81, 0x31, 0x64})
+var noteOffCS3 = &events.Event{
+	Event: midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
+}
 
 var tempo = makeEvent(
 	metaevent.MakeTempo(0, 0, 500000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
