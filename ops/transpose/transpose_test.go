@@ -52,10 +52,10 @@ var mtrk = midi.MTrk{
 			Event: &keySignatureA,
 		},
 		&events.Event{
-			Event: &noteOnA,
+			Event: noteOnA,
 		},
 		&events.Event{
-			Event: &noteOffA,
+			Event: noteOffA,
 		},
 		&events.Event{
 			Event: metaevent.EndOfTrack{},
@@ -72,10 +72,10 @@ var expected = midi.MTrk{
 			Event: &keySignatureB,
 		},
 		&events.Event{
-			Event: &noteOnB,
+			Event: noteOnB,
 		},
 		&events.Event{
-			Event: &noteOffB,
+			Event: noteOffB,
 		},
 		&events.Event{
 			Event: metaevent.EndOfTrack{},
@@ -103,12 +103,13 @@ func TestTransposeMTrk(t *testing.T) {
 	for i := range expected.Events {
 		p := transposed.Events[i]
 		q := expected.Events[i]
-		fmt.Printf(">>> %#v\n    %#v\n", p.Event, q.Event)
+		r := mtrk.Events[i]
+		fmt.Printf(">>> %#v\n    %#v\n    %#v\n", r.Event, p.Event, q.Event)
 		if !reflect.DeepEqual(p, p) {
 			t.Errorf("Incorrectly transposed MTrk event\n   expected:%+v\n   got:     %+v", q, p)
 		}
 	}
 
-	fmt.Printf(">>> %#v\n    %#v\n", keySignatureA, keySignatureB)
-	fmt.Printf(">>> %#v\n    %#v\n", noteOnA, noteOnB)
+	// fmt.Printf(">>> %#v\n    %#v\n", keySignatureA, keySignatureB)
+	// fmt.Printf(">>> %#v\n    %#v\n", noteOnA, noteOnB)
 }

@@ -199,10 +199,8 @@ type event interface {
 		metaevent.InstrumentName |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
-		// metaevent.EndOfTrack |
 		metaevent.SequencerSpecificEvent |
-		metaevent.KeySignature |
-		midievent.NoteOn
+		metaevent.KeySignature
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -247,13 +245,13 @@ var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	[]byte{0x3a, 0x4c, 0x5e}),
 	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
 
-var noteOnCS3 = makeEvent(
-	midievent.MakeNoteOn(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
-	[]byte{0x00, 0x91, 0x31, 0x48})
+var noteOnCS3 = &events.Event{
+	Event: midievent.MakeNoteOn(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
+}
 
-var noteOnC4 = makeEvent(
-	midievent.MakeNoteOn(0, 0, 1, midievent.Note{60, "C4", "C4"}, 76, []byte{0x00, 0x3c, 0x4c}...),
-	[]byte{0x00, 0x3c, 0x4c})
+var noteOnC4 = &events.Event{
+	Event: midievent.MakeNoteOn(0, 0, 1, midievent.Note{60, "C4", "C4"}, 76, []byte{0x00, 0x3c, 0x4c}...),
+}
 
 var noteOffCS3 = &events.Event{
 	Event: midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),

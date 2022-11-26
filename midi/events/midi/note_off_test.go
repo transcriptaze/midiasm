@@ -185,7 +185,7 @@ func TestTransposeNoteOff(t *testing.T) {
 	transposed := noteOff.Transpose(ctx, 1)
 
 	if !reflect.DeepEqual(transposed, expected) {
-		t.Errorf("Incorrectly transposed NoteOff event\n  expected:%#v\n  got:     %#v", expected, noteOff)
+		t.Errorf("Incorrectly transposed NoteOff event\n  expected:%#v\n  got:     %#v", expected, transposed)
 	}
 
 	if noteOff.Note.Value != 0x39 || noteOff.Note.Name != "A3" || noteOff.Note.Alias != "A3" {

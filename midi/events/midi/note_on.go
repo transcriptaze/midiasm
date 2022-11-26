@@ -39,7 +39,7 @@ func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, veloc
 	}
 }
 
-func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOn, error) {
+func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*NoteOn, error) {
 	if status&0xf0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
@@ -66,14 +66,14 @@ func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib
 		ctx.PutNoteOn(channel, note.Value)
 	}
 
-	event := MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
+	event := MakeNoteOn(tick, delta, channel, note, velocity)
 
 	return &event, nil
 }
 
-func (n *NoteOn) Transpose(ctx *context.Context, steps int) {
-	v := int(n.Note.Value) + steps
-	note := n.Note.Value
+func (e NoteOn) Transpose(ctx *context.Context, steps int) NoteOn {
+	v := int(e.Note.Value) + steps
+	note := e.Note.Value
 
 	switch {
 	case v < 0:
@@ -86,10 +86,21 @@ func (n *NoteOn) Transpose(ctx *context.Context, steps int) {
 		note = byte(v)
 	}
 
-	n.Note = Note{
-		Value: note,
-		Name:  FormatNote(ctx, note),
-		Alias: FormatNote(ctx, note),
+	return NoteOn{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   []byte{},
+			tag:     lib.TagNoteOn,
+			Status:  lib.Status(0x80 | e.Channel),
+			Channel: e.Channel,
+		},
+		Note: Note{
+			Value: note,
+			Name:  ctx.GetNoteOff(e.Channel, note),
+			Alias: ctx.FormatNote(note),
+		},
+		Velocity: e.Velocity,
 	}
 }
 

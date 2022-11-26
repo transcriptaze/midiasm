@@ -20,7 +20,6 @@ type event interface {
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
 		metaevent.KeySignature |
-		midievent.NoteOn |
 		midievent.Controller
 }
 
@@ -52,9 +51,9 @@ var programBankLSBCh5 = makeEvent(
 	midievent.MakeController(0, 0, 5, lib.Controller{32, "Bank Select (LSB)"}, 43, []byte{0x00, 0xb5, 0x20, 0x21}...),
 	[]byte{0x00, 0xb5, 0x20, 0x21}...)
 
-var noteOn = makeEvent(
-	midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
-	[]byte{0x00, 0x30, 0x40}...)
+var noteOn = &events.Event{
+	Event: midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),
+}
 
 var noteOff = &events.Event{
 	Event: midievent.MakeNoteOff(0, 0, 7, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),

@@ -37,13 +37,13 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 		t.Fatalf("Unexpected NoteOn event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*NoteOn)
+	event, ok := event.(NoteOn)
 	if !ok {
 		t.Fatalf("NoteOn event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 
@@ -77,13 +77,13 @@ func TestParseNoteOnInMinorKey(t *testing.T) {
 		t.Fatalf("Unexpected NoteOn event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*NoteOn)
+	event, ok := event.(NoteOn)
 	if !ok {
 		t.Fatalf("NoteOn event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 
@@ -146,4 +146,50 @@ func TestNoteOnUnmarshalText(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled NoteOn\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestTransposeNoteOn(t *testing.T) {
+	ctx := context.NewContext()
+
+	expected := NoteOn{
+		event{
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{},
+			tag:     lib.TagNoteOn,
+			Status:  0x81,
+			Channel: 1,
+		},
+		Note{
+			Value: 0x3a,
+			Name:  "A♯3",
+			Alias: "A♯3",
+		}, 72,
+	}
+
+	noteOn := NoteOn{
+		event{
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{0x00, 0x81, 0x39, 0x48},
+			tag:     lib.TagNoteOn,
+			Status:  0x81,
+			Channel: 1,
+		},
+		Note{
+			Value: 0x39,
+			Name:  "A3",
+			Alias: "A3",
+		}, 72,
+	}
+
+	transposed := noteOn.Transpose(ctx, 1)
+
+	if !reflect.DeepEqual(transposed, expected) {
+		t.Errorf("Incorrectly transposed NoteOn event\n  expected:%#v\n  got:     %#v", expected, transposed)
+	}
+
+	if noteOn.Note.Value != 0x39 || noteOn.Note.Name != "A3" || noteOn.Note.Alias != "A3" {
+		t.Errorf("Transpose mutated original NoteOn event")
+	}
 }

@@ -37,13 +37,12 @@ func transpose(mtrk midi.MTrk, steps int) midi.MTrk {
 			v.Transpose(mtrk.Context, steps)
 
 		case *midievent.NoteOn:
-			v.Transpose(mtrk.Context, steps)
-
-		case *midievent.NoteOff:
+		case midievent.NoteOn:
 			mtrk.Events[i] = &events.Event{
 				Event: v.Transpose(mtrk.Context, steps),
 			}
 
+		case *midievent.NoteOff:
 		case midievent.NoteOff:
 			mtrk.Events[i] = &events.Event{
 				Event: v.Transpose(mtrk.Context, steps),
