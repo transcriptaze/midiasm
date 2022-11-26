@@ -9,7 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 var SMF0 = []byte{
@@ -234,13 +234,13 @@ var didgeridoo = makeEvent(
 	[]byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f})
 
 var aMinor = makeEvent(
-	metaevent.MakeKeySignature(0, 0, 0, types.Minor, "A minor", []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
+	metaevent.MakeKeySignature(0, 0, 0, lib.Minor, "A minor", []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
 	[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
 
 var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	0,
 	0,
-	types.Manufacturer{
+	lib.Manufacturer{
 		ID:     []byte{0x00, 0x00, 0x3b},
 		Region: "American",
 		Name:   "Mark Of The Unicorn (MOTU)"},

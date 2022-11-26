@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalSequencerSpecificEvent(t *testing.T) {
@@ -12,12 +12,12 @@ func TestUnmarshalSequencerSpecificEvent(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSequencerSpecificEvent,
+			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
 			Type:   0x7f,
 			bytes:  []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x00, 0x00, 0x3b},
 			Region: "American",
 			Name:   "Mark Of The Unicorn (MOTU)",
@@ -40,12 +40,12 @@ func TestSequencerSpecificEventMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagSequencerSpecificEvent,
+			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
 			Type:   0x7f,
 			bytes:  []byte{},
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x00, 0x00, 0x3b},
 			Region: "American",
 			Name:   "Mark Of The Unicorn (MOTU)",
@@ -71,12 +71,12 @@ func TestTextUnmarshalSequencerSpecific(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagSequencerSpecificEvent,
+			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
 			Type:   0x7f,
 			bytes:  []byte{},
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x00, 0x00, 0x3b},
 			Region: "American",
 			Name:   "Mark Of The Unicorn (MOTU)",

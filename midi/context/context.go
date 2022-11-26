@@ -3,7 +3,7 @@ package context
 import (
 	"fmt"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 var Sharps = map[byte]string{
@@ -38,18 +38,18 @@ var Flats = map[byte]string{
 
 type Context struct {
 	scale         map[byte]string
-	RunningStatus types.Status
+	RunningStatus lib.Status
 	Casio         bool
 	ProgramBank   map[uint8]uint16
 	notes         map[uint16]string
 }
 
 // Ref. https://computermusicresource.com/midikeys.html
-func SetMiddleC(c types.MiddleC) {
+func SetMiddleC(c lib.MiddleC) {
 	MiddleC = c
 }
 
-var MiddleC = types.C3
+var MiddleC = lib.C3
 
 func NewContext() *Context {
 	return &Context{
@@ -77,7 +77,7 @@ func (ctx *Context) UseFlats() *Context {
 	return ctx
 }
 
-func (ctx *Context) GetNoteOff(ch types.Channel, n byte) string {
+func (ctx *Context) GetNoteOff(ch lib.Channel, n byte) string {
 	key := uint16(ch)
 	key <<= 8
 	key |= uint16(n)
@@ -89,7 +89,7 @@ func (ctx *Context) GetNoteOff(ch types.Channel, n byte) string {
 	return ctx.FormatNote(n)
 }
 
-func (ctx *Context) PutNoteOn(ch types.Channel, n byte) {
+func (ctx *Context) PutNoteOn(ch lib.Channel, n byte) {
 	key := uint16(ch)
 	key <<= 8
 	key |= uint16(n)
@@ -107,7 +107,7 @@ func (ctx *Context) FormatNote(n byte) string {
 	var note = scale[n%12]
 	var octave int
 
-	if MiddleC == types.C4 {
+	if MiddleC == lib.C4 {
 		octave = int(n/12) - 2
 	} else {
 		octave = int(n/12) - 1

@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type MThd struct {
@@ -14,12 +14,12 @@ type MThd struct {
 	Format        uint16
 	Tracks        uint16
 	Division      uint16
-	PPQN          uint16    // TODO make getter/TextUnmarshal
-	SMPTETimeCode bool      // TODO make getter/TextUnmarshal
-	SubFrames     uint16    // TODO make getter/TextUnmarshal
-	FPS           uint8     // TODO make getter/TextUnmarshal
-	DropFrame     bool      // TODO make getter/TextUnmarshal
-	Bytes         types.Hex `json:"-"` // TODO make getter/TextUnmarshal
+	PPQN          uint16  // TODO make getter/TextUnmarshal
+	SMPTETimeCode bool    // TODO make getter/TextUnmarshal
+	SubFrames     uint16  // TODO make getter/TextUnmarshal
+	FPS           uint8   // TODO make getter/TextUnmarshal
+	DropFrame     bool    // TODO make getter/TextUnmarshal
+	Bytes         lib.Hex `json:"-"` // TODO make getter/TextUnmarshal
 }
 
 func NewMThd(format uint16, tracks uint16, division uint16) (*MThd, error) {

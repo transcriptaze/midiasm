@@ -1,4 +1,4 @@
-package types
+package lib
 
 type VLQ uint32
 

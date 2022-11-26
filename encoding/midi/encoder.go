@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/transcriptaze/midiasm/midi"
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type Encoder interface {

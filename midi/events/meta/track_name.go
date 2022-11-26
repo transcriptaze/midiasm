@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type TrackName struct {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 var cli = []struct {
@@ -41,7 +41,7 @@ func main() {
 			return
 		}
 
-		manufacturers, err := types.LoadManufacturers(f)
+		manufacturers, err := lib.LoadManufacturers(f)
 
 		f.Close()
 
@@ -50,7 +50,7 @@ func main() {
 			return
 		}
 
-		types.AddManufacturers(manufacturers)
+		lib.AddManufacturers(manufacturers)
 	}
 
 	// ... set global stuff

@@ -5,18 +5,17 @@ import (
 	"regexp"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type SysExMessage struct {
 	event
-	Manufacturer types.Manufacturer
-	Data         types.Hex
+	Manufacturer lib.Manufacturer
+	Data         lib.Hex
 	Single       bool
 }
 
-func MakeSysExMessage(tick uint64, delta uint32, manufacturer types.Manufacturer, data types.Hex, bytes ...byte) SysExMessage {
+func MakeSysExMessage(tick uint64, delta uint32, manufacturer lib.Manufacturer, data lib.Hex, bytes ...byte) SysExMessage {
 	return SysExMessage{
 		event: event{
 			tick:   tick,
@@ -31,7 +30,7 @@ func MakeSysExMessage(tick uint64, delta uint32, manufacturer types.Manufacturer
 	}
 }
 
-func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer types.Manufacturer, data types.Hex, bytes ...byte) SysExMessage {
+func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer lib.Manufacturer, data lib.Hex, bytes ...byte) SysExMessage {
 	return SysExMessage{
 		event: event{
 			tick:   tick,
@@ -56,7 +55,7 @@ func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, stat
 	}
 
 	id := bytes[0:1]
-	manufacturer := types.LookupManufacturer(id)
+	manufacturer := lib.LookupManufacturer(id)
 	data := bytes[1:]
 
 	if data[len(data)-1] != 0xf7 {

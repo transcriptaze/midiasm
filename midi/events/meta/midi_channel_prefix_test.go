@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalMIDIChannelPrefix(t *testing.T) {
@@ -12,7 +12,7 @@ func TestUnmarshalMIDIChannelPrefix(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMIDIChannelPrefix,
+			tag:    lib.TagMIDIChannelPrefix,
 			Status: 0xff,
 			Type:   0x20,
 			bytes:  []byte{0x00, 0xff, 0x20, 0x01, 0x0d},
@@ -35,7 +35,7 @@ func TestMIDIChannelPrefixMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMIDIChannelPrefix,
+			tag:    lib.TagMIDIChannelPrefix,
 			Status: 0xff,
 			Type:   0x20,
 			bytes:  []byte{},
@@ -61,7 +61,7 @@ func TestTextUnmarshalMIDIChannelPrefix(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagMIDIChannelPrefix,
+			tag:    lib.TagMIDIChannelPrefix,
 			Status: 0xff,
 			Type:   0x20,
 			bytes:  []byte{},

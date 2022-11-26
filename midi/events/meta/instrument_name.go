@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type InstrumentName struct {

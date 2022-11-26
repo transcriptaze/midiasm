@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseEscapeMessage(t *testing.T) {
@@ -26,7 +26,7 @@ func TestParseEscapeMessage(t *testing.T) {
 		t.Fatalf("SysEx escape message parse error - returned %T", event)
 	}
 
-	expected := types.Hex{0xf3, 0x01}
+	expected := lib.Hex{0xf3, 0x01}
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx escape message data - expected:%v, got: %v", expected, message.Data)
 	}
@@ -38,10 +38,10 @@ func TestSysExEscapeMessageMarshalBinary(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  []byte{},
-			tag:    types.TagSysExEscape,
+			tag:    lib.TagSysExEscape,
 			Status: 0xf7,
 		},
-		Data: types.Hex{0xf3, 0x01},
+		Data: lib.Hex{0xf3, 0x01},
 	}
 
 	expected := []byte{0xf7, 0x02, 0xf3, 0x01}
@@ -62,11 +62,11 @@ func TestSysExEscapeMessageUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagSysExEscape,
+			tag:    lib.TagSysExEscape,
 			Status: 0xf7,
 			bytes:  []byte{},
 		},
-		Data: types.Hex{0xf3, 0x01},
+		Data: lib.Hex{0xf3, 0x01},
 	}
 
 	evt := SysExEscapeMessage{}

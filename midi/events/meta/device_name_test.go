@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalDeviceName(t *testing.T) {
@@ -12,7 +12,7 @@ func TestUnmarshalDeviceName(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagDeviceName,
+			tag:    lib.TagDeviceName,
 			Status: 0xff,
 			Type:   0x09,
 			bytes:  []byte{0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67},
@@ -35,7 +35,7 @@ func TestDeviceNameMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagDeviceName,
+			tag:    lib.TagDeviceName,
 			Status: 0xff,
 			Type:   0x09,
 			bytes:  []byte{},
@@ -61,7 +61,7 @@ func TestTextUnmarshalDeviceName(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagDeviceName,
+			tag:    lib.TagDeviceName,
 			Status: 0xff,
 			Type:   0x09,
 			bytes:  []byte{},

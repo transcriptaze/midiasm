@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParsePitchBend(t *testing.T) {
@@ -15,7 +15,7 @@ func TestParsePitchBend(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0xe7, 0x00, 0x08},
 
-			tag:     types.TagPitchBend,
+			tag:     lib.TagPitchBend,
 			Status:  0xe7,
 			Channel: 7,
 		},
@@ -45,7 +45,7 @@ func TestPitchBendMarshalBinary(t *testing.T) {
 			tick:  2400,
 			delta: 480,
 			bytes: []byte{0x00, 0xe7, 0x00, 0x08},
-			tag:   types.TagPitchBend,
+			tag:   lib.TagPitchBend,
 
 			Status:  0xe7,
 			Channel: 7,
@@ -71,7 +71,7 @@ func TestPitchBendUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   240,
-			tag:     types.TagPitchBend,
+			tag:     lib.TagPitchBend,
 			Status:  0xe7,
 			Channel: 7,
 			bytes:   []byte{},

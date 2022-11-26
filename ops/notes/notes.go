@@ -13,7 +13,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 const LOG_TAG = "notes"
@@ -25,7 +25,7 @@ type Notes struct {
 }
 
 type Note struct {
-	Channel       types.Channel
+	Channel       lib.Channel
 	Note          byte
 	FormattedNote string
 	Velocity      byte
@@ -182,12 +182,12 @@ func print(notes []*Note, w io.Writer) error {
 
 func export(notes []*Note, w io.Writer) error {
 	type note struct {
-		Channel  types.Channel `json:"channel"`
-		MidiNote byte          `json:"midi-note"`
-		Note     string        `json:"note"`
-		Velocity byte          `json:"velocity"`
-		Start    float64       `json:"start"`
-		End      float64       `json:"end"`
+		Channel  lib.Channel `json:"channel"`
+		MidiNote byte        `json:"midi-note"`
+		Note     string      `json:"note"`
+		Velocity byte        `json:"velocity"`
+		Start    float64     `json:"start"`
+		End      float64     `json:"end"`
 	}
 
 	object := struct {

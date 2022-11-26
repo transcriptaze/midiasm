@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalCMajorKeySignature(t *testing.T) {
@@ -12,13 +12,13 @@ func TestUnmarshalCMajorKeySignature(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00},
 		},
 		Accidentals: 0,
-		KeyType:     types.Major,
+		KeyType:     lib.Major,
 		Key:         "C major",
 	}
 
@@ -39,13 +39,13 @@ func TestUnmarshalCMinorKeySignature(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01},
 		},
 		Accidentals: -3,
-		KeyType:     types.Minor,
+		KeyType:     lib.Minor,
 		Key:         "C minor",
 	}
 
@@ -68,13 +68,13 @@ func TestKeySignatureMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{},
 		},
 		Accidentals: -3,
-		KeyType:     types.Minor,
+		KeyType:     lib.Minor,
 		Key:         "C minor",
 	}
 
@@ -96,7 +96,7 @@ func TestKeySignatureUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagKeySignature,
+			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
 			bytes:  []byte{},

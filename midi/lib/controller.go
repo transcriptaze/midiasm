@@ -1,4 +1,4 @@
-package types
+package lib
 
 type Controller struct {
 	ID   byte

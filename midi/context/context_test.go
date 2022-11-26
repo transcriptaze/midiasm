@@ -4,11 +4,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestFormatNote(t *testing.T) {
-	SetMiddleC(types.C3)
+	SetMiddleC(lib.C3)
 
 	sharps := []string{"C", "C\u266f", "D", "D\u266f", "E", "F", "F\u266f", "G", "G\u266f", "A", "A\u266f", "B"}
 	flats := []string{"C", "D\u266d", "D", "E\u266d", "E", "F", "G\u266d", "G", "A\u266d", "A", "B\u266d", "B"}
@@ -46,7 +46,7 @@ func TestFormatNote(t *testing.T) {
 }
 
 func TestFormatNoteWithC4(t *testing.T) {
-	SetMiddleC(types.C4)
+	SetMiddleC(lib.C4)
 
 	sharps := []string{"C", "C\u266f", "D", "D\u266f", "E", "F", "F\u266f", "G", "G\u266f", "A", "A\u266f", "B"}
 	flats := []string{"C", "D\u266d", "D", "E\u266d", "E", "F", "G\u266d", "G", "A\u266d", "A", "B\u266d", "B"}

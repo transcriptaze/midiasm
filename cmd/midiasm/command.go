@@ -10,7 +10,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type Command interface {
@@ -18,7 +18,7 @@ type Command interface {
 	Execute() error
 	Help()
 
-	MiddleC() types.MiddleC
+	MiddleC() lib.MiddleC
 	Debug() bool
 	Verbose() bool
 
@@ -37,12 +37,12 @@ func (c command) config() string {
 	return c.conf
 }
 
-func (c command) MiddleC() types.MiddleC {
+func (c command) MiddleC() lib.MiddleC {
 	if c.c4 {
-		return types.C4
+		return lib.C4
 	}
 
-	return types.C3
+	return lib.C3
 }
 
 func (c command) Debug() bool {

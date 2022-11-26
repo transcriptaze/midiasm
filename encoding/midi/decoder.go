@@ -8,7 +8,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type Decoder interface {
@@ -62,7 +62,7 @@ loop:
 	for _, chunk := range list[1:] {
 		if string(chunk[0:4]) == "MTrk" {
 			mtrk := midi.MTrk{
-				TrackNumber: types.TrackNumber(len(smf.Tracks)),
+				TrackNumber: lib.TrackNumber(len(smf.Tracks)),
 				Context:     context.NewContext(),
 			}
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseController(t *testing.T) {
@@ -15,11 +15,11 @@ func TestParseController(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
 
-			tag:     types.TagController,
+			tag:     lib.TagController,
 			Status:  0xb7,
 			Channel: 7,
 		},
-		Controller: types.Controller{84, "Portamento Control"},
+		Controller: lib.Controller{84, "Portamento Control"},
 		Value:      29,
 	}
 
@@ -64,12 +64,12 @@ func TestControllerMarshalBinary(t *testing.T) {
 			tick:  2400,
 			delta: 480,
 			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
-			tag:   types.TagController,
+			tag:   lib.TagController,
 
 			Status:  0xb7,
 			Channel: 7,
 		},
-		Controller: types.Controller{84, "Portamento Control"},
+		Controller: lib.Controller{84, "Portamento Control"},
 		Value:      29,
 	}
 
@@ -91,12 +91,12 @@ func TestControllerUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			tag:     types.TagController,
+			tag:     lib.TagController,
 			Status:  0xb7,
 			Channel: 7,
 			bytes:   []byte{},
 		},
-		Controller: types.Controller{101, "Registered Parameter Number (MSB)"},
+		Controller: lib.Controller{101, "Registered Parameter Number (MSB)"},
 		Value:      0x09,
 	}
 

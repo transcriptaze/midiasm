@@ -8,7 +8,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/events/sysex"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type TEvent interface {
@@ -64,7 +64,7 @@ func (e Event) Delta() uint32 {
 	panic(fmt.Sprintf("Invalid event (%v) - missing 'delta'", e))
 }
 
-func (e Event) Bytes() types.Hex {
+func (e Event) Bytes() lib.Hex {
 	if v, ok := e.Event.(IEvent); ok {
 		return v.Bytes()
 	}
@@ -149,7 +149,7 @@ func Clean(e any) string {
 // 	return e.Delta()
 // }
 //
-// func Bytes[E TEvent](e E) types.Hex {
+// func Bytes[E TEvent](e E) lib.Hex {
 // 	return e.Bytes()
 // }
 

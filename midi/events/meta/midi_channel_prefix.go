@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type MIDIChannelPrefix struct {

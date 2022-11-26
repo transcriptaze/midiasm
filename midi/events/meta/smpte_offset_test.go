@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalSMPTEOffset(t *testing.T) {

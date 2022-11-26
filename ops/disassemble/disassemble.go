@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 //go:embed template
@@ -93,7 +93,7 @@ func pad(width int, v any) string {
 	return s + strings.Repeat(" ", width-len([]rune(s)))
 }
 
-func valign(bytes types.Hex, w ...int) string {
+func valign(bytes lib.Hex, w ...int) string {
 	ix := 0
 
 	for {

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestProgramChange(t *testing.T) {
@@ -14,7 +14,7 @@ func TestProgramChange(t *testing.T) {
 			tick:    12345,
 			delta:   5432,
 			bytes:   []byte{0x00, 0xc7, 0x0d},
-			tag:     types.TagProgramChange,
+			tag:     lib.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 		},
@@ -48,7 +48,7 @@ func TestProgramChangeMarshalBinary(t *testing.T) {
 			tick:    2400,
 			delta:   480,
 			bytes:   []byte{0x00, 0xc7, 25},
-			tag:     types.TagProgramChange,
+			tag:     lib.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 		},
@@ -74,7 +74,7 @@ func TestProgramChangeUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			tag:     types.TagProgramChange,
+			tag:     lib.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
 			bytes:   []byte{},

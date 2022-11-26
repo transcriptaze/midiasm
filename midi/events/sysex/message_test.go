@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseSysExSingleMessage(t *testing.T) {
@@ -26,7 +26,7 @@ func TestParseSysExSingleMessage(t *testing.T) {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
 
-	manufacturer := types.Manufacturer{
+	manufacturer := lib.Manufacturer{
 		ID:     []byte{0x7e},
 		Region: "Special Purpose",
 		Name:   "Non-RealTime Extensions",
@@ -35,7 +35,7 @@ func TestParseSysExSingleMessage(t *testing.T) {
 		t.Errorf("Invalid SysEx single message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)
 	}
 
-	data := types.Hex{0x00, 0x09, 0x01}
+	data := lib.Hex{0x00, 0x09, 0x01}
 	if !reflect.DeepEqual(message.Data, data) {
 		t.Errorf("Invalid SysEx single message data - expected:%v, got: %v", data, message.Data)
 	}
@@ -67,7 +67,7 @@ func TestParseSysExMessage(t *testing.T) {
 		t.Fatalf("SysEx message parse error - returned %T", event)
 	}
 
-	manufacturer := types.Manufacturer{
+	manufacturer := lib.Manufacturer{
 		ID:     []byte{0x7e},
 		Region: "Special Purpose",
 		Name:   "Non-RealTime Extensions",
@@ -76,7 +76,7 @@ func TestParseSysExMessage(t *testing.T) {
 		t.Errorf("Invalid SysEx message manufacturer - expected:%v, got: %v", manufacturer, message.Manufacturer)
 	}
 
-	data := types.Hex([]byte{0x00, 0x09, 0x01, 0x43})
+	data := lib.Hex([]byte{0x00, 0x09, 0x01, 0x43})
 	if !reflect.DeepEqual(message.Data, data) {
 		t.Errorf("Invalid SysEx message data - expected:%v, got: %v", data, message.Data)
 	}
@@ -92,15 +92,15 @@ func TestSysExMessageMarshalBinary(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  []byte{},
-			tag:    types.TagSysExMessage,
+			tag:    lib.TagSysExMessage,
 			Status: 0xf0,
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x7e},
 			Region: "Special Purpose",
 			Name:   "Non-RealTime Extensions",
 		},
-		Data: types.Hex{0x00, 0x09, 0x01},
+		Data: lib.Hex{0x00, 0x09, 0x01},
 	}
 
 	expected := []byte{0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01}
@@ -121,15 +121,15 @@ func TestSysExSingleMessageMarshalBinary(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  []byte{},
-			tag:    types.TagSysExMessage,
+			tag:    lib.TagSysExMessage,
 			Status: 0xf0,
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x7e},
 			Region: "Special Purpose",
 			Name:   "Non-RealTime Extensions",
 		},
-		Data:   types.Hex{0x00, 0x09, 0x01},
+		Data:   lib.Hex{0x00, 0x09, 0x01},
 		Single: true,
 	}
 
@@ -151,16 +151,16 @@ func TestSysExMessageUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagSysExMessage,
+			tag:    lib.TagSysExMessage,
 			Status: 0xf0,
 			bytes:  []byte{},
 		},
-		Manufacturer: types.Manufacturer{
+		Manufacturer: lib.Manufacturer{
 			ID:     []byte{0x7e},
 			Region: "Special Purpose",
 			Name:   "Non-RealTime Extensions",
 		},
-		Data: types.Hex{0x00, 0x09, 0x01},
+		Data: lib.Hex{0x00, 0x09, 0x01},
 	}
 
 	evt := SysExMessage{}

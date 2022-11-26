@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseChannelPressure(t *testing.T) {
@@ -15,7 +15,7 @@ func TestParseChannelPressure(t *testing.T) {
 			delta: 480,
 			bytes: []byte{0x00, 0xd7, 0x64},
 
-			tag:     types.TagChannelPressure,
+			tag:     lib.TagChannelPressure,
 			Status:  0xd7,
 			Channel: 7,
 		},
@@ -47,7 +47,7 @@ func TestChannelPressureMarshalBinary(t *testing.T) {
 			tick:  2400,
 			delta: 480,
 			bytes: []byte{0x00, 0xd7, 0x64},
-			tag:   types.TagChannelPressure,
+			tag:   lib.TagChannelPressure,
 
 			Status:  0xd7,
 			Channel: 7,
@@ -73,7 +73,7 @@ func TestChannelPressureUnmarshalText(t *testing.T) {
 		event: event{
 			tick:    0,
 			delta:   480,
-			tag:     types.TagChannelPressure,
+			tag:     lib.TagChannelPressure,
 			Status:  0xd7,
 			Channel: 7,
 			bytes:   []byte{},

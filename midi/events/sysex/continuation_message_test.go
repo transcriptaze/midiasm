@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseContinuationMessage(t *testing.T) {
@@ -27,7 +27,7 @@ func TestParseContinuationMessage(t *testing.T) {
 		t.Fatalf("SysEx continuation message parse error - returned %T", event)
 	}
 
-	expected := types.Hex{0x7e, 0x00, 0x09, 0x01}
+	expected := lib.Hex{0x7e, 0x00, 0x09, 0x01}
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx continuation message data - expected:%v, got: %v", expected, message.Data)
 	}
@@ -43,10 +43,10 @@ func TestSysExContinuationMessageMarshalBinary(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  []byte{},
-			tag:    types.TagSysExContinuation,
+			tag:    lib.TagSysExContinuation,
 			Status: 0xf7,
 		},
-		Data: types.Hex{0x7e, 0x00, 0x09, 0x01},
+		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
 	}
 
 	expected := []byte{0xf7, 0x04, 0x7e, 0x00, 0x09, 0x01}
@@ -67,10 +67,10 @@ func TestSysExContinuationEndMessageMarshalBinary(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  []byte{},
-			tag:    types.TagSysExContinuation,
+			tag:    lib.TagSysExContinuation,
 			Status: 0xf7,
 		},
-		Data: types.Hex{0x7e, 0x00, 0x09, 0x01},
+		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
 		End:  true,
 	}
 
@@ -92,11 +92,11 @@ func TestSysExContinuationMessageUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  200,
-			tag:    types.TagSysExContinuation,
+			tag:    lib.TagSysExContinuation,
 			Status: 0xf7,
 			bytes:  []byte{},
 		},
-		Data: types.Hex{0x43, 0x12, 0x00, 0x43, 0x12, 0x00},
+		Data: lib.Hex{0x43, 0x12, 0x00, 0x43, 0x12, 0x00},
 	}
 
 	evt := SysExContinuationMessage{}

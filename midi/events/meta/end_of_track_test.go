@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalEndOfTrack(t *testing.T) {
@@ -13,7 +13,7 @@ func TestUnmarshalEndOfTrack(t *testing.T) {
 			tick:   2400,
 			delta:  480,
 			bytes:  nil,
-			tag:    types.TagEndOfTrack,
+			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 		},
@@ -34,7 +34,7 @@ func TestEndOfTrackMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  0,
-			tag:    types.TagEndOfTrack,
+			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},
@@ -59,7 +59,7 @@ func TestEndOfTrackUnmarshalText(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagEndOfTrack,
+			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},
@@ -83,7 +83,7 @@ func TestEndOfTrackMarshalJSON(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  0,
-			tag:    types.TagEndOfTrack,
+			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},
@@ -108,7 +108,7 @@ func TestEndOfTrackUnmarshalJSON(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagEndOfTrack,
+			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 			bytes:  []byte{},

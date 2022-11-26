@@ -9,7 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 var trackname = makeEvent(
@@ -17,11 +17,11 @@ var trackname = makeEvent(
 	[]byte{0x0, 0xff, 0x3, 0x9, 0x45, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x31}...)
 
 var keysignatureFSM = makeEvent(
-	metaevent.MakeKeySignature(0, 0, 6, types.Major, "F♯ major", []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00}...),
+	metaevent.MakeKeySignature(0, 0, 6, lib.Major, "F♯ major", []byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00}...),
 	[]byte{0x00, 0xff, 0x59, 0x02, 0x06, 0x00}...)
 
 var keysignatureEFm = makeEvent(
-	metaevent.MakeKeySignature(0, 0, -6, types.Minor, "E♭ minor", []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01}...),
+	metaevent.MakeKeySignature(0, 0, -6, lib.Minor, "E♭ minor", []byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01}...),
 	[]byte{0x00, 0xff, 0x59, 0x02, 0xfa, 0x01}...)
 
 var noteOnC3v72 = makeEvent(

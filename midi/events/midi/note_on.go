@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type NoteOn struct {

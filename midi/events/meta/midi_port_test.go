@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestUnmarshalMIDIPort(t *testing.T) {
@@ -12,7 +12,7 @@ func TestUnmarshalMIDIPort(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMIDIPort,
+			tag:    lib.TagMIDIPort,
 			Status: 0xff,
 			Type:   0x21,
 			bytes:  []byte{0x00, 0xff, 0x21, 0x01, 0x70},
@@ -35,7 +35,7 @@ func TestMIDIPortMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagMIDIPort,
+			tag:    lib.TagMIDIPort,
 			Status: 0xff,
 			Type:   0x21,
 			bytes:  []byte{},
@@ -61,7 +61,7 @@ func TestTextUnmarshalMIDIPort(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagMIDIPort,
+			tag:    lib.TagMIDIPort,
 			Status: 0xff,
 			Type:   0x21,
 			bytes:  []byte{},

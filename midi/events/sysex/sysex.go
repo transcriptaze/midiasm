@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/context"
-	"github.com/transcriptaze/midiasm/midi/types"
-	lib "github.com/transcriptaze/midiasm/midi/types"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type TSysExEvent interface {
@@ -47,7 +46,7 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status types.Status, data []byte, bytes ...byte) (any, error) {
+func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	if status != 0xF0 && status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx status (%v): expected 'F0' or 'F7'", status)
 	}
