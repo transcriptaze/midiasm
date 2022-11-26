@@ -12,12 +12,12 @@ type EndOfTrack struct {
 	event
 }
 
-func MakeEndOfTrack(tick uint64, delta lib.Delta) EndOfTrack {
+func MakeEndOfTrack(tick uint64, delta lib.Delta, bytes ...byte) EndOfTrack {
 	return EndOfTrack{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  []byte{0x00, 0xff, 0x2f, 0x00},
+			bytes:  bytes,
 			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   lib.TypeEndOfTrack,
@@ -25,7 +25,7 @@ func MakeEndOfTrack(tick uint64, delta lib.Delta) EndOfTrack {
 	}
 }
 
-func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, bytes []byte) (*EndOfTrack, error) {
+func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, data ...byte) (*EndOfTrack, error) {
 	event := MakeEndOfTrack(tick, delta)
 
 	return &event, nil

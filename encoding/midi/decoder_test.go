@@ -199,7 +199,7 @@ type event interface {
 		metaevent.InstrumentName |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
-		metaevent.EndOfTrack |
+		// metaevent.EndOfTrack |
 		metaevent.SequencerSpecificEvent |
 		metaevent.KeySignature |
 		midievent.NoteOn
@@ -267,6 +267,6 @@ var smpteOffset = makeEvent(
 	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
 	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
 
-var endOfTrack = makeEvent(
-	metaevent.MakeEndOfTrack(0, 0),
-	[]byte{0x00, 0xff, 0x2f, 0x00})
+var endOfTrack = &events.Event{
+	Event: metaevent.MakeEndOfTrack(0, 0, []byte{0x00, 0xff, 0x2f, 0x00}...),
+}

@@ -21,7 +21,13 @@ type event struct {
 	Channel lib.Channel
 }
 
-var EVENTS = map[byte]int{
+type Note struct {
+	Value byte
+	Name  string
+	Alias string
+}
+
+var Events = map[byte]int{
 	0x80: 2,
 	0x90: 2,
 	0xA0: 1,
@@ -58,17 +64,7 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-type Note struct {
-	Value byte
-	Name  string
-	Alias string
-}
-
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
-	return parse(ctx, tick, delta, status, data, bytes...)
-}
-
-func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
 		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
@@ -77,7 +73,13 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 			e.bytes = bytes
 			return *e, err
 		}
+	}
 
+	return parse(ctx, tick, delta, status, data, bytes...)
+}
+
+func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	switch status & 0xf0 {
 	case 0x90:
 		return UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...)
 

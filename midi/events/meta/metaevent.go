@@ -115,9 +115,9 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []
 		return UnmarshalMIDIPort(tick, delta, bytes)
 	},
 
-	lib.TypeEndOfTrack: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalEndOfTrack(tick, delta, bytes)
-	},
+	// lib.TypeEndOfTrack: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
+	// 	return UnmarshalEndOfTrack(tick, delta, bytes)
+	// },
 
 	lib.TypeTempo: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTempo(tick, delta, bytes)
@@ -152,8 +152,18 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []
 	},
 }
 
-func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b byte, data []byte) (any, error) {
+func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
 	eventType := lib.MetaEventType(b & 0x7F)
+
+	switch eventType {
+	case lib.TypeEndOfTrack:
+		if e, err := UnmarshalEndOfTrack(tick, delta, data...); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+	}
 
 	if f, ok := factory[eventType]; ok {
 		return f(ctx, tick, delta, data)

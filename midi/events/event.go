@@ -73,9 +73,13 @@ func (e Event) Bytes() types.Hex {
 }
 
 func IsEndOfTrack(e *Event) bool {
-	_, ok := e.Event.(*metaevent.EndOfTrack)
+	if _, ok := e.Event.(metaevent.EndOfTrack); ok {
+		return true
+	} else if _, ok := e.Event.(*metaevent.EndOfTrack); ok {
+		return true
+	}
 
-	return ok
+	return false
 }
 
 func IsTrack0Event(e *Event) bool {
@@ -88,6 +92,11 @@ func IsTrack0Event(e *Event) bool {
 		*metaevent.EndOfTrack,
 		*metaevent.Copyright:
 		return true
+
+	case
+		metaevent.EndOfTrack:
+		return true
+
 	default:
 		return false
 	}
@@ -99,6 +108,7 @@ func IsTrack1Event(e *Event) bool {
 		*metaevent.Tempo,
 		*metaevent.SMPTEOffset:
 		return false
+
 	default:
 		return true
 	}

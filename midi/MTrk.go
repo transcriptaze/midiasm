@@ -95,7 +95,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		} else if data, err := events.VLF(rr); err != nil {
 			return nil, err
 		} else {
-			e, err := metaevent.Parse(ctx, uint64(tick)+uint64(delta), lib.Delta(delta), status, eventType, data)
+			e, err := metaevent.Parse(ctx, uint64(tick)+uint64(delta), lib.Delta(delta), status, eventType, data, rr.Bytes()...)
 
 			return events.NewEvent(e), err
 		}
@@ -131,7 +131,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	ctx.RunningStatus = status
 
-	data := make([]byte, midievent.EVENTS[byte(status&0xf0)])
+	data := make([]byte, midievent.Events[byte(status&0xf0)])
 
 	io.ReadFull(rr, data)
 
