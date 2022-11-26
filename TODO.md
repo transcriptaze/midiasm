@@ -9,6 +9,8 @@
 
 - [ ] NoteOn with 0 velocity -> NoteOff
 - [ ] Unit tests for transpose
+      - [ ] Transpose: return new track and keep existing track unmodified
+      - [ ] Transpose is mutating original events
 
 - [ ] MIDI file grammar
       - (?) ASN.1
@@ -35,7 +37,6 @@
 
 
 ### Transpose
-
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
       - (!) or - only keep actual MIDI stuff and generate interpretation on the fly for e.g. disassemble
 - https://github.com/dolmen-go/goproc

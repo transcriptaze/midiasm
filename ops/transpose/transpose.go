@@ -5,6 +5,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
@@ -13,8 +14,9 @@ type Transpose struct {
 }
 
 func (t *Transpose) Execute(smf *midi.SMF, steps int) ([]byte, error) {
-	for _, mtrk := range smf.Tracks {
-		transpose(mtrk, steps)
+	for i, mtrk := range smf.Tracks {
+		transposed := transpose(*mtrk, steps)
+		smf.Tracks[i] = &transposed
 	}
 
 	var b bytes.Buffer
@@ -27,7 +29,7 @@ func (t *Transpose) Execute(smf *midi.SMF, steps int) ([]byte, error) {
 	}
 }
 
-func transpose(mtrk *midi.MTrk, steps int) {
+func transpose(mtrk midi.MTrk, steps int) midi.MTrk {
 	for i, _ := range mtrk.Events {
 		event := mtrk.Events[i]
 		switch v := event.Event.(type) {
@@ -38,11 +40,16 @@ func transpose(mtrk *midi.MTrk, steps int) {
 			v.Transpose(mtrk.Context, steps)
 
 		case *midievent.NoteOff:
-			v.Transpose(mtrk.Context, steps)
+			mtrk.Events[i] = &events.Event{
+				Event: v.Transpose(mtrk.Context, steps),
+			}
 
 		case midievent.NoteOff:
-			v.Transpose(mtrk.Context, steps)
-			event.Event = v
+			mtrk.Events[i] = &events.Event{
+				Event: v.Transpose(mtrk.Context, steps),
+			}
 		}
 	}
+
+	return mtrk
 }

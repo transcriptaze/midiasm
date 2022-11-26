@@ -41,11 +41,9 @@ release: build-all
 	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
 
 debug: build
-# 	$(CMD) --debug --verbose --C4 examples/reference-01.mid
-# 	go test ./midi/events/sysex/... -run TestParseSysExSingleMessage
-# 	go test ./encoding/midi/... -run TestDecodeFormat1
-	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
-	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
+# 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
+# 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
+	go test -v ./ops/transpose/... -run TestTransposeMTrk
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0
@@ -113,5 +111,6 @@ export: build
 	$(CMD) export --debug examples/reference-01.mid
 
 transpose: build
-	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+1.mid examples/greensleeves.mid
+	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 

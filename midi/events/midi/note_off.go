@@ -66,9 +66,9 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status li
 	return &event, nil
 }
 
-func (n *NoteOff) Transpose(ctx *context.Context, steps int) {
-	v := int(n.Note.Value) + steps
-	note := n.Note.Value
+func (e NoteOff) Transpose(ctx *context.Context, steps int) NoteOff {
+	v := int(e.Note.Value) + steps
+	note := e.Note.Value
 
 	switch {
 	case v < 0:
@@ -81,10 +81,21 @@ func (n *NoteOff) Transpose(ctx *context.Context, steps int) {
 		note = byte(v)
 	}
 
-	n.Note = Note{
-		Value: note,
-		Name:  ctx.GetNoteOff(n.Channel, note),
-		Alias: FormatNote(ctx, note),
+	return NoteOff{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   []byte{},
+			tag:     lib.TagNoteOff,
+			Status:  lib.Status(0x80 | e.Channel),
+			Channel: e.Channel,
+		},
+		Note: Note{
+			Value: note,
+			Name:  ctx.GetNoteOff(e.Channel, note),
+			Alias: ctx.FormatNote(note),
+		},
+		Velocity: e.Velocity,
 	}
 }
 

@@ -145,5 +145,50 @@ func TestNoteOffUnmarshalText(t *testing.T) {
 	if !reflect.DeepEqual(evt, expected) {
 		t.Errorf("incorrectly unmarshalled NoteOff\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
+}
 
+func TestTransposeNoteOff(t *testing.T) {
+	ctx := context.NewContext()
+
+	expected := NoteOff{
+		event{
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{},
+			tag:     types.TagNoteOff,
+			Status:  0x81,
+			Channel: 1,
+		},
+		Note{
+			Value: 0x3a,
+			Name:  "A♯3",
+			Alias: "A♯3",
+		}, 72,
+	}
+
+	noteOff := NoteOff{
+		event{
+			tick:    0,
+			delta:   0,
+			bytes:   []byte{0x00, 0x81, 0x39, 0x48},
+			tag:     types.TagNoteOff,
+			Status:  0x81,
+			Channel: 1,
+		},
+		Note{
+			Value: 0x39,
+			Name:  "A3",
+			Alias: "A3",
+		}, 72,
+	}
+
+	transposed := noteOff.Transpose(ctx, 1)
+
+	if !reflect.DeepEqual(transposed, expected) {
+		t.Errorf("Incorrectly transposed NoteOff event\n  expected:%#v\n  got:     %#v", expected, noteOff)
+	}
+
+	if noteOff.Note.Value != 0x39 || noteOff.Note.Name != "A3" || noteOff.Note.Alias != "A3" {
+		t.Errorf("Transpose mutated original NoteOff event")
+	}
 }
