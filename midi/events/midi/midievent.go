@@ -11,6 +11,12 @@ type TMidiEvent interface {
 	NoteOff | NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
 }
 
+type TMidiEventX interface {
+	NoteOff
+
+	Unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) error
+}
+
 type event struct {
 	tick  uint64
 	delta lib.Delta
@@ -67,18 +73,9 @@ func (e event) MarshalBinary() ([]byte, error) {
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
-			return nil, err
-		} else {
-			e.bytes = bytes
-			return *e, err
-		}
+		return parse(ctx, tick, delta, status, data, bytes...)
 	}
 
-	return parse(ctx, tick, delta, status, data, bytes...)
-}
-
-func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x90:
 		return UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...)
@@ -118,6 +115,30 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
 	}
 }
+
+func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	switch status & 0xf0 {
+	case 0x80:
+		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+	}
+
+	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
+}
+
+// func parsex[E TMidiEventX](e E, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+// 	if err := e.Unmarshal(ctx, tick, delta, status, data); err != nil {
+// 		return err
+// 	} else {
+// 		e.bytes = bytes
+// 	}
+//
+// 	return nil
+// }
 
 func or(status lib.Status, channel lib.Channel) lib.Status {
 	return lib.Status(byte(status&0xf0) | byte(channel&0x0f))

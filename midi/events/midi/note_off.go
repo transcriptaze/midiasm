@@ -66,6 +66,49 @@ func UnmarshalNoteOff(ctx *context.Context, tick uint64, delta uint32, status li
 	return &event, nil
 }
 
+// func (e NoteOff) Unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) error {
+// 	if status&0xf0 != 0x80 {
+// 		return fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
+// 	}
+//
+// 	if len(data) < 2 {
+// 		return nil, fmt.Errorf("Invalid NoteOff data (%v): expected note and velocity", data)
+// 	}
+//
+// 	var channel = lib.Channel(status & 0x0f)
+// 	var note = Note{
+// 		Value: data[0],
+// 		Name:  GetNoteOff(ctx, channel, data[0]),
+// 		Alias: FormatNote(ctx, data[0]),
+// 	}
+// 	var velocity uint8
+//
+// 	if v := data[1]; v > 127 {
+// 		return nil, fmt.Errorf("Invalid NoteOff velocity (%v)", v)
+// 	} else {
+// 		velocity = v
+// 	}
+//
+// 	if channel > 15 {
+// 		return fmt.Errorf("invalid channel (%v)", channel)
+// 	}
+//
+// 	if velocity > 127 {
+// 		return fmt.Errorf("invalid velocity (%v)", velocity)
+// 	}
+//
+// 	e.tick = tick
+// 	e.delta = lib.Delta(delta)
+// 	e.bytes = nil
+// 	e.tag = lib.TagNoteOff
+// 	e.Status = lib.Status(0x80 | channel)
+// 	e.Channel = channel
+// 	e.Note = note
+// 	e.Velocity = velocity
+//
+// 	return nil
+// }
+
 func (e NoteOff) Transpose(ctx *context.Context, steps int) NoteOff {
 	v := int(e.Note.Value) + steps
 	note := e.Note.Value
