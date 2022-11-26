@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/types"
+	lib "github.com/transcriptaze/midiasm/midi/types"
 )
 
 func TestUnmarshalCuePoint(t *testing.T) {
@@ -12,9 +12,9 @@ func TestUnmarshalCuePoint(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagCuePoint,
+			tag:    lib.TagCuePoint,
 			Status: 0xff,
-			Type:   0x07,
+			Type:   lib.TypeCuePoint,
 			bytes:  []byte{0x00, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c},
 		},
 		CuePoint: "More cowbell",
@@ -35,9 +35,9 @@ func TestCuePointMarshalBinary(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			tag:    types.TagCuePoint,
+			tag:    lib.TagCuePoint,
 			Status: 0xff,
-			Type:   0x07,
+			Type:   lib.TypeCuePoint,
 			bytes:  []byte{},
 		},
 		CuePoint: "More cowbell",
@@ -61,9 +61,9 @@ func TestTextUnmarshalCuePoint(t *testing.T) {
 		event: event{
 			tick:   0,
 			delta:  480,
-			tag:    types.TagCuePoint,
+			tag:    lib.TagCuePoint,
 			Status: 0xff,
-			Type:   0x07,
+			Type:   lib.TypeCuePoint,
 			bytes:  []byte{},
 		},
 		CuePoint: "More cowbell",
@@ -79,4 +79,48 @@ func TestTextUnmarshalCuePoint(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled CuePoint\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestCuePointMarshalJSON(t *testing.T) {
+	e := CuePoint{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagCuePoint,
+			Status: 0xff,
+			Type:   lib.TypeCuePoint,
+			bytes:  []byte{},
+		},
+		CuePoint: "More cowbell",
+	}
+
+	expected := `{"tag":"CuePoint","delta":480,"status":255,"type":7,"cuepoint":"More cowbell"}`
+
+	testMarshalJSON(t, lib.TagCuePoint, e, expected)
+}
+
+func TestCuePointNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagCuePoint
+	text := `{"tag":"CuePoint","delta":480,"status":255,"type":7,"cuepoint":"More cowbell"}`
+	expected := CuePoint{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagCuePoint,
+			Status: 0xff,
+			Type:   lib.TypeCuePoint,
+			bytes:  []byte{},
+		},
+		CuePoint: "More cowbell",
+	}
+
+	evt := CuePoint{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }
