@@ -124,3 +124,47 @@ func TestInstrumentNameUnmarshalJSON(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
 	}
 }
+
+func TestDeviceNameMarshalJSON(t *testing.T) {
+	e := DeviceName{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagDeviceName,
+			Status: 0xff,
+			Type:   lib.TypeDeviceName,
+			bytes:  []byte{},
+		},
+		Name: "TheThing",
+	}
+
+	expected := `{"tag":"DeviceName","delta":480,"status":255,"type":9,"name":"TheThing"}`
+
+	testMarshalJSON(t, lib.TagDeviceName, e, expected)
+}
+
+func TestDeviceNameNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagDeviceName
+	text := `{"tag":"DeviceName","delta":480,"status":255,"type":9,"name":"TheThing"}`
+	expected := DeviceName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagDeviceName,
+			Status: 0xff,
+			Type:   lib.TypeDeviceName,
+			bytes:  []byte{},
+		},
+		Name: "TheThing",
+	}
+
+	evt := DeviceName{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
+}

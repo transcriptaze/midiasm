@@ -146,6 +146,14 @@
         },
         {
           "event": {
+            "tag": "DeviceName",
+            "delta": 0,
+            "type": 9,
+            "name": "TheThing"
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
