@@ -90,9 +90,8 @@ func (e NoteOn) Transpose(ctx *context.Context, steps int) NoteOn {
 		event: event{
 			tick:    e.tick,
 			delta:   e.delta,
-			bytes:   []byte{},
 			tag:     lib.TagNoteOn,
-			Status:  lib.Status(0x80 | e.Channel),
+			Status:  lib.Status(0x90 | e.Channel),
 			Channel: e.Channel,
 		},
 		Note: Note{

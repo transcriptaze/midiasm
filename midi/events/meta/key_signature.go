@@ -67,34 +67,48 @@ func UnmarshalKeySignature(tick uint64, delta lib.Delta, data ...byte) (*KeySign
 	return &event, nil
 }
 
-func (k *KeySignature) Transpose(ctx *context.Context, steps int) {
+func (e KeySignature) Transpose(ctx *context.Context, steps int) KeySignature {
 	var scale lib.Scale
 	var ok bool
 
-	switch k.KeyType {
+	switch e.KeyType {
 	case 0:
-		if scale, ok = lib.MajorScale(k.Accidentals); !ok {
-			return
+		if scale, ok = lib.MajorScale(e.Accidentals); !ok {
+			panic(fmt.Sprintf("Unknown major scale (%v)", e.Accidentals))
 		}
 
 	case 1:
-		if scale, ok = lib.MinorScale(k.Accidentals); !ok {
-			return
+		if scale, ok = lib.MinorScale(e.Accidentals); !ok {
+			panic(fmt.Sprintf("Unknown minor scale (%v)", e.Accidentals))
 		}
 
 	default:
-		return
+		panic(fmt.Sprintf("Unknown key type (%v)", e.KeyType))
 	}
 
 	transposed := scale.Transpose(steps)
 
-	k.Key = transposed.Name
-	k.Accidentals = transposed.Accidentals
+	keyType := e.KeyType
+	key := transposed.Name
+	accidentals := transposed.Accidentals
 
-	if k.Accidentals < 0 {
+	if accidentals < 0 {
 		ctx.UseFlats()
 	} else {
 		ctx.UseSharps()
+	}
+
+	return KeySignature{
+		event: event{
+			tick:   e.tick,
+			delta:  e.delta,
+			tag:    lib.TagKeySignature,
+			Status: 0xff,
+			Type:   lib.TypeKeySignature,
+		},
+		Accidentals: accidentals,
+		KeyType:     keyType,
+		Key:         key,
 	}
 }
 

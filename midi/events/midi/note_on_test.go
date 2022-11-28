@@ -155,9 +155,8 @@ func TestTransposeNoteOn(t *testing.T) {
 		event{
 			tick:    0,
 			delta:   0,
-			bytes:   []byte{},
 			tag:     lib.TagNoteOn,
-			Status:  0x81,
+			Status:  0x91,
 			Channel: 1,
 		},
 		Note{
@@ -173,7 +172,7 @@ func TestTransposeNoteOn(t *testing.T) {
 			delta:   0,
 			bytes:   []byte{0x00, 0x81, 0x39, 0x48},
 			tag:     lib.TagNoteOn,
-			Status:  0x81,
+			Status:  0x91,
 			Channel: 1,
 		},
 		Note{

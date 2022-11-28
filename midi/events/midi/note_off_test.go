@@ -154,7 +154,6 @@ func TestTransposeNoteOff(t *testing.T) {
 		event{
 			tick:    0,
 			delta:   0,
-			bytes:   []byte{},
 			tag:     lib.TagNoteOff,
 			Status:  0x81,
 			Channel: 1,

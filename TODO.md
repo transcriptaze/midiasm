@@ -8,9 +8,9 @@
       - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
 
 - [ ] NoteOn with 0 velocity -> NoteOff
-- [ ] Unit tests for transpose
-      - [ ] Transpose: return new track and keep existing track unmodified
-      - [ ] Transpose is mutating original events
+- [x] Unit tests for transpose
+      - [x] Transpose: return new track and keep existing track unmodified
+      - [x] Transpose is mutating original events
 
 - [ ] MIDI file grammar
       - (?) ASN.1
