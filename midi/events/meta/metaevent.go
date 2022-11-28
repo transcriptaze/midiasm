@@ -129,21 +129,21 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []
 		return UnmarshalSMPTEOffset(tick, delta, bytes)
 	},
 
-	lib.TypeKeySignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		if ks, err := UnmarshalKeySignature(tick, delta, bytes); err != nil {
-			return ks, err
-		} else {
-			if ctx != nil {
-				if ks.Accidentals < 0 {
-					ctx.UseFlats()
-				} else {
-					ctx.UseSharps()
-				}
-			}
-
-			return ks, nil
-		}
-	},
+	// lib.TypeKeySignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
+	// 	if ks, err := UnmarshalKeySignature(tick, delta, bytes); err != nil {
+	// 		return ks, err
+	// 	} else {
+	// 		if ctx != nil {
+	// 			if ks.Accidentals < 0 {
+	// 				ctx.UseFlats()
+	// 			} else {
+	// 				ctx.UseSharps()
+	// 			}
+	// 		}
+	//
+	// 		return ks, nil
+	// 	}
+	// },
 
 	lib.TypeTimeSignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTimeSignature(tick, delta, bytes)
@@ -164,6 +164,24 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 		} else {
 			e.bytes = bytes
 			return *e, err
+		}
+
+	case lib.TypeKeySignature:
+		{
+			if e, err := UnmarshalKeySignature(tick, delta, data...); err != nil || e == nil {
+				return nil, err
+			} else {
+				if ctx != nil {
+					if e.Accidentals < 0 {
+						ctx.UseFlats()
+					} else {
+						ctx.UseSharps()
+					}
+				}
+
+				e.bytes = bytes
+				return *e, err
+			}
 		}
 	}
 

@@ -199,8 +199,7 @@ type event interface {
 		metaevent.InstrumentName |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
-		metaevent.SequencerSpecificEvent |
-		metaevent.KeySignature
+		metaevent.SequencerSpecificEvent
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -231,9 +230,9 @@ var didgeridoo = makeEvent(
 	metaevent.MakeInstrumentName(0, 0, "Didgeridoo"),
 	[]byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f})
 
-var aMinor = makeEvent(
-	metaevent.MakeKeySignature(0, 0, 0, lib.Minor, "A minor", []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
-	[]byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01})
+var aMinor = &events.Event{
+	Event: metaevent.MakeKeySignature(0, 0, 0, lib.Minor, "A minor", []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
+}
 
 var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
 	0,

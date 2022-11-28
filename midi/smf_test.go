@@ -19,7 +19,6 @@ type event interface {
 		metaevent.InstrumentName |
 		metaevent.Tempo |
 		metaevent.SMPTEOffset |
-		metaevent.KeySignature |
 		midievent.Controller
 }
 
