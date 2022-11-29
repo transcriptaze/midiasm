@@ -38,7 +38,8 @@ type TMetaEventX interface {
 		Marker |
 		CuePoint |
 		ProgramName |
-		DeviceName
+		DeviceName |
+		MIDIChannelPrefix
 
 	MarshalJSON() ([]byte, error)
 }

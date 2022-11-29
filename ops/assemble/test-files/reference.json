@@ -154,6 +154,14 @@
         },
         {
           "event": {
+            "tag": "MIDIChannelPrefix",
+            "delta": 0,
+            "type": 32,
+            "channel": 13
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

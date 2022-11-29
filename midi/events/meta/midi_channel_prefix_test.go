@@ -80,3 +80,47 @@ func TestTextUnmarshalMIDIChannelPrefix(t *testing.T) {
 	}
 
 }
+
+func TestMIDIChannelPrefixMarshalJSON(t *testing.T) {
+	e := MIDIChannelPrefix{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagMIDIChannelPrefix,
+			Status: 0xff,
+			Type:   lib.TypeMIDIChannelPrefix,
+			bytes:  []byte{},
+		},
+		Channel: 13,
+	}
+
+	expected := `{"tag":"MIDIChannelPrefix","delta":480,"status":255,"type":32,"channel":13}`
+
+	testMarshalJSON(t, lib.TagMIDIChannelPrefix, e, expected)
+}
+
+func TestMIDIChannelPrefixNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagMIDIChannelPrefix
+	text := `{"tag":"MIDIChannelPrefix","delta":480,"status":255,"type":32,"channel":13}`
+	expected := MIDIChannelPrefix{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMIDIChannelPrefix,
+			Status: 0xff,
+			Type:   lib.TypeMIDIChannelPrefix,
+			bytes:  []byte{},
+		},
+		Channel: 13,
+	}
+
+	evt := MIDIChannelPrefix{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
+}

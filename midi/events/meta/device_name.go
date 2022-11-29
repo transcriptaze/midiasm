@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -60,6 +61,48 @@ func (d *DeviceName) UnmarshalText(bytes []byte) error {
 	} else {
 		d.delta = delta
 		d.Name = string(match[2])
+	}
+
+	return nil
+}
+
+func (e DeviceName) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Name   string    `json:"name"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Name:   e.Name,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *DeviceName) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Name  string    `json:"name"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagDeviceName) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagDeviceName
+		e.Type = lib.TypeDeviceName
+		e.Name = t.Name
 	}
 
 	return nil

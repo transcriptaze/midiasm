@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -76,6 +77,48 @@ func (m *MIDIChannelPrefix) UnmarshalText(bytes []byte) error {
 	} else {
 		m.delta = delta
 		m.Channel = uint8(channel)
+	}
+
+	return nil
+}
+
+func (e MIDIChannelPrefix) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag     string    `json:"tag"`
+		Delta   lib.Delta `json:"delta"`
+		Status  byte      `json:"status"`
+		Type    byte      `json:"type"`
+		Channel uint8     `json:"channel"`
+	}{
+		Tag:     fmt.Sprintf("%v", e.tag),
+		Delta:   e.delta,
+		Status:  byte(e.Status),
+		Type:    byte(e.Type),
+		Channel: e.Channel,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *MIDIChannelPrefix) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag     string    `json:"tag"`
+		Delta   lib.Delta `json:"delta"`
+		Channel uint8     `json:"channel"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagMIDIChannelPrefix) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagMIDIChannelPrefix
+		e.Type = lib.TypeMIDIChannelPrefix
+		e.Channel = t.Channel
 	}
 
 	return nil
