@@ -77,12 +77,12 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0x90:
 		return parse(ctx, tick, delta, status, data, bytes...)
+
+	case 0xA0:
+		return parse(ctx, tick, delta, status, data, bytes...)
 	}
 
 	switch status & 0xf0 {
-	case 0xA0:
-		return UnmarshalPolyphonicPressure(tick, delta, status, data, bytes...)
-
 	case 0xB0:
 		if evt, err := UnmarshalController(tick, delta, status, data, bytes...); err != nil {
 			return nil, err
@@ -128,6 +128,14 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0x90:
 		if e, err := UnmarshalNoteOn(ctx, tick, delta, status, data); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case 0xA0:
+		if e, err := UnmarshalPolyphonicPressure(ctx, tick, delta, status, data); err != nil || e == nil {
 			return nil, err
 		} else {
 			e.bytes = bytes

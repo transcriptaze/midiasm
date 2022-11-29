@@ -24,20 +24,20 @@ func TestParsePolyphonicPressure(t *testing.T) {
 
 	ctx := context.NewContext()
 
-	event, err := Parse(ctx, 2400, 480, 0xa7, []byte{0x64}, []byte{0x00, 0xa7, 0x64}...)
+	e, err := Parse(ctx, 2400, 480, 0xa7, []byte{0x64}, []byte{0x00, 0xa7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected PolyphonicPressure event parse error: %v", err)
-	} else if event == nil {
-		t.Fatalf("Unexpected PolyphonicPressure event parse error - returned %v", event)
+	} else if e == nil {
+		t.Fatalf("Unexpected PolyphonicPressure event parse error - returned %v", e)
 	}
 
-	event, ok := event.(*PolyphonicPressure)
+	event, ok := e.(PolyphonicPressure)
 	if !ok {
 		t.Fatalf("PolyphonicPressure event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid PolyphonicPressure event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid PolyphonicPressure event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 
