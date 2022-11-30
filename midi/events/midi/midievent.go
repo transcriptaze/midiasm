@@ -80,28 +80,12 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0xA0:
 		return parse(ctx, tick, delta, status, data, bytes...)
+
+	case 0xB0:
+		return parse(ctx, tick, delta, status, data, bytes...)
 	}
 
 	switch status & 0xf0 {
-	case 0xB0:
-		if evt, err := UnmarshalController(tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			if ctx != nil && evt.Controller.ID == 0x00 {
-				c := uint8(evt.Channel)
-				v := uint16(evt.Value)
-				ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
-			}
-
-			if ctx != nil && evt.Controller.ID == 0x20 {
-				c := uint8(evt.Channel)
-				v := uint16(evt.Value)
-				ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
-			}
-
-			return evt, err
-		}
-
 	case 0xC0:
 		return UnmarshalProgramChange(ctx, tick, delta, status, data, bytes...)
 
@@ -136,6 +120,14 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0xA0:
 		if e, err := UnmarshalPolyphonicPressure(ctx, tick, delta, status, data); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case 0xB0:
+		if e, err := UnmarshalController(ctx, tick, delta, status, data); err != nil {
 			return nil, err
 		} else {
 			e.bytes = bytes

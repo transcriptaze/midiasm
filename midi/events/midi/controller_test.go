@@ -32,13 +32,13 @@ func TestParseController(t *testing.T) {
 		t.Fatalf("Unexpected Controller event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*Controller)
+	event, ok := event.(Controller)
 	if !ok {
 		t.Fatalf("Controller event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid Controller event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid Controller event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 

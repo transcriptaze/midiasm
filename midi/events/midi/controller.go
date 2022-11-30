@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -33,7 +34,7 @@ func MakeController(tick uint64, delta uint32, channel lib.Channel, controller l
 	}
 }
 
-func UnmarshalController(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*Controller, error) {
+func UnmarshalController(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*Controller, error) {
 	if status&0xf0 != 0xb0 {
 		return nil, fmt.Errorf("Invalid %v status (%v): expected 'Bx'", lib.TagController, status)
 	}
@@ -46,7 +47,23 @@ func UnmarshalController(tick uint64, delta uint32, status lib.Status, data []by
 	var controller = data[0]
 	var value = data[1]
 
-	event := MakeController(tick, delta, channel, lib.LookupController(controller), value, bytes...)
+	if channel > 15 {
+		return nil, fmt.Errorf("invalid channel (%v)", channel)
+	}
+
+	event := MakeController(tick, delta, channel, lib.LookupController(controller), value)
+
+	if ctx != nil && event.Controller.ID == 0x00 {
+		c := uint8(event.Channel)
+		v := uint16(event.Value)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
+	}
+
+	if ctx != nil && event.Controller.ID == 0x20 {
+		c := uint8(event.Channel)
+		v := uint16(event.Value)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
+	}
 
 	return &event, nil
 }
