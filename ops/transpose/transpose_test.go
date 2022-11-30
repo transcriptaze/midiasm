@@ -30,8 +30,8 @@ var Bflat3 = midievent.Note{
 	Alias: "B♭3",
 }
 
-var keySignatureA = metaevent.MakeKeySignature(0, 0, 0, lib.Major, "C major")
-var keySignatureB = metaevent.MakeKeySignature(0, 0, -5, lib.Major, "D♭ major")
+var keySignatureA = metaevent.MakeKeySignature(0, 0, 0, lib.Major)  // "C major"
+var keySignatureB = metaevent.MakeKeySignature(0, 0, -5, lib.Major) // "D♭ major"
 var noteOnA = midievent.MakeNoteOn(0, 0, 1, A3, 76)
 var noteOnAsharp = midievent.MakeNoteOn(0, 0, 1, Asharp3, 76)
 var noteOnBflat = midievent.MakeNoteOn(0, 0, 1, Bflat3, 76)

@@ -83,12 +83,12 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0xB0:
 		return parse(ctx, tick, delta, status, data, bytes...)
+
+	case 0xC0:
+		return parse(ctx, tick, delta, status, data, bytes...)
 	}
 
 	switch status & 0xf0 {
-	case 0xC0:
-		return UnmarshalProgramChange(ctx, tick, delta, status, data, bytes...)
-
 	case 0xD0:
 		return UnmarshalChannelPressure(tick, delta, status, data, bytes...)
 
@@ -128,6 +128,14 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0xB0:
 		if e, err := UnmarshalController(ctx, tick, delta, status, data); err != nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case 0xC0:
+		if e, err := UnmarshalProgramChange(ctx, tick, delta, status, data); err != nil {
 			return nil, err
 		} else {
 			e.bytes = bytes

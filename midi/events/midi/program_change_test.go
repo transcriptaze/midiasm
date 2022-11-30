@@ -32,13 +32,13 @@ func TestProgramChange(t *testing.T) {
 		t.Fatalf("Unexpected ProgramChange event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*ProgramChange)
+	event, ok := event.(ProgramChange)
 	if !ok {
 		t.Fatalf("ProgramChange event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid ProgramChange event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid ProgramChange event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 

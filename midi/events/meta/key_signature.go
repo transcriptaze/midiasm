@@ -17,7 +17,28 @@ type KeySignature struct {
 	Key         string
 }
 
-func MakeKeySignature(tick uint64, delta lib.Delta, accidentals int8, keyType lib.KeyType, key string, bytes ...byte) KeySignature {
+func MakeKeySignature(tick uint64, delta lib.Delta, accidentals int8, keyType lib.KeyType, bytes ...byte) KeySignature {
+	key := ""
+
+	switch keyType {
+	case lib.Major:
+		if scale, ok := lib.MajorScale(accidentals); !ok {
+			panic(fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals))
+		} else {
+			key = scale.Name
+		}
+
+	case lib.Minor:
+		if scale, ok := lib.MinorScale(accidentals); !ok {
+			panic(fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals))
+		} else {
+			key = scale.Name
+		}
+
+	default:
+		panic(fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0..1]", keyType))
+	}
+
 	return KeySignature{
 		event: event{
 			tick:   tick,
@@ -39,31 +60,26 @@ func UnmarshalKeySignature(tick uint64, delta lib.Delta, data ...byte) (*KeySign
 	}
 
 	var accidentals = int8(data[0])
-	var key = ""
 	var keyType lib.KeyType
 
 	switch data[1] {
 	case 0:
 		keyType = lib.Major
-		if scale, ok := lib.MajorScale(accidentals); !ok {
-			return nil, fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
-		} else {
-			key = scale.Name
+		if _, ok := lib.MajorScale(accidentals); !ok {
+			return nil, fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
 		}
 
 	case 1:
 		keyType = lib.Minor
-		if scale, ok := lib.MinorScale(accidentals); !ok {
-			return nil, fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6,0]", accidentals)
-		} else {
-			key = scale.Name
+		if _, ok := lib.MinorScale(accidentals); !ok {
+			return nil, fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
 		}
 
 	default:
-		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0,1]", keyType)
+		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0..1]", keyType)
 	}
 
-	event := MakeKeySignature(tick, delta, accidentals, keyType, key)
+	event := MakeKeySignature(tick, delta, accidentals, keyType)
 
 	return &event, nil
 }
