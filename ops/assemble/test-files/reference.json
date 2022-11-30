@@ -148,6 +148,7 @@
           "event": {
             "tag": "DeviceName",
             "delta": 0,
+            "status": 255,
             "type": 9,
             "name": "TheThing"
           }
@@ -156,11 +157,21 @@
           "event": {
             "tag": "MIDIChannelPrefix",
             "delta": 0,
+            "status": 255,
             "type": 32,
             "channel": 13
           }
         },
-        {
+         {
+          "event": {
+            "tag": "MIDIPort",
+            "delta": 0,
+            "status": 255,
+            "type": 33,
+            "port": 112
+          }
+        },
+       {
           "event": {
             "tag": "EndOfTrack",
             "delta": 0,

@@ -80,3 +80,47 @@ func TestTextUnmarshalMIDIPort(t *testing.T) {
 	}
 
 }
+
+func TestMIDIPortMarshalJSON(t *testing.T) {
+	e := MIDIPort{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagMIDIPort,
+			Status: 0xff,
+			Type:   lib.TypeMIDIPort,
+			bytes:  []byte{},
+		},
+		Port: 112,
+	}
+
+	expected := `{"tag":"MIDIPort","delta":480,"status":255,"type":33,"port":112}`
+
+	testMarshalJSON(t, lib.TagMIDIPort, e, expected)
+}
+
+func TestMIDIPortNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagMIDIPort
+	text := `{"tag":"MIDIPort","delta":480,"status":255,"type":33,"port":112}`
+	expected := MIDIPort{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMIDIPort,
+			Status: 0xff,
+			Type:   lib.TypeMIDIPort,
+			bytes:  []byte{},
+		},
+		Port: 112,
+	}
+
+	evt := MIDIPort{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
+}

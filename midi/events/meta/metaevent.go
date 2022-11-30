@@ -39,7 +39,8 @@ type TMetaEventX interface {
 		CuePoint |
 		ProgramName |
 		DeviceName |
-		MIDIChannelPrefix
+		MIDIChannelPrefix |
+		MIDIPort
 
 	MarshalJSON() ([]byte, error)
 }

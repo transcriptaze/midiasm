@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -54,14 +55,7 @@ func (m MIDIPort) MarshalBinary() (encoded []byte, err error) {
 	}, nil
 }
 
-func (m *MIDIPort) UnmarshalText(bytes []byte) error {
-	m.tick = 0
-	m.delta = 0
-	m.bytes = []byte{}
-	m.tag = lib.TagMIDIPort
-	m.Status = 0xff
-	m.Type = lib.TypeMIDIPort
-
+func (e *MIDIPort) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)MIDIPort\s+([0-9]+)`)
 	text := string(bytes)
 
@@ -74,8 +68,55 @@ func (m *MIDIPort) UnmarshalText(bytes []byte) error {
 	} else if port > 1278 {
 		return fmt.Errorf("Invalid MIDIPort channel (%d): expected a value in the interval [0..127]", port)
 	} else {
-		m.delta = delta
-		m.Port = uint8(port)
+		e.tick = 0
+		e.delta = delta
+		e.bytes = []byte{}
+		e.tag = lib.TagMIDIPort
+		e.Status = 0xff
+		e.Type = lib.TypeMIDIPort
+		e.Port = uint8(port)
+	}
+
+	return nil
+}
+
+func (e MIDIPort) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Type   byte      `json:"type"`
+		Port   uint8     `json:"port"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Type:   byte(e.Type),
+		Port:   e.Port,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *MIDIPort) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Port  uint8     `json:"port"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagMIDIPort) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagMIDIPort
+		e.Type = lib.TypeMIDIPort
+		e.Port = t.Port
 	}
 
 	return nil
