@@ -40,7 +40,8 @@ type TMetaEventX interface {
 		ProgramName |
 		DeviceName |
 		MIDIChannelPrefix |
-		MIDIPort
+		MIDIPort |
+		KeySignature
 
 	MarshalJSON() ([]byte, error)
 }

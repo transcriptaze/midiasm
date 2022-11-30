@@ -1,6 +1,7 @@
 package metaevent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -164,6 +165,76 @@ func (k *KeySignature) UnmarshalText(bytes []byte) error {
 				break
 			}
 		}
+	}
+
+	return nil
+}
+
+func (e KeySignature) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag         string      `json:"tag"`
+		Delta       lib.Delta   `json:"delta"`
+		Status      byte        `json:"status"`
+		Type        byte        `json:"type"`
+		Accidentals int8        `json:"accidentals"`
+		KeyType     lib.KeyType `json:"key-type"`
+		Key         string      `json:"key"`
+	}{
+		Tag:         fmt.Sprintf("%v", e.tag),
+		Delta:       e.delta,
+		Status:      byte(e.Status),
+		Type:        byte(e.Type),
+		Accidentals: e.Accidentals,
+		KeyType:     e.KeyType,
+		Key:         e.Key,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *KeySignature) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag         string      `json:"tag"`
+		Delta       lib.Delta   `json:"delta"`
+		Accidentals int8        `json:"accidentals"`
+		KeyType     lib.KeyType `json:"key-type"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagKeySignature) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		key := ""
+
+		switch t.KeyType {
+		case lib.Major:
+			if scale, ok := lib.MajorScale(t.Accidentals); !ok {
+				return fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6,0]", t.Accidentals)
+			} else {
+				key = scale.Name
+			}
+
+		case lib.Minor:
+			if scale, ok := lib.MinorScale(t.Accidentals); !ok {
+				return fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6,0]", t.Accidentals)
+			} else {
+				key = scale.Name
+			}
+
+		default:
+			return fmt.Errorf("Invalid key type (%v)", t.KeyType)
+		}
+
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagKeySignature
+		e.Type = lib.TypeKeySignature
+		e.Accidentals = t.Accidentals
+		e.KeyType = t.KeyType
+		e.Key = key
 	}
 
 	return nil

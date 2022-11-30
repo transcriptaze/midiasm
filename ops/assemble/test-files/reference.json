@@ -171,7 +171,18 @@
             "port": 112
           }
         },
-       {
+        {
+          "event": {
+            "tag": "KeySignature",
+            "delta": 0,
+            "status": 255,
+            "type": 89,
+            "accidentals": 0,
+            "key-type": 1,
+            "key": "A minor"
+          }
+        },
+        {
           "event": {
             "tag": "EndOfTrack",
             "delta": 0,

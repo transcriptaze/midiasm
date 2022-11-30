@@ -117,3 +117,51 @@ func TestKeySignatureUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestKeySignatureMarshalJSON(t *testing.T) {
+	e := KeySignature{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagKeySignature,
+			Status: 0xff,
+			Type:   lib.TypeKeySignature,
+			bytes:  []byte{},
+		},
+		Accidentals: -3,
+		KeyType:     lib.Minor,
+		Key:         "C minor",
+	}
+
+	expected := `{"tag":"KeySignature","delta":480,"status":255,"type":89,"accidentals":-3,"key-type":1,"key":"C minor"}`
+
+	testMarshalJSON(t, lib.TagKeySignature, e, expected)
+}
+
+func TestKeySignatureNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagKeySignature
+	text := `{"tag":"KeySignature","delta":480,"status":255,"type":89,"accidentals":-3,"key-type":1,"key":"C minor"}`
+	expected := KeySignature{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagKeySignature,
+			Status: 0xff,
+			Type:   lib.TypeKeySignature,
+			bytes:  []byte{},
+		},
+		Accidentals: -3,
+		KeyType:     lib.Minor,
+		Key:         "C minor",
+	}
+
+	evt := KeySignature{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
+}
