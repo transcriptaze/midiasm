@@ -2,6 +2,7 @@ package lib
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -29,4 +30,30 @@ func (bytes Hex) String() string {
 
 func (h Hex) MarshalBinary() ([]byte, error) {
 	return vlf2bin([]byte(h)), nil
+}
+
+func (h Hex) MarshalJSON() ([]byte, error) {
+	bytes := []uint{}
+	for _, b := range h {
+		bytes = append(bytes, uint(b))
+	}
+
+	return json.Marshal(bytes)
+}
+
+func (h *Hex) UnmarshalJSON(bytes []byte) error {
+	v := []uint{}
+
+	if err := json.Unmarshal(bytes, &v); err != nil {
+		return err
+	}
+
+	buffer := []byte{}
+	for _, b := range v {
+		buffer = append(buffer, byte(b))
+	}
+
+	*h = buffer
+
+	return nil
 }

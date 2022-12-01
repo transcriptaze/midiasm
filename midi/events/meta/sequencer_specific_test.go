@@ -14,7 +14,7 @@ func TestUnmarshalSequencerSpecificEvent(t *testing.T) {
 			delta:  480,
 			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
-			Type:   0x7f,
+			Type:   lib.TypeSequencerSpecificEvent,
 			bytes:  []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 		},
 		Manufacturer: lib.Manufacturer{
@@ -42,7 +42,7 @@ func TestSequencerSpecificEventMarshalBinary(t *testing.T) {
 			delta:  480,
 			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
-			Type:   0x7f,
+			Type:   lib.TypeSequencerSpecificEvent,
 			bytes:  []byte{},
 		},
 		Manufacturer: lib.Manufacturer{
@@ -73,7 +73,7 @@ func TestTextUnmarshalSequencerSpecific(t *testing.T) {
 			delta:  480,
 			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
-			Type:   0x7f,
+			Type:   lib.TypeSequencerSpecificEvent,
 			bytes:  []byte{},
 		},
 		Manufacturer: lib.Manufacturer{
@@ -94,4 +94,58 @@ func TestTextUnmarshalSequencerSpecific(t *testing.T) {
 		t.Errorf("incorrectly unmarshalled SequencerSpecificEvent\n   expected:%+v\n   got:     %+v", expected, evt)
 	}
 
+}
+
+func TestSequencerSpecificEventMarshalJSON(t *testing.T) {
+	e := SequencerSpecificEvent{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			tag:    lib.TagSequencerSpecificEvent,
+			Status: 0xff,
+			Type:   lib.TypeSequencerSpecificEvent,
+			bytes:  []byte{},
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x00, 0x00, 0x3b},
+			Region: "American",
+			Name:   "Mark Of The Unicorn (MOTU)",
+		},
+		Data: []byte{0x3a, 0x4c, 0x5e},
+	}
+
+	expected := `{"tag":"SequencerSpecificEvent","delta":480,"status":255,"type":127,"manufacturer":{"id":[0,0,59],"region":"American","name":"Mark Of The Unicorn (MOTU)"},"data":[58,76,94]}`
+
+	testMarshalJSON(t, lib.TagSequencerSpecificEvent, e, expected)
+}
+
+func TestSequencerSpecificEventNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagSequencerSpecificEvent
+	text := `{"tag":"SequencerSpecificEvent","delta":480,"status":255,"type":127,"manufacturer":{"id":[0,0,59],"region":"American","name":"Mark Of The Unicorn (MOTU)"},"data":[58,76,94]}`
+	expected := SequencerSpecificEvent{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagSequencerSpecificEvent,
+			Status: 0xff,
+			Type:   lib.TypeSequencerSpecificEvent,
+			bytes:  []byte{},
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x00, 0x00, 0x3b},
+			Region: "American",
+			Name:   "Mark Of The Unicorn (MOTU)",
+		},
+		Data: []byte{0x3a, 0x4c, 0x5e},
+	}
+
+	evt := SequencerSpecificEvent{}
+
+	if err := evt.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(evt, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, evt)
+	}
 }

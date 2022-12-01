@@ -8,9 +8,6 @@
       - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
 
 - [ ] NoteOn with 0 velocity -> NoteOff
-- [x] Unit tests for transpose
-      - [x] Transpose: return new track and keep existing track unmodified
-      - [x] Transpose is mutating original events
 
 - [ ] MIDI file grammar
       - (?) ASN.1
@@ -28,6 +25,7 @@
 
 - [ ] Assemble MTrk
       - [ ] JSON
+            - [x] lib.Hex MarshalJSON/UnmarshalJSON
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
 
 - [ ] VLQ: TestMarshalBinary

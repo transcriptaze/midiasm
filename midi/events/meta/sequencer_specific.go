@@ -2,6 +2,7 @@ package metaevent
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -84,6 +85,52 @@ func (s *SequencerSpecificEvent) UnmarshalText(bytes []byte) error {
 		s.delta = delta
 		s.Manufacturer = manufacturer
 		s.Data = data
+	}
+
+	return nil
+}
+
+func (e SequencerSpecificEvent) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag          string           `json:"tag"`
+		Delta        lib.Delta        `json:"delta"`
+		Status       byte             `json:"status"`
+		Type         byte             `json:"type"`
+		Manufacturer lib.Manufacturer `json:"manufacturer"`
+		Data         lib.Hex          `json:"data"`
+	}{
+		Tag:          fmt.Sprintf("%v", e.tag),
+		Delta:        e.delta,
+		Status:       byte(e.Status),
+		Type:         byte(e.Type),
+		Manufacturer: e.Manufacturer,
+		Data:         e.Data,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SequencerSpecificEvent) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag          string           `json:"tag"`
+		Delta        lib.Delta        `json:"delta"`
+		Manufacturer lib.Manufacturer `json:"manufacturer"`
+		Data         lib.Hex          `json:"data"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagSequencerSpecificEvent) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.Status = 0xff
+		e.tag = lib.TagSequencerSpecificEvent
+		e.Type = lib.TypeSequencerSpecificEvent
+		e.Manufacturer = t.Manufacturer
+		e.Data = t.Data
 	}
 
 	return nil

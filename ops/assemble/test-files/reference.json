@@ -184,6 +184,20 @@
         },
         {
           "event": {
+            "tag": "SequencerSpecificEvent",
+            "delta": 0,
+            "status": 255,
+            "type": 127,
+            "manufacturer": {
+              "id": [ 0,0,59 ],
+              "region": "American",
+              "name": "Mark Of The Unicorn (MOTU)"
+            },
+            "data": [ 58, 76, 94 ]
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

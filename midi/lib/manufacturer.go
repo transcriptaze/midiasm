@@ -14,6 +14,44 @@ type Manufacturer struct {
 	Name   string `json:"name"`
 }
 
+func (m Manufacturer) MarshalJSON() ([]byte, error) {
+	id := []uint{}
+	for _, b := range m.ID {
+		id = append(id, uint(b))
+	}
+
+	manufacturer := struct {
+		ID     []uint `json:"id"`
+		Region string `json:"region"`
+		Name   string `json:"name"`
+	}{
+		ID:     id,
+		Region: m.Region,
+		Name:   m.Name,
+	}
+
+	return json.Marshal(manufacturer)
+}
+
+func (m *Manufacturer) UnmarshalJSON(bytes []byte) error {
+	manufacturer := struct {
+		ID []uint `json:"id"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &manufacturer); err != nil {
+		return err
+	}
+
+	id := []byte{}
+	for _, b := range manufacturer.ID {
+		id = append(id, byte(b))
+	}
+
+	*m = LookupManufacturer(id)
+
+	return nil
+}
+
 func AddManufacturers(list map[string]Manufacturer) {
 	for k, v := range list {
 		manufacturers[k] = v

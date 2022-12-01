@@ -39,3 +39,40 @@ func TestHexMarshalBinary(t *testing.T) {
 		}
 	}
 }
+
+func TestHexMarshalJSON(t *testing.T) {
+	tests := []struct {
+		hex      []byte
+		expected string
+	}{
+		{[]byte{0x7e, 0x00, 0x09, 0xfe}, `[126,0,9,254]`},
+	}
+
+	for _, test := range tests {
+		h := Hex(test.hex)
+		if bytes, err := h.MarshalJSON(); err != nil {
+			t.Errorf("Error marshalling hex data (%v)", err)
+		} else if string(bytes) != test.expected {
+			t.Errorf("Incorrectly marshalled hex data - expected:%v, got:%v", test.expected, string(bytes))
+		}
+	}
+}
+
+func TestHexUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		hex      string
+		expected Hex
+	}{
+		{`[126,0,9,254]`, Hex{0x7e, 0x00, 0x09, 0xfe}},
+	}
+
+	for _, test := range tests {
+		var h Hex
+
+		if err := h.UnmarshalJSON([]byte(test.hex)); err != nil {
+			t.Errorf("Error unmarshalling hex data (%v)", err)
+		} else if !reflect.DeepEqual(h, test.expected) {
+			t.Errorf("Incorrectly marshalled hex data - expected:%#v, got:%#v", test.expected, h)
+		}
+	}
+}

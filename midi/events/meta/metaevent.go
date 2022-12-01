@@ -41,7 +41,8 @@ type TMetaEventX interface {
 		DeviceName |
 		MIDIChannelPrefix |
 		MIDIPort |
-		KeySignature
+		KeySignature |
+		SequencerSpecificEvent
 
 	MarshalJSON() ([]byte, error)
 }
