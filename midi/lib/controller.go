@@ -1,8 +1,8 @@
 package lib
 
 type Controller struct {
-	ID   byte
-	Name string
+	ID   byte   `json:"id"`
+	Name string `json:"name"`
 }
 
 func LookupController(id byte) Controller {

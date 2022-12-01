@@ -25,3 +25,14 @@ func TestEventMarshalBinary(t *testing.T) {
 		t.Errorf("Incorrectly marshalled MIDI base event\n   expected:%v\n   got:     %v", expected, bytes)
 	}
 }
+
+func testMarshalJSON[E TMidiEventX](t *testing.T, tag lib.Tag, e E, expected string) {
+	encoded, err := e.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding %v (%v)", tag, err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", tag, expected, string(encoded))
+	}
+}

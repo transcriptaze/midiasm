@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -34,6 +35,26 @@ func (c *Channel) UnmarshalText(bytes []byte) error {
 	} else {
 		*c = Channel(channel)
 	}
+
+	return nil
+}
+
+func (c Channel) MarshalJSON() ([]byte, error) {
+	channel := uint(c)
+
+	return json.Marshal(channel)
+}
+
+func (c *Channel) UnmarshalJSON(bytes []byte) error {
+	var v uint
+
+	if err := json.Unmarshal(bytes, &v); err != nil {
+		return err
+	} else if v > 15 {
+		return fmt.Errorf("Invalid channel (%v)", v)
+	}
+
+	*c = Channel(v)
 
 	return nil
 }

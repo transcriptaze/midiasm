@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -104,6 +105,53 @@ func (c *Controller) UnmarshalText(bytes []byte) error {
 		c.Channel = channel
 		c.Controller = lib.LookupController(uint8(controller))
 		c.Value = uint8(value)
+	}
+
+	return nil
+}
+
+func (e Controller) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag        string         `json:"tag"`
+		Delta      lib.Delta      `json:"delta"`
+		Status     byte           `json:"status"`
+		Channel    lib.Channel    `json:"channel"`
+		Controller lib.Controller `json:"controller"`
+		Value      byte           `json:"value"`
+	}{
+		Tag:        fmt.Sprintf("%v", e.tag),
+		Delta:      e.delta,
+		Status:     byte(e.Status),
+		Channel:    e.Channel,
+		Controller: e.Controller,
+		Value:      e.Value,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *Controller) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag        string         `json:"tag"`
+		Delta      lib.Delta      `json:"delta"`
+		Channel    lib.Channel    `json:"channel"`
+		Controller lib.Controller `json:"controller"`
+		Value      byte           `json:"value"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagController) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagController
+		e.Status = lib.Status(0xB0 | t.Channel)
+		e.Channel = t.Channel
+		e.Controller = t.Controller
+		e.Value = t.Value
 	}
 
 	return nil

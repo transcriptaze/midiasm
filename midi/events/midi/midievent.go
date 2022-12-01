@@ -11,6 +11,12 @@ type TMidiEvent interface {
 	NoteOff | NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
 }
 
+type TMidiEventX interface {
+	Controller
+
+	MarshalJSON() ([]byte, error)
+}
+
 // type TMidiEventX interface {
 // 	NoteOff
 //
@@ -145,6 +151,10 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 //
 // 	return nil
 // }
+
+func equal(s string, tag lib.Tag) bool {
+	return s == fmt.Sprintf("%v", tag)
+}
 
 func or(status lib.Status, channel lib.Channel) lib.Status {
 	return lib.Status(byte(status&0xf0) | byte(channel&0x0f))

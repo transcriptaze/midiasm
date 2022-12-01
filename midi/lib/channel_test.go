@@ -60,3 +60,39 @@ func TestChannelUnmarshalText(t *testing.T) {
 		}
 	}
 }
+
+func TestChannelMarshalJSON(t *testing.T) {
+	tests := []struct {
+		channel  Channel
+		expected string
+	}{
+		{7, `7`},
+	}
+
+	for _, test := range tests {
+		if bytes, err := test.channel.MarshalJSON(); err != nil {
+			t.Errorf("Error marshalling channel (%v)", err)
+		} else if string(bytes) != test.expected {
+			t.Errorf("Incorrectly marshalled channel - expected:%v, got:%v", test.expected, string(bytes))
+		}
+	}
+}
+
+func TestChannelUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		json     string
+		expected Channel
+	}{
+		{`7`, Channel(7)},
+	}
+
+	for _, test := range tests {
+		var c Channel
+
+		if err := c.UnmarshalJSON([]byte(test.json)); err != nil {
+			t.Errorf("Error unmarshalling channel (%v)", err)
+		} else if c != test.expected {
+			t.Errorf("Incorrectly marshalled channel - expected:%#v, got:%#v", test.expected, c)
+		}
+	}
+}

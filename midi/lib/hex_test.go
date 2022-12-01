@@ -60,7 +60,7 @@ func TestHexMarshalJSON(t *testing.T) {
 
 func TestHexUnmarshalJSON(t *testing.T) {
 	tests := []struct {
-		hex      string
+		json     string
 		expected Hex
 	}{
 		{`[126,0,9,254]`, Hex{0x7e, 0x00, 0x09, 0xfe}},
@@ -69,7 +69,7 @@ func TestHexUnmarshalJSON(t *testing.T) {
 	for _, test := range tests {
 		var h Hex
 
-		if err := h.UnmarshalJSON([]byte(test.hex)); err != nil {
+		if err := h.UnmarshalJSON([]byte(test.json)); err != nil {
 			t.Errorf("Error unmarshalling hex data (%v)", err)
 		} else if !reflect.DeepEqual(h, test.expected) {
 			t.Errorf("Incorrectly marshalled hex data - expected:%#v, got:%#v", test.expected, h)

@@ -10,6 +10,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
 type JSONAssembler struct {
@@ -145,7 +146,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"EndOfTrack":             func() E { return &metaevent.EndOfTrack{} },
 		"SequencerSpecificEvent": func() E { return &metaevent.SequencerSpecificEvent{} },
 		// "ProgramChange":          func() E { return &midievent.ProgramChange{} },
-		// "Controller":             func() E { return &midievent.Controller{} },
+		"Controller": func() E { return &midievent.Controller{} },
 		// "NoteOn":                 func() E { return &midievent.NoteOn{} },
 		// "NoteOff":                func() E { return &midievent.NoteOff{} },
 		// "PolyphonicPressure":     func() E { return &midievent.PolyphonicPressure{} },

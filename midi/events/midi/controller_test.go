@@ -111,3 +111,51 @@ func TestControllerUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestControllerMarshalJSON(t *testing.T) {
+	e := Controller{
+		event: event{
+			tick:  2400,
+			delta: 480,
+			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+			tag:   lib.TagController,
+
+			Status:  0xb7,
+			Channel: 7,
+		},
+		Controller: lib.Controller{84, "Portamento Control"},
+		Value:      29,
+	}
+
+	expected := `{"tag":"Controller","delta":480,"status":183,"channel":7,"controller":{"id":84,"name":"Portamento Control"},"value":29}`
+
+	testMarshalJSON(t, lib.TagController, e, expected)
+}
+
+func TestControllerNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagController
+	text := `{"tag":"Controller","delta":480,"status":183,"channel":7,"controller":{"id":84,"name":"Portamento Control"},"value":29}`
+	expected := Controller{
+		event: event{
+			tick:  0,
+			delta: 480,
+			bytes: []byte{},
+			tag:   lib.TagController,
+
+			Status:  0xb7,
+			Channel: 7,
+		},
+		Controller: lib.Controller{84, "Portamento Control"},
+		Value:      29,
+	}
+
+	e := Controller{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

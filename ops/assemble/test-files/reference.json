@@ -198,6 +198,19 @@
         },
         {
           "event": {
+            "tag": "Controller",
+            "delta": 0,
+            "status": 176,
+            "channel": 0,
+            "controller": {
+              "id": 0,
+              "name": "Bank Select (MSB)"
+            },
+            "value": 5
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
