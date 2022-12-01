@@ -71,33 +71,7 @@ func (e event) MarshalBinary() ([]byte, error) {
 }
 
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
-	switch status & 0xf0 {
-	case 0x80:
-		return parse(ctx, tick, delta, status, data, bytes...)
-
-	case 0x90:
-		return parse(ctx, tick, delta, status, data, bytes...)
-
-	case 0xA0:
-		return parse(ctx, tick, delta, status, data, bytes...)
-
-	case 0xB0:
-		return parse(ctx, tick, delta, status, data, bytes...)
-
-	case 0xC0:
-		return parse(ctx, tick, delta, status, data, bytes...)
-	}
-
-	switch status & 0xf0 {
-	case 0xD0:
-		return UnmarshalChannelPressure(tick, delta, status, data, bytes...)
-
-	case 0xE0:
-		return UnmarshalPitchBend(tick, delta, status, data, bytes...)
-
-	default:
-		return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
-	}
+	return parse(ctx, tick, delta, status, data, bytes...)
 }
 
 func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
@@ -136,6 +110,22 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 
 	case 0xC0:
 		if e, err := UnmarshalProgramChange(ctx, tick, delta, status, data); err != nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case 0xD0:
+		if e, err := UnmarshalChannelPressure(ctx, tick, delta, status, data); err != nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case 0xE0:
+		if e, err := UnmarshalPitchBend(ctx, tick, delta, status, data); err != nil {
 			return nil, err
 		} else {
 			e.bytes = bytes

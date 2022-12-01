@@ -31,13 +31,13 @@ func TestParseChannelPressure(t *testing.T) {
 		t.Fatalf("Unexpected ChannelPressure event parse error - returned %v", event)
 	}
 
-	event, ok := event.(*ChannelPressure)
+	event, ok := event.(ChannelPressure)
 	if !ok {
 		t.Fatalf("ChannelPressure event parse error - returned %T", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid ChannelPressure event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid ChannelPressure event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 

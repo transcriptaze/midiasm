@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -35,7 +36,7 @@ func MakeChannelPressure(tick uint64, delta uint32, channel lib.Channel, pressur
 	}
 }
 
-func UnmarshalChannelPressure(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ChannelPressure, error) {
+func UnmarshalChannelPressure(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*ChannelPressure, error) {
 	if status&0xf0 != 0xd0 {
 		return nil, fmt.Errorf("Invalid ChannelPressure status (%v): expected 'Dx'", status)
 	}
@@ -47,7 +48,15 @@ func UnmarshalChannelPressure(tick uint64, delta uint32, status lib.Status, data
 	var channel = lib.Channel(status & 0x0f)
 	var pressure = data[0]
 
-	event := MakeChannelPressure(tick, delta, channel, pressure, bytes...)
+	if channel > 15 {
+		return nil, fmt.Errorf("invalid channel (%v)", channel)
+	}
+
+	if pressure > 127 {
+		return nil, fmt.Errorf("invalid pressure (%v)", pressure)
+	}
+
+	event := MakeChannelPressure(tick, delta, channel, pressure)
 
 	return &event, nil
 }

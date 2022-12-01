@@ -31,11 +31,11 @@ func TestParsePitchBend(t *testing.T) {
 		t.Fatalf("Unexpected PitchBend event parse error - returned %v", event)
 	}
 
-	v, ok := event.(*PitchBend)
+	v, ok := event.(PitchBend)
 	if !ok {
 		t.Fatalf("PitchBend %v type error - returned %T", event, v)
-	} else if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid PitchBend event\n  expected:%#v\n  got:     %#v", &expected, event)
+	} else if !reflect.DeepEqual(event, expected) {
+		t.Errorf("Invalid PitchBend event\n  expected:%#v\n  got:     %#v", expected, event)
 	}
 }
 
