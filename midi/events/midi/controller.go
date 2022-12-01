@@ -69,6 +69,42 @@ func UnmarshalController(ctx *context.Context, tick uint64, delta uint32, status
 	return &event, nil
 }
 
+func (c *Controller) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+	if status&0xf0 != 0xb0 {
+		return fmt.Errorf("Invalid %v status (%v): expected 'Bx'", lib.TagController, status)
+	}
+
+	if len(data) < 2 {
+		return fmt.Errorf("Invalid %v data (%v): expected note and velocity", lib.TagController, data)
+	}
+
+	var channel = lib.Channel(status & 0x0f)
+	var controller = data[0]
+	var value = data[1]
+
+	if channel > 15 {
+		return fmt.Errorf("invalid channel (%v)", channel)
+	}
+
+	event := MakeController(tick, delta, channel, lib.LookupController(controller), value, bytes...)
+
+	if ctx != nil && event.Controller.ID == 0x00 {
+		c := uint8(event.Channel)
+		v := uint16(event.Value)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
+	}
+
+	if ctx != nil && event.Controller.ID == 0x20 {
+		c := uint8(event.Channel)
+		v := uint16(event.Value)
+		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
+	}
+
+	*c = event
+
+	return nil
+}
+
 func (c Controller) MarshalBinary() (encoded []byte, err error) {
 	encoded = []byte{
 		byte(0xb0 | c.Channel),

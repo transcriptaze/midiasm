@@ -17,6 +17,12 @@ type TMidiEventX interface {
 	MarshalJSON() ([]byte, error)
 }
 
+type TMidiEventQ interface {
+	*Controller
+
+	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+}
+
 // type TMidiEventX interface {
 // 	NoteOff
 //
@@ -77,10 +83,6 @@ func (e event) MarshalBinary() ([]byte, error) {
 }
 
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
-	return parse(ctx, tick, delta, status, data, bytes...)
-}
-
-func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
 		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
@@ -107,11 +109,11 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		}
 
 	case 0xB0:
-		if e, err := UnmarshalController(ctx, tick, delta, status, data); err != nil {
+		e := Controller{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
-			return *e, err
+			return e, err
 		}
 
 	case 0xC0:
@@ -140,6 +142,10 @@ func parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
+}
+
+func parse[T TMidiEventQ](e T, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+	return e.unmarshal(ctx, tick, delta, status, data, bytes...)
 }
 
 // func parsex[E TMidiEventX](e E, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
