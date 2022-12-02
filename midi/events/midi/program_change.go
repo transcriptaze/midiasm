@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -91,6 +92,53 @@ func (p *ProgramChange) UnmarshalText(bytes []byte) error {
 		p.Channel = channel
 		p.Bank = uint16(bank)
 		p.Program = uint8(program)
+	}
+
+	return nil
+}
+
+func (e ProgramChange) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag     string      `json:"tag"`
+		Delta   lib.Delta   `json:"delta"`
+		Status  byte        `json:"status"`
+		Channel lib.Channel `json:"channel"`
+		Bank    uint16      `json:"bank"`
+		Program uint8       `json:"program"`
+	}{
+		Tag:     fmt.Sprintf("%v", e.tag),
+		Delta:   e.delta,
+		Status:  byte(e.Status),
+		Channel: e.Channel,
+		Bank:    e.Bank,
+		Program: e.Program,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *ProgramChange) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag     string      `json:"tag"`
+		Delta   lib.Delta   `json:"delta"`
+		Channel lib.Channel `json:"channel"`
+		Bank    uint16      `json:"bank"`
+		Program uint8       `json:"program"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagProgramChange) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagProgramChange
+		e.Status = lib.Status(0xC0 | t.Channel)
+		e.Channel = t.Channel
+		e.Bank = t.Bank
+		e.Program = t.Program
 	}
 
 	return nil

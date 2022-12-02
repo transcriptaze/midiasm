@@ -94,3 +94,51 @@ func TestProgramChangeUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestProgramChangeMarshalJSON(t *testing.T) {
+	e := ProgramChange{
+		event: event{
+			tick:  2400,
+			delta: 480,
+			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+			tag:   lib.TagProgramChange,
+
+			Status:  0xc7,
+			Channel: 7,
+		},
+		Bank:    673,
+		Program: 13,
+	}
+
+	expected := `{"tag":"ProgramChange","delta":480,"status":199,"channel":7,"bank":673,"program":13}`
+
+	testMarshalJSON(t, lib.TagProgramChange, e, expected)
+}
+
+func TestProgramChangeNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagProgramChange
+	text := `{"tag":"ProgramChange","delta":480,"status":199,"channel":7,"bank":673,"program":13}`
+	expected := ProgramChange{
+		event: event{
+			tick:  0,
+			delta: 480,
+			bytes: []byte{},
+			tag:   lib.TagProgramChange,
+
+			Status:  0xc7,
+			Channel: 7,
+		},
+		Bank:    673,
+		Program: 13,
+	}
+
+	e := ProgramChange{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

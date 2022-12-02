@@ -211,6 +211,29 @@
         },
         {
           "event": {
+            "tag": "Controller",
+            "delta": 0,
+            "status": 176,
+            "channel": 0,
+            "controller": {
+              "id": 32,
+              "name": "Bank Select (LSB)"
+            },
+            "value": 33
+          }
+        },
+        {
+          "event": {
+            "tag": "ProgramChange",
+            "delta": 0,
+            "status": 192,
+            "channel": 0,
+            "bank": 673,
+            "program": 25
+          }
+        },        
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
