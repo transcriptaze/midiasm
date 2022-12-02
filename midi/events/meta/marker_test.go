@@ -20,7 +20,7 @@ func TestUnmarshalMarker(t *testing.T) {
 		Marker: "Here Be Dragons",
 	}
 
-	evt, err := UnmarshalMarker(2400, 480, []byte("Here Be Dragons"))
+	evt, err := UnmarshalMarker(2400, 480, []byte("Here Be Dragons"), []byte{0x00, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73}...)
 	if err != nil {
 		t.Fatalf("error encoding Marker (%v)", err)
 	}

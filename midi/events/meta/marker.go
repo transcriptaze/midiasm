@@ -13,12 +13,12 @@ type Marker struct {
 	Marker string
 }
 
-func MakeMarker(tick uint64, delta lib.Delta, marker string) Marker {
+func MakeMarker(tick uint64, delta lib.Delta, marker string, bytes ...byte) Marker {
 	return Marker{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x06, byte(len(marker))}, []byte(marker)...),
+			bytes:  bytes,
 			tag:    lib.TagMarker,
 			Status: 0xff,
 			Type:   lib.TypeMarker,
@@ -27,9 +27,9 @@ func MakeMarker(tick uint64, delta lib.Delta, marker string) Marker {
 	}
 }
 
-func UnmarshalMarker(tick uint64, delta lib.Delta, bytes []byte) (*Marker, error) {
-	marker := string(bytes)
-	event := MakeMarker(tick, delta, marker)
+func UnmarshalMarker(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Marker, error) {
+	marker := string(data)
+	event := MakeMarker(tick, delta, marker, bytes...)
 
 	return &event, nil
 }

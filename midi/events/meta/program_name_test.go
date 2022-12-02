@@ -20,7 +20,7 @@ func TestUnmarshalProgramName(t *testing.T) {
 		Name: "Escape",
 	}
 
-	evt, err := UnmarshalProgramName(2400, 480, []byte("Escape"))
+	evt, err := UnmarshalProgramName(2400, 480, []byte("Escape"), []byte{0x00, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65}...)
 	if err != nil {
 		t.Fatalf("error encoding ProgramName (%v)", err)
 	}

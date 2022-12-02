@@ -73,30 +73,6 @@ func (e event) Tag() string {
 }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeLyric: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalLyric(tick, delta, bytes)
-	},
-
-	lib.TypeMarker: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalMarker(tick, delta, bytes)
-	},
-
-	lib.TypeCuePoint: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalCuePoint(tick, delta, bytes)
-	},
-
-	lib.TypeProgramName: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalProgramName(tick, delta, bytes)
-	},
-
-	lib.TypeDeviceName: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalDeviceName(tick, delta, bytes)
-	},
-
-	lib.TypeMIDIChannelPrefix: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalMIDIChannelPrefix(tick, delta, bytes)
-	},
-
 	lib.TypeMIDIPort: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalMIDIPort(tick, delta, bytes)
 	},
@@ -157,6 +133,49 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 			return *e, err
 		}
 
+	case lib.TypeLyric:
+		if e, err := UnmarshalLyric(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeMarker:
+		if e, err := UnmarshalMarker(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeCuePoint:
+		if e, err := UnmarshalCuePoint(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeProgramName:
+		if e, err := UnmarshalProgramName(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeDeviceName:
+		if e, err := UnmarshalDeviceName(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeMIDIChannelPrefix:
+		if e, err := UnmarshalMIDIChannelPrefix(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+		// ###
 	case lib.TypeEndOfTrack:
 		if e, err := UnmarshalEndOfTrack(tick, delta, data...); err != nil || e == nil {
 			return nil, err

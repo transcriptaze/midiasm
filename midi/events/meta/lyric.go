@@ -13,12 +13,12 @@ type Lyric struct {
 	Lyric string
 }
 
-func MakeLyric(tick uint64, delta lib.Delta, lyric string) Lyric {
+func MakeLyric(tick uint64, delta lib.Delta, lyric string, bytes ...byte) Lyric {
 	return Lyric{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x05, byte(len(lyric))}, []byte(lyric)...),
+			bytes:  bytes,
 			tag:    lib.TagLyric,
 			Status: 0xff,
 			Type:   lib.TypeLyric,
@@ -27,9 +27,9 @@ func MakeLyric(tick uint64, delta lib.Delta, lyric string) Lyric {
 	}
 }
 
-func UnmarshalLyric(tick uint64, delta lib.Delta, bytes []byte) (*Lyric, error) {
-	lyric := string(bytes)
-	event := MakeLyric(tick, delta, lyric)
+func UnmarshalLyric(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Lyric, error) {
+	lyric := string(data)
+	event := MakeLyric(tick, delta, lyric, bytes...)
 
 	return &event, nil
 }

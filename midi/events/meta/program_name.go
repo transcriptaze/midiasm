@@ -13,12 +13,12 @@ type ProgramName struct {
 	Name string
 }
 
-func MakeProgramName(tick uint64, delta lib.Delta, name string) ProgramName {
+func MakeProgramName(tick uint64, delta lib.Delta, name string, bytes ...byte) ProgramName {
 	return ProgramName{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x08, byte(len(name))}, []byte(name)...),
+			bytes:  bytes,
 			tag:    lib.TagProgramName,
 			Status: 0xff,
 			Type:   lib.TypeProgramName,
@@ -27,9 +27,9 @@ func MakeProgramName(tick uint64, delta lib.Delta, name string) ProgramName {
 	}
 }
 
-func UnmarshalProgramName(tick uint64, delta lib.Delta, bytes []byte) (*ProgramName, error) {
-	name := string(bytes)
-	event := MakeProgramName(tick, delta, name)
+func UnmarshalProgramName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*ProgramName, error) {
+	name := string(data)
+	event := MakeProgramName(tick, delta, name, bytes...)
 
 	return &event, nil
 }

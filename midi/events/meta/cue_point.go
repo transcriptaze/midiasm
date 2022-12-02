@@ -13,12 +13,12 @@ type CuePoint struct {
 	CuePoint string
 }
 
-func MakeCuePoint(tick uint64, delta lib.Delta, cuepoint string) CuePoint {
+func MakeCuePoint(tick uint64, delta lib.Delta, cuepoint string, bytes ...byte) CuePoint {
 	return CuePoint{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x07, byte(len(cuepoint))}, []byte(cuepoint)...),
+			bytes:  bytes,
 			tag:    lib.TagCuePoint,
 			Status: 0xff,
 			Type:   lib.TypeCuePoint,
@@ -27,9 +27,9 @@ func MakeCuePoint(tick uint64, delta lib.Delta, cuepoint string) CuePoint {
 	}
 }
 
-func UnmarshalCuePoint(tick uint64, delta lib.Delta, bytes []byte) (*CuePoint, error) {
-	cuepoint := string(bytes)
-	event := MakeCuePoint(tick, delta, cuepoint)
+func UnmarshalCuePoint(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*CuePoint, error) {
+	cuepoint := string(data)
+	event := MakeCuePoint(tick, delta, cuepoint, bytes...)
 
 	return &event, nil
 }

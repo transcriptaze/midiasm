@@ -14,7 +14,7 @@ type MIDIChannelPrefix struct {
 	Channel uint8
 }
 
-func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8) MIDIChannelPrefix {
+func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8, bytes ...byte) MIDIChannelPrefix {
 	if channel > 15 {
 		panic(fmt.Sprintf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel))
 	}
@@ -23,7 +23,7 @@ func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8) MIDIChan
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x20, 0x01, channel}),
+			bytes:  bytes,
 			tag:    lib.TagMIDIChannelPrefix,
 			Status: 0xff,
 			Type:   lib.TypeMIDIChannelPrefix,
@@ -32,15 +32,15 @@ func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8) MIDIChan
 	}
 }
 
-func UnmarshalMIDIChannelPrefix(tick uint64, delta lib.Delta, bytes []byte) (*MIDIChannelPrefix, error) {
-	if len(bytes) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(bytes))
+func UnmarshalMIDIChannelPrefix(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIChannelPrefix, error) {
+	if len(data) != 1 {
+		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(data))
 	}
 
-	if channel := bytes[0]; channel > 15 {
+	if channel := data[0]; channel > 15 {
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
 	} else {
-		event := MakeMIDIChannelPrefix(tick, delta, channel)
+		event := MakeMIDIChannelPrefix(tick, delta, channel, bytes...)
 
 		return &event, nil
 	}

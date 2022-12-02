@@ -13,12 +13,12 @@ type DeviceName struct {
 	Name string
 }
 
-func MakeDeviceName(tick uint64, delta lib.Delta, name string) DeviceName {
+func MakeDeviceName(tick uint64, delta lib.Delta, name string, bytes ...byte) DeviceName {
 	return DeviceName{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x09, byte(len(name))}, []byte(name)...),
+			bytes:  bytes,
 			tag:    lib.TagDeviceName,
 			Status: 0xff,
 			Type:   lib.TypeDeviceName,
@@ -27,9 +27,9 @@ func MakeDeviceName(tick uint64, delta lib.Delta, name string) DeviceName {
 	}
 }
 
-func UnmarshalDeviceName(tick uint64, delta lib.Delta, bytes []byte) (*DeviceName, error) {
-	name := string(bytes)
-	event := MakeDeviceName(tick, delta, name)
+func UnmarshalDeviceName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*DeviceName, error) {
+	name := string(data)
+	event := MakeDeviceName(tick, delta, name, bytes...)
 
 	return &event, nil
 }
