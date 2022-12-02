@@ -73,26 +73,6 @@ func (e event) Tag() string {
 }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeSequenceNumber: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalSequenceNumber(tick, delta, bytes)
-	},
-
-	lib.TypeText: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalText(tick, delta, bytes)
-	},
-
-	lib.TypeCopyright: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalCopyright(tick, delta, bytes)
-	},
-
-	lib.TypeTrackName: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalTrackName(tick, delta, bytes)
-	},
-
-	lib.TypeInstrumentName: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalInstrumentName(tick, delta, bytes)
-	},
-
 	lib.TypeLyric: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalLyric(tick, delta, bytes)
 	},
@@ -121,10 +101,6 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []
 		return UnmarshalMIDIPort(tick, delta, bytes)
 	},
 
-	// lib.TypeEndOfTrack: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-	// 	return UnmarshalEndOfTrack(tick, delta, bytes)
-	// },
-
 	lib.TypeTempo: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTempo(tick, delta, bytes)
 	},
@@ -132,22 +108,6 @@ var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []
 	lib.TypeSMPTEOffset: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalSMPTEOffset(tick, delta, bytes)
 	},
-
-	// lib.TypeKeySignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-	// 	if ks, err := UnmarshalKeySignature(tick, delta, bytes); err != nil {
-	// 		return ks, err
-	// 	} else {
-	// 		if ctx != nil {
-	// 			if ks.Accidentals < 0 {
-	// 				ctx.UseFlats()
-	// 			} else {
-	// 				ctx.UseSharps()
-	// 			}
-	// 		}
-	//
-	// 		return ks, nil
-	// 	}
-	// },
 
 	lib.TypeTimeSignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTimeSignature(tick, delta, bytes)
@@ -162,6 +122,41 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 	eventType := lib.MetaEventType(b & 0x7F)
 
 	switch eventType {
+	case lib.TypeSequenceNumber:
+		if e, err := UnmarshalSequenceNumber(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeText:
+		if e, err := UnmarshalText(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeCopyright:
+		if e, err := UnmarshalCopyright(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeTrackName:
+		if e, err := UnmarshalTrackName(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeInstrumentName:
+		if e, err := UnmarshalInstrumentName(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
 	case lib.TypeEndOfTrack:
 		if e, err := UnmarshalEndOfTrack(tick, delta, data...); err != nil || e == nil {
 			return nil, err

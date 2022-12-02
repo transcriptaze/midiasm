@@ -13,12 +13,12 @@ type Text struct {
 	Text string
 }
 
-func MakeText(tick uint64, delta lib.Delta, text string) Text {
+func MakeText(tick uint64, delta lib.Delta, text string, bytes ...byte) Text {
 	return Text{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x01, byte(len(text))}, []byte(text)...),
+			bytes:  bytes,
 			tag:    lib.TagText,
 			Status: 0xff,
 			Type:   lib.TypeText,
@@ -27,9 +27,9 @@ func MakeText(tick uint64, delta lib.Delta, text string) Text {
 	}
 }
 
-func UnmarshalText(tick uint64, delta lib.Delta, bytes []byte) (*Text, error) {
-	text := string(bytes)
-	event := MakeText(tick, delta, text)
+func UnmarshalText(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Text, error) {
+	text := string(data)
+	event := MakeText(tick, delta, text, bytes...)
 
 	return &event, nil
 }

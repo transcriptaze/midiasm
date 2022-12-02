@@ -13,12 +13,12 @@ type InstrumentName struct {
 	Name string
 }
 
-func MakeInstrumentName(tick uint64, delta lib.Delta, name string) InstrumentName {
+func MakeInstrumentName(tick uint64, delta lib.Delta, name string, bytes ...byte) InstrumentName {
 	return InstrumentName{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x04, byte(len(name))}, []byte(name)...),
+			bytes:  bytes,
 			tag:    lib.TagInstrumentName,
 			Status: 0xff,
 			Type:   lib.TypeInstrumentName,
@@ -27,9 +27,9 @@ func MakeInstrumentName(tick uint64, delta lib.Delta, name string) InstrumentNam
 	}
 }
 
-func UnmarshalInstrumentName(tick uint64, delta lib.Delta, bytes []byte) (*InstrumentName, error) {
-	name := string(bytes)
-	event := MakeInstrumentName(tick, delta, name)
+func UnmarshalInstrumentName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*InstrumentName, error) {
+	name := string(data)
+	event := MakeInstrumentName(tick, delta, name, bytes...)
 
 	return &event, nil
 }

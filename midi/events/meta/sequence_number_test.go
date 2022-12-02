@@ -20,7 +20,7 @@ func TestUnmarshalSequenceNumber(t *testing.T) {
 		SequenceNumber: 23,
 	}
 
-	evt, err := UnmarshalSequenceNumber(2400, 480, []byte{0x00, 0x17})
+	evt, err := UnmarshalSequenceNumber(2400, 480, []byte{0x00, 0x17}, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...)
 	if err != nil {
 		t.Fatalf("error encoding SequenceNumber (%v)", err)
 	}

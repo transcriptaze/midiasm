@@ -15,12 +15,13 @@ type SequenceNumber struct {
 	SequenceNumber uint16
 }
 
-func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16) SequenceNumber {
+func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16, bytes ...byte) SequenceNumber {
 	return SequenceNumber{
 		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  binary.BigEndian.AppendUint16([]byte{0x00, 0xff, 0x00, 0x02}, sequence),
+			tick:  tick,
+			delta: delta,
+			// bytes:  binary.BigEndian.AppendUint16([]byte{0x00, 0xff, 0x00, 0x02}, sequence),
+			bytes:  bytes,
 			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
 			Type:   lib.TypeSequenceNumber,
@@ -29,13 +30,13 @@ func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16) SequenceN
 	}
 }
 
-func UnmarshalSequenceNumber(tick uint64, delta lib.Delta, bytes []byte) (*SequenceNumber, error) {
-	if len(bytes) != 2 {
-		return nil, fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(bytes))
+func UnmarshalSequenceNumber(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequenceNumber, error) {
+	if len(data) != 2 {
+		return nil, fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(data))
 	}
 
-	sequence := binary.BigEndian.Uint16(bytes)
-	event := MakeSequenceNumber(tick, delta, sequence)
+	sequence := binary.BigEndian.Uint16(data)
+	event := MakeSequenceNumber(tick, delta, sequence, bytes...)
 
 	return &event, nil
 }

@@ -15,15 +15,12 @@ type TrackName struct {
 	Name string
 }
 
-func MakeTrackName(tick uint64, delta lib.Delta, name string) TrackName {
-	n := lib.VLF(name)
-	v, _ := n.MarshalBinary()
-
+func MakeTrackName(tick uint64, delta lib.Delta, name string, bytes ...byte) TrackName {
 	return TrackName{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x03}, v...),
+			bytes:  bytes,
 			tag:    lib.TagTrackName,
 			Status: 0xff,
 			Type:   lib.TypeTrackName,
@@ -32,9 +29,9 @@ func MakeTrackName(tick uint64, delta lib.Delta, name string) TrackName {
 	}
 }
 
-func UnmarshalTrackName(tick uint64, delta lib.Delta, bytes []byte) (*TrackName, error) {
-	name := string(bytes)
-	event := MakeTrackName(tick, delta, name)
+func UnmarshalTrackName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*TrackName, error) {
+	name := string(data)
+	event := MakeTrackName(tick, delta, name, bytes...)
 
 	return &event, nil
 }

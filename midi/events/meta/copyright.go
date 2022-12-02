@@ -13,12 +13,12 @@ type Copyright struct {
 	Copyright string
 }
 
-func MakeCopyright(tick uint64, delta lib.Delta, copyright string) Copyright {
+func MakeCopyright(tick uint64, delta lib.Delta, copyright string, bytes ...byte) Copyright {
 	return Copyright{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x02, byte(len(copyright))}, []byte(copyright)...),
+			bytes:  bytes,
 			tag:    lib.TagCopyright,
 			Status: 0xff,
 			Type:   lib.TypeCopyright,
@@ -27,9 +27,9 @@ func MakeCopyright(tick uint64, delta lib.Delta, copyright string) Copyright {
 	}
 }
 
-func UnmarshalCopyright(tick uint64, delta lib.Delta, bytes []byte) (*Copyright, error) {
-	copyright := string(bytes)
-	event := MakeCopyright(tick, delta, copyright)
+func UnmarshalCopyright(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Copyright, error) {
+	copyright := string(data)
+	event := MakeCopyright(tick, delta, copyright, bytes...)
 
 	return &event, nil
 }
