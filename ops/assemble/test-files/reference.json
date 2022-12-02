@@ -234,6 +234,27 @@
         },        
         {
           "event": {
+            "tag": "Controller",
+            "delta": 0,
+            "status": 176,
+            "controller": {
+              "id": 101,
+              "name": "Registered Parameter Number (MSB)"
+            },
+            "value": 0
+          }
+        },
+        {
+          "event": {
+            "tag": "PolyphonicPressure",
+            "delta": 0,
+            "status": 160,
+            "channel": 0,
+            "pressure": 100
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

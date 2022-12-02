@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -87,6 +88,49 @@ func (p *PolyphonicPressure) UnmarshalText(bytes []byte) error {
 		p.Status = or(p.Status, channel)
 		p.Channel = channel
 		p.Pressure = uint8(pressure)
+	}
+
+	return nil
+}
+
+func (e PolyphonicPressure) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Status   byte        `json:"status"`
+		Channel  lib.Channel `json:"channel"`
+		Pressure uint8       `json:"pressure"`
+	}{
+		Tag:      fmt.Sprintf("%v", e.tag),
+		Delta:    e.delta,
+		Status:   byte(e.Status),
+		Channel:  e.Channel,
+		Pressure: e.Pressure,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *PolyphonicPressure) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Channel  lib.Channel `json:"channel"`
+		Pressure uint8       `json:"pressure"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagPolyphonicPressure) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagPolyphonicPressure
+		e.Status = lib.Status(0xA0 | t.Channel)
+		e.Channel = t.Channel
+		e.Pressure = t.Pressure
 	}
 
 	return nil

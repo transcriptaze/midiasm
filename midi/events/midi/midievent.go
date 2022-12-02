@@ -12,7 +12,7 @@ type TMidiEvent interface {
 }
 
 type TMidiEventX interface {
-	Controller | ProgramChange
+	PolyphonicPressure | Controller | ProgramChange
 
 	MarshalJSON() ([]byte, error)
 }

@@ -18,7 +18,7 @@ type Controller struct {
 
 func MakeController(tick uint64, delta uint32, channel lib.Channel, controller lib.Controller, value byte, bytes ...byte) Controller {
 	if channel > 15 {
-		panic(fmt.Sprintf("invalid channel (%v)", channel))
+		panic(fmt.Errorf("invalid channel (%v)", channel))
 	}
 
 	return Controller{
