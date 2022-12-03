@@ -146,7 +146,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"EndOfTrack":             func() E { return &metaevent.EndOfTrack{} },
 		"SequencerSpecificEvent": func() E { return &metaevent.SequencerSpecificEvent{} },
 		// "NoteOff":                func() E { return &midievent.NoteOff{} },
-		// "NoteOn":                 func() E { return &midievent.NoteOn{} },
+		"NoteOn":             func() E { return &midievent.NoteOn{} },
 		"PolyphonicPressure": func() E { return &midievent.PolyphonicPressure{} },
 		"Controller":         func() E { return &midievent.Controller{} },
 		"ProgramChange":      func() E { return &midievent.ProgramChange{} },

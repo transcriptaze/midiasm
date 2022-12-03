@@ -264,6 +264,48 @@
         },
         {
           "event": {
+            "tag": "NoteOn",
+            "delta": 0,
+            "status": 144,
+            "channel": 0,
+            "note": {
+              "value": 48,
+              "name": "C3",
+              "alias": "C3"
+            },
+            "velocity": 72
+          }
+        },
+        {
+          "event": {
+            "tag": "NoteOn",
+            "delta": 0,
+            "status": 146,
+            "channel": 2,
+            "note": {
+              "value": 49,
+              "name": "C♯3",
+              "alias": "C♯3"
+            },
+            "velocity": 72
+          }
+        },
+        {
+          "event": {
+            "tag": "NoteOn",
+            "delta": 0,
+            "status": 146,
+            "channel": 2,
+            "note": {
+              "value": 48,
+              "name": "C3",
+              "alias": "C3"
+            },
+            "velocity": 100
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

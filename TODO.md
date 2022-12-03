@@ -25,6 +25,8 @@
 
 - [ ] Assemble MTrk
       - [ ] JSON
+      - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
+            blank and also don't more or less match note value
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
 
 - [] Rework decoder as described in https://go.dev/blog/defer-panic-and-recover

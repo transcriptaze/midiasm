@@ -192,3 +192,57 @@ func TestTransposeNoteOn(t *testing.T) {
 		t.Errorf("Transpose mutated original NoteOn event")
 	}
 }
+
+func TestNoteOnMarshalJSON(t *testing.T) {
+	e := NoteOn{
+		event: event{
+			tick:    0,
+			delta:   480,
+			tag:     lib.TagNoteOn,
+			Status:  0x97,
+			Channel: 7,
+			bytes:   []byte{},
+		},
+		Note: Note{
+			Value: 48,
+			Name:  "C3",
+			Alias: "C3",
+		},
+		Velocity: 72,
+	}
+
+	expected := `{"tag":"NoteOn","delta":480,"status":151,"channel":7,"note":{"value":48,"name":"C3","alias":"C3"},"velocity":72}`
+
+	testMarshalJSON(t, lib.TagNoteOn, e, expected)
+}
+
+func TestNoteOnNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagNoteOn
+	text := `{"tag":"NoteOn","delta":480,"status":151,"channel":7,"note":{"value":48,"name":"C3","alias":"C3"},"velocity":72}`
+	expected := NoteOn{
+		event: event{
+			tick:    0,
+			delta:   480,
+			tag:     lib.TagNoteOn,
+			Status:  0x97,
+			Channel: 7,
+			bytes:   []byte{},
+		},
+		Note: Note{
+			Value: 48,
+			Name:  "C3",
+			Alias: "C3",
+		},
+		Velocity: 72,
+	}
+
+	e := NoteOn{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

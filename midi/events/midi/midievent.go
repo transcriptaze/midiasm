@@ -28,9 +28,9 @@ type event struct {
 }
 
 type Note struct {
-	Value byte
-	Name  string
-	Alias string
+	Value byte   `json:"value"`
+	Name  string `json:"name"`
+	Alias string `json:"alias"`
 }
 
 var Events = map[byte]int{
