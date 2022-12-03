@@ -192,8 +192,7 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 // TEST EVENTS
 
 type event interface {
-	metaevent.Tempo |
-		metaevent.SMPTEOffset |
+	metaevent.SMPTEOffset |
 		metaevent.SequencerSpecificEvent
 }
 
@@ -251,9 +250,9 @@ var noteOffCS3 = &events.Event{
 	Event: midievent.MakeNoteOff(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 100, []byte{0x00, 0x81, 0x31, 0x64}...),
 }
 
-var tempo = makeEvent(
-	metaevent.MakeTempo(0, 0, 500000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
-	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20})
+var tempo = &events.Event{
+	Event: metaevent.MakeTempo(0, 0, 500000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
+}
 
 var smpteOffset = makeEvent(
 	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),

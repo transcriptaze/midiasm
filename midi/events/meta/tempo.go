@@ -29,18 +29,18 @@ func MakeTempo(tick uint64, delta lib.Delta, tempo uint32, bytes ...byte) Tempo 
 	}
 }
 
-func UnmarshalTempo(tick uint64, delta lib.Delta, bytes []byte) (*Tempo, error) {
-	if len(bytes) != 3 {
-		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(bytes))
+func UnmarshalTempo(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Tempo, error) {
+	if len(data) != 3 {
+		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
 	}
 
 	tempo := uint32(0)
-	for _, b := range bytes {
+	for _, b := range data {
 		tempo <<= 8
 		tempo += uint32(b)
 	}
 
-	event := MakeTempo(tick, delta, tempo, append([]byte{0x00, 0xff, 0x51, 0x03}, bytes...)...)
+	event := MakeTempo(tick, delta, tempo, bytes...)
 
 	return &event, nil
 }

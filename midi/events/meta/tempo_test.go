@@ -20,7 +20,7 @@ func TestUnmarshalTempo(t *testing.T) {
 		Tempo: 500000,
 	}
 
-	evt, err := UnmarshalTempo(2400, 480, []byte{0x07, 0xa1, 0x20})
+	evt, err := UnmarshalTempo(2400, 480, []byte{0x07, 0xa1, 0x20}, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling Tempo (%v)", err)
 	}

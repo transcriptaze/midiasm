@@ -12,14 +12,14 @@ func TestUnmarshalEndOfTrack(t *testing.T) {
 		event: event{
 			tick:   2400,
 			delta:  480,
-			bytes:  nil,
+			bytes:  []byte{0xff, 0x2f, 0x00},
 			tag:    lib.TagEndOfTrack,
 			Status: 0xff,
 			Type:   0x2f,
 		},
 	}
 
-	evt, err := UnmarshalEndOfTrack(2400, 480, []byte{}...)
+	evt, err := UnmarshalEndOfTrack(2400, 480, []byte{}, []byte{0xff, 0x2f, 0x00}...)
 	if err != nil {
 		t.Fatalf("error encoding EndOfTrack (%v)", err)
 	}

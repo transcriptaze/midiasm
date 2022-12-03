@@ -25,8 +25,8 @@ func MakeEndOfTrack(tick uint64, delta lib.Delta, bytes ...byte) EndOfTrack {
 	}
 }
 
-func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, data ...byte) (*EndOfTrack, error) {
-	event := MakeEndOfTrack(tick, delta)
+func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*EndOfTrack, error) {
+	event := MakeEndOfTrack(tick, delta, bytes...)
 
 	return &event, nil
 }
