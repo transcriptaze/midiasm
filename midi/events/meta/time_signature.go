@@ -17,7 +17,7 @@ type TimeSignature struct {
 	ThirtySecondsPerQuarter uint8
 }
 
-func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter uint8) TimeSignature {
+func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter uint8, bytes ...byte) TimeSignature {
 	d := 0
 	dd := uint8(1)
 	for dd < denominator {
@@ -29,7 +29,7 @@ func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, tic
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  []byte{0x00, 0xff, 0x58, 0x04, numerator, byte(d), ticksPerClick, thirtySecondsPerQuarter},
+			bytes:  bytes,
 			tag:    lib.TagTimeSignature,
 			Status: 0xff,
 			Type:   lib.TypeTimeSignature,
@@ -41,21 +41,21 @@ func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, tic
 	}
 }
 
-func UnmarshalTimeSignature(tick uint64, delta lib.Delta, bytes []byte) (*TimeSignature, error) {
-	if len(bytes) != 4 {
-		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '4'", len(bytes))
+func UnmarshalTimeSignature(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*TimeSignature, error) {
+	if len(data) != 4 {
+		return nil, fmt.Errorf("Invalid TimeSignature length (%d): expected '4'", len(data))
 	}
 
-	numerator := bytes[0]
-	ticksPerClick := bytes[2]
-	thirtySecondsPerQuarter := bytes[3]
+	numerator := data[0]
+	ticksPerClick := data[2]
+	thirtySecondsPerQuarter := data[3]
 
 	denominator := uint8(1)
-	for i := uint8(0); i < bytes[1]; i++ {
+	for i := uint8(0); i < data[1]; i++ {
 		denominator *= 2
 	}
 
-	event := MakeTimeSignature(tick, delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter)
+	event := MakeTimeSignature(tick, delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter, bytes...)
 
 	return &event, nil
 }

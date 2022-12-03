@@ -73,10 +73,6 @@ func (e event) Tag() string {
 }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeTimeSignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalTimeSignature(tick, delta, bytes)
-	},
-
 	lib.TypeSequencerSpecificEvent: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalSequencerSpecificEvent(tick, delta, bytes)
 	},
@@ -210,6 +206,14 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 				e.bytes = bytes
 				return *e, err
 			}
+		}
+
+	case lib.TypeTimeSignature:
+		if e, err := UnmarshalTimeSignature(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
 		}
 	}
 
