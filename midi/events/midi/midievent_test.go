@@ -7,6 +7,12 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
+type TestMidiEvent interface {
+	PolyphonicPressure | Controller | ProgramChange | ChannelPressure
+
+	MarshalJSON() ([]byte, error)
+}
+
 func TestEventMarshalBinary(t *testing.T) {
 	e := event{
 		tick:    0,
@@ -26,7 +32,7 @@ func TestEventMarshalBinary(t *testing.T) {
 	}
 }
 
-func testMarshalJSON[E TMidiEventX](t *testing.T, tag lib.Tag, e E, expected string) {
+func testMarshalJSON[E TestMidiEvent](t *testing.T, tag lib.Tag, e E, expected string) {
 	encoded, err := e.MarshalJSON()
 	if err != nil {
 		t.Fatalf("error encoding %v (%v)", tag, err)

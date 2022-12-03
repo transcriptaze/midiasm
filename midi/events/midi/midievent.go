@@ -11,23 +11,11 @@ type TMidiEvent interface {
 	NoteOff | NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
 }
 
-type TMidiEventX interface {
-	PolyphonicPressure | Controller | ProgramChange | ChannelPressure
-
-	MarshalJSON() ([]byte, error)
-}
-
 type TMidiEventQ interface {
-	*Controller
+	*NoteOff | *NoteOn | *PolyphonicPressure | *Controller | *ProgramChange | *ChannelPressure | *PitchBend
 
 	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
-
-// type TMidiEventX interface {
-// 	NoteOff
-//
-// 	Unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) error
-// }
 
 type event struct {
 	tick  uint64
@@ -85,24 +73,27 @@ func (e event) MarshalBinary() ([]byte, error) {
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data, bytes...); err != nil || e == nil {
+		e := NoteOff{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 
 	case 0x90:
-		if e, err := UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...); err != nil {
+		e := NoteOn{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 
 	case 0xA0:
-		if e, err := UnmarshalPolyphonicPressure(ctx, tick, delta, status, data, bytes...); err != nil {
+		e := PolyphonicPressure{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 
 	case 0xB0:
@@ -114,24 +105,27 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		}
 
 	case 0xC0:
-		if e, err := UnmarshalProgramChange(ctx, tick, delta, status, data, bytes...); err != nil {
+		e := ProgramChange{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 
 	case 0xD0:
-		if e, err := UnmarshalChannelPressure(ctx, tick, delta, status, data, bytes...); err != nil {
+		e := ChannelPressure{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 
 	case 0xE0:
-		if e, err := UnmarshalPitchBend(ctx, tick, delta, status, data, bytes...); err != nil {
+		e := PitchBend{}
+		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			return *e, err
+			return e, err
 		}
 	}
 

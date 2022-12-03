@@ -32,13 +32,36 @@ func MakePitchBend(tick uint64, delta uint32, channel lib.Channel, bend uint16, 
 	}
 }
 
-func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*PitchBend, error) {
+// func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*PitchBend, error) {
+// 	if status&0xf0 != 0xe0 {
+// 		return nil, fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
+// 	}
+//
+// 	if len(data) < 2 {
+// 		return nil, fmt.Errorf("Invalid PitchBend data (%v): expected bend", data)
+// 	}
+//
+// 	channel := lib.Channel(status & 0x0f)
+// 	bend := uint16(data[0])
+// 	bend <<= 7
+// 	bend |= uint16(data[1]) & 0x7f
+//
+// 	if channel > 15 {
+// 		return nil, fmt.Errorf("invalid channel (%v)", channel)
+// 	}
+//
+// 	event := MakePitchBend(tick, delta, channel, bend, bytes...)
+//
+// 	return &event, nil
+// }
+
+func (e *PitchBend) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xe0 {
-		return nil, fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
+		return fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
 	}
 
 	if len(data) < 2 {
-		return nil, fmt.Errorf("Invalid PitchBend data (%v): expected bend", data)
+		return fmt.Errorf("Invalid PitchBend data (%v): expected bend", data)
 	}
 
 	channel := lib.Channel(status & 0x0f)
@@ -47,12 +70,12 @@ func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, status 
 	bend |= uint16(data[1]) & 0x7f
 
 	if channel > 15 {
-		return nil, fmt.Errorf("invalid channel (%v)", channel)
+		return fmt.Errorf("invalid channel (%v)", channel)
 	}
 
-	event := MakePitchBend(tick, delta, channel, bend, bytes...)
+	*e = MakePitchBend(tick, delta, channel, bend, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (b PitchBend) MarshalBinary() (encoded []byte, err error) {

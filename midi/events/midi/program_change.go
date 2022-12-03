@@ -35,13 +35,35 @@ func MakeProgramChange(tick uint64, delta uint32, channel lib.Channel, bank uint
 	}
 }
 
-func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ProgramChange, error) {
+// func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ProgramChange, error) {
+// 	if status&0xf0 != 0xc0 {
+// 		return nil, fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
+// 	}
+//
+// 	if len(data) < 1 {
+// 		return nil, fmt.Errorf("Invalid %v data (%v): expected note and velocity", lib.TagProgramChange, data)
+// 	}
+//
+// 	var channel = lib.Channel(status & 0x0f)
+// 	var bank uint16
+// 	var program = data[0]
+//
+// 	if ctx != nil {
+// 		bank = ctx.ProgramBank[uint8(channel)]
+// 	}
+//
+// 	event := MakeProgramChange(tick, delta, channel, bank, program, bytes...)
+//
+// 	return &event, nil
+// }
+
+func (e *ProgramChange) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xc0 {
-		return nil, fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
+		return fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
 	}
 
 	if len(data) < 1 {
-		return nil, fmt.Errorf("Invalid %v data (%v): expected note and velocity", lib.TagProgramChange, data)
+		return fmt.Errorf("Invalid %v data (%v): expected note and velocity", lib.TagProgramChange, data)
 	}
 
 	var channel = lib.Channel(status & 0x0f)
@@ -52,9 +74,9 @@ func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, sta
 		bank = ctx.ProgramBank[uint8(channel)]
 	}
 
-	event := MakeProgramChange(tick, delta, channel, bank, program, bytes...)
+	*e = MakeProgramChange(tick, delta, channel, bank, program, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (p ProgramChange) MarshalBinary() (encoded []byte, err error) {
