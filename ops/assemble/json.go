@@ -150,7 +150,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"PolyphonicPressure": func() E { return &midievent.PolyphonicPressure{} },
 		"Controller":         func() E { return &midievent.Controller{} },
 		"ProgramChange":      func() E { return &midievent.ProgramChange{} },
-		// "ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
+		"ChannelPressure":    func() E { return &midievent.ChannelPressure{} },
 		// "PitchBend":              func() E { return &midievent.PitchBend{} },
 		// "SysExMessage":           func() E { return &sysex.SysExMessage{} },
 		// "SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },

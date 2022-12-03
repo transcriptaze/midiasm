@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -29,7 +30,7 @@ func MakeChannelPressure(tick uint64, delta uint32, channel lib.Channel, pressur
 			delta:   lib.Delta(delta),
 			bytes:   bytes,
 			tag:     lib.TagChannelPressure,
-			Status:  lib.Status(0xd0 | channel),
+			Status:  or(0xD0, channel),
 			Channel: channel,
 		},
 		Pressure: pressure,
@@ -61,22 +62,16 @@ func UnmarshalChannelPressure(ctx *context.Context, tick uint64, delta uint32, s
 	return &event, nil
 }
 
-func (p ChannelPressure) MarshalBinary() (encoded []byte, err error) {
+func (e ChannelPressure) MarshalBinary() (encoded []byte, err error) {
 	encoded = []byte{
-		byte(0xd0 | p.Channel),
-		p.Pressure,
+		byte(0xD0 | e.Channel),
+		e.Pressure,
 	}
 
 	return
 }
 
-func (p *ChannelPressure) UnmarshalText(bytes []byte) error {
-	p.tick = 0
-	p.delta = 0
-	p.bytes = []byte{}
-	p.tag = lib.TagChannelPressure
-	p.Status = 0xd0
-
+func (e *ChannelPressure) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)ChannelPressure\s+channel:([0-9]+)\s+pressure:([0-9]+)`)
 	text := string(bytes)
 
@@ -91,10 +86,56 @@ func (p *ChannelPressure) UnmarshalText(bytes []byte) error {
 	} else if pressure > 127 {
 		return fmt.Errorf("invalid ChannelPressure pressure (%v)", pressure)
 	} else {
-		p.delta = delta
-		p.Status = or(p.Status, channel)
-		p.Channel = channel
-		p.Pressure = uint8(pressure)
+		e.tick = 0
+		e.delta = delta
+		e.bytes = []byte{}
+		e.tag = lib.TagChannelPressure
+		e.Status = or(0xD0, channel)
+		e.Channel = channel
+		e.Pressure = uint8(pressure)
+	}
+
+	return nil
+}
+
+func (e ChannelPressure) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Status   byte        `json:"status"`
+		Channel  lib.Channel `json:"channel"`
+		Pressure uint8       `json:"pressure"`
+	}{
+		Tag:      fmt.Sprintf("%v", e.tag),
+		Delta:    e.delta,
+		Status:   byte(e.Status),
+		Channel:  e.Channel,
+		Pressure: e.Pressure,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *ChannelPressure) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Channel  lib.Channel `json:"channel"`
+		Pressure uint8       `json:"pressure"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagChannelPressure) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagChannelPressure
+		e.Status = or(0xD0, t.Channel)
+		e.Channel = t.Channel
+		e.Pressure = t.Pressure
 	}
 
 	return nil

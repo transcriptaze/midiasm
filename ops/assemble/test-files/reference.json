@@ -255,6 +255,15 @@
         },
         {
           "event": {
+            "tag": "ChannelPressure",
+            "delta": 0,
+            "status": 208,
+            "channel": 0,
+            "pressure": 7
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

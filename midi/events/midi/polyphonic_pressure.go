@@ -30,7 +30,7 @@ func MakePolyphonicPressure(tick uint64, delta uint32, channel lib.Channel, pres
 			delta:   lib.Delta(delta),
 			bytes:   bytes,
 			tag:     lib.TagPolyphonicPressure,
-			Status:  lib.Status(0xa0 | channel),
+			Status:  or(0xA0, channel),
 			Channel: channel,
 		},
 		Pressure: pressure,
@@ -54,22 +54,16 @@ func UnmarshalPolyphonicPressure(ctx *context.Context, tick uint64, delta uint32
 	return &event, nil
 }
 
-func (p PolyphonicPressure) MarshalBinary() (encoded []byte, err error) {
+func (e PolyphonicPressure) MarshalBinary() (encoded []byte, err error) {
 	encoded = []byte{
-		byte(0xa0 | p.Channel),
-		p.Pressure,
+		byte(0xA0 | e.Channel),
+		e.Pressure,
 	}
 
 	return
 }
 
-func (p *PolyphonicPressure) UnmarshalText(bytes []byte) error {
-	p.tick = 0
-	p.delta = 0
-	p.bytes = []byte{}
-	p.tag = lib.TagPolyphonicPressure
-	p.Status = 0xa0
-
+func (e *PolyphonicPressure) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)PolyphonicPressure\s+channel:([0-9]+)\s+pressure:([0-9]+)`)
 	text := string(bytes)
 
@@ -84,10 +78,13 @@ func (p *PolyphonicPressure) UnmarshalText(bytes []byte) error {
 	} else if pressure > 127 {
 		return fmt.Errorf("invalid PolyphonicPressure pressure (%v)", pressure)
 	} else {
-		p.delta = delta
-		p.Status = or(p.Status, channel)
-		p.Channel = channel
-		p.Pressure = uint8(pressure)
+		e.tick = 0
+		e.delta = delta
+		e.bytes = []byte{}
+		e.tag = lib.TagPolyphonicPressure
+		e.Status = or(0xA0, channel)
+		e.Channel = channel
+		e.Pressure = uint8(pressure)
 	}
 
 	return nil
