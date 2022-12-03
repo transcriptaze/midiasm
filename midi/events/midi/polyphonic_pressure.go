@@ -37,7 +37,7 @@ func MakePolyphonicPressure(tick uint64, delta uint32, channel lib.Channel, pres
 	}
 }
 
-func UnmarshalPolyphonicPressure(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*PolyphonicPressure, error) {
+func UnmarshalPolyphonicPressure(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*PolyphonicPressure, error) {
 	if status&0xf0 != 0xa0 {
 		return nil, fmt.Errorf("Invalid PolyphonicPressure status (%v): expected 'Ax'", status)
 	}
@@ -49,7 +49,7 @@ func UnmarshalPolyphonicPressure(ctx *context.Context, tick uint64, delta uint32
 	var channel = lib.Channel(status & 0x0f)
 	var pressure = data[0]
 
-	event := MakePolyphonicPressure(tick, delta, channel, pressure)
+	event := MakePolyphonicPressure(tick, delta, channel, pressure, bytes...)
 
 	return &event, nil
 }

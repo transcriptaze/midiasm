@@ -37,7 +37,7 @@ func MakeChannelPressure(tick uint64, delta uint32, channel lib.Channel, pressur
 	}
 }
 
-func UnmarshalChannelPressure(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*ChannelPressure, error) {
+func UnmarshalChannelPressure(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ChannelPressure, error) {
 	if status&0xf0 != 0xd0 {
 		return nil, fmt.Errorf("Invalid ChannelPressure status (%v): expected 'Dx'", status)
 	}
@@ -57,7 +57,7 @@ func UnmarshalChannelPressure(ctx *context.Context, tick uint64, delta uint32, s
 		return nil, fmt.Errorf("invalid pressure (%v)", pressure)
 	}
 
-	event := MakeChannelPressure(tick, delta, channel, pressure)
+	event := MakeChannelPressure(tick, delta, channel, pressure, bytes...)
 
 	return &event, nil
 }

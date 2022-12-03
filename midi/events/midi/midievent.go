@@ -85,26 +85,23 @@ func (e event) MarshalBinary() ([]byte, error) {
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data); err != nil || e == nil {
+		if e, err := UnmarshalNoteOff(ctx, tick, delta, status, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
 	case 0x90:
-		if e, err := UnmarshalNoteOn(ctx, tick, delta, status, data); err != nil || e == nil {
+		if e, err := UnmarshalNoteOn(ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
 	case 0xA0:
-		if e, err := UnmarshalPolyphonicPressure(ctx, tick, delta, status, data); err != nil || e == nil {
+		if e, err := UnmarshalPolyphonicPressure(ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
@@ -117,26 +114,23 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		}
 
 	case 0xC0:
-		if e, err := UnmarshalProgramChange(ctx, tick, delta, status, data); err != nil {
+		if e, err := UnmarshalProgramChange(ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
 	case 0xD0:
-		if e, err := UnmarshalChannelPressure(ctx, tick, delta, status, data); err != nil {
+		if e, err := UnmarshalChannelPressure(ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
 	case 0xE0:
-		if e, err := UnmarshalPitchBend(ctx, tick, delta, status, data); err != nil {
+		if e, err := UnmarshalPitchBend(ctx, tick, delta, status, data, bytes...); err != nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 	}
@@ -147,16 +141,6 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 func parse[T TMidiEventQ](e T, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	return e.unmarshal(ctx, tick, delta, status, data, bytes...)
 }
-
-// func parsex[E TMidiEventX](e E, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
-// 	if err := e.Unmarshal(ctx, tick, delta, status, data); err != nil {
-// 		return err
-// 	} else {
-// 		e.bytes = bytes
-// 	}
-//
-// 	return nil
-// }
 
 func equal(s string, tag lib.Tag) bool {
 	return s == fmt.Sprintf("%v", tag)

@@ -15,14 +15,14 @@ func TestUnmarshalCMajorKeySignature(t *testing.T) {
 			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
-			bytes:  nil,
+			bytes:  []byte{0xff, 0x59, 0x02, 0x00, 0x00},
 		},
 		Accidentals: 0,
 		KeyType:     lib.Major,
 		Key:         "C major",
 	}
 
-	event, err := UnmarshalKeySignature(2400, 480, []byte{0x00, 0x00}...)
+	event, err := UnmarshalKeySignature(2400, 480, []byte{0x00, 0x00}, []byte{0xff, 0x59, 0x02, 0x00, 0x00}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {
@@ -42,14 +42,14 @@ func TestUnmarshalCMinorKeySignature(t *testing.T) {
 			tag:    lib.TagKeySignature,
 			Status: 0xff,
 			Type:   0x59,
-			bytes:  nil,
+			bytes:  []byte{0xff, 0x59, 0x02, 0xfd, 0x01},
 		},
 		Accidentals: -3,
 		KeyType:     lib.Minor,
 		Key:         "C minor",
 	}
 
-	event, err := UnmarshalKeySignature(2400, 480, []byte{0xfd, 0x01}...)
+	event, err := UnmarshalKeySignature(2400, 480, []byte{0xfd, 0x01}, []byte{0xff, 0x59, 0x02, 0xfd, 0x01}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}

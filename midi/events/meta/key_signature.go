@@ -54,7 +54,7 @@ func MakeKeySignature(tick uint64, delta lib.Delta, accidentals int8, keyType li
 	}
 }
 
-func UnmarshalKeySignature(tick uint64, delta lib.Delta, data ...byte) (*KeySignature, error) {
+func UnmarshalKeySignature(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*KeySignature, error) {
 	if len(data) != 2 {
 		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(data))
 	}
@@ -79,7 +79,7 @@ func UnmarshalKeySignature(tick uint64, delta lib.Delta, data ...byte) (*KeySign
 		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0..1]", keyType)
 	}
 
-	event := MakeKeySignature(tick, delta, accidentals, keyType)
+	event := MakeKeySignature(tick, delta, accidentals, keyType, bytes...)
 
 	return &event, nil
 }

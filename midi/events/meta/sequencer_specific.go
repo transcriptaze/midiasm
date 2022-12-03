@@ -44,14 +44,17 @@ func UnmarshalSequencerSpecificEvent(tick uint64, delta lib.Delta, data []byte, 
 	return &event, nil
 }
 
-func (s SequencerSpecificEvent) MarshalBinary() (encoded []byte, err error) {
-	return concat(
-		[]byte{
-			byte(s.Status),
-			byte(s.Type),
-			byte(len(s.Manufacturer.ID) + len(s.Data))},
-		s.Manufacturer.ID,
-		s.Data), nil
+// FIXME encode as VLF
+func (e SequencerSpecificEvent) MarshalBinary() (encoded []byte, err error) {
+	b := []byte{
+		byte(e.Status),
+		byte(e.Type),
+		byte(len(e.Manufacturer.ID) + len(e.Data))}
+
+	b = append(b, e.Manufacturer.ID...)
+	b = append(b, e.Data...)
+
+	return b, nil
 }
 
 func (s *SequencerSpecificEvent) UnmarshalText(bytes []byte) error {

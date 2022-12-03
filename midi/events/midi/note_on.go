@@ -39,7 +39,7 @@ func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, veloc
 	}
 }
 
-func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*NoteOn, error) {
+func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOn, error) {
 	if status&0xf0 != 0x90 {
 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
@@ -66,7 +66,7 @@ func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib
 		ctx.PutNoteOn(channel, note.Value)
 	}
 
-	event := MakeNoteOn(tick, delta, channel, note, velocity)
+	event := MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
 
 	return &event, nil
 }

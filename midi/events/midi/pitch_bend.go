@@ -50,7 +50,7 @@ func UnmarshalPitchBend(ctx *context.Context, tick uint64, delta uint32, status 
 		return nil, fmt.Errorf("invalid channel (%v)", channel)
 	}
 
-	event := MakePitchBend(tick, delta, channel, bend)
+	event := MakePitchBend(tick, delta, channel, bend, bytes...)
 
 	return &event, nil
 }

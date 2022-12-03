@@ -72,8 +72,6 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
-var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){}
-
 func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
 	eventType := lib.MetaEventType(b & 0x7F)
 
@@ -166,7 +164,6 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 		if e, err := UnmarshalEndOfTrack(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
@@ -174,7 +171,6 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 		if e, err := UnmarshalTempo(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
@@ -182,33 +178,28 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 		if e, err := UnmarshalSMPTEOffset(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
 	case lib.TypeKeySignature:
-		{
-			if e, err := UnmarshalKeySignature(tick, delta, data...); err != nil || e == nil {
-				return nil, err
-			} else {
-				if ctx != nil {
-					if e.Accidentals < 0 {
-						ctx.UseFlats()
-					} else {
-						ctx.UseSharps()
-					}
+		if e, err := UnmarshalKeySignature(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			if ctx != nil {
+				if e.Accidentals < 0 {
+					ctx.UseFlats()
+				} else {
+					ctx.UseSharps()
 				}
-
-				e.bytes = bytes
-				return *e, err
 			}
+
+			return *e, err
 		}
 
 	case lib.TypeTimeSignature:
 		if e, err := UnmarshalTimeSignature(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
 
@@ -216,26 +207,12 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 		if e, err := UnmarshalSequencerSpecificEvent(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			e.bytes = bytes
 			return *e, err
 		}
+
+	default:
+		return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
 	}
-
-	if f, ok := factory[eventType]; ok {
-		return f(ctx, tick, delta, data)
-	}
-
-	return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
-}
-
-func concat(list ...[]byte) []byte {
-	bytes := []byte{}
-
-	for _, b := range list {
-		bytes = append(bytes, b...)
-	}
-
-	return bytes
 }
 
 func equal(s string, tag lib.Tag) bool {

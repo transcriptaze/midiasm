@@ -35,7 +35,7 @@ func MakeProgramChange(tick uint64, delta uint32, channel lib.Channel, bank uint
 	}
 }
 
-func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte) (*ProgramChange, error) {
+func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*ProgramChange, error) {
 	if status&0xf0 != 0xc0 {
 		return nil, fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
 	}
@@ -52,7 +52,7 @@ func UnmarshalProgramChange(ctx *context.Context, tick uint64, delta uint32, sta
 		bank = ctx.ProgramBank[uint8(channel)]
 	}
 
-	event := MakeProgramChange(tick, delta, channel, bank, program)
+	event := MakeProgramChange(tick, delta, channel, bank, program, bytes...)
 
 	return &event, nil
 }
