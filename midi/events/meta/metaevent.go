@@ -73,10 +73,6 @@ func (e event) Tag() string {
 }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeMIDIPort: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalMIDIPort(tick, delta, bytes)
-	},
-
 	lib.TypeTempo: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTempo(tick, delta, bytes)
 	},
@@ -170,6 +166,13 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	case lib.TypeMIDIChannelPrefix:
 		if e, err := UnmarshalMIDIChannelPrefix(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			return *e, err
+		}
+
+	case lib.TypeMIDIPort:
+		if e, err := UnmarshalMIDIPort(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err

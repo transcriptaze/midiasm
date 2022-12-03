@@ -20,7 +20,7 @@ func TestUnmarshalMIDIPort(t *testing.T) {
 		Port: 112,
 	}
 
-	evt, err := UnmarshalMIDIPort(2400, 480, []byte{112})
+	evt, err := UnmarshalMIDIPort(2400, 480, []byte{112}, []byte{0x00, 0xff, 0x21, 0x01, 0x70}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling MIDIPort (%v)", err)
 	}

@@ -14,7 +14,7 @@ type MIDIPort struct {
 	Port uint8
 }
 
-func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8) MIDIPort {
+func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8, bytes ...byte) MIDIPort {
 	if port > 127 {
 		panic(fmt.Sprintf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port))
 	}
@@ -23,7 +23,7 @@ func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8) MIDIPort {
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  append([]byte{0x00, 0xff, 0x21, 0x01, port}),
+			bytes:  bytes,
 			tag:    lib.TagMIDIPort,
 			Status: 0xff,
 			Type:   lib.TypeMIDIPort,
@@ -32,18 +32,20 @@ func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8) MIDIPort {
 	}
 }
 
-func UnmarshalMIDIPort(tick uint64, delta lib.Delta, bytes []byte) (*MIDIPort, error) {
-	if len(bytes) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(bytes))
+func UnmarshalMIDIPort(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIPort, error) {
+	if len(data) != 1 {
+		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
 	}
 
-	if port := bytes[0]; port > 127 {
+	port := data[0]
+
+	if port > 127 {
 		return nil, fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
-	} else {
-		event := MakeMIDIPort(tick, delta, port)
-
-		return &event, nil
 	}
+
+	event := MakeMIDIPort(tick, delta, port, bytes...)
+
+	return &event, nil
 }
 
 func (m MIDIPort) MarshalBinary() (encoded []byte, err error) {
