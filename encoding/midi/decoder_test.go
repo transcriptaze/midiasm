@@ -192,8 +192,7 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 // TEST EVENTS
 
 type event interface {
-	metaevent.SMPTEOffset |
-		metaevent.SequencerSpecificEvent
+	metaevent.SequencerSpecificEvent
 }
 
 func makeEvent[E event](e E, bytes []byte) *events.Event {
@@ -254,9 +253,9 @@ var tempo = &events.Event{
 	Event: metaevent.MakeTempo(0, 0, 500000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
 }
 
-var smpteOffset = makeEvent(
-	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
-	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27})
+var smpteOffset = &events.Event{
+	Event: metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...),
+}
 
 var endOfTrack = &events.Event{
 	Event: metaevent.MakeEndOfTrack(0, 0, []byte{0x00, 0xff, 0x2f, 0x00}...),

@@ -25,9 +25,9 @@
 
 - [ ] Assemble MTrk
       - [ ] JSON
-            - [x] lib.Hex MarshalJSON/UnmarshalJSON
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
 
+- [] Rework decoder as described in https://go.dev/blog/defer-panic-and-recover
 - [ ] VLQ: TestMarshalBinary
 - [ ] VLQ: UnmarshalBinary
 - [ ] VLF: TestMarshalBinary

@@ -19,7 +19,7 @@ type SMPTEOffset struct {
 	FractionalFrames uint8
 }
 
-func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRate, frames, fractionalFrames uint8) SMPTEOffset {
+func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRate, frames, fractionalFrames uint8, bytes ...byte) SMPTEOffset {
 	var rr uint8
 
 	if hour > 24 {
@@ -59,7 +59,7 @@ func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRa
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  []byte{0x00, 0xff, 0x54, 0x05, rr | hour&0x1f, minute, second, frames, fractionalFrames},
+			bytes:  bytes,
 			tag:    lib.TagSMPTEOffset,
 			Status: 0xff,
 			Type:   lib.TypeSMPTEOffset,
@@ -73,18 +73,17 @@ func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRa
 	}
 }
 
-// TODO Maybe rework this as described in https://go.dev/blog/defer-panic-and-recover
-func UnmarshalSMPTEOffset(tick uint64, delta lib.Delta, bytes []byte) (*SMPTEOffset, error) {
-	if len(bytes) != 5 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(bytes))
+func UnmarshalSMPTEOffset(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SMPTEOffset, error) {
+	if len(data) != 5 {
+		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(data))
 	}
 
-	rr := (bytes[0] >> 6) & 0x03
-	hour := bytes[0] & 0x01f
-	minute := bytes[1]
-	second := bytes[2]
-	frames := bytes[3]
-	fractions := bytes[4]
+	rr := (data[0] >> 6) & 0x03
+	hour := data[0] & 0x01f
+	minute := data[1]
+	second := data[2]
+	frames := data[3]
+	fractions := data[4]
 
 	if hour > 24 {
 		return nil, fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)
@@ -122,7 +121,7 @@ func UnmarshalSMPTEOffset(tick uint64, delta lib.Delta, bytes []byte) (*SMPTEOff
 		return nil, fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	}
 
-	event := MakeSMPTEOffset(tick, delta, hour, minute, second, framerate, frames, fractions)
+	event := MakeSMPTEOffset(tick, delta, hour, minute, second, framerate, frames, fractions, bytes...)
 
 	return &event, nil
 }

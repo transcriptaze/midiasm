@@ -73,10 +73,6 @@ func (e event) Tag() string {
 }
 
 var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeSMPTEOffset: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalSMPTEOffset(tick, delta, bytes)
-	},
-
 	lib.TypeTimeSignature: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
 		return UnmarshalTimeSignature(tick, delta, bytes)
 	},
@@ -184,6 +180,14 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	case lib.TypeTempo:
 		if e, err := UnmarshalTempo(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case lib.TypeSMPTEOffset:
+		if e, err := UnmarshalSMPTEOffset(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			e.bytes = bytes
