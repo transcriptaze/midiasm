@@ -72,11 +72,7 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
-var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){
-	lib.TypeSequencerSpecificEvent: func(ctx *context.Context, tick uint64, delta lib.Delta, bytes []byte) (any, error) {
-		return UnmarshalSequencerSpecificEvent(tick, delta, bytes)
-	},
-}
+var factory = map[lib.MetaEventType]func(*context.Context, uint64, lib.Delta, []byte) (any, error){}
 
 func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
 	eventType := lib.MetaEventType(b & 0x7F)
@@ -210,6 +206,14 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	case lib.TypeTimeSignature:
 		if e, err := UnmarshalTimeSignature(tick, delta, data, bytes...); err != nil || e == nil {
+			return nil, err
+		} else {
+			e.bytes = bytes
+			return *e, err
+		}
+
+	case lib.TypeSequencerSpecificEvent:
+		if e, err := UnmarshalSequencerSpecificEvent(tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			e.bytes = bytes

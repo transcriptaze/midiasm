@@ -15,12 +15,12 @@ type SequencerSpecificEvent struct {
 	Data         lib.Hex
 }
 
-func MakeSequencerSpecificEvent(tick uint64, delta lib.Delta, manufacturer lib.Manufacturer, data []byte) SequencerSpecificEvent {
+func MakeSequencerSpecificEvent(tick uint64, delta lib.Delta, manufacturer lib.Manufacturer, data []byte, bytes ...byte) SequencerSpecificEvent {
 	return SequencerSpecificEvent{
 		event: event{
 			tick:   tick,
 			delta:  delta,
-			bytes:  concat([]byte{0x00, 0xff, 0x7f, byte(len(manufacturer.ID) + len(data))}, manufacturer.ID, data),
+			bytes:  bytes,
 			tag:    lib.TagSequencerSpecificEvent,
 			Status: 0xff,
 			Type:   lib.TypeSequencerSpecificEvent,
@@ -30,16 +30,16 @@ func MakeSequencerSpecificEvent(tick uint64, delta lib.Delta, manufacturer lib.M
 	}
 }
 
-func UnmarshalSequencerSpecificEvent(tick uint64, delta lib.Delta, bytes []byte) (*SequencerSpecificEvent, error) {
-	id := bytes[0:1]
-	data := bytes[1:]
+func UnmarshalSequencerSpecificEvent(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequencerSpecificEvent, error) {
+	id := data[0:1]
+	d := data[1:]
 
-	if bytes[0] == 0x00 {
-		id = bytes[0:3]
-		data = bytes[3:]
+	if data[0] == 0x00 {
+		id = data[0:3]
+		d = data[3:]
 	}
 
-	event := MakeSequencerSpecificEvent(tick, delta, lib.LookupManufacturer(id), data)
+	event := MakeSequencerSpecificEvent(tick, delta, lib.LookupManufacturer(id), d, bytes...)
 
 	return &event, nil
 }

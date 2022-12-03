@@ -191,14 +191,6 @@ func testDecode(t *testing.T, b []byte, mthd *midi.MThd, tracks []*midi.MTrk) {
 
 // TEST EVENTS
 
-type event interface {
-	metaevent.SequencerSpecificEvent
-}
-
-func makeEvent[E event](e E, bytes []byte) *events.Event {
-	return events.NewEvent(&e, bytes...)
-}
-
 var sequenceNumber = &events.Event{
 	Event: metaevent.MakeSequenceNumber(0, 0, 23, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...),
 }
@@ -227,15 +219,17 @@ var aMinor = &events.Event{
 	Event: metaevent.MakeKeySignature(0, 0, 0, lib.Minor, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x01}...),
 }
 
-var motu = makeEvent(metaevent.MakeSequencerSpecificEvent(
-	0,
-	0,
-	lib.Manufacturer{
-		ID:     []byte{0x00, 0x00, 0x3b},
-		Region: "American",
-		Name:   "Mark Of The Unicorn (MOTU)"},
-	[]byte{0x3a, 0x4c, 0x5e}),
-	[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e})
+var motu = &events.Event{
+	Event: metaevent.MakeSequencerSpecificEvent(
+		0,
+		0,
+		lib.Manufacturer{
+			ID:     []byte{0x00, 0x00, 0x3b},
+			Region: "American",
+			Name:   "Mark Of The Unicorn (MOTU)"},
+		[]byte{0x3a, 0x4c, 0x5e},
+		[]byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}...),
+}
 
 var noteOnCS3 = &events.Event{
 	Event: midievent.MakeNoteOn(0, 0, 1, midievent.Note{49, "C♯3", "C♯3"}, 72, []byte{0x00, 0x91, 0x31, 0x48}...),
