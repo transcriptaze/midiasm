@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -164,6 +165,57 @@ func (n *NoteOff) UnmarshalText(bytes []byte) error {
 		n.Channel = channel
 		n.Note = note
 		n.Velocity = uint8(velocity)
+	}
+
+	return nil
+}
+
+func (e NoteOff) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Status   byte        `json:"status"`
+		Channel  lib.Channel `json:"channel"`
+		Note     Note        `json:"note"`
+		Velocity uint8       `json:"velocity"`
+	}{
+		Tag:      fmt.Sprintf("%v", e.tag),
+		Delta:    e.delta,
+		Status:   byte(e.Status),
+		Channel:  e.Channel,
+		Note:     e.Note,
+		Velocity: e.Velocity,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *NoteOff) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag      string      `json:"tag"`
+		Delta    lib.Delta   `json:"delta"`
+		Channel  lib.Channel `json:"channel"`
+		Note     Note        `json:"note"`
+		Velocity uint8       `json:"velocity"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagNoteOff) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagNoteOff
+		e.Status = or(0x80, t.Channel)
+		e.Channel = t.Channel
+		e.Note = Note{
+			Value: t.Note.Value,
+			Name:  FormatNote(nil, t.Note.Value),
+			Alias: FormatNote(nil, t.Note.Value),
+		}
+		e.Velocity = t.Velocity
 	}
 
 	return nil

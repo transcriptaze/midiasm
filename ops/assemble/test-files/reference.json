@@ -315,6 +315,20 @@
         },
         {
           "event": {
+            "tag": "NoteOff",
+            "delta": 480,
+            "status": 126,
+            "channel": 0,
+            "note": {
+              "value": 48,
+              "name": "C3",
+              "alias": "C3"
+            },
+            "velocity": 64
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

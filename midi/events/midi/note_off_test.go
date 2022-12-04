@@ -38,7 +38,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 
 	event, ok := event.(NoteOff)
 	if !ok {
-		t.Fatalf("NoteOn event parse error - returned %T", event)
+		t.Fatalf("NoteOff event parse error - returned %T", event)
 	}
 
 	if !reflect.DeepEqual(event, expected) {
@@ -189,5 +189,59 @@ func TestTransposeNoteOff(t *testing.T) {
 
 	if noteOff.Note.Value != 0x39 || noteOff.Note.Name != "A3" || noteOff.Note.Alias != "A3" {
 		t.Errorf("Transpose mutated original NoteOff event")
+	}
+}
+
+func TestNoteOffMarshalJSON(t *testing.T) {
+	e := NoteOff{
+		event: event{
+			tick:    0,
+			delta:   480,
+			tag:     lib.TagNoteOff,
+			Status:  0x87,
+			Channel: 7,
+			bytes:   []byte{},
+		},
+		Note: Note{
+			Value: 48,
+			Name:  "C3",
+			Alias: "C3",
+		},
+		Velocity: 72,
+	}
+
+	expected := `{"tag":"NoteOff","delta":480,"status":135,"channel":7,"note":{"value":48,"name":"C3","alias":"C3"},"velocity":72}`
+
+	testMarshalJSON(t, lib.TagNoteOff, e, expected)
+}
+
+func TestNoteOffNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagNoteOff
+	text := `{"tag":"NoteOff","delta":480,"status":135,"channel":7,"note":{"value":48,"name":"C3","alias":"C3"},"velocity":72}`
+	expected := NoteOff{
+		event: event{
+			tick:    0,
+			delta:   480,
+			tag:     lib.TagNoteOff,
+			Status:  0x87,
+			Channel: 7,
+			bytes:   []byte{},
+		},
+		Note: Note{
+			Value: 48,
+			Name:  "C3",
+			Alias: "C3",
+		},
+		Velocity: 72,
+	}
+
+	e := NoteOff{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
 	}
 }
