@@ -21,7 +21,7 @@ func TestParseSysExSingleMessage(t *testing.T) {
 		t.Fatalf("Unexpected SysEx single message parse error - returned %v", event)
 	}
 
-	message, ok := event.(*SysExMessage)
+	message, ok := event.(SysExMessage)
 	if !ok {
 		t.Fatalf("SysEx single message parse error - returned %T", event)
 	}
@@ -62,7 +62,7 @@ func TestParseSysExMessage(t *testing.T) {
 		t.Fatalf("Unexpected SysEx message parse error - returned %v", event)
 	}
 
-	message, ok := event.(*SysExMessage)
+	message, ok := event.(SysExMessage)
 	if !ok {
 		t.Fatalf("SysEx message parse error - returned %T", event)
 	}

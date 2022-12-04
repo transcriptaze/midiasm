@@ -21,7 +21,7 @@ func TestParseEscapeMessage(t *testing.T) {
 		t.Fatalf("Unexpected SysEx escape message parse error - returned %v", event)
 	}
 
-	message, ok := event.(*SysExEscapeMessage)
+	message, ok := event.(SysExEscapeMessage)
 	if !ok {
 		t.Fatalf("SysEx escape message parse error - returned %T", event)
 	}

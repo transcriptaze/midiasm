@@ -22,7 +22,7 @@ func TestParseContinuationMessage(t *testing.T) {
 		t.Fatalf("Unexpected SysEx continuation message parse error - returned %v", event)
 	}
 
-	message, ok := event.(*SysExContinuationMessage)
+	message, ok := event.(SysExContinuationMessage)
 	if !ok {
 		t.Fatalf("SysEx continuation message parse error - returned %T", event)
 	}
