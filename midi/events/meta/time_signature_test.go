@@ -25,14 +25,15 @@ func TestUnmarshalTimeSignature(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := TimeSignature{}
 
-	evt, err := UnmarshalTimeSignature(ctx, 2400, 480, []byte{0x03, 0x02, 0x18, 0x08}, []byte{0x00, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x03, 0x02, 0x18, 0x08}, []byte{0x00, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling TimeSignature (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect TimeSignature\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect TimeSignature\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

@@ -28,11 +28,12 @@ func MakeCuePoint(tick uint64, delta lib.Delta, cuepoint string, bytes ...byte) 
 	}
 }
 
-func UnmarshalCuePoint(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*CuePoint, error) {
+func (e *CuePoint) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	cuepoint := string(data)
-	event := MakeCuePoint(tick, delta, cuepoint, bytes...)
 
-	return &event, nil
+	*e = MakeCuePoint(tick, delta, cuepoint, bytes...)
+
+	return nil
 }
 
 func (c CuePoint) MarshalBinary() (encoded []byte, err error) {

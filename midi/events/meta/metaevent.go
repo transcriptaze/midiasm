@@ -29,7 +29,7 @@ type TMetaEvent interface {
 }
 
 type IMetaEvent interface {
-	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+	unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -62,130 +62,58 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	switch eventType {
 	case lib.TypeSequenceNumber:
-		if e, err := UnmarshalSequenceNumber(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SequenceNumber](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeText:
-		if e, err := UnmarshalText(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[Text](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeCopyright:
-		if e, err := UnmarshalCopyright(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[Copyright](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeTrackName:
-		if e, err := UnmarshalTrackName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[TrackName](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeInstrumentName:
-		if e, err := UnmarshalInstrumentName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[InstrumentName](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeLyric:
-		if e, err := UnmarshalLyric(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[Lyric](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeMarker:
-		if e, err := UnmarshalMarker(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[Marker](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeCuePoint:
-		if e, err := UnmarshalCuePoint(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[CuePoint](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeProgramName:
-		if e, err := UnmarshalProgramName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[ProgramName](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeDeviceName:
-		if e, err := UnmarshalDeviceName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[DeviceName](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeMIDIChannelPrefix:
-		if e, err := UnmarshalMIDIChannelPrefix(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[MIDIChannelPrefix](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeMIDIPort:
-		if e, err := UnmarshalMIDIPort(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[MIDIPort](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeEndOfTrack:
-		if e, err := UnmarshalEndOfTrack(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[EndOfTrack](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeTempo:
-		if e, err := UnmarshalTempo(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[Tempo](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeSMPTEOffset:
-		if e, err := UnmarshalSMPTEOffset(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SMPTEOffset](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeKeySignature:
-		if e, err := UnmarshalKeySignature(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[KeySignature](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeTimeSignature:
-		if e, err := UnmarshalTimeSignature(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[TimeSignature](ctx, tick, delta, status, data, bytes...)
 
 	case lib.TypeSequencerSpecificEvent:
-		if e, err := UnmarshalSequencerSpecificEvent(ctx, tick, delta, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SequencerSpecificEvent](ctx, tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
@@ -199,7 +127,7 @@ func unmarshal[
 	P interface {
 		*E
 		IMetaEvent
-	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	}](ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) (any, error) {
 	p := P(new(E))
 	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
 		return nil, err

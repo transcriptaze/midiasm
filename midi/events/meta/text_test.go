@@ -22,14 +22,15 @@ func TestUnmarshalText(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := Text{}
 
-	evt, err := UnmarshalText(ctx, 2400, 480, []byte("This and That"), []byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("This and That"), []byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}...)
 	if err != nil {
 		t.Fatalf("error encoding Text (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect Text\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect Text\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

@@ -22,14 +22,15 @@ func TestUnmarshalMIDIChannelPrefix(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := MIDIChannelPrefix{}
 
-	evt, err := UnmarshalMIDIChannelPrefix(ctx, 2400, 480, []byte{13}, []byte{0x00, 0xff, 0x20, 0x01, 0x0d}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{13}, []byte{0x00, 0xff, 0x20, 0x01, 0x0d}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling MIDIChannelPrefix (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect MIDIChannelPrefix\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect MIDIChannelPrefix\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

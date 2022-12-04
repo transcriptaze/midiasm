@@ -22,14 +22,15 @@ func TestUnmarshalSequenceNumber(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := SequenceNumber{}
 
-	evt, err := UnmarshalSequenceNumber(ctx, 2400, 480, []byte{0x00, 0x17}, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x00, 0x17}, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...)
 	if err != nil {
 		t.Fatalf("error encoding SequenceNumber (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect SequenceNumber\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect SequenceNumber\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

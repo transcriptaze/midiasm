@@ -33,20 +33,20 @@ func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8, bytes ...byte) MIDIP
 	}
 }
 
-func UnmarshalMIDIPort(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIPort, error) {
+func (e *MIDIPort) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
+		return fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
 	}
 
 	port := data[0]
 
 	if port > 127 {
-		return nil, fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
+		return fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
 	}
 
-	event := MakeMIDIPort(tick, delta, port, bytes...)
+	*e = MakeMIDIPort(tick, delta, port, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (m MIDIPort) MarshalBinary() (encoded []byte, err error) {

@@ -28,11 +28,13 @@ func MakeText(tick uint64, delta lib.Delta, text string, bytes ...byte) Text {
 	}
 }
 
-func UnmarshalText(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Text, error) {
+func (e *Text) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	text := string(data)
 	event := MakeText(tick, delta, text, bytes...)
 
-	return &event, nil
+	*e = event
+
+	return nil
 }
 
 func (e Text) MarshalBinary() (encoded []byte, err error) {

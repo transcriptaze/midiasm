@@ -26,10 +26,10 @@ func MakeEndOfTrack(tick uint64, delta lib.Delta, bytes ...byte) EndOfTrack {
 	}
 }
 
-func UnmarshalEndOfTrack(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*EndOfTrack, error) {
-	event := MakeEndOfTrack(tick, delta, bytes...)
+func (e *EndOfTrack) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+	*e = MakeEndOfTrack(tick, delta, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (e EndOfTrack) MarshalBinary() (encoded []byte, err error) {

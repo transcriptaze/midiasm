@@ -22,14 +22,15 @@ func TestUnmarshalInstrumentName(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := InstrumentName{}
 
-	evt, err := UnmarshalInstrumentName(ctx, 2400, 480, []byte("Didgeridoo"), []byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Didgeridoo"), []byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f}...)
 	if err != nil {
 		t.Fatalf("error encoding InstrumentName (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect InstrumentName\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect InstrumentName\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

@@ -24,16 +24,15 @@ func TestUnmarshalCMajorKeySignature(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := KeySignature{}
 
-	event, err := UnmarshalKeySignature(ctx, 2400, 480, []byte{0x00, 0x00}, []byte{0xff, 0x59, 0x02, 0x00, 0x00}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x00, 0x00}, []byte{0xff, 0x59, 0x02, 0x00, 0x00}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
-	} else if event == nil {
-		t.Fatalf("Unexpected KeySignature event parse error - returned %v", event)
 	}
 
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", expected, e)
 	}
 }
 
@@ -53,18 +52,15 @@ func TestUnmarshalCMinorKeySignature(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := KeySignature{}
 
-	event, err := UnmarshalKeySignature(ctx, 2400, 480, []byte{0xfd, 0x01}, []byte{0xff, 0x59, 0x02, 0xfd, 0x01}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0xfd, 0x01}, []byte{0xff, 0x59, 0x02, 0xfd, 0x01}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}
 
-	if event == nil {
-		t.Fatalf("Unexpected KeySignature event parse error - returned %v", event)
-	}
-
-	if !reflect.DeepEqual(event, &expected) {
-		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", &expected, event)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", expected, e)
 	}
 }
 

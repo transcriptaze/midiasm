@@ -28,11 +28,12 @@ func MakeProgramName(tick uint64, delta lib.Delta, name string, bytes ...byte) P
 	}
 }
 
-func UnmarshalProgramName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*ProgramName, error) {
+func (e *ProgramName) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	name := string(data)
-	event := MakeProgramName(tick, delta, name, bytes...)
 
-	return &event, nil
+	*e = MakeProgramName(tick, delta, name, bytes...)
+
+	return nil
 }
 
 func (p ProgramName) MarshalBinary() (encoded []byte, err error) {

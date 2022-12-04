@@ -28,11 +28,12 @@ func MakeDeviceName(tick uint64, delta lib.Delta, name string, bytes ...byte) De
 	}
 }
 
-func UnmarshalDeviceName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*DeviceName, error) {
+func (e *DeviceName) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	name := string(data)
-	event := MakeDeviceName(tick, delta, name, bytes...)
 
-	return &event, nil
+	*e = MakeDeviceName(tick, delta, name, bytes...)
+
+	return nil
 }
 
 func (d DeviceName) MarshalBinary() (encoded []byte, err error) {

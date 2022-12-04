@@ -27,14 +27,15 @@ func TestUnmarshalSMPTEOffset(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := SMPTEOffset{}
 
-	evt, err := UnmarshalSMPTEOffset(ctx, 2400, 480, []byte{0x4d, 0x2d, 0x3b, 0x07, 0x27}, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x4d, 0x2d, 0x3b, 0x07, 0x27}, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...)
 	if err != nil {
 		t.Fatalf("error encoding SMPTEOffset (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect SMPTEOffset\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect SMPTEOffset\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

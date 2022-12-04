@@ -30,9 +30,9 @@ func MakeTempo(tick uint64, delta lib.Delta, tempo uint32, bytes ...byte) Tempo 
 	}
 }
 
-func UnmarshalTempo(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Tempo, error) {
+func (e *Tempo) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 3 {
-		return nil, fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
+		return fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
 	}
 
 	tempo := uint32(0)
@@ -41,9 +41,9 @@ func UnmarshalTempo(ctx *context.Context, tick uint64, delta lib.Delta, data []b
 		tempo += uint32(b)
 	}
 
-	event := MakeTempo(tick, delta, tempo, bytes...)
+	*e = MakeTempo(tick, delta, tempo, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (t Tempo) String() string {

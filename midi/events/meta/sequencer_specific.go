@@ -31,7 +31,7 @@ func MakeSequencerSpecificEvent(tick uint64, delta lib.Delta, manufacturer lib.M
 	}
 }
 
-func UnmarshalSequencerSpecificEvent(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequencerSpecificEvent, error) {
+func (e *SequencerSpecificEvent) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	id := data[0:1]
 	d := data[1:]
 
@@ -40,9 +40,9 @@ func UnmarshalSequencerSpecificEvent(ctx *context.Context, tick uint64, delta li
 		d = data[3:]
 	}
 
-	event := MakeSequencerSpecificEvent(tick, delta, lib.LookupManufacturer(id), d, bytes...)
+	*e = MakeSequencerSpecificEvent(tick, delta, lib.LookupManufacturer(id), d, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 // FIXME encode as VLF

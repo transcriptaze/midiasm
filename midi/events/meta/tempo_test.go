@@ -22,14 +22,15 @@ func TestUnmarshalTempo(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := Tempo{}
 
-	evt, err := UnmarshalTempo(ctx, 2400, 480, []byte{0x07, 0xa1, 0x20}, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x07, 0xa1, 0x20}, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling Tempo (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect Tempo\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect Tempo\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

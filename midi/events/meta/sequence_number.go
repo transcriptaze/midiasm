@@ -31,15 +31,17 @@ func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16, bytes ...
 	}
 }
 
-func UnmarshalSequenceNumber(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequenceNumber, error) {
+func (e *SequenceNumber) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 2 {
-		return nil, fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(data))
+		return fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(data))
 	}
 
 	sequence := binary.BigEndian.Uint16(data)
 	event := MakeSequenceNumber(tick, delta, sequence, bytes...)
 
-	return &event, nil
+	*e = event
+
+	return nil
 }
 
 func (s SequenceNumber) MarshalBinary() (encoded []byte, err error) {

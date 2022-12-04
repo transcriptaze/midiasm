@@ -22,14 +22,15 @@ func TestUnmarshalLyric(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := Lyric{}
 
-	evt, err := UnmarshalLyric(ctx, 2400, 480, []byte("La-la-la"), []byte{0x00, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("La-la-la"), []byte{0x00, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61}...)
 	if err != nil {
 		t.Fatalf("error encoding Lyric (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect Lyric\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect Lyric\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

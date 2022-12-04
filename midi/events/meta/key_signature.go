@@ -54,9 +54,9 @@ func MakeKeySignature(tick uint64, delta lib.Delta, accidentals int8, keyType li
 	}
 }
 
-func UnmarshalKeySignature(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*KeySignature, error) {
+func (e *KeySignature) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 2 {
-		return nil, fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(data))
+		return fmt.Errorf("Invalid KeySignature length (%d): expected '2'", len(data))
 	}
 
 	var accidentals = int8(data[0])
@@ -66,17 +66,17 @@ func UnmarshalKeySignature(ctx *context.Context, tick uint64, delta lib.Delta, d
 	case 0:
 		keyType = lib.Major
 		if _, ok := lib.MajorScale(accidentals); !ok {
-			return nil, fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
+			return fmt.Errorf("Invalid major key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
 		}
 
 	case 1:
 		keyType = lib.Minor
 		if _, ok := lib.MinorScale(accidentals); !ok {
-			return nil, fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
+			return fmt.Errorf("Invalid minor key signature (%d accidentals): expected a value in the interval [-6..0]", accidentals)
 		}
 
 	default:
-		return nil, fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0..1]", keyType)
+		return fmt.Errorf("Invalid KeySignature key type (%d): expected a value in the interval [0..1]", keyType)
 	}
 
 	if ctx != nil {
@@ -87,9 +87,9 @@ func UnmarshalKeySignature(ctx *context.Context, tick uint64, delta lib.Delta, d
 		}
 	}
 
-	event := MakeKeySignature(tick, delta, accidentals, keyType, bytes...)
+	*e = MakeKeySignature(tick, delta, accidentals, keyType, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (e KeySignature) Transpose(ctx *context.Context, steps int) KeySignature {

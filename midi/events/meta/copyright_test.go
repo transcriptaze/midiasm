@@ -22,14 +22,15 @@ func TestUnmarshalCopyright(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := Copyright{}
 
-	evt, err := UnmarshalCopyright(ctx, 2400, 480, []byte("Them"), []byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Them"), []byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d}...)
 	if err != nil {
 		t.Fatalf("error encoding Copyright (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect Copyright\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect Copyright\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

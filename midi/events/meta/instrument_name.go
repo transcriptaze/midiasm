@@ -28,11 +28,12 @@ func MakeInstrumentName(tick uint64, delta lib.Delta, name string, bytes ...byte
 	}
 }
 
-func UnmarshalInstrumentName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*InstrumentName, error) {
+func (e *InstrumentName) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	name := string(data)
-	event := MakeInstrumentName(tick, delta, name, bytes...)
 
-	return &event, nil
+	*e = MakeInstrumentName(tick, delta, name, bytes...)
+
+	return nil
 }
 
 func (n InstrumentName) MarshalBinary() (encoded []byte, err error) {

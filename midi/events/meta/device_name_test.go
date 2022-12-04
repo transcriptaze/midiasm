@@ -22,14 +22,15 @@ func TestUnmarshalDeviceName(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := DeviceName{}
 
-	evt, err := UnmarshalDeviceName(ctx, 2400, 480, []byte("TheThing"), []byte{0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("TheThing"), []byte{0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling DeviceName (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect DeviceName\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect DeviceName\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

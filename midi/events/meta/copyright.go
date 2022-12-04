@@ -28,20 +28,20 @@ func MakeCopyright(tick uint64, delta lib.Delta, copyright string, bytes ...byte
 	}
 }
 
-func UnmarshalCopyright(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Copyright, error) {
+func (e *Copyright) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	copyright := string(data)
-	event := MakeCopyright(tick, delta, copyright, bytes...)
+	*e = MakeCopyright(tick, delta, copyright, bytes...)
 
-	return &event, nil
+	return nil
 }
 
-func (c Copyright) MarshalBinary() (encoded []byte, err error) {
+func (e Copyright) MarshalBinary() (encoded []byte, err error) {
 	return append([]byte{
-		byte(c.Status),
-		byte(c.Type),
-		byte(len(c.Copyright)),
+		byte(e.Status),
+		byte(e.Type),
+		byte(len(e.Copyright)),
 	},
-		[]byte(c.Copyright)...), nil
+		[]byte(e.Copyright)...), nil
 }
 
 func (e *Copyright) UnmarshalText(bytes []byte) error {

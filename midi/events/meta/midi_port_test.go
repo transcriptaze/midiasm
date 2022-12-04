@@ -22,14 +22,15 @@ func TestUnmarshalMIDIPort(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := MIDIPort{}
 
-	evt, err := UnmarshalMIDIPort(ctx, 2400, 480, []byte{112}, []byte{0x00, 0xff, 0x21, 0x01, 0x70}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{112}, []byte{0x00, 0xff, 0x21, 0x01, 0x70}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling MIDIPort (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect MIDIPort\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect MIDIPort\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

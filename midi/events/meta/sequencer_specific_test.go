@@ -27,14 +27,15 @@ func TestUnmarshalSequencerSpecificEvent(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := SequencerSpecificEvent{}
 
-	evt, err := UnmarshalSequencerSpecificEvent(ctx, 2400, 480, []byte{0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}, []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}, []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling SequencerSpecificEvent (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect SequencerSpecificEvent\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect SequencerSpecificEvent\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

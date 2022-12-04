@@ -74,9 +74,9 @@ func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRa
 	}
 }
 
-func UnmarshalSMPTEOffset(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SMPTEOffset, error) {
+func (e *SMPTEOffset) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 5 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(data))
+		return fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(data))
 	}
 
 	rr := (data[0] >> 6) & 0x03
@@ -87,19 +87,19 @@ func UnmarshalSMPTEOffset(ctx *context.Context, tick uint64, delta lib.Delta, da
 	fractions := data[4]
 
 	if hour > 24 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)
+		return fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)
 	}
 
 	if minute > 59 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset minute (%d): expected a value in the interval [0..59]", minute)
+		return fmt.Errorf("Invalid SMPTEOffset minute (%d): expected a value in the interval [0..59]", minute)
 	}
 
 	if second > 59 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset second (%d): expected a value in the interval [0..59]", second)
+		return fmt.Errorf("Invalid SMPTEOffset second (%d): expected a value in the interval [0..59]", second)
 	}
 
 	if rr != 0x00 && rr != 0x01 && rr != 0x02 && rr != 0x03 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset frame rate (%02X): expected a value in the set [0,1,2,3]", rr)
+		return fmt.Errorf("Invalid SMPTEOffset frame rate (%02X): expected a value in the set [0,1,2,3]", rr)
 	}
 
 	framerate := uint8(0)
@@ -115,16 +115,16 @@ func UnmarshalSMPTEOffset(ctx *context.Context, tick uint64, delta lib.Delta, da
 	}
 
 	if frames >= framerate {
-		return nil, fmt.Errorf("Invalid SMPTEOffset frames (%d): expected a value in the interval [0..%d]", frames, framerate-1)
+		return fmt.Errorf("Invalid SMPTEOffset frames (%d): expected a value in the interval [0..%d]", frames, framerate-1)
 	}
 
 	if fractions > 100 {
-		return nil, fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
+		return fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	}
 
-	event := MakeSMPTEOffset(tick, delta, hour, minute, second, framerate, frames, fractions, bytes...)
+	*e = MakeSMPTEOffset(tick, delta, hour, minute, second, framerate, frames, fractions, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (s SMPTEOffset) MarshalBinary() (encoded []byte, err error) {

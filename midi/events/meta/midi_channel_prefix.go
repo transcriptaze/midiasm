@@ -33,17 +33,17 @@ func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8, bytes ..
 	}
 }
 
-func UnmarshalMIDIChannelPrefix(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIChannelPrefix, error) {
+func (e *MIDIChannelPrefix) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 1 {
-		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(data))
+		return fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(data))
 	}
 
 	if channel := data[0]; channel > 15 {
-		return nil, fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
+		return fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
 	} else {
-		event := MakeMIDIChannelPrefix(tick, delta, channel, bytes...)
+		*e = MakeMIDIChannelPrefix(tick, delta, channel, bytes...)
 
-		return &event, nil
+		return nil
 	}
 }
 

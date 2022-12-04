@@ -21,15 +21,16 @@ func TestUnmarshalEndOfTrack(t *testing.T) {
 	}
 
 	ctx := context.NewContext()
+	e := EndOfTrack{}
 
-	evt, err := UnmarshalEndOfTrack(ctx, 2400, 480, []byte{}, []byte{0xff, 0x2f, 0x00}...)
+	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{}, []byte{0xff, 0x2f, 0x00}...)
 
 	if err != nil {
 		t.Fatalf("error encoding EndOfTrack (%v)", err)
 	}
 
-	if !reflect.DeepEqual(*evt, expected) {
-		t.Errorf("incorrect EndOfTrack\n   expected:%+v\n   got:     %+v", expected, *evt)
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrect EndOfTrack\n   expected:%+v\n   got:     %+v", expected, e)
 	}
 }
 

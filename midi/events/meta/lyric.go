@@ -28,11 +28,12 @@ func MakeLyric(tick uint64, delta lib.Delta, lyric string, bytes ...byte) Lyric 
 	}
 }
 
-func UnmarshalLyric(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Lyric, error) {
+func (e *Lyric) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	lyric := string(data)
-	event := MakeLyric(tick, delta, lyric, bytes...)
 
-	return &event, nil
+	*e = MakeLyric(tick, delta, lyric, bytes...)
+
+	return nil
 }
 
 func (l Lyric) MarshalBinary() (encoded []byte, err error) {

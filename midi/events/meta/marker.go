@@ -28,11 +28,12 @@ func MakeMarker(tick uint64, delta lib.Delta, marker string, bytes ...byte) Mark
 	}
 }
 
-func UnmarshalMarker(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Marker, error) {
+func (e *Marker) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	marker := string(data)
-	event := MakeMarker(tick, delta, marker, bytes...)
 
-	return &event, nil
+	*e = MakeMarker(tick, delta, marker, bytes...)
+
+	return nil
 }
 
 func (m Marker) MarshalBinary() (encoded []byte, err error) {
