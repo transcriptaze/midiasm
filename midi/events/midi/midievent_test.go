@@ -8,7 +8,7 @@ import (
 )
 
 type TestMidiEvent interface {
-	NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure
+	NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
 
 	MarshalJSON() ([]byte, error)
 }

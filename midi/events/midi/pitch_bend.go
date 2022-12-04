@@ -1,6 +1,7 @@
 package midievent
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -111,6 +112,48 @@ func (b *PitchBend) UnmarshalText(bytes []byte) error {
 		b.Status = or(b.Status, channel)
 		b.Channel = channel
 		b.Bend = uint16(bend)
+	}
+
+	return nil
+}
+func (e PitchBend) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag     string      `json:"tag"`
+		Delta   lib.Delta   `json:"delta"`
+		Status  byte        `json:"status"`
+		Channel lib.Channel `json:"channel"`
+		Bend    uint16      `json:"bend"`
+	}{
+		Tag:     fmt.Sprintf("%v", e.tag),
+		Delta:   e.delta,
+		Status:  byte(e.Status),
+		Channel: e.Channel,
+		Bend:    e.Bend,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *PitchBend) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag     string      `json:"tag"`
+		Delta   lib.Delta   `json:"delta"`
+		Channel lib.Channel `json:"channel"`
+		Bend    uint16      `json:"bend"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagPitchBend) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagPitchBend
+		e.Status = or(0xE0, t.Channel)
+		e.Channel = t.Channel
+		e.Bend = t.Bend
 	}
 
 	return nil

@@ -90,3 +90,46 @@ func TestPitchBendUnmarshalText(t *testing.T) {
 	}
 
 }
+func TestPitchBendMarshalJSON(t *testing.T) {
+	e := PitchBend{
+		event: event{
+			tick:    2400,
+			delta:   480,
+			bytes:   []byte{0x00, 0xe7, 0x00, 0x08},
+			tag:     lib.TagPitchBend,
+			Status:  0xe7,
+			Channel: 7,
+		},
+		Bend: 8,
+	}
+
+	expected := `{"tag":"PitchBend","delta":480,"status":231,"channel":7,"bend":8}`
+
+	testMarshalJSON(t, lib.TagPitchBend, e, expected)
+}
+
+func TestPitchBendNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagPitchBend
+	text := `{"tag":"PitchBend","delta":480,"status":231,"channel":7,"bend":8}`
+	expected := PitchBend{
+		event: event{
+			tick:    0,
+			delta:   480,
+			bytes:   []byte{},
+			tag:     lib.TagPitchBend,
+			Status:  0xe7,
+			Channel: 7,
+		},
+		Bend: 8,
+	}
+
+	e := PitchBend{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

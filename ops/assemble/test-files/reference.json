@@ -306,6 +306,15 @@
         },
         {
           "event": {
+            "tag": "PitchBend",
+            "delta": 240,
+            "status": 224,
+            "channel": 0,
+            "bend": 8
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,
