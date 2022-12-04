@@ -40,38 +40,6 @@ func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, veloc
 	}
 }
 
-// func UnmarshalNoteOn(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (*NoteOn, error) {
-// 	if status&0xf0 != 0x90 {
-// 		return nil, fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
-// 	}
-//
-// 	if len(data) < 2 {
-// 		return nil, fmt.Errorf("Invalid NoteOff data (%v): expected note and velocity", data)
-// 	}
-//
-// 	var channel = lib.Channel(status & 0x0f)
-// 	var note = Note{
-// 		Value: data[0],
-// 		Name:  FormatNote(ctx, data[0]),
-// 		Alias: FormatNote(ctx, data[0]),
-// 	}
-// 	var velocity uint8
-//
-// 	if v := data[1]; v > 127 {
-// 		return nil, fmt.Errorf("Invalid NoteOn velocity (%v)", v)
-// 	} else {
-// 		velocity = v
-// 	}
-//
-// 	if ctx != nil {
-// 		ctx.PutNoteOn(channel, note.Value)
-// 	}
-//
-// 	event := MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
-//
-// 	return &event, nil
-// }
-
 func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0x90 {
 		return fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
