@@ -11,9 +11,7 @@ type TMidiEvent interface {
 	NoteOff | NoteOn | PolyphonicPressure | Controller | ProgramChange | ChannelPressure | PitchBend
 }
 
-type TMidiEventQ interface {
-	*NoteOff | *NoteOn | *PolyphonicPressure | *Controller | *ProgramChange | *ChannelPressure | *PitchBend
-
+type IMidiEvent interface {
 	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
 
@@ -73,67 +71,44 @@ func (e event) MarshalBinary() ([]byte, error) {
 func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		e := NoteOff{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[NoteOff](ctx, tick, delta, status, data, bytes...)
 
 	case 0x90:
-		e := NoteOn{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[NoteOn](ctx, tick, delta, status, data, bytes...)
 
 	case 0xA0:
-		e := PolyphonicPressure{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[PolyphonicPressure](ctx, tick, delta, status, data, bytes...)
 
 	case 0xB0:
-		e := Controller{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[Controller](ctx, tick, delta, status, data, bytes...)
 
 	case 0xC0:
-		e := ProgramChange{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[ProgramChange](ctx, tick, delta, status, data, bytes...)
 
 	case 0xD0:
-		e := ChannelPressure{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[ChannelPressure](ctx, tick, delta, status, data, bytes...)
 
 	case 0xE0:
-		e := PitchBend{}
-		if err := parse(&e, ctx, tick, delta, status, data, bytes...); err != nil {
-			return nil, err
-		} else {
-			return e, err
-		}
+		return unmarshal[PitchBend](ctx, tick, delta, status, data, bytes...)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
 }
 
-func parse[T TMidiEventQ](e T, ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
-	return e.unmarshal(ctx, tick, delta, status, data, bytes...)
+// Ref. https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
+// Ref. https://stackoverflow.com/questions/69573113/how-can-i-instantiate-a-non-nil-pointer-of-type-argument-with-generic-go/69575720#69575720
+func unmarshal[
+	E TMidiEvent,
+	P interface {
+		*E
+		IMidiEvent
+	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	p := P(new(E))
+	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+		return nil, err
+	} else {
+		return *p, nil
+	}
 }
 
 func equal(s string, tag lib.Tag) bool {

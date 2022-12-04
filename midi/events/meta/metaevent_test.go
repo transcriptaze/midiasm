@@ -8,6 +8,25 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
+type TestMetaEvent interface {
+	SequenceNumber |
+		Text |
+		Copyright |
+		TrackName |
+		InstrumentName |
+		Lyric |
+		Marker |
+		CuePoint |
+		ProgramName |
+		DeviceName |
+		MIDIChannelPrefix |
+		MIDIPort |
+		KeySignature |
+		SequencerSpecificEvent
+
+	MarshalJSON() ([]byte, error)
+}
+
 func TestParseCMajorKeySignature(t *testing.T) {
 	expected := KeySignature{
 		event: event{
@@ -78,7 +97,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 	}
 }
 
-func testMarshalJSON[E TMetaEventX](t *testing.T, tag lib.Tag, e E, expected string) {
+func testMarshalJSON[E TestMetaEvent](t *testing.T, tag lib.Tag, e E, expected string) {
 	encoded, err := e.MarshalJSON()
 	if err != nil {
 		t.Fatalf("error encoding %v (%v)", tag, err)

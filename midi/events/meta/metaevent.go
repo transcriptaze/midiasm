@@ -28,23 +28,8 @@ type TMetaEvent interface {
 		SequencerSpecificEvent
 }
 
-type TMetaEventX interface {
-	SequenceNumber |
-		Text |
-		Copyright |
-		TrackName |
-		InstrumentName |
-		Lyric |
-		Marker |
-		CuePoint |
-		ProgramName |
-		DeviceName |
-		MIDIChannelPrefix |
-		MIDIPort |
-		KeySignature |
-		SequencerSpecificEvent
-
-	MarshalJSON() ([]byte, error)
+type IMetaEvent interface {
+	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -204,6 +189,22 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	default:
 		return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
+	}
+}
+
+// Ref. https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
+// Ref. https://stackoverflow.com/questions/69573113/how-can-i-instantiate-a-non-nil-pointer-of-type-argument-with-generic-go/69575720#69575720
+func unmarshal[
+	E TMetaEvent,
+	P interface {
+		*E
+		IMetaEvent
+	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	p := P(new(E))
+	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+		return nil, err
+	} else {
+		return *p, nil
 	}
 }
 
