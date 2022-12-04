@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -25,7 +26,7 @@ func MakeEndOfTrack(tick uint64, delta lib.Delta, bytes ...byte) EndOfTrack {
 	}
 }
 
-func UnmarshalEndOfTrack(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*EndOfTrack, error) {
+func UnmarshalEndOfTrack(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*EndOfTrack, error) {
 	event := MakeEndOfTrack(tick, delta, bytes...)
 
 	return &event, nil

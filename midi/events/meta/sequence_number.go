@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -30,7 +31,7 @@ func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16, bytes ...
 	}
 }
 
-func UnmarshalSequenceNumber(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequenceNumber, error) {
+func UnmarshalSequenceNumber(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequenceNumber, error) {
 	if len(data) != 2 {
 		return nil, fmt.Errorf("Invalid SequenceNumber length (%d): expected '2'", len(data))
 	}

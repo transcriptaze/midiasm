@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -23,7 +24,9 @@ func TestUnmarshalTimeSignature(t *testing.T) {
 		ThirtySecondsPerQuarter: 8,
 	}
 
-	evt, err := UnmarshalTimeSignature(2400, 480, []byte{0x03, 0x02, 0x18, 0x08}, []byte{0x00, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalTimeSignature(ctx, 2400, 480, []byte{0x03, 0x02, 0x18, 0x08}, []byte{0x00, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling TimeSignature (%v)", err)
 	}

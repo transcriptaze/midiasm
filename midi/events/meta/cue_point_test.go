@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -20,7 +21,9 @@ func TestUnmarshalCuePoint(t *testing.T) {
 		CuePoint: "More cowbell",
 	}
 
-	evt, err := UnmarshalCuePoint(2400, 480, []byte("More cowbell"), []byte{0x00, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalCuePoint(ctx, 2400, 480, []byte("More cowbell"), []byte{0x00, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c}...)
 	if err != nil {
 		t.Fatalf("error encoding CuePoint (%v)", err)
 	}

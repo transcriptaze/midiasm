@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -25,7 +26,9 @@ func TestUnmarshalSequencerSpecificEvent(t *testing.T) {
 		Data: []byte{0x3a, 0x4c, 0x5e},
 	}
 
-	evt, err := UnmarshalSequencerSpecificEvent(2400, 480, []byte{0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}, []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalSequencerSpecificEvent(ctx, 2400, 480, []byte{0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}, []byte{0x00, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling SequencerSpecificEvent (%v)", err)
 	}

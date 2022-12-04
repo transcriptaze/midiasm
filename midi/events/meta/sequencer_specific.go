@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -30,7 +31,7 @@ func MakeSequencerSpecificEvent(tick uint64, delta lib.Delta, manufacturer lib.M
 	}
 }
 
-func UnmarshalSequencerSpecificEvent(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequencerSpecificEvent, error) {
+func UnmarshalSequencerSpecificEvent(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SequencerSpecificEvent, error) {
 	id := data[0:1]
 	d := data[1:]
 

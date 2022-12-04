@@ -77,134 +77,126 @@ func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b by
 
 	switch eventType {
 	case lib.TypeSequenceNumber:
-		if e, err := UnmarshalSequenceNumber(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalSequenceNumber(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeText:
-		if e, err := UnmarshalText(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalText(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeCopyright:
-		if e, err := UnmarshalCopyright(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalCopyright(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeTrackName:
-		if e, err := UnmarshalTrackName(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalTrackName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeInstrumentName:
-		if e, err := UnmarshalInstrumentName(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalInstrumentName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeLyric:
-		if e, err := UnmarshalLyric(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalLyric(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeMarker:
-		if e, err := UnmarshalMarker(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalMarker(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeCuePoint:
-		if e, err := UnmarshalCuePoint(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalCuePoint(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeProgramName:
-		if e, err := UnmarshalProgramName(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalProgramName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeDeviceName:
-		if e, err := UnmarshalDeviceName(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalDeviceName(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeMIDIChannelPrefix:
-		if e, err := UnmarshalMIDIChannelPrefix(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalMIDIChannelPrefix(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeMIDIPort:
-		if e, err := UnmarshalMIDIPort(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalMIDIPort(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeEndOfTrack:
-		if e, err := UnmarshalEndOfTrack(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalEndOfTrack(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeTempo:
-		if e, err := UnmarshalTempo(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalTempo(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeSMPTEOffset:
-		if e, err := UnmarshalSMPTEOffset(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalSMPTEOffset(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeKeySignature:
-		if e, err := UnmarshalKeySignature(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalKeySignature(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
-			if ctx != nil {
-				if e.Accidentals < 0 {
-					ctx.UseFlats()
-				} else {
-					ctx.UseSharps()
-				}
-			}
-
 			return *e, err
 		}
 
 	case lib.TypeTimeSignature:
-		if e, err := UnmarshalTimeSignature(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalTimeSignature(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err
 		}
 
 	case lib.TypeSequencerSpecificEvent:
-		if e, err := UnmarshalSequencerSpecificEvent(tick, delta, data, bytes...); err != nil || e == nil {
+		if e, err := UnmarshalSequencerSpecificEvent(ctx, tick, delta, data, bytes...); err != nil || e == nil {
 			return nil, err
 		} else {
 			return *e, err

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -27,7 +28,7 @@ func MakeProgramName(tick uint64, delta lib.Delta, name string, bytes ...byte) P
 	}
 }
 
-func UnmarshalProgramName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*ProgramName, error) {
+func UnmarshalProgramName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*ProgramName, error) {
 	name := string(data)
 	event := MakeProgramName(tick, delta, name, bytes...)
 

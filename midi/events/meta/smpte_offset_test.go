@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -25,7 +26,9 @@ func TestUnmarshalSMPTEOffset(t *testing.T) {
 		FractionalFrames: 39,
 	}
 
-	evt, err := UnmarshalSMPTEOffset(2400, 480, []byte{0x4d, 0x2d, 0x3b, 0x07, 0x27}, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalSMPTEOffset(ctx, 2400, 480, []byte{0x4d, 0x2d, 0x3b, 0x07, 0x27}, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...)
 	if err != nil {
 		t.Fatalf("error encoding SMPTEOffset (%v)", err)
 	}

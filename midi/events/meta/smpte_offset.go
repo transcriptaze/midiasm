@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -73,7 +74,7 @@ func MakeSMPTEOffset(tick uint64, delta lib.Delta, hour, minute, second, frameRa
 	}
 }
 
-func UnmarshalSMPTEOffset(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SMPTEOffset, error) {
+func UnmarshalSMPTEOffset(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*SMPTEOffset, error) {
 	if len(data) != 5 {
 		return nil, fmt.Errorf("Invalid SMPTEOffset length (%d): expected '5'", len(data))
 	}

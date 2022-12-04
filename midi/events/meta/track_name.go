@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -29,7 +30,7 @@ func MakeTrackName(tick uint64, delta lib.Delta, name string, bytes ...byte) Tra
 	}
 }
 
-func UnmarshalTrackName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*TrackName, error) {
+func UnmarshalTrackName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*TrackName, error) {
 	name := string(data)
 	event := MakeTrackName(tick, delta, name, bytes...)
 

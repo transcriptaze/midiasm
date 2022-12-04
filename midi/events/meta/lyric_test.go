@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -20,7 +21,9 @@ func TestUnmarshalLyric(t *testing.T) {
 		Lyric: "La-la-la",
 	}
 
-	evt, err := UnmarshalLyric(2400, 480, []byte("La-la-la"), []byte{0x00, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalLyric(ctx, 2400, 480, []byte("La-la-la"), []byte{0x00, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61}...)
 	if err != nil {
 		t.Fatalf("error encoding Lyric (%v)", err)
 	}

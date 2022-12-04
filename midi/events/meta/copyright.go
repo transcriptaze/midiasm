@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -27,7 +28,7 @@ func MakeCopyright(tick uint64, delta lib.Delta, copyright string, bytes ...byte
 	}
 }
 
-func UnmarshalCopyright(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Copyright, error) {
+func UnmarshalCopyright(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Copyright, error) {
 	copyright := string(data)
 	event := MakeCopyright(tick, delta, copyright, bytes...)
 

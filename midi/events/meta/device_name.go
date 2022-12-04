@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -27,7 +28,7 @@ func MakeDeviceName(tick uint64, delta lib.Delta, name string, bytes ...byte) De
 	}
 }
 
-func UnmarshalDeviceName(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*DeviceName, error) {
+func UnmarshalDeviceName(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*DeviceName, error) {
 	name := string(data)
 	event := MakeDeviceName(tick, delta, name, bytes...)
 

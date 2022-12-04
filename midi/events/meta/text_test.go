@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -20,7 +21,9 @@ func TestUnmarshalText(t *testing.T) {
 		Text: "This and That",
 	}
 
-	evt, err := UnmarshalText(2400, 480, []byte("This and That"), []byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}...)
+	ctx := context.NewContext()
+
+	evt, err := UnmarshalText(ctx, 2400, 480, []byte("This and That"), []byte{0x00, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}...)
 	if err != nil {
 		t.Fatalf("error encoding Text (%v)", err)
 	}

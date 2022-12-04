@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -27,7 +28,7 @@ func MakeText(tick uint64, delta lib.Delta, text string, bytes ...byte) Text {
 	}
 }
 
-func UnmarshalText(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Text, error) {
+func UnmarshalText(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*Text, error) {
 	text := string(data)
 	event := MakeText(tick, delta, text, bytes...)
 

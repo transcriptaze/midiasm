@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -22,7 +23,9 @@ func TestUnmarshalCMajorKeySignature(t *testing.T) {
 		Key:         "C major",
 	}
 
-	event, err := UnmarshalKeySignature(2400, 480, []byte{0x00, 0x00}, []byte{0xff, 0x59, 0x02, 0x00, 0x00}...)
+	ctx := context.NewContext()
+
+	event, err := UnmarshalKeySignature(ctx, 2400, 480, []byte{0x00, 0x00}, []byte{0xff, 0x59, 0x02, 0x00, 0x00}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {
@@ -49,7 +52,9 @@ func TestUnmarshalCMinorKeySignature(t *testing.T) {
 		Key:         "C minor",
 	}
 
-	event, err := UnmarshalKeySignature(2400, 480, []byte{0xfd, 0x01}, []byte{0xff, 0x59, 0x02, 0xfd, 0x01}...)
+	ctx := context.NewContext()
+
+	event, err := UnmarshalKeySignature(ctx, 2400, 480, []byte{0xfd, 0x01}, []byte{0xff, 0x59, 0x02, 0xfd, 0x01}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	}

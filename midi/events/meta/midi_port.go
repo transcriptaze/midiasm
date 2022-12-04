@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -32,7 +33,7 @@ func MakeMIDIPort(tick uint64, delta lib.Delta, port uint8, bytes ...byte) MIDIP
 	}
 }
 
-func UnmarshalMIDIPort(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIPort, error) {
+func UnmarshalMIDIPort(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIPort, error) {
 	if len(data) != 1 {
 		return nil, fmt.Errorf("Invalid MIDIPort length (%d): expected '1'", len(data))
 	}

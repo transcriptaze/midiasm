@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -32,7 +33,7 @@ func MakeMIDIChannelPrefix(tick uint64, delta lib.Delta, channel uint8, bytes ..
 	}
 }
 
-func UnmarshalMIDIChannelPrefix(tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIChannelPrefix, error) {
+func UnmarshalMIDIChannelPrefix(ctx *context.Context, tick uint64, delta lib.Delta, data []byte, bytes ...byte) (*MIDIChannelPrefix, error) {
 	if len(data) != 1 {
 		return nil, fmt.Errorf("Invalid MIDIChannelPrefix length (%d): expected '1'", len(data))
 	}
