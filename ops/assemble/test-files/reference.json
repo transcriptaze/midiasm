@@ -329,6 +329,20 @@
         },
         {
           "event": {
+            "tag": "SysExMessage",
+            "delta": 0,
+            "status": 240,
+            "manufacturer": {
+              "id": [ 126 ],
+              "region": "Special Purpose",
+              "name": "Non-RealTime Extensions"
+            },
+            "data": [ 0, 9, 1 ],
+            "single": true
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

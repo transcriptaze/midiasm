@@ -174,3 +174,56 @@ func TestSysExMessageUnmarshalText(t *testing.T) {
 	}
 
 }
+func TestSysExMessageMarshalJSON(t *testing.T) {
+	e := SysExMessage{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExMessage,
+			Status: 0xf0,
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x7e},
+			Region: "Special Purpose",
+			Name:   "Non-RealTime Extensions",
+		},
+		Data:   lib.Hex{0x00, 0x09, 0x01},
+		Single: true,
+	}
+
+	expected := `{"tag":"SysExMessage","delta":480,"status":240,"manufacturer":{"id":[126],"region":"Special Purpose","name":"Non-RealTime Extensions"},"data":[0,9,1],"single":true}`
+
+	testMarshalJSON(t, lib.TagSysExMessage, e, expected)
+}
+
+func TestSysExMessageNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagSysExMessage
+	text := `{"tag":"SysExMessage","delta":480,"status":240,"manufacturer":{"id":[126],"region":"Special Purpose","name":"Non-RealTime Extensions"},"data":[0,9,1],"single":true}`
+	expected := SysExMessage{
+		event: event{
+			tick:   0,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExMessage,
+			Status: 0xf0,
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x7e},
+			Region: "Special Purpose",
+			Name:   "Non-RealTime Extensions",
+		},
+		Data:   lib.Hex{0x00, 0x09, 0x01},
+		Single: true,
+	}
+
+	e := SysExMessage{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

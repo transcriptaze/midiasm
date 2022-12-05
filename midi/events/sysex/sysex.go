@@ -80,3 +80,7 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
 	}
 }
+
+func equal(s string, tag lib.Tag) bool {
+	return s == fmt.Sprintf("%v", tag)
+}

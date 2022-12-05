@@ -11,6 +11,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 )
 
 type JSONAssembler struct {
@@ -152,7 +153,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"ProgramChange":          func() E { return &midievent.ProgramChange{} },
 		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
 		"PitchBend":              func() E { return &midievent.PitchBend{} },
-		// "SysExMessage":           func() E { return &sysex.SysExMessage{} },
+		"SysExMessage":           func() E { return &sysex.SysExMessage{} },
 		// "SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },
 		// "SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
 	}

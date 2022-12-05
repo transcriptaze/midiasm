@@ -1,6 +1,7 @@
 package sysex
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -22,7 +23,7 @@ func MakeSysExMessage(tick uint64, delta uint32, manufacturer lib.Manufacturer, 
 			delta:  lib.Delta(delta),
 			bytes:  bytes,
 			tag:    lib.TagSysExMessage,
-			Status: 0xf0,
+			Status: 0xF0,
 		},
 		Manufacturer: manufacturer,
 		Data:         data,
@@ -113,6 +114,53 @@ func (s *SysExMessage) UnmarshalText(bytes []byte) error {
 		s.delta = delta
 		s.Manufacturer = manufacturer
 		s.Data = data
+	}
+
+	return nil
+}
+
+func (e SysExMessage) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag          string           `json:"tag"`
+		Delta        lib.Delta        `json:"delta"`
+		Status       byte             `json:"status"`
+		Manufacturer lib.Manufacturer `json:"manufacturer"`
+		Data         lib.Hex          `json:"data"`
+		Single       bool             `json:"single"`
+	}{
+		Tag:          fmt.Sprintf("%v", e.tag),
+		Delta:        e.delta,
+		Status:       byte(e.Status),
+		Manufacturer: e.Manufacturer,
+		Data:         e.Data,
+		Single:       e.Single,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SysExMessage) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag          string           `json:"tag"`
+		Delta        lib.Delta        `json:"delta"`
+		Manufacturer lib.Manufacturer `json:"manufacturer"`
+		Data         lib.Hex          `json:"data"`
+		Single       bool             `json:"single"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagSysExMessage) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagSysExMessage
+		e.Status = 0xF0
+		e.Manufacturer = t.Manufacturer
+		e.Data = t.Data
+		e.Single = t.Single
 	}
 
 	return nil

@@ -7,6 +7,12 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
+type TestSysExEvent interface {
+	SysExMessage
+
+	MarshalJSON() ([]byte, error)
+}
+
 func TestEventMarshalBinary(t *testing.T) {
 	e := event{
 		tick:   0,
@@ -22,5 +28,16 @@ func TestEventMarshalBinary(t *testing.T) {
 		t.Fatalf("Error marshalling SYSEX base event (%v)", e)
 	} else if !reflect.DeepEqual(bytes, expected) {
 		t.Errorf("Incorrectly marshalled SYSEX base event\n   expected:%v\n   got:     %v", expected, bytes)
+	}
+}
+
+func testMarshalJSON[E TestSysExEvent](t *testing.T, tag lib.Tag, e E, expected string) {
+	encoded, err := e.MarshalJSON()
+	if err != nil {
+		t.Fatalf("error encoding %v (%v)", tag, err)
+	}
+
+	if string(encoded) != expected {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", tag, expected, string(encoded))
 	}
 }
