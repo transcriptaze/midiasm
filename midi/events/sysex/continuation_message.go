@@ -42,23 +42,23 @@ func MakeSysExContinuationEndMessage(tick uint64, delta uint32, data lib.Hex, by
 	}
 }
 
-func UnmarshalSysExContinuationMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExContinuationMessage, error) {
+func (e *SysExContinuationMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xf7 {
-		return nil, fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
+		return fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
 
-	data := bytes
-	if len(bytes) > 0 {
-		terminator := bytes[len(data)-1]
+	d := data
+	if len(data) > 0 {
+		terminator := data[len(d)-1]
 		if terminator == 0xf7 {
-			data = bytes[:len(data)-1]
+			d = data[:len(d)-1]
 			ctx.Casio = false
 		}
 	}
 
-	event := MakeSysExContinuationMessage(tick, delta, data, src...)
+	*e = MakeSysExContinuationMessage(tick, delta, d, bytes...)
 
-	return &event, nil
+	return nil
 }
 
 func (s SysExContinuationMessage) MarshalBinary() ([]byte, error) {

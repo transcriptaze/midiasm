@@ -11,6 +11,10 @@ type TSysExEvent interface {
 	SysExMessage | SysExContinuationMessage | SysExEscapeMessage
 }
 
+type ISysExEvent interface {
+	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+}
+
 type event struct {
 	tick  uint64
 	delta lib.Delta
@@ -56,28 +60,32 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 
 	case status == 0xf0:
-		if e, err := UnmarshalSysExMessage(ctx, tick, delta, status, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SysExMessage](ctx, tick, delta, status, data, bytes...)
 
 	case status == 0xf7 && ctx.Casio:
-		if e, err := UnmarshalSysExContinuationMessage(ctx, tick, delta, status, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SysExContinuationMessage](ctx, tick, delta, status, data, bytes...)
 
 	case status == 0xf7:
-		if e, err := UnmarshalSysExEscapeMessage(ctx, tick, delta, status, data, bytes...); err != nil || e == nil {
-			return nil, err
-		} else {
-			return *e, err
-		}
+		return unmarshal[SysExEscapeMessage](ctx, tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
+	}
+}
+
+// Ref. https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
+// Ref. https://stackoverflow.com/questions/69573113/how-can-i-instantiate-a-non-nil-pointer-of-type-argument-with-generic-go/69575720#69575720
+func unmarshal[
+	E TSysExEvent,
+	P interface {
+		*E
+		ISysExEvent
+	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	p := P(new(E))
+	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+		return nil, err
+	} else {
+		return *p, nil
 	}
 }
 

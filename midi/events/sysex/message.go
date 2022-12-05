@@ -46,28 +46,27 @@ func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer lib.Manufact
 	}
 }
 
-func UnmarshalSysExMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExMessage, error) {
+func (e *SysExMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xf0 {
-		return nil, fmt.Errorf("Invalid SysExMessage event type (%02x): expected 'F0'", status)
+		return fmt.Errorf("Invalid SysExMessage event type (%02x): expected 'F0'", status)
 	}
 
-	if len(bytes) == 0 {
-		return nil, fmt.Errorf("Invalid SysExMessage event data (0 bytes")
+	if len(data) == 0 {
+		return fmt.Errorf("Invalid SysExMessage event data (0 bytes")
 	}
 
-	id := bytes[0:1]
+	id := data[0:1]
 	manufacturer := lib.LookupManufacturer(id)
-	data := bytes[1:]
+	d := data[1:]
 
-	if data[len(data)-1] != 0xf7 {
+	if d[len(d)-1] != 0xf7 {
 		ctx.Casio = true
-		event := MakeSysExMessage(tick, delta, manufacturer, data, src...)
-		return &event, nil
+		*e = MakeSysExMessage(tick, delta, manufacturer, d, bytes...)
 	} else {
-		data = data[:len(data)-1]
-		event := MakeSysExSingleMessage(tick, delta, manufacturer, data, src...)
-		return &event, nil
+		*e = MakeSysExSingleMessage(tick, delta, manufacturer, d[:len(d)-1], bytes...)
 	}
+
+	return nil
 }
 
 func (s SysExMessage) MarshalBinary() ([]byte, error) {

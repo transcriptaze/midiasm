@@ -26,20 +26,18 @@ func MakeSysExEscapeMessage(tick uint64, delta uint32, data lib.Hex, bytes ...by
 	}
 }
 
-func UnmarshalSysExEscapeMessage(ctx *context.Context, tick uint64, delta uint32, status lib.Status, bytes []byte, src ...byte) (*SysExEscapeMessage, error) {
+func (e *SysExEscapeMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xf7 {
-		return nil, fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
+		return fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
 
 	if ctx.Casio {
-		return nil, fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
+		return fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 
-	data := bytes
+	*e = MakeSysExEscapeMessage(tick, delta, data, bytes...)
 
-	event := MakeSysExEscapeMessage(tick, delta, data, src...)
-
-	return &event, nil
+	return nil
 }
 
 func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
