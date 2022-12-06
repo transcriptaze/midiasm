@@ -80,3 +80,45 @@ func TestSysExEscapeMessageUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestSysExEscapeMessageMarshalJSON(t *testing.T) {
+	e := SysExEscapeMessage{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExEscape,
+			Status: 0xf7,
+		},
+		Data: lib.Hex{0xf3, 0x01},
+	}
+
+	expected := `{"tag":"SysExEscape","delta":480,"status":247,"data":[243,1]}`
+
+	testMarshalJSON(t, lib.TagSysExEscape, e, expected)
+}
+
+func TestSysExEscapeNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagSysExEscape
+	text := `{"tag":"SysExEscape","delta":480,"status":247,"data":[243,1]}`
+	expected := SysExEscapeMessage{
+		event: event{
+			tick:   0,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExEscape,
+			Status: 0xf7,
+		},
+		Data: lib.Hex{0xf3, 0x01},
+	}
+
+	e := SysExEscapeMessage{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

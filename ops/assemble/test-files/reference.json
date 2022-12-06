@@ -375,6 +375,14 @@
         },
         {
           "event": {
+            "tag": "SysExEscape",
+            "delta": 0,
+            "status": 247,
+            "data": [ 243, 1 ]
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

@@ -155,7 +155,7 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 		"PitchBend":              func() E { return &midievent.PitchBend{} },
 		"SysExMessage":           func() E { return &sysex.SysExMessage{} },
 		"SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },
-		// "SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
+		"SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
 	}
 
 	for _, e := range track.Events {

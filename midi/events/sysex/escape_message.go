@@ -1,6 +1,7 @@
 package sysex
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -20,14 +21,14 @@ func MakeSysExEscapeMessage(tick uint64, delta uint32, data lib.Hex, bytes ...by
 			delta:  lib.Delta(delta),
 			bytes:  bytes,
 			tag:    lib.TagSysExEscape,
-			Status: 0xf7,
+			Status: 0xF7,
 		},
 		Data: data,
 	}
 }
 
 func (e *SysExEscapeMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
-	if status != 0xf7 {
+	if status != 0xF7 {
 		return fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
 	}
 
@@ -62,7 +63,7 @@ func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
 	s.delta = 0
 	s.bytes = []byte{}
 	s.tag = lib.TagSysExEscape
-	s.Status = 0xf7
+	s.Status = 0xF7
 
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SysExEscape\s+(.*)`)
 	text := string(bytes)
@@ -76,6 +77,45 @@ func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
 	} else {
 		s.delta = delta
 		s.Data = data
+	}
+
+	return nil
+}
+
+func (e SysExEscapeMessage) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Data   lib.Hex   `json:"data"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Data:   e.Data,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SysExEscapeMessage) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Data  lib.Hex   `json:"data"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagSysExEscape) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagSysExEscape
+		e.Status = 0xF7
+		e.Data = t.Data
 	}
 
 	return nil
