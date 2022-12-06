@@ -21,12 +21,16 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 
+
 ### Assembler
 
 - [ ] Assemble MTrk
+      - [ ] MThd format field
       - [x] JSON
             - [ ] Round trip JSON export/assemble
       - [ ] Rework event factory lists as generic functions
+            - [x] JSON
+            - [ ] Text
       - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
@@ -56,7 +60,7 @@
 
 
 ### Export
-- [x] Don't export context
+- [ ] TSV
 
 ### Disassembler
 
@@ -67,7 +71,7 @@
 - (?) Rework decoder using tags/reflection/grammar+packrat-parser/kaitai/binpac/somesuch
 - [ ] Reference files
       - Format 0
-      - Format 1
+      - [x] Format 1
       - Format 2
 - [ ] Decode RPNs
       - https://en.wikipedia.org/wiki/General_MIDI
@@ -99,27 +103,26 @@
 
 1.  Tremolo/vibrato
 2.  TSV
-3.  Export to JSON
-4.  Export to S-expressions
-5.  VSCode plugin
+3.  Export to S-expressions
+4.  VSCode plugin
     -  [Language Server Protocol Tutorial: From VSCode to Vim](https://www.toptal.com/javascript/language-server-protocol-tutorial)
-6.  Convert between formats 0, 1 and 2
-7.  [Manufacturer ID's](https://www.midi.org/specifications-old/category/reference-tables) (?)
-8.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
-9.  [How to use a field of struct or variable value as template name?](https://stackoverflow.com/questions/28830543/how-to-use-a-field-of-struct-or-variable-value-as-template-name)
-10. Online/Javascript version
-12. https://github.com/go-interpreter/chezgo
-13. SDK (?)
-14. mmap
-15. REST/GraphQL interface
-16. https://sound.stackexchange.com/questions/39457/how-to-open-midi-file-in-text-editor
-17. https://github.com/mido/mido
-18. [Janet](https://janet-lang.org)
-19. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)
-20. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
-21. [go-jq](https://github.com/itchyny/gojq)
-22. [Katai struct](https://kaitai.io/)
-23. [PotLuck](https://www.inkandswitch.com/potluck)
+5.  Convert between formats 0, 1 and 2
+6.  [Manufacturer ID's](https://www.midi.org/specifications-old/category/reference-tables) (?)
+7.  Check against reference files from [github:nfroidure/midifile](https://github.com/nfroidure/midifile)
+8.  [How to use a field of struct or variable value as template name?](https://stackoverflow.com/questions/28830543/how-to-use-a-field-of-struct-or-variable-value-as-template-name)
+9. Online/Javascript version
+10. https://github.com/go-interpreter/chezgo
+12. SDK (?)
+13. mmap
+14. REST/GraphQL interface
+15. https://sound.stackexchange.com/questions/39457/how-to-open-midi-file-in-text-editor
+16. https://github.com/mido/mido
+17. [Janet](https://janet-lang.org)
+18. [Charm/BubbleTea](https://dlvhdr.me/posts/the-renaissance-of-the-command-line)
+19. [GNU Poke](https://youtu.be/Nwb_8VJ5ZeQ)
+20. [go-jq](https://github.com/itchyny/gojq)
+21. [Katai struct](https://kaitai.io/)
+22. [PotLuck](https://www.inkandswitch.com/potluck)
     - [LAPIS](http://groups.csail.mit.edu/graphics/lapis/doc/papers.html)
-24. https://futureofcoding.org/catalog/
-25. https://github.com/codemechanic/midi-sysex-grammar
+23. https://futureofcoding.org/catalog/
+24. https://github.com/codemechanic/midi-sysex-grammar

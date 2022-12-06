@@ -25,6 +25,37 @@ func NewTextAssembler() TextAssembler {
 	return TextAssembler{}
 }
 
+// type TEvent interface {
+// 	metaevent.SequenceNumber |
+// 		metaevent.Text |
+// 		metaevent.Copyright |
+// 		metaevent.TrackName |
+// 		metaevent.InstrumentName |
+// 		metaevent.Lyric |
+// 		metaevent.Marker |
+// 		metaevent.CuePoint |
+// 		metaevent.ProgramName |
+// 		metaevent.DeviceName |
+// 		metaevent.MIDIChannelPrefix |
+// 		metaevent.MIDIPort |
+// 		metaevent.Tempo |
+// 		metaevent.TimeSignature |
+// 		metaevent.KeySignature |
+// 		metaevent.SMPTEOffset |
+// 		metaevent.EndOfTrack |
+// 		metaevent.SequencerSpecificEvent |
+// 		midievent.NoteOff |
+// 		midievent.NoteOn |
+// 		midievent.PolyphonicPressure |
+// 		midievent.Controller |
+// 		midievent.ProgramChange |
+// 		midievent.ChannelPressure |
+// 		midievent.PitchBend |
+// 		sysex.SysExMessage |
+// 		sysex.SysExContinuationMessage |
+// 		sysex.SysExEscapeMessage
+// }
+
 func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	chunks, err := a.read(r)
 	if err != nil {
