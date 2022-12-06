@@ -24,7 +24,10 @@
 ### Assembler
 
 - [ ] Assemble MTrk
-      - [ ] JSON
+      - [x] JSON
+            - [ ] Round trip JSON export/assemble
+      - [ ] Rework event factory lists as generic functions
+      - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
       - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)

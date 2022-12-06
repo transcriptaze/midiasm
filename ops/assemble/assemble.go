@@ -21,6 +21,13 @@ func fixups(mtrk *midi.MTrk) (*midi.MTrk, error) {
 				message.Single = true
 			}
 		}
+
+		if message, ok := previous.Event.(sysex.SysExMessage); ok {
+			if _, ok := event.Event.(sysex.SysExContinuationMessage); !ok {
+				message.Single = true
+				mtrk.Events[ix].Event = message
+			}
+		}
 	}
 
 	for ix := range mtrk.Events[1:] {
@@ -30,6 +37,13 @@ func fixups(mtrk *midi.MTrk) (*midi.MTrk, error) {
 		if message, ok := previous.Event.(*sysex.SysExContinuationMessage); ok {
 			if _, ok := event.Event.(*sysex.SysExContinuationMessage); !ok {
 				message.End = true
+			}
+		}
+
+		if message, ok := previous.Event.(sysex.SysExContinuationMessage); ok {
+			if _, ok := event.Event.(sysex.SysExContinuationMessage); !ok {
+				message.End = true
+				mtrk.Events[ix].Event = message
 			}
 		}
 	}

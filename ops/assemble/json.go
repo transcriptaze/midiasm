@@ -31,6 +31,41 @@ type mtrk struct {
 	} `json:"events"`
 }
 
+type TEvent interface {
+	metaevent.SequenceNumber |
+		metaevent.Text |
+		metaevent.Copyright |
+		metaevent.TrackName |
+		metaevent.InstrumentName |
+		metaevent.Lyric |
+		metaevent.Marker |
+		metaevent.CuePoint |
+		metaevent.ProgramName |
+		metaevent.DeviceName |
+		metaevent.MIDIChannelPrefix |
+		metaevent.MIDIPort |
+		metaevent.Tempo |
+		metaevent.TimeSignature |
+		metaevent.KeySignature |
+		metaevent.SMPTEOffset |
+		metaevent.EndOfTrack |
+		metaevent.SequencerSpecificEvent |
+		midievent.NoteOff |
+		midievent.NoteOn |
+		midievent.PolyphonicPressure |
+		midievent.Controller |
+		midievent.ProgramChange |
+		midievent.ChannelPressure |
+		midievent.PitchBend |
+		sysex.SysExMessage |
+		sysex.SysExContinuationMessage |
+		sysex.SysExEscapeMessage
+}
+
+type IEvent interface {
+	UnmarshalJSON([]byte) error
+}
+
 func NewJSONAssembler() JSONAssembler {
 	return JSONAssembler{}
 }
@@ -115,49 +150,6 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 	}
 
 	// ... events
-	type E json.Unmarshaler
-
-	f := func(bytes []byte, e E) error {
-		if err := e.UnmarshalJSON(bytes); err != nil {
-			return err
-		} else {
-			mtrk.Events = append(mtrk.Events, events.NewEvent(e))
-		}
-
-		return nil
-	}
-
-	g := map[string]func() E{
-		"SequenceNumber":         func() E { return &metaevent.SequenceNumber{} },
-		"Text":                   func() E { return &metaevent.Text{} },
-		"Copyright":              func() E { return &metaevent.Copyright{} },
-		"TrackName":              func() E { return &metaevent.TrackName{} },
-		"InstrumentName":         func() E { return &metaevent.InstrumentName{} },
-		"Lyric":                  func() E { return &metaevent.Lyric{} },
-		"Marker":                 func() E { return &metaevent.Marker{} },
-		"CuePoint":               func() E { return &metaevent.CuePoint{} },
-		"ProgramName":            func() E { return &metaevent.ProgramName{} },
-		"DeviceName":             func() E { return &metaevent.DeviceName{} },
-		"MIDIChannelPrefix":      func() E { return &metaevent.MIDIChannelPrefix{} },
-		"MIDIPort":               func() E { return &metaevent.MIDIPort{} },
-		"Tempo":                  func() E { return &metaevent.Tempo{} },
-		"TimeSignature":          func() E { return &metaevent.TimeSignature{} },
-		"KeySignature":           func() E { return &metaevent.KeySignature{} },
-		"SMPTEOffset":            func() E { return &metaevent.SMPTEOffset{} },
-		"EndOfTrack":             func() E { return &metaevent.EndOfTrack{} },
-		"SequencerSpecificEvent": func() E { return &metaevent.SequencerSpecificEvent{} },
-		"NoteOff":                func() E { return &midievent.NoteOff{} },
-		"NoteOn":                 func() E { return &midievent.NoteOn{} },
-		"PolyphonicPressure":     func() E { return &midievent.PolyphonicPressure{} },
-		"Controller":             func() E { return &midievent.Controller{} },
-		"ProgramChange":          func() E { return &midievent.ProgramChange{} },
-		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
-		"PitchBend":              func() E { return &midievent.PitchBend{} },
-		"SysExMessage":           func() E { return &sysex.SysExMessage{} },
-		"SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },
-		"SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
-	}
-
 	for _, e := range track.Events {
 		t := struct {
 			Tag string `json:"tag"`
@@ -167,16 +159,166 @@ func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {
 			return nil, err
 		}
 
-		if v, ok := g[t.Tag]; ok {
-			event := v()
-			if err := f(e.Event, event); err != nil {
+		switch t.Tag {
+		case "SequenceNumber":
+			if err := unmarshal[metaevent.SequenceNumber](mtrk, e.Event); err != nil {
 				return nil, err
-			} else if _, ok := event.(*metaevent.EndOfTrack); ok {
+			}
+
+		case "Text":
+			if err := unmarshal[metaevent.Text](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "Copyright":
+			if err := unmarshal[metaevent.Copyright](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "TrackName":
+			if err := unmarshal[metaevent.TrackName](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "InstrumentName":
+			if err := unmarshal[metaevent.InstrumentName](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "Lyric":
+			if err := unmarshal[metaevent.Lyric](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "Marker":
+			if err := unmarshal[metaevent.Marker](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "CuePoint":
+			if err := unmarshal[metaevent.CuePoint](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "ProgramName":
+			if err := unmarshal[metaevent.ProgramName](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "DeviceName":
+			if err := unmarshal[metaevent.DeviceName](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "MIDIChannelPrefix":
+			if err := unmarshal[metaevent.MIDIChannelPrefix](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "MIDIPort":
+			if err := unmarshal[metaevent.MIDIPort](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "Tempo":
+			if err := unmarshal[metaevent.Tempo](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "TimeSignature":
+			if err := unmarshal[metaevent.TimeSignature](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "KeySignature":
+			if err := unmarshal[metaevent.KeySignature](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "SMPTEOffset":
+			if err := unmarshal[metaevent.SMPTEOffset](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "EndOfTrack":
+			if err := unmarshal[metaevent.EndOfTrack](mtrk, e.Event); err != nil {
+				return nil, err
+			} else {
 				return fixups(mtrk)
+			}
+
+		case "SequencerSpecificEvent":
+			if err := unmarshal[metaevent.SequencerSpecificEvent](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "NoteOff":
+			if err := unmarshal[midievent.NoteOff](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "NoteOn":
+			if err := unmarshal[midievent.NoteOn](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "PolyphonicPressure":
+			if err := unmarshal[midievent.PolyphonicPressure](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "Controller":
+			if err := unmarshal[midievent.Controller](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "ProgramChange":
+			if err := unmarshal[midievent.ProgramChange](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "ChannelPressure":
+			if err := unmarshal[midievent.ChannelPressure](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "PitchBend":
+			if err := unmarshal[midievent.PitchBend](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "SysExMessage":
+			if err := unmarshal[sysex.SysExMessage](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "SysExContinuation":
+			if err := unmarshal[sysex.SysExContinuationMessage](mtrk, e.Event); err != nil {
+				return nil, err
+			}
+
+		case "SysExEscape":
+			if err := unmarshal[sysex.SysExEscapeMessage](mtrk, e.Event); err != nil {
+				return nil, err
 			}
 		}
 	}
 
 	return mtrk, fmt.Errorf("missing EndOfTrack")
 
+}
+
+func unmarshal[
+	E TEvent,
+	P interface {
+		*E
+		IEvent
+	}](mtrk *midi.MTrk, bytes []byte) (err error) {
+	p := P(new(E))
+
+	if err = p.UnmarshalJSON(bytes); err == nil {
+		mtrk.Events = append(mtrk.Events, events.NewEvent(*p))
+	}
+
+	return
 }
