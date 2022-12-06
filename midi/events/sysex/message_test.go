@@ -174,6 +174,7 @@ func TestSysExMessageUnmarshalText(t *testing.T) {
 	}
 
 }
+
 func TestSysExMessageMarshalJSON(t *testing.T) {
 	e := SysExMessage{
 		event: event{

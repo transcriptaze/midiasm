@@ -8,7 +8,7 @@ import (
 )
 
 type TestSysExEvent interface {
-	SysExMessage
+	SysExMessage | SysExContinuationMessage
 
 	MarshalJSON() ([]byte, error)
 }

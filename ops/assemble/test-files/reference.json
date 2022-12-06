@@ -343,6 +343,38 @@
         },
         {
           "event": {
+            "tag": "SysExMessage",
+            "delta": 0,
+            "status": 240,
+            "manufacturer": {
+              "id": [ 67 ],
+              "region": "Japanese",
+              "name": "Yamaha"
+            },
+            "data": [ 18, 0 ],
+            "single": false
+          }
+        },
+       {
+          "event": {
+            "tag": "SysExContinuation",
+            "delta": 200,
+            "status": 247,
+            "data": [ 67, 18, 0, 67, 18, 0 ],
+            "end": false
+          }
+        },
+        {
+          "event": {
+            "tag": "SysExContinuation",
+            "delta": 100,
+            "status": 247,
+            "data": [ 67, 18, 0 ],
+            "end": false
+          }
+        },
+        {
+          "event": {
             "tag": "EndOfTrack",
             "delta": 0,
             "status": 255,

@@ -43,7 +43,7 @@ release: build-all
 debug: build
 # 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
 # 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
-	go test -v ./ops/transpose/... -run TestTransposeMTrk
+	go test -v ./ops/assemble/... -run TestJSONReference
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

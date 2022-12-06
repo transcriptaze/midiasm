@@ -110,3 +110,47 @@ func TestSysExContinuationMessageUnmarshalText(t *testing.T) {
 	}
 
 }
+
+func TestSysExContinuationMessageMarshalJSON(t *testing.T) {
+	e := SysExContinuationMessage{
+		event: event{
+			tick:   2400,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExContinuation,
+			Status: 0xf7,
+		},
+		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
+		End:  true,
+	}
+
+	expected := `{"tag":"SysExContinuation","delta":480,"status":247,"data":[126,0,9,1],"end":true}`
+
+	testMarshalJSON(t, lib.TagSysExContinuation, e, expected)
+}
+
+func TestSysExContinuationNameUnmarshalJSON(t *testing.T) {
+	tag := lib.TagSysExContinuation
+	text := `{"tag":"SysExContinuation","delta":480,"status":247,"data":[126,0,9,1],"end":true}`
+	expected := SysExContinuationMessage{
+		event: event{
+			tick:   0,
+			delta:  480,
+			bytes:  []byte{},
+			tag:    lib.TagSysExContinuation,
+			Status: 0xf7,
+		},
+		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
+		End:  true,
+	}
+
+	e := SysExContinuationMessage{}
+
+	if err := e.UnmarshalJSON([]byte(text)); err != nil {
+		t.Fatalf("error unmarshalling %v (%v)", tag, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", tag, expected, e)
+	}
+}

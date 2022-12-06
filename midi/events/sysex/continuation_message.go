@@ -1,6 +1,7 @@
 package sysex
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 
@@ -101,6 +102,49 @@ func (s *SysExContinuationMessage) UnmarshalText(bytes []byte) error {
 	} else {
 		s.delta = delta
 		s.Data = data
+	}
+
+	return nil
+}
+
+func (e SysExContinuationMessage) MarshalJSON() (encoded []byte, err error) {
+	t := struct {
+		Tag    string    `json:"tag"`
+		Delta  lib.Delta `json:"delta"`
+		Status byte      `json:"status"`
+		Data   lib.Hex   `json:"data"`
+		End    bool      `json:"end"`
+	}{
+		Tag:    fmt.Sprintf("%v", e.tag),
+		Delta:  e.delta,
+		Status: byte(e.Status),
+		Data:   e.Data,
+		End:    e.End,
+	}
+
+	return json.Marshal(t)
+}
+
+func (e *SysExContinuationMessage) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Tag   string    `json:"tag"`
+		Delta lib.Delta `json:"delta"`
+		Data  lib.Hex   `json:"data"`
+		End   bool      `json:"end"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	} else if !equal(t.Tag, lib.TagSysExContinuation) {
+		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else {
+		e.tick = 0
+		e.delta = t.Delta
+		e.bytes = []byte{}
+		e.tag = lib.TagSysExContinuation
+		e.Status = 0xF7
+		e.Data = t.Data
+		e.End = t.End
 	}
 
 	return nil

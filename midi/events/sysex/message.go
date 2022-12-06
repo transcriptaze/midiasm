@@ -69,14 +69,14 @@ func (e *SysExMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32
 	return nil
 }
 
-func (s SysExMessage) MarshalBinary() ([]byte, error) {
-	status := byte(s.Status)
+func (e SysExMessage) MarshalBinary() ([]byte, error) {
+	status := byte(e.Status)
 
 	vlf := []byte{}
-	vlf = append(vlf, s.Manufacturer.ID...)
-	vlf = append(vlf, s.Data...)
+	vlf = append(vlf, e.Manufacturer.ID...)
+	vlf = append(vlf, e.Data...)
 
-	if s.Single {
+	if e.Single {
 		vlf = append(vlf, 0xf7)
 	}
 
