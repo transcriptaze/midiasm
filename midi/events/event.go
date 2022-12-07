@@ -1,6 +1,7 @@
 package events
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -70,6 +71,47 @@ func (e Event) Bytes() lib.Hex {
 	}
 
 	panic(fmt.Sprintf("Invalid event (%v) - missing 'bytes'", e))
+}
+
+func (e *Event) UnmarshalJSON(bytes []byte) error {
+	t := struct {
+		Event json.RawMessage `json:"event"`
+	}{}
+
+	if err := json.Unmarshal(bytes, &t); err != nil {
+		return err
+	}
+
+	u := struct {
+		Tag string `json:"tag"`
+	}{}
+
+	if err := json.Unmarshal(t.Event, &u); err != nil {
+		return err
+	}
+
+	switch u.Tag {
+	case "SequenceNumber":
+		if event, err := unmarshal[metaevent.SequenceNumber](t.Event); err != nil {
+			return err
+		} else {
+			e.Event = event
+		}
+	}
+
+	return nil
+}
+
+func unmarshal[
+	E TEvent,
+	P interface {
+		*E
+		json.Unmarshaler
+	}](bytes []byte) (E, error) {
+	p := P(new(E))
+	err := p.UnmarshalJSON(bytes)
+
+	return *p, err
 }
 
 func IsEndOfTrack(e *Event) bool {
