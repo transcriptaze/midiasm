@@ -24,6 +24,8 @@
 
 ### Assembler
 
+- https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
+
 - [ ] Assemble MTrk
       - [ ] MThd format field
       - [x] JSON
