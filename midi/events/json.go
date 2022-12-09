@@ -28,95 +28,95 @@ func (e *Event) UnmarshalJSON(bytes []byte) error {
 
 	switch u.Tag {
 	case "SequenceNumber":
-		return unmarshal[metaevent.SequenceNumber](e, t.Event)
+		return unmarshalJSON[metaevent.SequenceNumber](e, t.Event)
 
 	case "Text":
-		return unmarshal[metaevent.Text](e, t.Event)
+		return unmarshalJSON[metaevent.Text](e, t.Event)
 
 	case "Copyright":
-		return unmarshal[metaevent.Copyright](e, t.Event)
+		return unmarshalJSON[metaevent.Copyright](e, t.Event)
 
 	case "TrackName":
-		return unmarshal[metaevent.TrackName](e, t.Event)
+		return unmarshalJSON[metaevent.TrackName](e, t.Event)
 
 	case "InstrumentName":
-		return unmarshal[metaevent.InstrumentName](e, t.Event)
+		return unmarshalJSON[metaevent.InstrumentName](e, t.Event)
 
 	case "Lyric":
-		return unmarshal[metaevent.Lyric](e, t.Event)
+		return unmarshalJSON[metaevent.Lyric](e, t.Event)
 
 	case "Marker":
-		return unmarshal[metaevent.Marker](e, t.Event)
+		return unmarshalJSON[metaevent.Marker](e, t.Event)
 
 	case "CuePoint":
-		return unmarshal[metaevent.CuePoint](e, t.Event)
+		return unmarshalJSON[metaevent.CuePoint](e, t.Event)
 
 	case "ProgramName":
-		return unmarshal[metaevent.ProgramName](e, t.Event)
+		return unmarshalJSON[metaevent.ProgramName](e, t.Event)
 
 	case "DeviceName":
-		return unmarshal[metaevent.DeviceName](e, t.Event)
+		return unmarshalJSON[metaevent.DeviceName](e, t.Event)
 
 	case "MIDIChannelPrefix":
-		return unmarshal[metaevent.MIDIChannelPrefix](e, t.Event)
+		return unmarshalJSON[metaevent.MIDIChannelPrefix](e, t.Event)
 
 	case "MIDIPort":
-		return unmarshal[metaevent.MIDIPort](e, t.Event)
+		return unmarshalJSON[metaevent.MIDIPort](e, t.Event)
 
 	case "Tempo":
-		return unmarshal[metaevent.Tempo](e, t.Event)
+		return unmarshalJSON[metaevent.Tempo](e, t.Event)
 
 	case "TimeSignature":
-		return unmarshal[metaevent.TimeSignature](e, t.Event)
+		return unmarshalJSON[metaevent.TimeSignature](e, t.Event)
 
 	case "KeySignature":
-		return unmarshal[metaevent.KeySignature](e, t.Event)
+		return unmarshalJSON[metaevent.KeySignature](e, t.Event)
 
 	case "SMPTEOffset":
-		return unmarshal[metaevent.SMPTEOffset](e, t.Event)
+		return unmarshalJSON[metaevent.SMPTEOffset](e, t.Event)
 
 	case "EndOfTrack":
-		return unmarshal[metaevent.EndOfTrack](e, t.Event)
+		return unmarshalJSON[metaevent.EndOfTrack](e, t.Event)
 
 	case "SequencerSpecificEvent":
-		return unmarshal[metaevent.SequencerSpecificEvent](e, t.Event)
+		return unmarshalJSON[metaevent.SequencerSpecificEvent](e, t.Event)
 
 	case "NoteOff":
-		return unmarshal[midievent.NoteOff](e, t.Event)
+		return unmarshalJSON[midievent.NoteOff](e, t.Event)
 
 	case "NoteOn":
-		return unmarshal[midievent.NoteOn](e, t.Event)
+		return unmarshalJSON[midievent.NoteOn](e, t.Event)
 
 	case "PolyphonicPressure":
-		return unmarshal[midievent.PolyphonicPressure](e, t.Event)
+		return unmarshalJSON[midievent.PolyphonicPressure](e, t.Event)
 
 	case "Controller":
-		return unmarshal[midievent.Controller](e, t.Event)
+		return unmarshalJSON[midievent.Controller](e, t.Event)
 
 	case "ProgramChange":
-		return unmarshal[midievent.ProgramChange](e, t.Event)
+		return unmarshalJSON[midievent.ProgramChange](e, t.Event)
 
 	case "ChannelPressure":
-		return unmarshal[midievent.ChannelPressure](e, t.Event)
+		return unmarshalJSON[midievent.ChannelPressure](e, t.Event)
 
 	case "PitchBend":
-		return unmarshal[midievent.PitchBend](e, t.Event)
+		return unmarshalJSON[midievent.PitchBend](e, t.Event)
 
 	case "SysExMessage":
-		return unmarshal[sysex.SysExMessage](e, t.Event)
+		return unmarshalJSON[sysex.SysExMessage](e, t.Event)
 
 	case "SysExContinuation":
-		return unmarshal[sysex.SysExContinuationMessage](e, t.Event)
+		return unmarshalJSON[sysex.SysExContinuationMessage](e, t.Event)
 
 	case "SysExEscape":
-		return unmarshal[sysex.SysExEscapeMessage](e, t.Event)
+		return unmarshalJSON[sysex.SysExEscapeMessage](e, t.Event)
 
 	default:
 		return fmt.Errorf("Unrecognised tag (%v)", u.Tag)
 	}
 }
 
-func unmarshal[
+func unmarshalJSON[
 	E TEvent,
 	P interface {
 		*E

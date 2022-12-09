@@ -3,7 +3,6 @@ package assemble
 import (
 	"bufio"
 	"bytes"
-	"encoding"
 	"fmt"
 	"io"
 	"regexp"
@@ -13,9 +12,6 @@ import (
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
-	"github.com/transcriptaze/midiasm/midi/events/meta"
-	"github.com/transcriptaze/midiasm/midi/events/midi"
-	"github.com/transcriptaze/midiasm/midi/events/sysex"
 )
 
 type TextAssembler struct {
@@ -24,37 +20,6 @@ type TextAssembler struct {
 func NewTextAssembler() TextAssembler {
 	return TextAssembler{}
 }
-
-// type TEvent interface {
-// 	metaevent.SequenceNumber |
-// 		metaevent.Text |
-// 		metaevent.Copyright |
-// 		metaevent.TrackName |
-// 		metaevent.InstrumentName |
-// 		metaevent.Lyric |
-// 		metaevent.Marker |
-// 		metaevent.CuePoint |
-// 		metaevent.ProgramName |
-// 		metaevent.DeviceName |
-// 		metaevent.MIDIChannelPrefix |
-// 		metaevent.MIDIPort |
-// 		metaevent.Tempo |
-// 		metaevent.TimeSignature |
-// 		metaevent.KeySignature |
-// 		metaevent.SMPTEOffset |
-// 		metaevent.EndOfTrack |
-// 		metaevent.SequencerSpecificEvent |
-// 		midievent.NoteOff |
-// 		midievent.NoteOn |
-// 		midievent.PolyphonicPressure |
-// 		midievent.Controller |
-// 		midievent.ProgramChange |
-// 		midievent.ChannelPressure |
-// 		midievent.PitchBend |
-// 		sysex.SysExMessage |
-// 		sysex.SysExContinuationMessage |
-// 		sysex.SysExEscapeMessage
-// }
 
 func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	chunks, err := a.read(r)
@@ -94,7 +59,6 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 	}
 
 	// ... 'k, done
-
 	var b bytes.Buffer
 	var e = midifile.NewEncoder(&b)
 
@@ -238,65 +202,19 @@ func (a TextAssembler) parseMTrk(chunk []string) (*midi.MTrk, error) {
 	}
 
 	// ... extract events
-	type E encoding.TextUnmarshaler
-
-	f := func(line string, e E) error {
-		if err := e.UnmarshalText([]byte(line)); err != nil {
-			return err
-		} else {
-			mtrk.Events = append(mtrk.Events, events.NewEvent(e))
-		}
-
-		return nil
-	}
-
-	g := map[string]func() E{
-		"SequenceNumber":         func() E { return &metaevent.SequenceNumber{} },
-		"Text":                   func() E { return &metaevent.Text{} },
-		"Copyright":              func() E { return &metaevent.Copyright{} },
-		"TrackName":              func() E { return &metaevent.TrackName{} },
-		"InstrumentName":         func() E { return &metaevent.InstrumentName{} },
-		"Lyric":                  func() E { return &metaevent.Lyric{} },
-		"Marker":                 func() E { return &metaevent.Marker{} },
-		"CuePoint":               func() E { return &metaevent.CuePoint{} },
-		"ProgramName":            func() E { return &metaevent.ProgramName{} },
-		"DeviceName":             func() E { return &metaevent.DeviceName{} },
-		"MIDIChannelPrefix":      func() E { return &metaevent.MIDIChannelPrefix{} },
-		"MIDIPort":               func() E { return &metaevent.MIDIPort{} },
-		"Tempo":                  func() E { return &metaevent.Tempo{} },
-		"TimeSignature":          func() E { return &metaevent.TimeSignature{} },
-		"KeySignature":           func() E { return &metaevent.KeySignature{} },
-		"SMPTEOffset":            func() E { return &metaevent.SMPTEOffset{} },
-		"EndOfTrack":             func() E { return &metaevent.EndOfTrack{} },
-		"SequencerSpecificEvent": func() E { return &metaevent.SequencerSpecificEvent{} },
-		"ProgramChange":          func() E { return &midievent.ProgramChange{} },
-		"Controller":             func() E { return &midievent.Controller{} },
-		"NoteOn":                 func() E { return &midievent.NoteOn{} },
-		"NoteOff":                func() E { return &midievent.NoteOff{} },
-		"PolyphonicPressure":     func() E { return &midievent.PolyphonicPressure{} },
-		"ChannelPressure":        func() E { return &midievent.ChannelPressure{} },
-		"PitchBend":              func() E { return &midievent.PitchBend{} },
-		"SysExMessage":           func() E { return &sysex.SysExMessage{} },
-		"SysExContinuation":      func() E { return &sysex.SysExContinuationMessage{} },
-		"SysExEscape":            func() E { return &sysex.SysExEscapeMessage{} },
-	}
-
 	for line := range lines {
-		if strings.HasPrefix(line, "%%") {
-			continue
-		}
+		if !strings.HasPrefix(line, "%%") && strings.TrimSpace(line) != "" {
+			text := []byte(line)
+			e := events.Event{}
 
-		for k, v := range g {
-			if strings.Contains(line, k) {
-				e := v()
-				if err := f(line, e); err != nil {
-					return nil, err
-				} else if _, ok := e.(*metaevent.EndOfTrack); ok {
-					return fixups(mtrk)
-				}
+			if err := e.UnmarshalText(text); err != nil {
+				return nil, err
+			} else {
+				mtrk.Events = append(mtrk.Events, &e)
 			}
 		}
 	}
 
-	return mtrk, fmt.Errorf("missing EndOfTrack")
+	return fixups(mtrk)
+	// return mtrk, fmt.Errorf("missing EndOfTrack")
 }

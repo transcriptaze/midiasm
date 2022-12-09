@@ -51,7 +51,6 @@ func (a JSONAssembler) Assemble(r io.Reader) ([]byte, error) {
 	}
 
 	// ... tracks
-
 	for _, t := range src.Tracks {
 		if mtrk, err := a.parseMTrk(t); err != nil {
 			return nil, err

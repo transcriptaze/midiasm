@@ -30,9 +30,11 @@
       - [ ] MThd format field
       - [x] JSON
             - [ ] Round trip JSON export/assemble
-      - [ ] Rework event factory lists as generic functions
+      - [x] Rework event factory lists as generic functions
             - [x] JSON
-            - [ ] Text
+            - [x] Text
+            - [ ] Validate
+                  - missing/wrong EndOfTrack
       - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
