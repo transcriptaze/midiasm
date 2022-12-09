@@ -3,9 +3,7 @@
 - [ ] Optimise parsing
 - [ ] (maybe) Remove superfluous Event struct
       - (?) or just move bytes and tick back into it so it doesn't clutter event struct
-      - (?) bytes are only really used for disassemble
       - (?) tick is used for disassemble and notes
-      - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
 
 - [ ] NoteOn with 0 velocity -> NoteOff
 
@@ -20,7 +18,17 @@
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
 
+- [ ] TSV
 
+- [ ] Validation errors
+```
+make transpose
+
+WARNING: there are validation errors:
+         ** Track 0: unexpected event (Tempo)
+         ** Track 0: unexpected event (TimeSignature)
+         ** Track 0: unexpected event (TrackName)
+```
 
 ### Assembler
 
@@ -64,7 +72,6 @@
 
 
 ### Export
-- [ ] TSV
 
 ### Disassembler
 

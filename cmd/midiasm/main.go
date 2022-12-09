@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
+	"plugin"
 
 	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
@@ -25,7 +28,35 @@ var cli = []struct {
 
 const version = "v0.1.0"
 
+type Plugin interface {
+	Execute() error
+}
+
 func main() {
+	// ... load plugins
+	bindir := filepath.Dir(os.Args[0])
+	plugins := filepath.Join(bindir, "plugins")
+
+	fs.WalkDir(os.DirFS(plugins), ".", func(path string, d fs.DirEntry, err error) error {
+		file := filepath.Join(plugins, path)
+
+		if err != nil {
+			return err
+		} else if !d.Type().IsRegular() {
+			return nil
+		} else if p, err := plugin.Open(file); err != nil {
+			fmt.Printf("Error loading plugin %q (%v)", path, err)
+		} else if tsv, err := p.Lookup("TSV"); err != nil {
+			fmt.Printf("Error loading plugin %q (%v)", path, err)
+		} else if x, ok := tsv.(Plugin); !ok {
+			fmt.Printf("Error loading plugin %q (%v)", path, err)
+		} else {
+			x.Execute()
+		}
+
+		return nil
+	})
+
 	// ... parse command line
 	cmd, err := parse()
 	if err != nil {
