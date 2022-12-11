@@ -25,6 +25,7 @@
 ### Assembler
 
 - https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
+- https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
 
 - [ ] Assemble MTrk
       - [ ] MThd format field
