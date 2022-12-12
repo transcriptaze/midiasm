@@ -20,7 +20,7 @@
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
 
-- [ ] Export reference.mid validation
+- [x] Export reference.mid validation
 ```
 WARNING: there are validation errors:
          ** Track 0: unexpected event (TrackName)
@@ -44,7 +44,7 @@ WARNING: there are validation errors:
 - [ ] Assemble MTrk
       - [ ] MThd format field
       - [x] JSON
-            - [ ] Round trip JSON export/assemble
+            - [x] Round trip JSON export/assemble
       - [x] Rework event factory lists as generic functions
             - [x] JSON
             - [x] Text
