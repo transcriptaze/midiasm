@@ -11,44 +11,29 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
-type event interface {
-	metaevent.SequenceNumber |
-		metaevent.Text |
-		metaevent.Copyright |
-		metaevent.TrackName |
-		metaevent.InstrumentName |
-		metaevent.Tempo |
-		metaevent.SMPTEOffset |
-		midievent.Controller
+var tempo = &events.Event{
+	Event: metaevent.MakeTempo(0, 0, 50000, []byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...),
 }
 
-func makeEvent[E event](e E, bytes ...byte) *events.Event {
-	return events.NewEvent(&e, bytes...)
+var smpteOffset = &events.Event{
+	Event: metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39, []byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...),
 }
 
-var tempo = makeEvent(
-	metaevent.MakeTempo(0, 0, 50000),
-	[]byte{0x00, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}...)
+var programBankMSB = &events.Event{
+	Event: midievent.MakeController(0, 0, 7, lib.Controller{0, "Bank Select (MSB)"}, 0x05, []byte{0x00, 0xb7, 0x00, 0x05}...),
+}
 
-var smpteOffset = makeEvent(
-	metaevent.MakeSMPTEOffset(0, 0, 13, 45, 59, 25, 7, 39),
-	[]byte{0x00, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}...)
+var programBankLSB = &events.Event{
+	Event: midievent.MakeController(0, 0, 7, lib.Controller{32, "Bank Select (LSB)"}, 33, []byte{0x00, 0xb7, 0x20, 0x21}...),
+}
 
-var programBankMSB = makeEvent(
-	midievent.MakeController(0, 0, 7, lib.Controller{0, "Bank Select (MSB)"}, 0x05, []byte{0x00, 0xb7, 0x00, 0x05}...),
-	[]byte{0x00, 0xb7, 0x00, 0x05}...)
+var programBankMSBCh3 = &events.Event{
+	Event: midievent.MakeController(0, 0, 3, lib.Controller{0, "Bank Select (MSB)"}, 5, []byte{0x00, 0xb3, 0x00, 0x05}...),
+}
 
-var programBankLSB = makeEvent(
-	midievent.MakeController(0, 0, 7, lib.Controller{32, "Bank Select (LSB)"}, 33, []byte{0x00, 0xb7, 0x20, 0x21}...),
-	[]byte{0x00, 0xb7, 0x20, 0x21}...)
-
-var programBankMSBCh3 = makeEvent(
-	midievent.MakeController(0, 0, 3, lib.Controller{0, "Bank Select (MSB)"}, 5, []byte{0x00, 0xb3, 0x00, 0x05}...),
-	[]byte{0x00, 0xb3, 0x00, 0x05}...)
-
-var programBankLSBCh5 = makeEvent(
-	midievent.MakeController(0, 0, 5, lib.Controller{32, "Bank Select (LSB)"}, 43, []byte{0x00, 0xb5, 0x20, 0x21}...),
-	[]byte{0x00, 0xb5, 0x20, 0x21}...)
+var programBankLSBCh5 = &events.Event{
+	Event: midievent.MakeController(0, 0, 5, lib.Controller{32, "Bank Select (LSB)"}, 43, []byte{0x00, 0xb5, 0x20, 0x21}...),
+}
 
 var noteOn = &events.Event{
 	Event: midievent.MakeNoteOn(0, 0, 0, midievent.Note{48, "C2", "C2"}, 64, []byte{0x00, 0x30, 0x40}...),

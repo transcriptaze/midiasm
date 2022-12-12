@@ -19,15 +19,6 @@ type TEvent interface {
 	Bytes() []byte
 }
 
-type TTrack0Event interface {
-	*metaevent.Tempo |
-		*metaevent.TimeSignature |
-		*metaevent.TrackName |
-		*metaevent.SMPTEOffset |
-		*metaevent.EndOfTrack |
-		*metaevent.Copyright
-}
-
 type IEvent interface {
 	Tick() uint64
 	Delta() uint32
@@ -85,15 +76,11 @@ func IsEndOfTrack(e *Event) bool {
 func IsTrack0Event(e *Event) bool {
 	switch e.Event.(type) {
 	case
-		*metaevent.Tempo,
-		*metaevent.TimeSignature,
-		*metaevent.TrackName,
-		*metaevent.SMPTEOffset,
-		*metaevent.EndOfTrack,
-		*metaevent.Copyright:
-		return true
-
-	case
+		metaevent.Tempo,
+		metaevent.TimeSignature,
+		metaevent.TrackName,
+		metaevent.SMPTEOffset,
+		metaevent.Copyright,
 		metaevent.EndOfTrack:
 		return true
 
@@ -105,8 +92,8 @@ func IsTrack0Event(e *Event) bool {
 func IsTrack1Event(e *Event) bool {
 	switch e.Event.(type) {
 	case
-		*metaevent.Tempo,
-		*metaevent.SMPTEOffset:
+		metaevent.Tempo,
+		metaevent.SMPTEOffset:
 		return false
 
 	default:

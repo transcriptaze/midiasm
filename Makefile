@@ -43,7 +43,7 @@ release: build-all
 debug: build
 # 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
 # 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
-	go test -v ./midi/events/... -run TestEventUnmarshalBinary
+	go test -v ./midi/... -run TestValidateFormat1
 
 delve: build
 # 	dlv test github.com/transcriptaze/midiasm/midi -- run TestMTrkMarshalTrack0

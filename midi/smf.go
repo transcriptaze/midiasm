@@ -47,12 +47,12 @@ func (smf *SMF) Validate() []ValidationError {
 			event := e.Event
 			c := []*midievent.Controller{nil, nil}
 
-			if cx, ok := last.(*midievent.Controller); ok {
-				c[0] = cx
+			if cx, ok := last.(midievent.Controller); ok {
+				c[0] = &cx
 			}
 
-			if cx, ok := event.(*midievent.Controller); ok {
-				c[1] = cx
+			if cx, ok := event.(midievent.Controller); ok {
+				c[1] = &cx
 			}
 
 			if c[0] != nil && c[0].Controller.ID == 0x00 && (c[1] == nil || c[1].Controller.ID != 0x20) {
