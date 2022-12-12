@@ -22,8 +22,8 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeSequenceNumber):
 			return unmarshalBinary[metaevent.SequenceNumber](e, bytes)
 
-		// case "Text":
-		//     return unmarshalJSON[metaevent.Text](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeText):
+			return unmarshalBinary[metaevent.Text](e, bytes)
 
 		// case "Copyright":
 		//     return unmarshalJSON[metaevent.Copyright](e, t.Event)

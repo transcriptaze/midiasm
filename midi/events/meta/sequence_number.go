@@ -17,17 +17,11 @@ type SequenceNumber struct {
 }
 
 func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16, bytes ...byte) SequenceNumber {
-	return SequenceNumber{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  bytes,
-			tag:    lib.TagSequenceNumber,
-			Status: 0xff,
-			Type:   lib.TypeSequenceNumber,
-		},
-		SequenceNumber: sequence,
-	}
+	e := SequenceNumber{}
+
+	e.initialise(tick, delta, sequence, bytes...)
+
+	return e
 }
 
 func (e *SequenceNumber) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
@@ -65,13 +59,9 @@ func (e *SequenceNumber) UnmarshalBinary(bytes []byte) error {
 	} else if v, err := vlf(remaining[2:]); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = lib.Delta(delta)
-		e.bytes = bytes
-		e.tag = lib.TagSequenceNumber
-		e.Status = 0xff
-		e.Type = lib.TypeSequenceNumber
-		e.SequenceNumber = binary.BigEndian.Uint16(v)
+		seqno := binary.BigEndian.Uint16(v)
+
+		e.initialise(0, lib.Delta(delta), seqno, bytes...)
 
 		return nil
 	}
@@ -88,13 +78,9 @@ func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagSequenceNumber
-		e.Status = 0xff
-		e.Type = lib.TypeSequenceNumber
-		e.SequenceNumber = uint16(sequence)
+		seqno := uint16(sequence)
+
+		e.initialise(0, delta, seqno, []byte{}...)
 	}
 
 	return nil
@@ -130,14 +116,18 @@ func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagSequenceNumber) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagSequenceNumber
-		e.Type = lib.TypeSequenceNumber
-		e.SequenceNumber = t.SequenceNumber
+		e.initialise(0, t.Delta, t.SequenceNumber, []byte{}...)
 	}
 
 	return nil
+}
+
+func (e *SequenceNumber) initialise(tick uint64, delta lib.Delta, sequence uint16, bytes ...byte) {
+	e.tick = tick
+	e.delta = delta
+	e.bytes = bytes
+	e.tag = lib.TagSequenceNumber
+	e.Status = 0xff
+	e.Type = lib.TypeSequenceNumber
+	e.SequenceNumber = sequence
 }

@@ -20,22 +20,6 @@
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
 
-- [x] Export reference.mid validation
-```
-WARNING: there are validation errors:
-         ** Track 0: unexpected event (TrackName)
-         ** Track 0: unexpected event (Tempo)
-         ** Track 0: unexpected event (TimeSignature)
-         ** Track 0: unexpected event (SMPTEOffset)
-```
-     => because
-```
-     {
-       "tag": "MTrk",
--      "track-number": 0,
-+      "track-number": 1,
-```
-
 ### Assembler
 
 - https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
@@ -43,11 +27,8 @@ WARNING: there are validation errors:
 
 - [ ] Assemble MTrk
       - [ ] MThd format field
-      - [x] JSON
-            - [x] Round trip JSON export/assemble
       - [x] Rework event factory lists as generic functions
-            - [x] JSON
-            - [x] Text
+            - [ ] MarshalBinary
             - [ ] Validate
                   - missing/wrong EndOfTrack
       - [ ] Post process tick

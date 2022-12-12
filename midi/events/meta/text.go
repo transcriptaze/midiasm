@@ -15,17 +15,11 @@ type Text struct {
 }
 
 func MakeText(tick uint64, delta lib.Delta, text string, bytes ...byte) Text {
-	return Text{
-		event: event{
-			tick:   tick,
-			delta:  delta,
-			bytes:  bytes,
-			tag:    lib.TagText,
-			Status: 0xff,
-			Type:   lib.TypeText,
-		},
-		Text: text,
-	}
+	e := Text{}
+
+	e.initialise(tick, delta, text, bytes...)
+
+	return e
 }
 
 func (e *Text) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
@@ -46,6 +40,26 @@ func (e Text) MarshalBinary() (encoded []byte, err error) {
 		[]byte(e.Text)...), nil
 }
 
+func (e *Text) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := vlq(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagText, remaining[0])
+	} else if !equals(remaining[1], lib.TypeText) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagText, remaining[1])
+	} else if v, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		text := string(v)
+
+		e.initialise(0, lib.Delta(delta), text, bytes...)
+
+		return nil
+	}
+}
+
 func (e *Text) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Text\s+(.*)`)
 	text := string(bytes)
@@ -55,13 +69,9 @@ func (e *Text) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagText
-		e.Status = 0xff
-		e.Type = lib.TypeText
-		e.Text = string(match[2])
+		text := string(match[2])
+
+		e.initialise(0, delta, text, []byte{}...)
 	}
 
 	return nil
@@ -97,14 +107,18 @@ func (e *Text) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagText) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagText
-		e.Type = lib.TypeText
-		e.Text = t.Text
+		e.initialise(0, t.Delta, t.Text, []byte{}...)
 	}
 
 	return nil
+}
+
+func (e *Text) initialise(tick uint64, delta lib.Delta, text string, bytes ...byte) {
+	e.tick = tick
+	e.delta = delta
+	e.bytes = bytes
+	e.tag = lib.TagText
+	e.Status = 0xff
+	e.Type = lib.TypeText
+	e.Text = text
 }
