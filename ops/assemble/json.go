@@ -9,6 +9,7 @@ import (
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type JSONAssembler struct {
@@ -55,6 +56,8 @@ func (a JSONAssembler) Assemble(r io.Reader) ([]byte, error) {
 		if mtrk, err := a.parseMTrk(t); err != nil {
 			return nil, err
 		} else {
+			mtrk.TrackNumber = lib.TrackNumber(len(smf.Tracks))
+
 			smf.Tracks = append(smf.Tracks, mtrk)
 			smf.MThd.Tracks += 1
 		}

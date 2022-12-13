@@ -1,9 +1,28 @@
 # TODO
 
 - [ ] Optimise parsing
-- [ ] (maybe) Remove superfluous Event struct
-      - (?) or just move bytes and tick back into it so it doesn't clutter event struct
-      - (?) tick is used for disassemble and notes
+      - [x] Rework event factory lists as generic functions
+            - [ ] MarshalBinary
+            - [ ] Validate
+                  - missing/wrong EndOfTrack
+      - [ ] Post process tick
+      - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
+            blank and also don't more or less match note value
+      - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
+      - [ ] Rework decoder as described in https://go.dev/blog/defer-panic-and-recover
+      - [ ] VLQ: TestMarshalBinary
+      - [ ] VLQ: UnmarshalBinary
+      - [ ] VLF: TestMarshalBinary
+      - [ ] VLF: UnmarshalBinary
+
+      - [ ] (maybe) Remove superfluous Event struct
+            - (?) or just move bytes and tick back into it so it doesn't clutter event struct
+            - (?) bytes are only really used for disassemble
+            - (?) tick is used for disassemble and notes
+            - (?) so .. either initialise tick and bytes from decoder or move tick and byte into Event
+            - https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
+            - https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
+
 
 - [ ] NoteOn with 0 velocity -> NoteOff
 
@@ -19,7 +38,6 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 - [ ] TSV
-
 - [ ] Validation errors
 ```
 make transpose
@@ -29,31 +47,10 @@ WARNING: there are validation errors:
          ** Track 0: unexpected event (TimeSignature)
          ** Track 0: unexpected event (TrackName)
 ```
-
 ### Assembler
 
-- https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
-
-- [ ] Assemble MTrk
-      - [ ] MThd format field
-      - [x] JSON
-            - [ ] Round trip JSON export/assemble
-      - [x] Rework event factory lists as generic functions
-            - [x] JSON
-            - [x] Text
-            - [ ] Validate
-                  - missing/wrong EndOfTrack
-      - [ ] Post process tick
-      - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
-            blank and also don't more or less match note value
-      - [ ] Move FormatNote to NoteOn (pass ctx as a parameter)
-
-- [] Rework decoder as described in https://go.dev/blog/defer-panic-and-recover
-- [ ] VLQ: TestMarshalBinary
-- [ ] VLQ: UnmarshalBinary
-- [ ] VLF: TestMarshalBinary
-- [ ] VLF: UnmarshalBinary
-
+- [x] Assemble MTrk
+      - [x] MThd format field
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format

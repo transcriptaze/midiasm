@@ -35,7 +35,7 @@ func TestUnmarshalText(t *testing.T) {
 }
 
 func TestTextMarshalBinary(t *testing.T) {
-	evt := Text{
+	e := Text{
 		event: event{
 			tick:   2400,
 			delta:  480,
@@ -49,13 +49,36 @@ func TestTextMarshalBinary(t *testing.T) {
 
 	expected := []byte{0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}
 
-	encoded, err := evt.MarshalBinary()
-	if err != nil {
-		t.Fatalf("error encoding Text (%v)", err)
+	if bytes, err := e.MarshalBinary(); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagText, err)
+	} else if !reflect.DeepEqual(bytes, expected) {
+		t.Errorf("incorrectly encoded %v\n   expected:%+v\n   got:     %+v", lib.TagText, expected, bytes)
+	}
+}
+
+func TestTextUnmarshalBinary(t *testing.T) {
+	expected := Text{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagText,
+			Status: 0xff,
+			Type:   lib.TypeText,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
+		},
+		Text: "This and That",
 	}
 
-	if !reflect.DeepEqual(encoded, expected) {
-		t.Errorf("incorrectly encoded Text\n   expected:%+v\n   got:     %+v", expected, encoded)
+	bytes := []byte{0x83, 0x60, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74}
+
+	e := Text{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagText, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagText, expected, e)
 	}
 }
 

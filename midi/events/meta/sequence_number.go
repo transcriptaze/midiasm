@@ -19,9 +19,8 @@ type SequenceNumber struct {
 func MakeSequenceNumber(tick uint64, delta lib.Delta, sequence uint16, bytes ...byte) SequenceNumber {
 	return SequenceNumber{
 		event: event{
-			tick:  tick,
-			delta: delta,
-			// bytes:  binary.BigEndian.AppendUint16([]byte{0x00, 0xff, 0x00, 0x02}, sequence),
+			tick:   tick,
+			delta:  delta,
 			bytes:  bytes,
 			tag:    lib.TagSequenceNumber,
 			Status: 0xff,
@@ -54,6 +53,24 @@ func (s SequenceNumber) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
+func (e *SequenceNumber) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagSequenceNumber, remaining[0])
+	} else if !equals(remaining[1], lib.TypeSequenceNumber) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSequenceNumber, remaining[1])
+	} else if v, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeSequenceNumber(0, delta, binary.BigEndian.Uint16(v), bytes...)
+	}
+
+	return nil
+}
+
 func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SequenceNumber\s+([0-9]+)`)
 	text := string(bytes)
@@ -65,13 +82,7 @@ func (e *SequenceNumber) UnmarshalText(bytes []byte) error {
 	} else if sequence, err := strconv.ParseUint(match[2], 10, 16); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagSequenceNumber
-		e.Status = 0xff
-		e.Type = lib.TypeSequenceNumber
-		e.SequenceNumber = uint16(sequence)
+		*e = MakeSequenceNumber(0, delta, uint16(sequence), []byte{}...)
 	}
 
 	return nil
@@ -107,13 +118,7 @@ func (e *SequenceNumber) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagSequenceNumber) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagSequenceNumber
-		e.Type = lib.TypeSequenceNumber
-		e.SequenceNumber = t.SequenceNumber
+		*e = MakeSequenceNumber(0, t.Delta, t.SequenceNumber, []byte{}...)
 	}
 
 	return nil

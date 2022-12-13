@@ -12,6 +12,7 @@ import (
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type TextAssembler struct {
@@ -49,6 +50,8 @@ func (a TextAssembler) Assemble(r io.Reader) ([]byte, error) {
 				if mtrk, err := a.parseMTrk(chunk); err != nil {
 					return nil, err
 				} else {
+					mtrk.TrackNumber = lib.TrackNumber(len(smf.Tracks))
+
 					smf.MThd.Tracks += 1
 					smf.Tracks = append(smf.Tracks, mtrk)
 				}

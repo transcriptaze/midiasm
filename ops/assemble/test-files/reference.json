@@ -1,9 +1,15 @@
 {
   "header": {
-    "tag": "MThd",
-    "format": 1,
-    "tracks": 0,
-    "PPQN": 480
+    "Tag": "MThd",
+    "Length": 6,
+    "Format": 1,
+    "Tracks": 2,
+    "Division": 480,
+    "PPQN": 480,
+    "SMPTETimeCode": false,
+    "SubFrames": 0,
+    "FPS": 0,
+    "DropFrame": false
   },
   "tracks": [
     {
@@ -22,6 +28,7 @@
         {
           "event": {
             "tag": "Tempo",
+            "delta": 0,
             "status": 255,
             "type": 81,
             "tempo": 500000
@@ -30,6 +37,7 @@
         {
           "event": {
             "tag": "TimeSignature",
+            "delta": 0,
             "status": 255,
             "type": 88,
             "numerator": 4,
@@ -41,6 +49,7 @@
         {
           "event": {
             "tag": "SMPTEOffset",
+            "delta": 0,
             "status": 255,
             "type": 84,
             "hour": 13,
@@ -61,10 +70,9 @@
         }
       ]
     },
-
     {
       "tag": "MTrk",
-      "track-number": 0,
+      "track-number": 1,
       "events": [
         {
           "event": {
@@ -78,6 +86,7 @@
         {
           "event": {
             "tag": "Text",
+            "delta": 0,
             "status": 255,
             "type": 1,
             "text": "This and That"
@@ -86,9 +95,10 @@
         {
           "event": {
             "tag": "Copyright",
+            "delta": 0,
             "status": 255,
             "type": 2,
-            "Copyright": "Them"
+            "copyright": "Them"
           }
         },
         {
@@ -114,6 +124,7 @@
             "tag": "Lyric",
             "delta": 0,
             "status": 255,
+            "type": 5,
             "lyric": "La-la-la"
           }
         },
@@ -162,7 +173,7 @@
             "channel": 13
           }
         },
-         {
+        {
           "event": {
             "tag": "MIDIPort",
             "delta": 0,
@@ -189,11 +200,19 @@
             "status": 255,
             "type": 127,
             "manufacturer": {
-              "id": [ 0,0,59 ],
+              "id": [
+                0,
+                0,
+                59
+              ],
               "region": "American",
               "name": "Mark Of The Unicorn (MOTU)"
             },
-            "data": [ 58, 76, 94 ]
+            "data": [
+              58,
+              76,
+              94
+            ]
           }
         },
         {
@@ -231,12 +250,13 @@
             "bank": 673,
             "program": 25
           }
-        },        
+        },
         {
           "event": {
             "tag": "Controller",
             "delta": 0,
             "status": 176,
+            "channel": 0,
             "controller": {
               "id": 101,
               "name": "Registered Parameter Number (MSB)"
@@ -317,7 +337,7 @@
           "event": {
             "tag": "NoteOff",
             "delta": 480,
-            "status": 126,
+            "status": 128,
             "channel": 0,
             "note": {
               "value": 48,
@@ -333,11 +353,17 @@
             "delta": 0,
             "status": 240,
             "manufacturer": {
-              "id": [ 126 ],
+              "id": [
+                126
+              ],
               "region": "Special Purpose",
               "name": "Non-RealTime Extensions"
             },
-            "data": [ 0, 9, 1 ],
+            "data": [
+              0,
+              9,
+              1
+            ],
             "single": true
           }
         },
@@ -347,20 +373,32 @@
             "delta": 0,
             "status": 240,
             "manufacturer": {
-              "id": [ 67 ],
+              "id": [
+                67
+              ],
               "region": "Japanese",
               "name": "Yamaha"
             },
-            "data": [ 18, 0 ],
+            "data": [
+              18,
+              0
+            ],
             "single": false
           }
         },
-       {
+        {
           "event": {
             "tag": "SysExContinuation",
             "delta": 200,
             "status": 247,
-            "data": [ 67, 18, 0, 67, 18, 0 ],
+            "data": [
+              67,
+              18,
+              0,
+              67,
+              18,
+              0
+            ],
             "end": false
           }
         },
@@ -369,7 +407,11 @@
             "tag": "SysExContinuation",
             "delta": 100,
             "status": 247,
-            "data": [ 67, 18, 0 ],
+            "data": [
+              67,
+              18,
+              0
+            ],
             "end": false
           }
         },
@@ -378,7 +420,10 @@
             "tag": "SysExEscape",
             "delta": 0,
             "status": 247,
-            "data": [ 243, 1 ]
+            "data": [
+              243,
+              1
+            ]
           }
         },
         {
