@@ -13,18 +13,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
-type Command interface {
-	Flagset() *flag.FlagSet
-	Execute() error
-	Help()
-
-	MiddleC() lib.MiddleC
-	Debug() bool
-	Verbose() bool
-
-	config() string
-}
-
 type command struct {
 	conf    string
 	c4      bool
@@ -33,7 +21,7 @@ type command struct {
 	flags   *flag.FlagSet
 }
 
-func (c command) config() string {
+func (c command) Config() string {
 	return c.conf
 }
 

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"plugin"
 
+	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
@@ -14,7 +15,7 @@ import (
 
 var cli = []struct {
 	cmd     string
-	command Command
+	command commands.Command
 }{
 	{"disassemble", &DISASSEMBLE},
 	{"assemble", &ASSEMBLE},
@@ -29,7 +30,7 @@ var cli = []struct {
 const version = "v0.1.0"
 
 type Plugin interface {
-	Execute() error
+	GetCommand() (string, commands.Command)
 }
 
 func main() {
@@ -48,10 +49,16 @@ func main() {
 			fmt.Printf("Error loading plugin %q (%v)", path, err)
 		} else if tsv, err := p.Lookup("TSV"); err != nil {
 			fmt.Printf("Error loading plugin %q (%v)", path, err)
-		} else if x, ok := tsv.(Plugin); !ok {
-			fmt.Printf("Error loading plugin %q (%v)", path, err)
-		} else {
-			x.Execute()
+		} else if plugin, ok := tsv.(Plugin); ok {
+			cmd, command := plugin.GetCommand()
+
+			cli = append(cli, struct {
+				cmd     string
+				command commands.Command
+			}{
+				cmd:     cmd,
+				command: command,
+			})
 		}
 
 		return nil
@@ -65,7 +72,7 @@ func main() {
 	}
 
 	// ... set manufacturer specific options
-	if conf := cmd.config(); conf != "" {
+	if conf := cmd.Config(); conf != "" {
 		f, err := os.Open(conf)
 		if err != nil {
 			fmt.Printf("ERROR: %v\n", err)
@@ -104,7 +111,7 @@ func main() {
 	}
 }
 
-func parse() (Command, error) {
+func parse() (commands.Command, error) {
 	if len(os.Args) > 1 {
 		for _, c := range cli {
 			if c.cmd == os.Args[1] {

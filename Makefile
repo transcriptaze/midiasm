@@ -14,11 +14,11 @@ format:
 
 build: format
 	mkdir -p bin
-	go build -o bin ./cmd/... 
+	go build -o bin ./cmd/...
 
 plugins: format
 	mkdir -p bin/plugins
-	go build -buildmode=plugin -o bin/plugins/ ./plugins/... 
+	go build -buildmode=plugin -o bin/plugins/ ./plugins/...
 
 test: build
 	go clean -testcache
@@ -117,4 +117,8 @@ export: build
 transpose: build
 	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+1.mid examples/greensleeves.mid
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+
+tsv: build plugins
+	$(CMD) help commands
+#	$(CMD) tsv --debug examples/reference-01.mid
 
