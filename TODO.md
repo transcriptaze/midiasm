@@ -38,15 +38,7 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 - [ ] TSV
-- [ ] Validation errors
-```
-make transpose
 
-WARNING: there are validation errors:
-         ** Track 0: unexpected event (Tempo)
-         ** Track 0: unexpected event (TimeSignature)
-         ** Track 0: unexpected event (TrackName)
-```
 ### Assembler
 
 - [x] Assemble MTrk
