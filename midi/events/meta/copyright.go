@@ -44,6 +44,24 @@ func (e Copyright) MarshalBinary() (encoded []byte, err error) {
 		[]byte(e.Copyright)...), nil
 }
 
+func (e *Copyright) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagCopyright, remaining[0])
+	} else if !equals(remaining[1], lib.TypeCopyright) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagCopyright, remaining[1])
+	} else if copyright, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeCopyright(0, delta, string(copyright), bytes...)
+	}
+
+	return nil
+}
+
 func (e *Copyright) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Copyright\s+(.*)`)
 	text := string(bytes)
@@ -53,13 +71,7 @@ func (e *Copyright) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagCopyright
-		e.Status = 0xff
-		e.Type = lib.TypeCopyright
-		e.Copyright = string(match[2])
+		*e = MakeCopyright(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -95,13 +107,7 @@ func (e *Copyright) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagCopyright) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagCopyright
-		e.Type = lib.TypeCopyright
-		e.Copyright = t.Copyright
+		*e = MakeCopyright(0, t.Delta, t.Copyright, []byte{}...)
 	}
 
 	return nil

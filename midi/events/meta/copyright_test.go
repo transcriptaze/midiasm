@@ -59,7 +59,33 @@ func TestCopyrightMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalCopyright(t *testing.T) {
+func TestCopyrightUnmarshalBinary(t *testing.T) {
+	expected := Copyright{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagCopyright,
+			Status: 0xff,
+			Type:   lib.TypeCopyright,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
+		},
+		Copyright: "Them",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d}
+
+	e := Copyright{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagCopyright, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagCopyright, expected, e)
+	}
+}
+
+func TestCopyrightUnmarshalText(t *testing.T) {
 	text := "      00 FF 02 04 54 68 65 6D               tick:0          delta:480        02 Copyright              Them"
 	expected := Copyright{
 		event: event{

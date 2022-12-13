@@ -74,7 +74,7 @@ func TestTextUnmarshalBinary(t *testing.T) {
 	e := Text{}
 
 	if err := e.UnmarshalBinary(bytes); err != nil {
-		t.Fatalf("error encoding Text (%v)", err)
+		t.Fatalf("error encoding %v (%v)", lib.TagText, err)
 	}
 
 	if !reflect.DeepEqual(e, expected) {
