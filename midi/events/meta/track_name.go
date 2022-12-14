@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
@@ -63,24 +62,33 @@ func (t TrackName) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (e *TrackName) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.tag = lib.TagTrackName
-	e.Status = 0xff
-	e.Type = lib.TypeTrackName
+func (e *TrackName) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagTrackName, remaining[0])
+	} else if !equals(remaining[1], lib.TypeTrackName) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagTrackName, remaining[1])
+	} else if name, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeTrackName(0, delta, string(name), bytes...)
+	}
 
+	return nil
+}
+
+func (e *TrackName) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TrackName\s+(.*)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.delta = delta
-		e.Name = strings.TrimSpace(match[2])
+		*e = MakeTrackName(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -116,13 +124,7 @@ func (e *TrackName) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagTrackName) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagTrackName
-		e.Type = lib.TypeTrackName
-		e.Name = t.Name
+		*e = MakeTrackName(0, t.Delta, t.Name, []byte{}...)
 	}
 
 	return nil

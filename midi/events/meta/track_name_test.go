@@ -70,6 +70,39 @@ func TestTrackNameMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestTracknameUnmarshalBinary(t *testing.T) {
+	expected := TrackName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagTrackName,
+			Status: 0xff,
+			Type:   lib.TypeTrackName,
+			bytes: []byte{
+				0x83, 0x60, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69,
+				0x6c, 0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72,
+				0x61, 0x71, 0x75, 0x65,
+			},
+		},
+		Name: "Railroad Traque",
+	}
+
+	bytes := []byte{
+		0x83, 0x60, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69,
+		0x6c, 0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72,
+		0x61, 0x71, 0x75, 0x65}
+
+	e := TrackName{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagTrackName, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagTrackName, expected, e)
+	}
+}
+
 func TestTrackNameUnmarshalText(t *testing.T) {
 	text := "      00 FF 03 0F 41 63 6F 75 73 74 69 63…  tick:0          delta:480        03 TrackName              Railroad Traque"
 	expected := TrackName{

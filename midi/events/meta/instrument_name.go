@@ -36,13 +36,31 @@ func (e *InstrumentName) unmarshal(ctx *context.Context, tick uint64, delta lib.
 	return nil
 }
 
-func (n InstrumentName) MarshalBinary() (encoded []byte, err error) {
+func (e InstrumentName) MarshalBinary() (encoded []byte, err error) {
 	return append([]byte{
-		byte(n.Status),
-		byte(n.Type),
-		byte(len(n.Name)),
+		byte(e.Status),
+		byte(e.Type),
+		byte(len(e.Name)),
 	},
-		[]byte(n.Name)...), nil
+		[]byte(e.Name)...), nil
+}
+
+func (e *InstrumentName) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagInstrumentName, remaining[0])
+	} else if !equals(remaining[1], lib.TypeInstrumentName) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagInstrumentName, remaining[1])
+	} else if name, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeInstrumentName(0, delta, string(name), bytes...)
+	}
+
+	return nil
 }
 
 func (e *InstrumentName) UnmarshalText(bytes []byte) error {
@@ -54,13 +72,7 @@ func (e *InstrumentName) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagInstrumentName
-		e.Status = 0xff
-		e.Type = lib.TypeInstrumentName
-		e.Name = match[2]
+		*e = MakeInstrumentName(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -96,13 +108,7 @@ func (e *InstrumentName) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagInstrumentName) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagInstrumentName
-		e.Type = lib.TypeInstrumentName
-		e.Name = t.Name
+		*e = MakeInstrumentName(0, t.Delta, t.Name, []byte{}...)
 	}
 
 	return nil
