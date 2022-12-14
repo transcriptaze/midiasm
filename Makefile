@@ -55,12 +55,14 @@ delve: build
 
 help: build
 	$(CMD) help
+	$(CMD) help commands
 	$(CMD) help disassemble
 	$(CMD) help assemble
 	$(CMD) help export
 	$(CMD) help notes
 	$(CMD) help click
 	$(CMD) help transpose
+	$(CMD) help tsv
 
 version: build
 	$(CMD) version
@@ -119,6 +121,5 @@ transpose: build
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 
 tsv: build plugins
-	$(CMD) help commands
-#	$(CMD) tsv --debug examples/reference-01.mid
+	$(CMD) tsv --debug examples/reference-01.mid
 

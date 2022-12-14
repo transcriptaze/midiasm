@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/transcriptaze/midiasm/commands"
+	"github.com/transcriptaze/midiasm/encoding/midi"
+	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -14,27 +17,28 @@ type tsv struct {
 	c4      bool
 	verbose bool
 	debug   bool
+	flagset *flag.FlagSet
 }
 
-var TSV tsv
+var TSV = tsv{}
+
+func init() {
+	flagset := flag.NewFlagSet("tsv", flag.ExitOnError)
+
+	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
+	flagset.BoolVar(&TSV.c4, "C4", TSV.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
+	flagset.BoolVar(&TSV.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&TSV.debug, "debug", false, "Enable debugging information")
+
+	TSV.flagset = flagset
+}
 
 func (t tsv) GetCommand() (string, commands.Command) {
 	return "tsv", TSV
 }
 
 func (t tsv) Flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("tsv", flag.ExitOnError)
-
-	flagset.StringVar(&t.out, "out", "", "Output file path (or directory for split files)")
-	flagset.BoolVar(&t.c4, "C4", t.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
-	flagset.BoolVar(&t.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&t.debug, "debug", false, "Enable debugging information")
-
-	return flagset
-}
-
-func (t tsv) Execute() error {
-	return fmt.Errorf("NOT IMPLEMENTED")
+	return t.flagset
 }
 
 func (t tsv) Help() {
@@ -76,4 +80,53 @@ func (t tsv) Debug() bool {
 
 func (t tsv) Verbose() bool {
 	return t.verbose
+}
+
+func (t tsv) Execute() error {
+	filename := t.flagset.Arg(0)
+
+	if smf, err := decode(filename); err != nil {
+		return err
+	} else if err := validate(smf); err != nil {
+		return err
+	} else {
+		return export(smf)
+	}
+}
+
+func decode(filename string) (*midi.SMF, error) {
+	if f, err := os.Open(filename); err != nil {
+		return nil, err
+	} else {
+		defer f.Close()
+
+		decoder := midifile.NewDecoder()
+
+		if smf, err := decoder.Decode(f); err != nil {
+			return nil, err
+		} else if smf == nil {
+			return nil, fmt.Errorf("failed to decode MIDI file")
+		} else {
+			return smf, nil
+		}
+	}
+}
+
+func validate(smf *midi.SMF) error {
+	errors := smf.Validate()
+
+	if len(errors) > 0 {
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintf(os.Stderr, "WARNING: there are validation errors:\n")
+		for _, e := range errors {
+			fmt.Fprintf(os.Stderr, "         ** %v\n", e)
+		}
+		fmt.Fprintln(os.Stderr)
+	}
+
+	return nil
+}
+
+func export(smf *midi.SMF) error {
+	return fmt.Errorf("NOT IMPLEMENTED")
 }

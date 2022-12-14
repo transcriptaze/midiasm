@@ -23,8 +23,6 @@ var cli = []struct {
 	{"click", &CLICK},
 	{"export", &EXPORT},
 	{"transpose", &TRANSPOSE},
-	{"help", &HELP},
-	{"version", &VERSION},
 }
 
 const version = "v0.1.0"
@@ -62,6 +60,24 @@ func main() {
 		}
 
 		return nil
+	})
+
+	// ... add 'help' and 'version' commands to CLI
+
+	cli = append(cli, struct {
+		cmd     string
+		command commands.Command
+	}{
+		cmd:     "help",
+		command: &HELP,
+	})
+
+	cli = append(cli, struct {
+		cmd     string
+		command commands.Command
+	}{
+		cmd:     "version",
+		command: &VERSION,
 	})
 
 	// ... parse command line
