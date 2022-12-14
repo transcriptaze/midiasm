@@ -59,7 +59,33 @@ func TestLyricMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalLyric(t *testing.T) {
+func TestLyricUnmarshalBinary(t *testing.T) {
+	expected := Lyric{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagLyric,
+			Status: 0xff,
+			Type:   lib.TypeLyric,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61},
+		},
+		Lyric: "La-la-la",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61}
+
+	e := Lyric{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagLyric, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagLyric, expected, e)
+	}
+}
+
+func TestLyricUnmarshalText(t *testing.T) {
 	text := "      00 FF 05 08 4C 61 2D 6C 61 2D 6C 61   tick:0          delta:480        05 Lyric                  La-la-la"
 	expected := Lyric{
 		event: event{

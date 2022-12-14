@@ -45,6 +45,24 @@ func (l Lyric) MarshalBinary() (encoded []byte, err error) {
 		[]byte(l.Lyric)...), nil
 }
 
+func (e *Lyric) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagLyric, remaining[0])
+	} else if !equals(remaining[1], lib.TypeLyric) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagLyric, remaining[1])
+	} else if lyric, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeLyric(0, delta, string(lyric), bytes...)
+	}
+
+	return nil
+}
+
 func (e *Lyric) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Lyric\s+(.*)`)
 	text := string(bytes)

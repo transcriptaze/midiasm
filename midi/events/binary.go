@@ -28,14 +28,14 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeCopyright):
 			return unmarshalBinary[metaevent.Copyright](e, bytes)
 
-		// case "TrackName":
-		//     return unmarshalJSON[metaevent.TrackName](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeTrackName):
+			return unmarshalBinary[metaevent.TrackName](e, bytes)
 
-		// case "InstrumentName":
-		//     return unmarshalJSON[metaevent.InstrumentName](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeInstrumentName):
+			return unmarshalBinary[metaevent.InstrumentName](e, bytes)
 
-		// case "Lyric":
-		//     return unmarshalJSON[metaevent.Lyric](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeLyric):
+			return unmarshalBinary[metaevent.Lyric](e, bytes)
 
 		// case "Marker":
 		//     return unmarshalJSON[metaevent.Marker](e, t.Event)
