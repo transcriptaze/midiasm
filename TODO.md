@@ -27,10 +27,11 @@
 - [ ] NoteOn with 0 velocity -> NoteOff
 
 - [ ] MIDI file grammar
+      - (?) Treesitter
+            - https://tree-sitter.github.io/tree-sitter/
       - (?) ASN.1
       - (?) EBNF
       - (?) Grammar stack
-      - (?) Treesitter
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
       
