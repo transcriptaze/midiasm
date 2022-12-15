@@ -59,7 +59,33 @@ func TestProgramNameMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalProgramName(t *testing.T) {
+func TestProgramNameUnmarshalBinary(t *testing.T) {
+	expected := ProgramName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagProgramName,
+			Status: 0xff,
+			Type:   lib.TypeProgramName,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65},
+		},
+		Name: "Escape",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65}
+
+	e := ProgramName{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagProgramName, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagProgramName, expected, e)
+	}
+}
+
+func TestProgramNameUnmarshalText(t *testing.T) {
 	text := "      00 FF 08 06 45 73 63 61 70 65         tick:0          delta:480        08 ProgramName            Escape"
 	expected := ProgramName{
 		event: event{

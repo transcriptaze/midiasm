@@ -59,7 +59,33 @@ func TestCuePointMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalCuePoint(t *testing.T) {
+func TestCuePointUnmarshalBinary(t *testing.T) {
+	expected := CuePoint{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagCuePoint,
+			Status: 0xff,
+			Type:   lib.TypeCuePoint,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c},
+		},
+		CuePoint: "More cowbell",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c}
+
+	e := CuePoint{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagCuePoint, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagCuePoint, expected, e)
+	}
+}
+
+func TestCuePointUnmarshalText(t *testing.T) {
 	text := "      00 FF 07 0C 4D 6F 72 65 20 63 6F 77…  tick:0          delta:480        07 CuePoint               More cowbell"
 	expected := CuePoint{
 		event: event{

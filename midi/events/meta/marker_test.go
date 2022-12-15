@@ -59,7 +59,33 @@ func TestMarkerMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalMarker(t *testing.T) {
+func TestMarkerUnmarshalBinary(t *testing.T) {
+	expected := Marker{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMarker,
+			Status: 0xff,
+			Type:   lib.TypeMarker,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73},
+		},
+		Marker: "Here Be Dragons",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73}
+
+	e := Marker{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagMarker, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagMarker, expected, e)
+	}
+}
+
+func TestMarkerUnmarshalText(t *testing.T) {
 	text := "      00 FF 06 0F 48 65 72 65 20 42 65 20…  tick:0          delta:480        06 Marker                 Here Be Dragons"
 	expected := Marker{
 		event: event{

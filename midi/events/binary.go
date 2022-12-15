@@ -37,14 +37,14 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeLyric):
 			return unmarshalBinary[metaevent.Lyric](e, bytes)
 
-		// case "Marker":
-		//     return unmarshalJSON[metaevent.Marker](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeMarker):
+			return unmarshalBinary[metaevent.Marker](e, bytes)
 
-		// case "CuePoint":
-		//     return unmarshalJSON[metaevent.CuePoint](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeCuePoint):
+			return unmarshalBinary[metaevent.CuePoint](e, bytes)
 
-		// case "ProgramName":
-		//     return unmarshalJSON[metaevent.ProgramName](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeProgramName):
+			return unmarshalBinary[metaevent.ProgramName](e, bytes)
 
 		// case "DeviceName":
 		//     return unmarshalJSON[metaevent.DeviceName](e, t.Event)
