@@ -59,7 +59,33 @@ func TestDeviceNameMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalDeviceName(t *testing.T) {
+func TestDeviceNameUnmarshalBinary(t *testing.T) {
+	expected := DeviceName{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagDeviceName,
+			Status: 0xff,
+			Type:   lib.TypeDeviceName,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67},
+		},
+		Name: "TheThing",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67}
+
+	e := DeviceName{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagDeviceName, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagDeviceName, expected, e)
+	}
+}
+
+func TestDeviceNameUnmarshalText(t *testing.T) {
 	text := "      00 FF 09 08 54 68 65 54 68 69 6E 67   tick:0          delta:480        09 DeviceName             TheThing"
 	expected := DeviceName{
 		event: event{

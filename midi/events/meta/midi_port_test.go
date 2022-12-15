@@ -59,7 +59,33 @@ func TestMIDIPortMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalMIDIPort(t *testing.T) {
+func TestMIDIPortUnmarshalBinary(t *testing.T) {
+	expected := MIDIPort{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMIDIPort,
+			Status: 0xff,
+			Type:   lib.TypeMIDIPort,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x21, 0x01, 0x70},
+		},
+		Port: 112,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x21, 0x01, 0x70}
+
+	e := MIDIPort{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagMIDIPort, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagMIDIPort, expected, e)
+	}
+}
+
+func TestMIDIPortUnmarshalText(t *testing.T) {
 	text := "      00 FF 21 01 70                        tick:0          delta:480        21 MIDIPort               112"
 	expected := MIDIPort{
 		event: event{

@@ -56,28 +56,41 @@ func (m MIDIChannelPrefix) MarshalBinary() (encoded []byte, err error) {
 	}, nil
 }
 
-func (m *MIDIChannelPrefix) UnmarshalText(bytes []byte) error {
-	m.tick = 0
-	m.delta = 0
-	m.bytes = []byte{}
-	m.tag = lib.TagMIDIChannelPrefix
-	m.Status = 0xff
-	m.Type = lib.TypeMIDIChannelPrefix
+func (e *MIDIChannelPrefix) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagMIDIChannelPrefix, remaining[0])
+	} else if !equals(remaining[1], lib.TypeMIDIChannelPrefix) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagMIDIChannelPrefix, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 1 {
+		return fmt.Errorf("Invalid MIDIChannelPrefix channel data")
+	} else if channel := data[0]; channel > 15 {
+		return fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
+	} else {
+		*e = MakeMIDIChannelPrefix(0, delta, channel, bytes...)
+	}
 
+	return nil
+}
+
+func (e *MIDIChannelPrefix) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)MIDIChannelPrefix\s+([0-9]+)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid MIDIChannelPrefix event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if channel, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
-	} else if channel < 0 || channel > 15 {
+	} else if channel > 15 {
 		return fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", channel)
 	} else {
-		m.delta = delta
-		m.Channel = uint8(channel)
+		*e = MakeMIDIChannelPrefix(0, delta, uint8(channel), []byte{}...)
 	}
 
 	return nil
@@ -112,14 +125,10 @@ func (e *MIDIChannelPrefix) UnmarshalJSON(bytes []byte) error {
 		return err
 	} else if !equal(t.Tag, lib.TagMIDIChannelPrefix) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else if t.Channel > 15 {
+		return fmt.Errorf("Invalid MIDIChannelPrefix channel (%d): expected a value in the interval [0..15]", t.Channel)
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagMIDIChannelPrefix
-		e.Type = lib.TypeMIDIChannelPrefix
-		e.Channel = t.Channel
+		*e = MakeMIDIChannelPrefix(0, t.Delta, t.Channel, []byte{}...)
 	}
 
 	return nil

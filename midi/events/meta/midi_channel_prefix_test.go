@@ -59,7 +59,33 @@ func TestMIDIChannelPrefixMarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTextUnmarshalMIDIChannelPrefix(t *testing.T) {
+func TestMIDIChannelPrefixUnmarshalBinary(t *testing.T) {
+	expected := MIDIChannelPrefix{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagMIDIChannelPrefix,
+			Status: 0xff,
+			Type:   lib.TypeMIDIChannelPrefix,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x20, 0x01, 0x0d},
+		},
+		Channel: 13,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x20, 0x01, 0x0d}
+
+	e := MIDIChannelPrefix{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagMIDIChannelPrefix, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagMIDIChannelPrefix, expected, e)
+	}
+}
+
+func TestMIDIChannelPrefixUnmarshalText(t *testing.T) {
 	text := "      00 FF 20 01 0D                        tick:0          delta:480        20 MIDIChannelPrefix      13"
 	expected := MIDIChannelPrefix{
 		event: event{
