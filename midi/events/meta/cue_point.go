@@ -36,23 +36,34 @@ func (e *CuePoint) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta,
 	return nil
 }
 
-func (c CuePoint) MarshalBinary() (encoded []byte, err error) {
+func (e CuePoint) MarshalBinary() (encoded []byte, err error) {
 	return append([]byte{
-		byte(c.Status),
-		byte(c.Type),
-		byte(len(c.CuePoint)),
+		byte(e.Status),
+		byte(e.Type),
+		byte(len(e.CuePoint)),
 	},
-		[]byte(c.CuePoint)...), nil
+		[]byte(e.CuePoint)...), nil
 }
 
-func (c *CuePoint) UnmarshalText(bytes []byte) error {
-	c.tick = 0
-	c.delta = 0
-	c.bytes = []byte{}
-	c.tag = lib.TagCuePoint
-	c.Status = 0xff
-	c.Type = lib.TypeCuePoint
+func (e *CuePoint) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagCuePoint, remaining[0])
+	} else if !equals(remaining[1], lib.TypeCuePoint) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagCuePoint, remaining[1])
+	} else if cuepoint, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeCuePoint(0, delta, string(cuepoint), bytes...)
+	}
 
+	return nil
+}
+
+func (e *CuePoint) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)CuePoint\s+(.*)`)
 	text := string(bytes)
 
@@ -61,8 +72,7 @@ func (c *CuePoint) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		c.delta = delta
-		c.CuePoint = string(match[2])
+		*e = MakeCuePoint(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -98,13 +108,7 @@ func (e *CuePoint) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagCuePoint) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagCuePoint
-		e.Type = lib.TypeCuePoint
-		e.CuePoint = t.CuePoint
+		*e = MakeCuePoint(0, t.Delta, t.CuePoint, []byte{}...)
 	}
 
 	return nil

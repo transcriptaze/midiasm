@@ -36,23 +36,34 @@ func (e *ProgramName) unmarshal(ctx *context.Context, tick uint64, delta lib.Del
 	return nil
 }
 
-func (p ProgramName) MarshalBinary() (encoded []byte, err error) {
+func (e ProgramName) MarshalBinary() (encoded []byte, err error) {
 	return append([]byte{
-		byte(p.Status),
-		byte(p.Type),
-		byte(len(p.Name)),
+		byte(e.Status),
+		byte(e.Type),
+		byte(len(e.Name)),
 	},
-		[]byte(p.Name)...), nil
+		[]byte(e.Name)...), nil
 }
 
-func (p *ProgramName) UnmarshalText(bytes []byte) error {
-	p.tick = 0
-	p.delta = 0
-	p.bytes = []byte{}
-	p.tag = lib.TagProgramName
-	p.Status = 0xff
-	p.Type = lib.TypeProgramName
+func (e *ProgramName) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagProgramName, remaining[0])
+	} else if !equals(remaining[1], lib.TypeProgramName) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagProgramName, remaining[1])
+	} else if name, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeProgramName(0, delta, string(name), bytes...)
+	}
 
+	return nil
+}
+
+func (e *ProgramName) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)ProgramName\s+(.*)`)
 	text := string(bytes)
 
@@ -61,8 +72,7 @@ func (p *ProgramName) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		p.delta = delta
-		p.Name = string(match[2])
+		*e = MakeProgramName(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -98,13 +108,7 @@ func (e *ProgramName) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagProgramName) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagProgramName
-		e.Type = lib.TypeProgramName
-		e.Name = t.Name
+		*e = MakeProgramName(0, t.Delta, t.Name, []byte{}...)
 	}
 
 	return nil

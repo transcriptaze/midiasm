@@ -45,6 +45,24 @@ func (m Marker) MarshalBinary() (encoded []byte, err error) {
 		[]byte(m.Marker)...), nil
 }
 
+func (e *Marker) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagMarker, remaining[0])
+	} else if !equals(remaining[1], lib.TypeMarker) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagMarker, remaining[1])
+	} else if marker, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else {
+		*e = MakeMarker(0, delta, string(marker), bytes...)
+	}
+
+	return nil
+}
+
 func (e *Marker) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Marker\s+(.*)`)
 	text := string(bytes)
@@ -54,13 +72,7 @@ func (e *Marker) UnmarshalText(bytes []byte) error {
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagMarker
-		e.Status = 0xff
-		e.Type = lib.TypeMarker
-		e.Marker = match[2]
+		*e = MakeMarker(0, delta, match[2], []byte{}...)
 	}
 
 	return nil
@@ -96,13 +108,7 @@ func (e *Marker) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagMarker) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagMarker
-		e.Type = lib.TypeMarker
-		e.Marker = t.Marker
+		*e = MakeMarker(0, t.Delta, t.Marker, []byte{}...)
 	}
 
 	return nil
