@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
@@ -10,6 +11,10 @@ import (
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
+
+type TField interface {
+	uint64 | uint32
+}
 
 type tsv struct {
 	out     string
@@ -128,5 +133,37 @@ func validate(smf *midi.SMF) error {
 }
 
 func export(smf *midi.SMF) error {
-	return fmt.Errorf("NOT IMPLEMENTED")
+	records := [][]string{
+		{"Tick", "Delta", "Tag"},
+	}
+
+	track := smf.Tracks[1]
+	for _, e := range track.Events {
+		records = append(records, []string{
+			format(e.Event.Tick()),
+			format(e.Event.Delta()),
+			e.Event.Tag(),
+		})
+	}
+
+	w := csv.NewWriter(os.Stdout)
+	w.Comma = '\t'
+
+	for _, record := range records {
+		if err := w.Write(record); err != nil {
+			return err
+		}
+	}
+
+	w.Flush()
+
+	if err := w.Error(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func format[T TField](v T) string {
+	return fmt.Sprintf("%v", v)
 }

@@ -14,14 +14,18 @@ import (
 type TEvent interface {
 	metaevent.TMetaEvent | midievent.TMidiEvent | sysex.TSysExEvent
 
-	Tick() uint64
 	Delta() uint32
+	Tag() string
+
+	Tick() uint64
 	Bytes() []byte
 }
 
 type IEvent interface {
-	Tick() uint64
 	Delta() uint32
+	Tag() string
+
+	Tick() uint64
 	Bytes() []byte
 }
 
