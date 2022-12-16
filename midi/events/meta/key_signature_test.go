@@ -91,6 +91,34 @@ func TestKeySignatureMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestKeySignatureUnmarshalBinary(t *testing.T) {
+	expected := KeySignature{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagKeySignature,
+			Status: 0xff,
+			Type:   lib.TypeKeySignature,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01},
+		},
+		Accidentals: -3,
+		KeyType:     lib.Minor,
+		Key:         "C minor",
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01}
+
+	e := KeySignature{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagKeySignature, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagKeySignature, expected, e)
+	}
+}
+
 func TestKeySignatureUnmarshalText(t *testing.T) {
 	text := "      00 FF 59 02 00 01                     tick:0          delta:480        59 KeySignature           B minor"
 	expected := KeySignature{

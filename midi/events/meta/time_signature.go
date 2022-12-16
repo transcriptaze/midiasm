@@ -86,14 +86,36 @@ func (t TimeSignature) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (e *TimeSignature) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagTimeSignature
-	e.Type = lib.TypeTimeSignature
+func (e *TimeSignature) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagTimeSignature, remaining[0])
+	} else if !equals(remaining[1], lib.TypeTimeSignature) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagTimeSignature, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 4 {
+		return fmt.Errorf("Invalid TimeSignature data")
+	} else {
+		numerator := data[0]
+		ticksPerClick := data[2]
+		thirtySecondsPerQuarter := data[3]
 
+		denominator := uint8(1)
+		for i := uint8(0); i < data[1]; i++ {
+			denominator *= 2
+		}
+
+		*e = MakeTimeSignature(0, delta, numerator, denominator, ticksPerClick, thirtySecondsPerQuarter, bytes...)
+	}
+
+	return nil
+}
+
+func (e *TimeSignature) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)TimeSignature\s+([0-9]+)/([1-9][0-9]*),\s* ([0-9]+) ticks per click,\s*([1-9][0-8]*)/32 per quarter`)
 	text := string(bytes)
 
@@ -110,11 +132,7 @@ func (e *TimeSignature) UnmarshalText(bytes []byte) error {
 	} else if beats, err := strconv.ParseUint(match[5], 10, 8); err != nil {
 		return err
 	} else {
-		e.delta = delta
-		e.Numerator = uint8(numerator)
-		e.Denominator = uint8(denominator)
-		e.TicksPerClick = uint8(ticks)
-		e.ThirtySecondsPerQuarter = uint8(beats)
+		*e = MakeTimeSignature(0, delta, uint8(numerator), uint8(denominator), uint8(ticks), uint8(beats), []byte{}...)
 	}
 
 	return nil
@@ -166,11 +184,7 @@ func (e *TimeSignature) UnmarshalJSON(bytes []byte) error {
 	} else if t.Tag != fmt.Sprintf("%v", lib.TagTimeSignature) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.delta = t.Delta
-		e.Numerator = t.Numerator
-		e.Denominator = t.Denominator
-		e.TicksPerClick = t.TicksPerClick
-		e.ThirtySecondsPerQuarter = t.ThirtySecondsPerQuarter
+		*e = MakeTimeSignature(0, t.Delta, t.Numerator, t.Denominator, t.TicksPerClick, t.ThirtySecondsPerQuarter, []byte{}...)
 	}
 
 	return nil

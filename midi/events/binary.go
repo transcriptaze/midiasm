@@ -58,20 +58,20 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeTempo):
 			return unmarshalBinary[metaevent.Tempo](e, bytes)
 
-		// case "TimeSignature":
-		//     return unmarshalJSON[metaevent.TimeSignature](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeTimeSignature):
+			return unmarshalBinary[metaevent.TimeSignature](e, bytes)
 
-		// case "KeySignature":
-		//     return unmarshalJSON[metaevent.KeySignature](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeKeySignature):
+			return unmarshalBinary[metaevent.KeySignature](e, bytes)
 
-		// case "SMPTEOffset":
-		//     return unmarshalJSON[metaevent.SMPTEOffset](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeSMPTEOffset):
+			return unmarshalBinary[metaevent.SMPTEOffset](e, bytes)
 
-		// case "EndOfTrack":
-		//     return unmarshalJSON[metaevent.EndOfTrack](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeEndOfTrack):
+			return unmarshalBinary[metaevent.EndOfTrack](e, bytes)
 
-		// case "SequencerSpecificEvent":
-		//     return unmarshalJSON[metaevent.SequencerSpecificEvent](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeSequencerSpecificEvent):
+			return unmarshalBinary[metaevent.SequencerSpecificEvent](e, bytes)
 
 		// case "NoteOff":
 		//     return unmarshalJSON[midievent.NoteOff](e, t.Event)

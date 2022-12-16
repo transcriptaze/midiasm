@@ -154,18 +154,73 @@ func (s SMPTEOffset) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.tag = lib.TagSMPTEOffset
-	e.Status = 0xff
-	e.Type = lib.TypeSMPTEOffset
+func (e *SMPTEOffset) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagSMPTEOffset, remaining[0])
+	} else if !equals(remaining[1], lib.TypeSMPTEOffset) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSMPTEOffset, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 5 {
+		return fmt.Errorf("Invalid SMPTEOffset data")
+	} else {
+		rr := (data[0] >> 6) & 0x03
+		hour := data[0] & 0x01f
+		minute := data[1]
+		second := data[2]
+		frames := data[3]
+		fractions := data[4]
 
+		if hour > 24 {
+			return fmt.Errorf("Invalid SMPTEOffset hour (%d): expected a value in the interval [0..24]", hour)
+		}
+
+		if minute > 59 {
+			return fmt.Errorf("Invalid SMPTEOffset minute (%d): expected a value in the interval [0..59]", minute)
+		}
+
+		if second > 59 {
+			return fmt.Errorf("Invalid SMPTEOffset second (%d): expected a value in the interval [0..59]", second)
+		}
+
+		if rr != 0x00 && rr != 0x01 && rr != 0x02 && rr != 0x03 {
+			return fmt.Errorf("Invalid SMPTEOffset frame rate (%02X): expected a value in the set [0,1,2,3]", rr)
+		}
+
+		framerate := uint8(0)
+		switch rr {
+		case 0:
+			framerate = 24
+		case 1:
+			framerate = 25
+		case 2:
+			framerate = 29
+		case 3:
+			framerate = 30
+		}
+
+		if frames >= framerate {
+			return fmt.Errorf("Invalid SMPTEOffset frames (%d): expected a value in the interval [0..%d]", frames, framerate-1)
+		}
+
+		if fractions > 100 {
+			return fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
+		}
+
+		*e = MakeSMPTEOffset(0, delta, hour, minute, second, framerate, frames, fractions, bytes...)
+	}
+
+	return nil
+}
+
+func (e *SMPTEOffset) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SMPTEOffset\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 8 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 8 {
 		return fmt.Errorf("invalid SMPTEOffset event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
@@ -186,13 +241,7 @@ func (e *SMPTEOffset) UnmarshalText(bytes []byte) error {
 	} else if fractions > 100 {
 		return fmt.Errorf("Invalid SMPTEOffset fractional frames (%d): expected a value in the interval [0..100", fractions)
 	} else {
-		e.delta = delta
-		e.Hour = uint8(hour)
-		e.Minute = uint8(minute)
-		e.Second = uint8(second)
-		e.FrameRate = uint8(frameRate)
-		e.Frames = uint8(frames)
-		e.FractionalFrames = uint8(fractions)
+		*e = MakeSMPTEOffset(0, delta, uint8(hour), uint8(minute), uint8(second), uint8(frameRate), uint8(frames), uint8(fractions), []byte{}...)
 	}
 
 	return nil
@@ -227,13 +276,6 @@ func (e SMPTEOffset) MarshalJSON() (encoded []byte, err error) {
 }
 
 func (e *SMPTEOffset) UnmarshalJSON(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagSMPTEOffset
-	e.Type = lib.TypeSMPTEOffset
-
 	t := struct {
 		Tag              string    `json:"tag"`
 		Delta            lib.Delta `json:"delta"`
@@ -250,13 +292,7 @@ func (e *SMPTEOffset) UnmarshalJSON(bytes []byte) error {
 	} else if t.Tag != fmt.Sprintf("%v", lib.TagSMPTEOffset) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.delta = t.Delta
-		e.Hour = t.Hour
-		e.Minute = t.Minute
-		e.Second = t.Second
-		e.FrameRate = t.FrameRate
-		e.Frames = t.Frames
-		e.FractionalFrames = t.FractionalFrames
+		*e = MakeSMPTEOffset(0, t.Delta, t.Hour, t.Minute, t.Second, t.FrameRate, t.Frames, t.FractionalFrames, []byte{}...)
 	}
 
 	return nil

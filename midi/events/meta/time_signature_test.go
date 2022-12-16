@@ -65,6 +65,35 @@ func TestTimeSignatureMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestTimeSignatureUnmarshalBinary(t *testing.T) {
+	expected := TimeSignature{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagTimeSignature,
+			Status: 0xff,
+			Type:   lib.TypeTimeSignature,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08},
+		},
+		Numerator:               3,
+		Denominator:             4,
+		TicksPerClick:           24,
+		ThirtySecondsPerQuarter: 8,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08}
+
+	e := TimeSignature{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagTimeSignature, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagTimeSignature, expected, e)
+	}
+}
+
 func TestTimeSignatureUnmarshalText(t *testing.T) {
 	text := "      00 FF 58 04 04 02 18 08               tick:0          delta:480        58 TimeSignature          3/4, 24 ticks per click, 8/32 per quarter"
 	tag := lib.TagTimeSignature

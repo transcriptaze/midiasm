@@ -69,6 +69,37 @@ func TestSequencerSpecificEventMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestSequencerSpecificEventUnmarshalBinary(t *testing.T) {
+	expected := SequencerSpecificEvent{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagSequencerSpecificEvent,
+			Status: 0xff,
+			Type:   lib.TypeSequencerSpecificEvent,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x00, 0x00, 0x3b},
+			Region: "American",
+			Name:   "Mark Of The Unicorn (MOTU)",
+		},
+		Data: []byte{0x3a, 0x4c, 0x5e},
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e}
+
+	e := SequencerSpecificEvent{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagSequencerSpecificEvent, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagSequencerSpecificEvent, expected, e)
+	}
+}
+
 func TestTextUnmarshalSequencerSpecific(t *testing.T) {
 	text := "      00 FF 7F 06 00 00 3B 3A 4C 5E         tick:0          delta:480        7F SequencerSpecificEvent Mark Of The Unicorn (MOTU), 3A 4C 5E"
 	expected := SequencerSpecificEvent{

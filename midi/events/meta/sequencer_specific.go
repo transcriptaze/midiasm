@@ -58,6 +58,36 @@ func (e SequencerSpecificEvent) MarshalBinary() (encoded []byte, err error) {
 	return b, nil
 }
 
+func (e *SequencerSpecificEvent) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagSequencerSpecificEvent, remaining[0])
+	} else if !equals(remaining[1], lib.TypeSequencerSpecificEvent) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSequencerSpecificEvent, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 2 {
+		return fmt.Errorf("Invalid SequencerSpecificEvent channel data")
+	} else {
+		id := data[0:1]
+		d := data[1:]
+
+		if data[0] == 0x00 {
+			id = data[0:3]
+			d = data[3:]
+		}
+
+		manufacturer := lib.LookupManufacturer(id)
+
+		*e = MakeSequencerSpecificEvent(0, delta, manufacturer, d, bytes...)
+	}
+
+	return nil
+}
+
 func (s *SequencerSpecificEvent) UnmarshalText(bytes []byte) error {
 	s.tick = 0
 	s.delta = 0
