@@ -65,26 +65,43 @@ func (t Tempo) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (e *Tempo) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.tag = lib.TagTempo
-	e.Status = 0xff
-	e.Type = 0x51
+func (e *Tempo) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagTempo, remaining[0])
+	} else if !equals(remaining[1], lib.TypeTempo) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagTempo, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 3 {
+		return fmt.Errorf("Invalid Tempo data")
+	} else {
+		tempo := uint32(data[0])
+		tempo <<= 8
+		tempo += uint32(data[1])
+		tempo <<= 8
+		tempo += uint32(data[2])
 
+		*e = MakeTempo(0, delta, tempo, bytes...)
+	}
+
+	return nil
+}
+
+func (e *Tempo) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)Tempo\s+tempo:([0-9]+)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid Tempo event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
-	} else if v, err := strconv.ParseUint(match[2], 10, 32); err != nil {
+	} else if tempo, err := strconv.ParseUint(match[2], 10, 32); err != nil {
 		return err
 	} else {
-		e.delta = delta
-		e.Tempo = uint32(v)
+		*e = MakeTempo(0, delta, uint32(tempo), []byte{}...)
 	}
 
 	return nil
@@ -109,13 +126,6 @@ func (e Tempo) MarshalJSON() (encoded []byte, err error) {
 }
 
 func (e *Tempo) UnmarshalJSON(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagTempo
-	e.Type = lib.TypeTempo
-
 	t := struct {
 		Tag   string    `json:"tag"`
 		Delta lib.Delta `json:"delta"`
@@ -127,8 +137,7 @@ func (e *Tempo) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagTempo) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.delta = t.Delta
-		e.Tempo = t.Tempo
+		*e = MakeTempo(0, t.Delta, t.Tempo, []byte{}...)
 	}
 
 	return nil

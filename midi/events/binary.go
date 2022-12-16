@@ -46,32 +46,32 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeProgramName):
 			return unmarshalBinary[metaevent.ProgramName](e, bytes)
 
-		// case "DeviceName":
-		//     return unmarshalJSON[metaevent.DeviceName](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeDeviceName):
+			return unmarshalBinary[metaevent.DeviceName](e, bytes)
 
-		// case "MIDIChannelPrefix":
-		//     return unmarshalJSON[metaevent.MIDIChannelPrefix](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeMIDIChannelPrefix):
+			return unmarshalBinary[metaevent.MIDIChannelPrefix](e, bytes)
 
-		// case "MIDIPort":
-		//     return unmarshalJSON[metaevent.MIDIPort](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeMIDIPort):
+			return unmarshalBinary[metaevent.MIDIPort](e, bytes)
 
-		// case "Tempo":
-		//     return unmarshalJSON[metaevent.Tempo](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeTempo):
+			return unmarshalBinary[metaevent.Tempo](e, bytes)
 
-		// case "TimeSignature":
-		//     return unmarshalJSON[metaevent.TimeSignature](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeTimeSignature):
+			return unmarshalBinary[metaevent.TimeSignature](e, bytes)
 
-		// case "KeySignature":
-		//     return unmarshalJSON[metaevent.KeySignature](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeKeySignature):
+			return unmarshalBinary[metaevent.KeySignature](e, bytes)
 
-		// case "SMPTEOffset":
-		//     return unmarshalJSON[metaevent.SMPTEOffset](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeSMPTEOffset):
+			return unmarshalBinary[metaevent.SMPTEOffset](e, bytes)
 
-		// case "EndOfTrack":
-		//     return unmarshalJSON[metaevent.EndOfTrack](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeEndOfTrack):
+			return unmarshalBinary[metaevent.EndOfTrack](e, bytes)
 
-		// case "SequencerSpecificEvent":
-		//     return unmarshalJSON[metaevent.SequencerSpecificEvent](e, t.Event)
+		case status == 0xff && equals(remaining[1], lib.TypeSequencerSpecificEvent):
+			return unmarshalBinary[metaevent.SequencerSpecificEvent](e, bytes)
 
 		// case "NoteOff":
 		//     return unmarshalJSON[midievent.NoteOff](e, t.Event)

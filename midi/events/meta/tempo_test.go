@@ -59,6 +59,32 @@ func TestTempoMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestTempoUnmarshalBinary(t *testing.T) {
+	expected := Tempo{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagTempo,
+			Status: 0xff,
+			Type:   lib.TypeTempo,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+		},
+		Tempo: 500000,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20}
+
+	e := Tempo{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagTempo, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagTempo, expected, e)
+	}
+}
+
 func TestTempoUnmarshalText(t *testing.T) {
 	text := "      00 FF 51 03 07 A1 20                  tick:0          delta:480        51 Tempo                  tempo:500000"
 	expected := Tempo{

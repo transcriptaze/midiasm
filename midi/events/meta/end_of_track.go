@@ -40,23 +40,31 @@ func (e EndOfTrack) MarshalBinary() (encoded []byte, err error) {
 	}, nil
 }
 
-func (e *EndOfTrack) UnmarshalText(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagEndOfTrack
-	e.Type = 0x2f
+func (e *EndOfTrack) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagEndOfTrack, remaining[0])
+	} else if !equals(remaining[1], lib.TypeEndOfTrack) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagEndOfTrack, remaining[1])
+	} else {
+		*e = MakeEndOfTrack(0, delta, bytes...)
+	}
 
+	return nil
+}
+
+func (e *EndOfTrack) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)EndOfTrack`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 2 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 2 {
 		return fmt.Errorf("invalid EndOfTrack event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else {
-		e.delta = delta
+		*e = MakeEndOfTrack(0, delta, []byte{}...)
 	}
 
 	return nil
@@ -79,13 +87,6 @@ func (e EndOfTrack) MarshalJSON() (encoded []byte, err error) {
 }
 
 func (e *EndOfTrack) UnmarshalJSON(bytes []byte) error {
-	e.tick = 0
-	e.delta = 0
-	e.bytes = []byte{}
-	e.Status = 0xff
-	e.tag = lib.TagEndOfTrack
-	e.Type = 0x2f
-
 	t := struct {
 		Tag   string    `json:"tag"`
 		Delta lib.Delta `json:"delta"`
@@ -96,7 +97,7 @@ func (e *EndOfTrack) UnmarshalJSON(bytes []byte) error {
 	} else if t.Tag != "EndOfTrack" {
 		return fmt.Errorf("invalid EndOfTrack event (%v)", string(bytes))
 	} else {
-		e.delta = t.Delta
+		*e = MakeEndOfTrack(0, t.Delta, []byte{}...)
 	}
 
 	return nil

@@ -58,6 +58,28 @@ func (m MIDIPort) MarshalBinary() (encoded []byte, err error) {
 	}, nil
 }
 
+func (e *MIDIPort) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if remaining[0] != 0xff {
+		return fmt.Errorf("Invalid %v status (%02X)", lib.TagMIDIPort, remaining[0])
+	} else if !equals(remaining[1], lib.TypeMIDIPort) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagMIDIPort, remaining[1])
+	} else if data, err := vlf(remaining[2:]); err != nil {
+		return err
+	} else if len(data) < 1 {
+		return fmt.Errorf("Invalid MIDIPort channel data")
+	} else if port := data[0]; port > 127 {
+		return fmt.Errorf("Invalid MIDIPort port (%d): expected a value in the interval [0..127]", port)
+	} else {
+		*e = MakeMIDIPort(0, delta, port, bytes...)
+	}
+
+	return nil
+}
+
 func (e *MIDIPort) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)MIDIPort\s+([0-9]+)`)
 	text := string(bytes)
@@ -68,16 +90,10 @@ func (e *MIDIPort) UnmarshalText(bytes []byte) error {
 		return err
 	} else if port, err := strconv.ParseUint(match[2], 10, 8); err != nil {
 		return err
-	} else if port > 1278 {
+	} else if port > 127 {
 		return fmt.Errorf("Invalid MIDIPort channel (%d): expected a value in the interval [0..127]", port)
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagMIDIPort
-		e.Status = 0xff
-		e.Type = lib.TypeMIDIPort
-		e.Port = uint8(port)
+		*e = MakeMIDIPort(0, delta, uint8(port), []byte{}...)
 	}
 
 	return nil
@@ -112,14 +128,10 @@ func (e *MIDIPort) UnmarshalJSON(bytes []byte) error {
 		return err
 	} else if !equal(t.Tag, lib.TagMIDIPort) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
+	} else if t.Port > 127 {
+		return fmt.Errorf("Invalid MIDIPort channel (%d): expected a value in the interval [0..127]", t.Port)
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.Status = 0xff
-		e.tag = lib.TagMIDIPort
-		e.Type = lib.TypeMIDIPort
-		e.Port = t.Port
+		*e = MakeMIDIPort(0, t.Delta, t.Port, []byte{}...)
 	}
 
 	return nil

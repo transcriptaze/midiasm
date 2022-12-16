@@ -58,6 +58,31 @@ func TestEndOfTrackMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestEndOfTrackUnmarshalBinary(t *testing.T) {
+	expected := EndOfTrack{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagEndOfTrack,
+			Status: 0xff,
+			Type:   lib.TypeEndOfTrack,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x2f, 0x00},
+		},
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x2f, 0x00}
+
+	e := EndOfTrack{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagEndOfTrack, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagEndOfTrack, expected, e)
+	}
+}
+
 func TestEndOfTrackUnmarshalText(t *testing.T) {
 	text := "      00 FF 2F 00                           tick:0          delta:480        2F EndOfTrack"
 	expected := EndOfTrack{

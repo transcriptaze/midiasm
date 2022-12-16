@@ -69,6 +69,37 @@ func TestSMPTEOffsetMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestSMPTEOffsetUnmarshalBinary(t *testing.T) {
+	expected := SMPTEOffset{
+		event: event{
+			tick:   0,
+			delta:  480,
+			tag:    lib.TagSMPTEOffset,
+			Status: 0xff,
+			Type:   lib.TypeSMPTEOffset,
+			bytes:  []byte{0x83, 0x60, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
+		},
+		Hour:             13,
+		Minute:           45,
+		Second:           59,
+		FrameRate:        25,
+		Frames:           7,
+		FractionalFrames: 39,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27}
+
+	e := SMPTEOffset{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagSMPTEOffset, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagSMPTEOffset, expected, e)
+	}
+}
+
 func TestSMPTEOffsetUnmarshalText(t *testing.T) {
 	text := "      00 FF 54 05 4D 2D 3B 07 27            tick:0          delta:480        54 SMPTEOffset            13 45 59 25 7 39"
 	expected := SMPTEOffset{
