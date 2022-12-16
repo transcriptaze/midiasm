@@ -133,21 +133,58 @@ func validate(smf *midi.SMF) error {
 }
 
 func export(smf *midi.SMF) error {
-	records := [][]string{
-		{"Tick", "Delta", "Tag"},
+	// ... TSV header record
+	header := []string{}
+	for range smf.Tracks {
+		header = append(header, []string{"Tick", "Delta", "Tag"}...)
 	}
 
-	track := smf.Tracks[1]
-	for _, e := range track.Events {
-		records = append(records, []string{
-			format(e.Event.Tick()),
-			format(e.Event.Delta()),
-			e.Event.Tag(),
-		})
+	// ... build track columns
+	tracks := [][][]string{}
+
+	for _, t := range smf.Tracks {
+		track := [][]string{}
+		for _, e := range t.Events {
+			track = append(track, []string{
+				format(e.Event.Tick()),
+				format(e.Event.Delta()),
+				e.Event.Tag(),
+			})
+		}
+
+		tracks = append(tracks, track)
 	}
 
+	// ... zip tracks
+	rows := 0
+	for _, track := range tracks {
+		if len(track) > rows {
+			rows = len(track)
+		}
+	}
+
+	records := make([][]string, rows)
+
+	for i, _ := range records {
+		record := []string{}
+		for _, track := range tracks {
+			if i < len(track) {
+				record = append(record, track[i]...)
+			} else {
+				record = append(record, []string{"", "", ""}...)
+			}
+		}
+
+		records[i] = record
+	}
+
+	// ... export as TSV
 	w := csv.NewWriter(os.Stdout)
 	w.Comma = '\t'
+
+	if err := w.Write(header); err != nil {
+		return err
+	}
 
 	for _, record := range records {
 		if err := w.Write(record); err != nil {
