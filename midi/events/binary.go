@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
-	// "github.com/transcriptaze/midiasm/midi/events/midi"
 	// "github.com/transcriptaze/midiasm/midi/events/sysex"
 )
 
@@ -73,8 +73,8 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case status == 0xff && equals(remaining[1], lib.TypeSequencerSpecificEvent):
 			return unmarshalBinary[metaevent.SequencerSpecificEvent](e, bytes)
 
-		// case "NoteOff":
-		//     return unmarshalJSON[midievent.NoteOff](e, t.Event)
+		case equals(status, lib.TypeNoteOff):
+			return unmarshalBinary[midievent.NoteOff](e, bytes)
 
 		// case "NoteOn":
 		//     return unmarshalJSON[midievent.NoteOn](e, t.Event)
@@ -141,6 +141,10 @@ func vlq(bytes []byte) (uint32, []byte, error) {
 	return 0, nil, fmt.Errorf("Invalid event 'delta'")
 }
 
-func equals[T lib.MetaEventType](b byte, t T) bool {
-	return (b & 0x7f) == byte(t)
+func equals[T lib.TEventType](b byte, t T) bool {
+	return t.Equals(b)
 }
+
+// func equals[T lib.MidiEventType](b byte, t T) bool {
+// 	return (b & 0x70) == byte(t)
+// }

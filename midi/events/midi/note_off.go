@@ -109,6 +109,32 @@ func (n NoteOff) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
+func (e *NoteOff) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) != 3 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypeNoteOff.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagNoteOff, remaining[0])
+	} else if channel := remaining[0] & 0x0f; channel > 15 {
+		return fmt.Errorf("invalid channel (%v)", channel)
+	} else if data := remaining[1:]; len(data) < 2 {
+		return fmt.Errorf("Invalid NoteOff data")
+	} else if velocity := data[1]; velocity > 127 {
+		return fmt.Errorf("Invalid NoteOff velocity (%v)", velocity)
+	} else {
+		note := Note{
+			Value: data[0],
+			Name:  GetNoteOff(nil, lib.Channel(channel), data[0]),
+			Alias: FormatNote(nil, data[0]),
+		}
+
+		*e = MakeNoteOff(0, delta, lib.Channel(channel), note, velocity, bytes...)
+	}
+
+	return nil
+}
+
 func (n *NoteOff) UnmarshalText(bytes []byte) error {
 	n.tick = 0
 	n.delta = 0
