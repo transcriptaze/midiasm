@@ -30,6 +30,7 @@ var bytes = map[lib.Tag][]byte{
 	lib.TagSequencerSpecificEvent: []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 
 	lib.TagNoteOff: []byte{0x83, 0x60, 0x87, 0x31, 0x48},
+	lib.TagNoteOn:  []byte{0x83, 0x60, 0x97, 0x31, 0x48},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -157,6 +158,16 @@ func TestEventUnmarshalBinary(t *testing.T) {
 					Name:  "C♯3",
 					Alias: "C♯3",
 				}, 72, bytes[lib.TagNoteOff]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagNoteOn],
+			expected: Event{
+				Event: midievent.MakeNoteOn(0, 480, 7, midievent.Note{
+					Value: 49,
+					Name:  "C♯3",
+					Alias: "C♯3",
+				}, 72, bytes[lib.TagNoteOn]...),
 			},
 		},
 	}

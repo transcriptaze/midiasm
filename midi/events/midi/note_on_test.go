@@ -117,6 +117,36 @@ func TestNoteOnMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestNoteOnUnmarshalBinary(t *testing.T) {
+	expected := NoteOn{
+		event: event{
+			delta:   480,
+			tag:     lib.TagNoteOn,
+			Status:  0x97,
+			Channel: 7,
+			bytes:   []byte{0x83, 0x60, 0x97, 0x31, 0x48},
+		},
+		Note: Note{
+			Value: 49,
+			Name:  "C♯3",
+			Alias: "C♯3",
+		},
+		Velocity: 72,
+	}
+
+	bytes := []byte{0x83, 0x60, 0x97, 0x31, 0x48}
+
+	e := NoteOn{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagNoteOn, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagNoteOn, expected, e)
+	}
+}
+
 func TestNoteOnUnmarshalText(t *testing.T) {
 	text := "      00 97 30 48                           tick:0          delta:480        97 NoteOn                 channel:7  note:C3, velocity:72"
 	expected := NoteOn{

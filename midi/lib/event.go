@@ -45,6 +45,7 @@ type MidiEventType byte
 
 const (
 	TypeNoteOff MidiEventType = 0x80
+	TypeNoteOn  MidiEventType = 0x90
 )
 
 func (t MidiEventType) String() string {
