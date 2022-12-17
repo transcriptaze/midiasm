@@ -4,6 +4,12 @@ import (
 	"fmt"
 )
 
+type TEventType interface {
+	MetaEventType | MidiEventType
+
+	Equals(byte) bool
+}
+
 type MetaEventType byte
 
 const (
@@ -29,4 +35,22 @@ const (
 
 func (t MetaEventType) String() string {
 	return fmt.Sprintf("%02X", byte(t))
+}
+
+func (t MetaEventType) Equals(b byte) bool {
+	return (b & 0x7f) == byte(t)
+}
+
+type MidiEventType byte
+
+const (
+	TypeNoteOff MidiEventType = 0x80
+)
+
+func (t MidiEventType) String() string {
+	return fmt.Sprintf("%02X", byte(t))
+}
+
+func (t MidiEventType) Equals(b byte) bool {
+	return (b & 0xf0) == byte(t)
 }

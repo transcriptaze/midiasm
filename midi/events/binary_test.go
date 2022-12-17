@@ -5,28 +5,31 @@ import (
 	"testing"
 
 	"github.com/transcriptaze/midiasm/midi/events/meta"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
-var bytes = map[lib.MetaEventType][]byte{
-	lib.TypeSequenceNumber:         []byte{0x83, 0x60, 0xff, 0x00, 0x02, 0x00, 0x17},
-	lib.TypeText:                   []byte{0x83, 0x60, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
-	lib.TypeCopyright:              []byte{0x83, 0x60, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
-	lib.TypeTrackName:              []byte{0x83, 0x60, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69, 0x6c, 0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72, 0x61, 0x71, 0x75, 0x65},
-	lib.TypeInstrumentName:         []byte{0x83, 0x60, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f},
-	lib.TypeLyric:                  []byte{0x83, 0x60, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61},
-	lib.TypeMarker:                 []byte{0x83, 0x60, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73},
-	lib.TypeCuePoint:               []byte{0x83, 0x60, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c},
-	lib.TypeProgramName:            []byte{0x83, 0x60, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65},
-	lib.TypeDeviceName:             []byte{0x83, 0x60, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67},
-	lib.TypeMIDIChannelPrefix:      []byte{0x83, 0x60, 0xff, 0x20, 0x01, 0x0d},
-	lib.TypeMIDIPort:               []byte{0x83, 0x60, 0xff, 0x21, 0x01, 0x70},
-	lib.TypeTempo:                  []byte{0x83, 0x60, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
-	lib.TypeTimeSignature:          []byte{0x83, 0x60, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08},
-	lib.TypeKeySignature:           []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01},
-	lib.TypeSMPTEOffset:            []byte{0x83, 0x60, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
-	lib.TypeEndOfTrack:             []byte{0x83, 0x60, 0xff, 0x2f, 0x00},
-	lib.TypeSequencerSpecificEvent: []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+var bytes = map[lib.Tag][]byte{
+	lib.TagSequenceNumber:         []byte{0x83, 0x60, 0xff, 0x00, 0x02, 0x00, 0x17},
+	lib.TagText:                   []byte{0x83, 0x60, 0xff, 0x01, 0x0d, 0x54, 0x68, 0x69, 0x73, 0x20, 0x61, 0x6e, 0x64, 0x20, 0x54, 0x68, 0x61, 0x74},
+	lib.TagCopyright:              []byte{0x83, 0x60, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d},
+	lib.TagTrackName:              []byte{0x83, 0x60, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69, 0x6c, 0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72, 0x61, 0x71, 0x75, 0x65},
+	lib.TagInstrumentName:         []byte{0x83, 0x60, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f},
+	lib.TagLyric:                  []byte{0x83, 0x60, 0xff, 0x05, 0x08, 0x4c, 0x61, 0x2d, 0x6c, 0x61, 0x2d, 0x6c, 0x61},
+	lib.TagMarker:                 []byte{0x83, 0x60, 0xff, 0x06, 0x0f, 0x48, 0x65, 0x72, 0x65, 0x20, 0x42, 0x65, 0x20, 0x44, 0x72, 0x61, 0x67, 0x6f, 0x6e, 0x73},
+	lib.TagCuePoint:               []byte{0x83, 0x60, 0xff, 0x07, 0x0c, 0x4d, 0x6f, 0x72, 0x65, 0x20, 0x63, 0x6f, 0x77, 0x62, 0x65, 0x6c, 0x6c},
+	lib.TagProgramName:            []byte{0x83, 0x60, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65},
+	lib.TagDeviceName:             []byte{0x83, 0x60, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67},
+	lib.TagMIDIChannelPrefix:      []byte{0x83, 0x60, 0xff, 0x20, 0x01, 0x0d},
+	lib.TagMIDIPort:               []byte{0x83, 0x60, 0xff, 0x21, 0x01, 0x70},
+	lib.TagTempo:                  []byte{0x83, 0x60, 0xff, 0x51, 0x03, 0x07, 0xa1, 0x20},
+	lib.TagTimeSignature:          []byte{0x83, 0x60, 0xff, 0x58, 0x04, 0x03, 0x02, 0x18, 0x08},
+	lib.TagKeySignature:           []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01},
+	lib.TagSMPTEOffset:            []byte{0x83, 0x60, 0xff, 0x54, 0x05, 0x4d, 0x2d, 0x3b, 0x07, 0x27},
+	lib.TagEndOfTrack:             []byte{0x83, 0x60, 0xff, 0x2f, 0x00},
+	lib.TagSequencerSpecificEvent: []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
+
+	lib.TagNoteOff: []byte{0x83, 0x60, 0x87, 0x31, 0x48},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -35,115 +38,125 @@ func TestEventUnmarshalBinary(t *testing.T) {
 		expected Event
 	}{
 		{
-			bytes: bytes[lib.TypeSequenceNumber],
+			bytes: bytes[lib.TagSequenceNumber],
 			expected: Event{
-				Event: metaevent.MakeSequenceNumber(0, 480, 23, bytes[lib.TypeSequenceNumber]...),
+				Event: metaevent.MakeSequenceNumber(0, 480, 23, bytes[lib.TagSequenceNumber]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeText],
+			bytes: bytes[lib.TagText],
 			expected: Event{
-				Event: metaevent.MakeText(0, 480, "This and That", bytes[lib.TypeText]...),
+				Event: metaevent.MakeText(0, 480, "This and That", bytes[lib.TagText]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeCopyright],
+			bytes: bytes[lib.TagCopyright],
 			expected: Event{
-				Event: metaevent.MakeCopyright(0, 480, "Them", bytes[lib.TypeCopyright]...),
+				Event: metaevent.MakeCopyright(0, 480, "Them", bytes[lib.TagCopyright]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeTrackName],
+			bytes: bytes[lib.TagTrackName],
 			expected: Event{
-				Event: metaevent.MakeTrackName(0, 480, "Railroad Traque", bytes[lib.TypeTrackName]...),
+				Event: metaevent.MakeTrackName(0, 480, "Railroad Traque", bytes[lib.TagTrackName]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeInstrumentName],
+			bytes: bytes[lib.TagInstrumentName],
 			expected: Event{
-				Event: metaevent.MakeInstrumentName(0, 480, "Didgeridoo", bytes[lib.TypeInstrumentName]...),
+				Event: metaevent.MakeInstrumentName(0, 480, "Didgeridoo", bytes[lib.TagInstrumentName]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeLyric],
+			bytes: bytes[lib.TagLyric],
 			expected: Event{
-				Event: metaevent.MakeLyric(0, 480, "La-la-la", bytes[lib.TypeLyric]...),
+				Event: metaevent.MakeLyric(0, 480, "La-la-la", bytes[lib.TagLyric]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeMarker],
+			bytes: bytes[lib.TagMarker],
 			expected: Event{
-				Event: metaevent.MakeMarker(0, 480, "Here Be Dragons", bytes[lib.TypeMarker]...),
+				Event: metaevent.MakeMarker(0, 480, "Here Be Dragons", bytes[lib.TagMarker]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeCuePoint],
+			bytes: bytes[lib.TagCuePoint],
 			expected: Event{
-				Event: metaevent.MakeCuePoint(0, 480, "More cowbell", bytes[lib.TypeCuePoint]...),
+				Event: metaevent.MakeCuePoint(0, 480, "More cowbell", bytes[lib.TagCuePoint]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeProgramName],
+			bytes: bytes[lib.TagProgramName],
 			expected: Event{
-				Event: metaevent.MakeProgramName(0, 480, "Escape", bytes[lib.TypeProgramName]...),
+				Event: metaevent.MakeProgramName(0, 480, "Escape", bytes[lib.TagProgramName]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeDeviceName],
+			bytes: bytes[lib.TagDeviceName],
 			expected: Event{
-				Event: metaevent.MakeDeviceName(0, 480, "TheThing", bytes[lib.TypeDeviceName]...),
+				Event: metaevent.MakeDeviceName(0, 480, "TheThing", bytes[lib.TagDeviceName]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeMIDIChannelPrefix],
+			bytes: bytes[lib.TagMIDIChannelPrefix],
 			expected: Event{
-				Event: metaevent.MakeMIDIChannelPrefix(0, 480, 13, bytes[lib.TypeMIDIChannelPrefix]...),
+				Event: metaevent.MakeMIDIChannelPrefix(0, 480, 13, bytes[lib.TagMIDIChannelPrefix]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeMIDIPort],
+			bytes: bytes[lib.TagMIDIPort],
 			expected: Event{
-				Event: metaevent.MakeMIDIPort(0, 480, 112, bytes[lib.TypeMIDIPort]...),
+				Event: metaevent.MakeMIDIPort(0, 480, 112, bytes[lib.TagMIDIPort]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeTempo],
+			bytes: bytes[lib.TagTempo],
 			expected: Event{
-				Event: metaevent.MakeTempo(0, 480, 500000, bytes[lib.TypeTempo]...),
+				Event: metaevent.MakeTempo(0, 480, 500000, bytes[lib.TagTempo]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeTimeSignature],
+			bytes: bytes[lib.TagTimeSignature],
 			expected: Event{
-				Event: metaevent.MakeTimeSignature(0, 480, 3, 4, 24, 8, bytes[lib.TypeTimeSignature]...),
+				Event: metaevent.MakeTimeSignature(0, 480, 3, 4, 24, 8, bytes[lib.TagTimeSignature]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeKeySignature],
+			bytes: bytes[lib.TagKeySignature],
 			expected: Event{
-				Event: metaevent.MakeKeySignature(0, 480, -3, 1, bytes[lib.TypeKeySignature]...),
+				Event: metaevent.MakeKeySignature(0, 480, -3, 1, bytes[lib.TagKeySignature]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeSMPTEOffset],
+			bytes: bytes[lib.TagSMPTEOffset],
 			expected: Event{
-				Event: metaevent.MakeSMPTEOffset(0, 480, 13, 45, 59, 25, 7, 39, bytes[lib.TypeSMPTEOffset]...),
+				Event: metaevent.MakeSMPTEOffset(0, 480, 13, 45, 59, 25, 7, 39, bytes[lib.TagSMPTEOffset]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeEndOfTrack],
+			bytes: bytes[lib.TagEndOfTrack],
 			expected: Event{
-				Event: metaevent.MakeEndOfTrack(0, 480, bytes[lib.TypeEndOfTrack]...),
+				Event: metaevent.MakeEndOfTrack(0, 480, bytes[lib.TagEndOfTrack]...),
 			},
 		},
 		{
-			bytes: bytes[lib.TypeSequencerSpecificEvent],
+			bytes: bytes[lib.TagSequencerSpecificEvent],
 			expected: Event{
 				Event: metaevent.MakeSequencerSpecificEvent(0, 480, lib.Manufacturer{
 					ID:     []byte{0x00, 0x00, 0x3b},
 					Region: "American",
 					Name:   "Mark Of The Unicorn (MOTU)",
-				}, []byte{0x3a, 0x4c, 0x5e}, bytes[lib.TypeSequencerSpecificEvent]...),
+				}, []byte{0x3a, 0x4c, 0x5e}, bytes[lib.TagSequencerSpecificEvent]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagNoteOff],
+			expected: Event{
+				Event: midievent.MakeNoteOff(0, 480, 7, midievent.Note{
+					Value: 49,
+					Name:  "C♯3",
+					Alias: "C♯3",
+				}, 72, bytes[lib.TagNoteOff]...),
 			},
 		},
 	}

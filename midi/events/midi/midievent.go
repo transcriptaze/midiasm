@@ -111,6 +111,35 @@ func unmarshal[
 	}
 }
 
+func vlq(bytes []byte) (uint32, []byte, error) {
+	vlq := uint32(0)
+
+	for i, b := range bytes {
+		vlq <<= 7
+		vlq += uint32(b & 0x7f)
+
+		if b&0x80 == 0 {
+			return vlq, bytes[i+1:], nil
+		}
+	}
+
+	return 0, nil, fmt.Errorf("Invalid event 'delta'")
+}
+
+func vlf(bytes []byte) ([]byte, error) {
+	if N, remaining, err := vlq(bytes); err != nil {
+		return nil, err
+	} else {
+		return remaining[:N], nil
+	}
+}
+
+func delta(bytes []byte) (uint32, []byte, error) {
+	v, remaining, err := vlq(bytes)
+
+	return v, remaining, err
+}
+
 func equal(s string, tag lib.Tag) bool {
 	return s == fmt.Sprintf("%v", tag)
 }

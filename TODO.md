@@ -5,6 +5,8 @@
             - [ ] MarshalBinary
             - [ ] Validate
                   - missing/wrong EndOfTrack
+            - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
+                  - https://dmitrykandalov.com/coroutines-as-threads
       - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
@@ -34,6 +36,9 @@
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
       
+- [ ] Fuzz parser/assembler
+      - https://www.pypy.org/posts/2022/12/jit-bug-finding-smt-fuzzing.html
+
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
 
