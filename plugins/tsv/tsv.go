@@ -10,6 +10,7 @@ import (
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
@@ -134,7 +135,7 @@ func export(smf *midi.SMF) error {
 	// ... TSV header record
 	header := []string{}
 	for range smf.Tracks {
-		header = append(header, []string{"Tick", "Delta", "Tag", "Channel"}...)
+		header = append(header, []string{"Tick", "Delta", "Tag", "Channel", "Details"}...)
 	}
 
 	// ... build track columns
@@ -200,7 +201,81 @@ func fields(v events.IEvent) []string {
 	delta := fmt.Sprintf("%v", v.Delta())
 	tag := v.Tag()
 	channel := ""
+	details := ""
 
+	// ... meta events
+	if e, ok := v.(metaevent.SequenceNumber); ok {
+		details = fmt.Sprintf("%v", e.SequenceNumber)
+	}
+
+	if e, ok := v.(metaevent.Text); ok {
+		details = fmt.Sprintf("%v", e.Text)
+	}
+
+	if e, ok := v.(metaevent.Copyright); ok {
+		details = fmt.Sprintf("%v", e.Copyright)
+	}
+
+	if e, ok := v.(metaevent.TrackName); ok {
+		details = fmt.Sprintf("%v", e.Name)
+	}
+
+	if e, ok := v.(metaevent.InstrumentName); ok {
+		details = fmt.Sprintf("%v", e.Name)
+	}
+
+	if e, ok := v.(metaevent.Lyric); ok {
+		details = fmt.Sprintf("%v", e.Lyric)
+	}
+
+	if e, ok := v.(metaevent.Marker); ok {
+		details = fmt.Sprintf("%v", e.Marker)
+	}
+
+	if e, ok := v.(metaevent.CuePoint); ok {
+		details = fmt.Sprintf("%v", e.CuePoint)
+	}
+
+	if e, ok := v.(metaevent.ProgramName); ok {
+		details = fmt.Sprintf("%v", e.Name)
+	}
+
+	if e, ok := v.(metaevent.DeviceName); ok {
+		details = fmt.Sprintf("%v", e.Name)
+	}
+
+	if e, ok := v.(metaevent.MIDIChannelPrefix); ok {
+		details = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(metaevent.MIDIPort); ok {
+		details = fmt.Sprintf("%v", e.Port)
+	}
+
+	if _, ok := v.(metaevent.EndOfTrack); ok {
+	}
+
+	if e, ok := v.(metaevent.Tempo); ok {
+		details = fmt.Sprintf("%v", e.Tempo)
+	}
+
+	if e, ok := v.(metaevent.SMPTEOffset); ok {
+		details = fmt.Sprintf("offset %02v:%02v:%02v  frame rate %v:%v:%v", e.Hour, e.Minute, e.Second, e.FrameRate, e.Frames, e.FractionalFrames)
+	}
+
+	if e, ok := v.(metaevent.KeySignature); ok {
+		details = fmt.Sprintf("%v", e.Key)
+	}
+
+	if e, ok := v.(metaevent.TimeSignature); ok {
+		details = fmt.Sprintf("%v/%v, %v ticks/click, %v 32nds/quarter", e.Numerator, e.Denominator, e.TicksPerClick, e.ThirtySecondsPerQuarter)
+	}
+
+	if e, ok := v.(metaevent.SequencerSpecificEvent); ok {
+		details = fmt.Sprintf("%v [%v]", e.Manufacturer.Name, e.Data)
+	}
+
+	// ... MIDI events
 	if e, ok := v.(midievent.NoteOff); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
 	}
@@ -229,5 +304,5 @@ func fields(v events.IEvent) []string {
 		channel = fmt.Sprintf("%v", e.Channel)
 	}
 
-	return []string{tick, delta, tag, channel}
+	return []string{tick, delta, tag, channel, details}
 }

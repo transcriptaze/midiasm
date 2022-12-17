@@ -44,6 +44,7 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 - [ ] TSV
+      - [ ] fixed width output
 
 ### Assembler
 
