@@ -72,38 +72,6 @@ func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, stat
 	return nil
 }
 
-func (e NoteOn) Transpose(ctx *context.Context, steps int) NoteOn {
-	v := int(e.Note.Value) + steps
-	note := e.Note.Value
-
-	switch {
-	case v < 0:
-		note = 0
-
-	case v > 127:
-		note = 127
-
-	default:
-		note = byte(v)
-	}
-
-	return NoteOn{
-		event: event{
-			tick:    e.tick,
-			delta:   e.delta,
-			tag:     lib.TagNoteOn,
-			Status:  lib.Status(0x90 | e.Channel),
-			Channel: e.Channel,
-		},
-		Note: Note{
-			Value: note,
-			Name:  ctx.GetNoteOff(e.Channel, note),
-			Alias: ctx.FormatNote(note),
-		},
-		Velocity: e.Velocity,
-	}
-}
-
 func (n NoteOn) MarshalBinary() (encoded []byte, err error) {
 	encoded = []byte{
 		byte(0x90 | n.Channel),
@@ -112,6 +80,32 @@ func (n NoteOn) MarshalBinary() (encoded []byte, err error) {
 	}
 
 	return
+}
+
+func (e *NoteOn) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) != 3 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypeNoteOn.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagNoteOn, remaining[0])
+	} else if channel := remaining[0] & 0x0f; channel > 15 {
+		return fmt.Errorf("invalid channel (%v)", channel)
+	} else if data := remaining[1:]; len(data) < 2 {
+		return fmt.Errorf("Invalid NoteOn data")
+	} else if velocity := data[1]; velocity > 127 {
+		return fmt.Errorf("Invalid NoteOn velocity (%v)", velocity)
+	} else {
+		note := Note{
+			Value: data[0],
+			Name:  FormatNote(nil, data[0]),
+			Alias: FormatNote(nil, data[0]),
+		}
+
+		*e = MakeNoteOn(0, delta, lib.Channel(channel), note, velocity, bytes...)
+	}
+
+	return nil
 }
 
 func (n *NoteOn) UnmarshalText(bytes []byte) error {
@@ -196,6 +190,38 @@ func (e *NoteOn) UnmarshalJSON(bytes []byte) error {
 	}
 
 	return nil
+}
+
+func (e NoteOn) Transpose(ctx *context.Context, steps int) NoteOn {
+	v := int(e.Note.Value) + steps
+	note := e.Note.Value
+
+	switch {
+	case v < 0:
+		note = 0
+
+	case v > 127:
+		note = 127
+
+	default:
+		note = byte(v)
+	}
+
+	return NoteOn{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			tag:     lib.TagNoteOn,
+			Status:  lib.Status(0x90 | e.Channel),
+			Channel: e.Channel,
+		},
+		Note: Note{
+			Value: note,
+			Name:  ctx.GetNoteOff(e.Channel, note),
+			Alias: ctx.FormatNote(note),
+		},
+		Velocity: e.Velocity,
+	}
 }
 
 func FormatNote(ctx *context.Context, n byte) string {
