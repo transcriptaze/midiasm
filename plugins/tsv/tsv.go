@@ -9,12 +9,10 @@ import (
 	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
+	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
-
-type TField interface {
-	uint64 | uint32
-}
 
 type tsv struct {
 	out     string
@@ -136,7 +134,7 @@ func export(smf *midi.SMF) error {
 	// ... TSV header record
 	header := []string{}
 	for range smf.Tracks {
-		header = append(header, []string{"Tick", "Delta", "Tag"}...)
+		header = append(header, []string{"Tick", "Delta", "Tag", "Channel"}...)
 	}
 
 	// ... build track columns
@@ -145,11 +143,7 @@ func export(smf *midi.SMF) error {
 	for _, t := range smf.Tracks {
 		track := [][]string{}
 		for _, e := range t.Events {
-			track = append(track, []string{
-				format(e.Event.Tick()),
-				format(e.Event.Delta()),
-				e.Event.Tag(),
-			})
+			track = append(track, fields(e.Event))
 		}
 
 		tracks = append(tracks, track)
@@ -201,6 +195,39 @@ func export(smf *midi.SMF) error {
 	return nil
 }
 
-func format[T TField](v T) string {
-	return fmt.Sprintf("%v", v)
+func fields(v events.IEvent) []string {
+	tick := fmt.Sprintf("%v", v.Tick())
+	delta := fmt.Sprintf("%v", v.Delta())
+	tag := v.Tag()
+	channel := ""
+
+	if e, ok := v.(midievent.NoteOff); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.NoteOn); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.PolyphonicPressure); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.Controller); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.ProgramChange); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.ChannelPressure); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	if e, ok := v.(midievent.PitchBend); ok {
+		channel = fmt.Sprintf("%v", e.Channel)
+	}
+
+	return []string{tick, delta, tag, channel}
 }
