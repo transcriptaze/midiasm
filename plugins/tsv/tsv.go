@@ -278,31 +278,40 @@ func fields(v events.IEvent) []string {
 	// ... MIDI events
 	if e, ok := v.(midievent.NoteOff); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v|%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
 	}
 
 	if e, ok := v.(midievent.NoteOn); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v|%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
 	}
 
 	if e, ok := v.(midievent.PolyphonicPressure); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v", e.Pressure)
 	}
 
 	if e, ok := v.(midievent.Controller); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v, %v", "???", "???")
 	}
 
 	if e, ok := v.(midievent.ProgramChange); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v, %v", e.Bank, e.Program)
 	}
 
 	if e, ok := v.(midievent.ChannelPressure); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v", e.Pressure)
 	}
 
 	if e, ok := v.(midievent.PitchBend); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
+		details = fmt.Sprintf("%v", e.Bend)
 	}
+
+	// ... SysEx events
 
 	return []string{tick, delta, tag, channel, details}
 }
