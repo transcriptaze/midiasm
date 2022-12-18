@@ -29,8 +29,9 @@ var bytes = map[lib.Tag][]byte{
 	lib.TagEndOfTrack:             []byte{0x83, 0x60, 0xff, 0x2f, 0x00},
 	lib.TagSequencerSpecificEvent: []byte{0x83, 0x60, 0xff, 0x7f, 0x06, 0x00, 0x00, 0x3b, 0x3a, 0x4c, 0x5e},
 
-	lib.TagNoteOff: []byte{0x83, 0x60, 0x87, 0x31, 0x48},
-	lib.TagNoteOn:  []byte{0x83, 0x60, 0x97, 0x31, 0x48},
+	lib.TagNoteOff:            []byte{0x83, 0x60, 0x87, 0x31, 0x48},
+	lib.TagNoteOn:             []byte{0x83, 0x60, 0x97, 0x31, 0x48},
+	lib.TagPolyphonicPressure: []byte{0x83, 0x60, 0xa7, 0x64},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -168,6 +169,12 @@ func TestEventUnmarshalBinary(t *testing.T) {
 					Name:  "C♯3",
 					Alias: "C♯3",
 				}, 72, bytes[lib.TagNoteOn]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagPolyphonicPressure],
+			expected: Event{
+				Event: midievent.MakePolyphonicPressure(0, 480, 7, 100, bytes[lib.TagPolyphonicPressure]...),
 			},
 		},
 	}

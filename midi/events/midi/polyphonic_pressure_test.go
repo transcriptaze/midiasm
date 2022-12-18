@@ -67,6 +67,31 @@ func TestPolyphonicPressureMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestPolyphonicPressureUnmarshalBinary(t *testing.T) {
+	expected := PolyphonicPressure{
+		event: event{
+			delta:   480,
+			tag:     lib.TagPolyphonicPressure,
+			Status:  0xa7,
+			Channel: 7,
+			bytes:   []byte{0x83, 0x60, 0xa7, 0x64},
+		},
+		Pressure: 100,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xa7, 0x64}
+
+	e := PolyphonicPressure{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagPolyphonicPressure, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagPolyphonicPressure, expected, e)
+	}
+}
+
 func TestPolyphonicPressureUnmarshalText(t *testing.T) {
 	text := "      00 A0 64                              tick:0          delta:480        A7 PolyphonicPressure     channel:7  pressure:100"
 	expected := PolyphonicPressure{

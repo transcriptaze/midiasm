@@ -79,8 +79,8 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case equals(status, lib.TypeNoteOn):
 			return unmarshalBinary[midievent.NoteOn](e, bytes)
 
-		// case "PolyphonicPressure":
-		//     return unmarshalJSON[midievent.PolyphonicPressure](e, t.Event)
+		case equals(status, lib.TypePolyphonicPressure):
+			return unmarshalBinary[midievent.PolyphonicPressure](e, bytes)
 
 		// case "Controller":
 		//     return unmarshalJSON[midievent.Controller](e, t.Event)

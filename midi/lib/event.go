@@ -44,8 +44,9 @@ func (t MetaEventType) Equals(b byte) bool {
 type MidiEventType byte
 
 const (
-	TypeNoteOff MidiEventType = 0x80
-	TypeNoteOn  MidiEventType = 0x90
+	TypeNoteOff            MidiEventType = 0x80
+	TypeNoteOn             MidiEventType = 0x90
+	TypePolyphonicPressure MidiEventType = 0xa0
 )
 
 func (t MidiEventType) String() string {
