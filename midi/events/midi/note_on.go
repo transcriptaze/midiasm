@@ -108,13 +108,7 @@ func (e *NoteOn) UnmarshalBinary(bytes []byte) error {
 	return nil
 }
 
-func (n *NoteOn) UnmarshalText(bytes []byte) error {
-	n.tick = 0
-	n.delta = 0
-	n.bytes = []byte{}
-	n.tag = lib.TagNoteOn
-	n.Status = 0x90
-
+func (e *NoteOn) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)NoteOn\s+channel:([0-9]+)\s+note:([A-G][♯♭]?[0-9]),\s*velocity:([0-9]+)`)
 	text := string(bytes)
 
@@ -131,11 +125,7 @@ func (n *NoteOn) UnmarshalText(bytes []byte) error {
 	} else if velocity > 127 {
 		return fmt.Errorf("invalid NoteOn velocity (%v)", velocity)
 	} else {
-		n.delta = delta
-		n.Status = or(n.Status, channel)
-		n.Channel = channel
-		n.Note = note
-		n.Velocity = uint8(velocity)
+		*e = MakeNoteOn(0, uint32(delta), lib.Channel(channel), note, uint8(velocity), []byte{}...)
 	}
 
 	return nil
@@ -175,18 +165,13 @@ func (e *NoteOn) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagNoteOn) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.tag = lib.TagNoteOn
-		e.Status = or(0x90, t.Channel)
-		e.Channel = t.Channel
-		e.Note = Note{
+		note := Note{
 			Value: t.Note.Value,
 			Name:  FormatNote(nil, t.Note.Value),
 			Alias: FormatNote(nil, t.Note.Value),
 		}
-		e.Velocity = t.Velocity
+
+		*e = MakeNoteOn(0, uint32(t.Delta), t.Channel, note, t.Velocity, []byte{}...)
 	}
 
 	return nil

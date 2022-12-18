@@ -63,6 +63,26 @@ func (e PolyphonicPressure) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
+func (e *PolyphonicPressure) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) != 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypePolyphonicPressure.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagPolyphonicPressure, remaining[0])
+	} else if channel := remaining[0] & 0x0f; channel > 15 {
+		return fmt.Errorf("invalid channel (%v)", channel)
+	} else if data := remaining[1:]; len(data) < 1 {
+		return fmt.Errorf("Invalid PolyphonicPressure data")
+	} else if pressure := data[0]; pressure > 127 {
+		return fmt.Errorf("Invalid PolyphonicPressure pressure (%v)", pressure)
+	} else {
+		*e = MakePolyphonicPressure(0, delta, lib.Channel(channel), pressure, bytes...)
+	}
+
+	return nil
+}
+
 func (e *PolyphonicPressure) UnmarshalText(bytes []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)PolyphonicPressure\s+channel:([0-9]+)\s+pressure:([0-9]+)`)
 	text := string(bytes)
