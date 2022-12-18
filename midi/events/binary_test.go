@@ -32,6 +32,10 @@ var bytes = map[lib.Tag][]byte{
 	lib.TagNoteOff:            []byte{0x83, 0x60, 0x87, 0x31, 0x48},
 	lib.TagNoteOn:             []byte{0x83, 0x60, 0x97, 0x31, 0x48},
 	lib.TagPolyphonicPressure: []byte{0x83, 0x60, 0xa7, 0x64},
+	lib.TagController:         []byte{0x83, 0x60, 0xb7, 0x54, 0x1d},
+	lib.TagProgramChange:      []byte{0x83, 0x60, 0xc7, 0x19},
+	lib.TagChannelPressure:    []byte{0x83, 0x60, 0xd7, 0x64},
+	lib.TagPitchBend:          []byte{0x83, 0x60, 0xe7, 0x00, 0x08},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -175,6 +179,30 @@ func TestEventUnmarshalBinary(t *testing.T) {
 			bytes: bytes[lib.TagPolyphonicPressure],
 			expected: Event{
 				Event: midievent.MakePolyphonicPressure(0, 480, 7, 100, bytes[lib.TagPolyphonicPressure]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagController],
+			expected: Event{
+				Event: midievent.MakeController(0, 480, 7, lib.Controller{84, "Portamento Control"}, 29, bytes[lib.TagController]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagProgramChange],
+			expected: Event{
+				Event: midievent.MakeProgramChange(0, 480, 7, 0, 25, bytes[lib.TagProgramChange]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagChannelPressure],
+			expected: Event{
+				Event: midievent.MakeChannelPressure(0, 480, 7, 100, bytes[lib.TagChannelPressure]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagPitchBend],
+			expected: Event{
+				Event: midievent.MakePitchBend(0, 480, 7, 8, bytes[lib.TagPitchBend]...),
 			},
 		},
 	}

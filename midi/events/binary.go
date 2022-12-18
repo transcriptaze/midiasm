@@ -82,17 +82,17 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case equals(status, lib.TypePolyphonicPressure):
 			return unmarshalBinary[midievent.PolyphonicPressure](e, bytes)
 
-		// case "Controller":
-		//     return unmarshalJSON[midievent.Controller](e, t.Event)
+		case equals(status, lib.TypeController):
+			return unmarshalBinary[midievent.Controller](e, bytes)
 
-		// case "ProgramChange":
-		//     return unmarshalJSON[midievent.ProgramChange](e, t.Event)
+		case equals(status, lib.TypeProgramChange):
+			return unmarshalBinary[midievent.ProgramChange](e, bytes)
 
-		// case "ChannelPressure":
-		//     return unmarshalJSON[midievent.ChannelPressure](e, t.Event)
+		case equals(status, lib.TypeChannelPressure):
+			return unmarshalBinary[midievent.ChannelPressure](e, bytes)
 
-		// case "PitchBend":
-		//     return unmarshalJSON[midievent.PitchBend](e, t.Event)
+		case equals(status, lib.TypePitchBend):
+			return unmarshalBinary[midievent.PitchBend](e, bytes)
 
 		// case "SysExMessage":
 		//     return unmarshalJSON[sysex.SysExMessage](e, t.Event)

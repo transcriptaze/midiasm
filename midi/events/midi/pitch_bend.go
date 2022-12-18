@@ -66,17 +66,34 @@ func (b PitchBend) MarshalBinary() (encoded []byte, err error) {
 	return
 }
 
-func (b *PitchBend) UnmarshalText(bytes []byte) error {
-	b.tick = 0
-	b.delta = 0
-	b.bytes = []byte{}
-	b.tag = lib.TagPitchBend
-	b.Status = 0xe0
+func (e *PitchBend) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) != 3 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypePitchBend.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagPitchBend, remaining[0])
+	} else if channel := remaining[0] & 0x0f; channel > 15 {
+		return fmt.Errorf("invalid channel (%v)", channel)
+	} else if data := remaining[1:]; len(data) < 2 {
+		return fmt.Errorf("Invalid PitchBend data")
+	} else if pressure := data[0]; pressure > 127 {
+		return fmt.Errorf("InvalidPitchBend pressure (%v)", pressure)
+	} else {
+		bend := uint16(data[0])
+		bend <<= 7
+		bend |= uint16(data[1]) & 0x7f
 
+		*e = MakePitchBend(0, delta, lib.Channel(channel), bend, bytes...)
+	}
+
+	return nil
+}
+
+func (e *PitchBend) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)PitchBend\s+channel:([0-9]+)\s+bend:([0-9]+)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 4 {
 		return fmt.Errorf("invalid PitchBend event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
@@ -85,10 +102,7 @@ func (b *PitchBend) UnmarshalText(bytes []byte) error {
 	} else if bend, err := strconv.ParseUint(match[3], 10, 16); err != nil {
 		return err
 	} else {
-		b.delta = delta
-		b.Status = or(b.Status, channel)
-		b.Channel = channel
-		b.Bend = uint16(bend)
+		*e = MakePitchBend(0, uint32(delta), lib.Channel(channel), uint16(bend), []byte{}...)
 	}
 
 	return nil
@@ -124,13 +138,7 @@ func (e *PitchBend) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagPitchBend) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.tag = lib.TagPitchBend
-		e.Status = or(0xE0, t.Channel)
-		e.Channel = t.Channel
-		e.Bend = t.Bend
+		*e = MakePitchBend(0, uint32(t.Delta), t.Channel, t.Bend, []byte{}...)
 	}
 
 	return nil

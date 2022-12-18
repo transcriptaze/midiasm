@@ -67,6 +67,31 @@ func TestChannelPressureMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestChannelPressureUnmarshalBinary(t *testing.T) {
+	expected := ChannelPressure{
+		event: event{
+			delta:   480,
+			tag:     lib.TagChannelPressure,
+			Status:  0xd7,
+			Channel: 7,
+			bytes:   []byte{0x83, 0x60, 0xd7, 0x64},
+		},
+		Pressure: 100,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xd7, 0x64}
+
+	e := ChannelPressure{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagChannelPressure, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagChannelPressure, expected, e)
+	}
+}
+
 func TestChannelPressureUnmarshalText(t *testing.T) {
 	text := "      00 D0 07                              tick:0          delta:480        D0 ChannelPressure        channel:7  pressure:100"
 	expected := ChannelPressure{

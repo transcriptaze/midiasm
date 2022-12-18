@@ -68,6 +68,32 @@ func TestProgramChangeMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestProgramChangeUnmarshalBinary(t *testing.T) {
+	expected := ProgramChange{
+		event: event{
+			delta:   480,
+			tag:     lib.TagProgramChange,
+			Status:  0xc7,
+			Channel: 7,
+			bytes:   []byte{0x83, 0x60, 0xc7, 0x19},
+		},
+		Bank:    0,
+		Program: 25,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xc7, 0x19}
+
+	e := ProgramChange{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagProgramChange, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagProgramChange, expected, e)
+	}
+}
+
 func TestProgramChangeUnmarshalText(t *testing.T) {
 	text := "      00 C7 19                              tick:0          delta:480        C7 ProgramChange          channel:7  bank:3, program:25"
 	expected := ProgramChange{
