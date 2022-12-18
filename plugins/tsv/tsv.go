@@ -293,7 +293,7 @@ func fields(v events.IEvent) []string {
 
 	if e, ok := v.(midievent.Controller); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v, %v", "???", "???")
+		details = fmt.Sprintf("%v|%v, %v", e.Controller.ID, e.Controller.Name, e.Value)
 	}
 
 	if e, ok := v.(midievent.ProgramChange); ok {
