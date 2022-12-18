@@ -85,6 +85,32 @@ func TestControllerMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestControllerUnmarshalBinary(t *testing.T) {
+	expected := Controller{
+		event: event{
+			delta:   480,
+			tag:     lib.TagController,
+			Status:  0xb7,
+			Channel: 7,
+			bytes:   []byte{0x83, 0x60, 0xb7, 0x54, 0x1d},
+		},
+		Controller: lib.Controller{84, "Portamento Control"},
+		Value:      29,
+	}
+
+	bytes := []byte{0x83, 0x60, 0xb7, 0x54, 0x1d}
+
+	e := Controller{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error encoding %v (%v)", lib.TagController, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagController, expected, e)
+	}
+}
+
 func TestControllerUnmarshalText(t *testing.T) {
 	text := "      00 B0 65 09                           tick:0          delta:480        B7 Controller             channel:7  101/Registered Parameter Number (MSB), value:9"
 	expected := Controller{

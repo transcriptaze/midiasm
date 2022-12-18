@@ -83,11 +83,10 @@ func (e *PolyphonicPressure) UnmarshalBinary(bytes []byte) error {
 	return nil
 }
 
-func (e *PolyphonicPressure) UnmarshalText(bytes []byte) error {
+func (e *PolyphonicPressure) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)PolyphonicPressure\s+channel:([0-9]+)\s+pressure:([0-9]+)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 4 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 4 {
 		return fmt.Errorf("invalid PolyphonicPressure event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
@@ -98,13 +97,7 @@ func (e *PolyphonicPressure) UnmarshalText(bytes []byte) error {
 	} else if pressure > 127 {
 		return fmt.Errorf("invalid PolyphonicPressure pressure (%v)", pressure)
 	} else {
-		e.tick = 0
-		e.delta = delta
-		e.bytes = []byte{}
-		e.tag = lib.TagPolyphonicPressure
-		e.Status = or(0xA0, channel)
-		e.Channel = channel
-		e.Pressure = uint8(pressure)
+		*e = MakePolyphonicPressure(0, uint32(delta), lib.Channel(channel), uint8(pressure), []byte{}...)
 	}
 
 	return nil
@@ -141,13 +134,7 @@ func (e *PolyphonicPressure) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagPolyphonicPressure) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.tag = lib.TagPolyphonicPressure
-		e.Status = lib.Status(0xA0 | t.Channel)
-		e.Channel = t.Channel
-		e.Pressure = t.Pressure
+		*e = MakePolyphonicPressure(0, uint32(t.Delta), t.Channel, t.Pressure, []byte{}...)
 	}
 
 	return nil

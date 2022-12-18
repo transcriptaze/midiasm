@@ -47,6 +47,10 @@ const (
 	TypeNoteOff            MidiEventType = 0x80
 	TypeNoteOn             MidiEventType = 0x90
 	TypePolyphonicPressure MidiEventType = 0xa0
+	TypeController         MidiEventType = 0xb0
+	TypeProgramChange      MidiEventType = 0xc0
+	TypeChannelPressure    MidiEventType = 0xd0
+	TypePitchBend          MidiEventType = 0xe0
 )
 
 func (t MidiEventType) String() string {
