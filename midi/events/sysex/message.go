@@ -91,6 +91,32 @@ func (e SysExMessage) MarshalBinary() ([]byte, error) {
 	}
 }
 
+func (e *SysExMessage) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypeSysExMessage.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSysExMessage, remaining[0])
+	} else if data, err := vlf(remaining[1:]); err != nil {
+		return err
+	} else {
+		id := data[0:1]
+		manufacturer := lib.LookupManufacturer(id)
+		d := data[1:]
+
+		if d[len(d)-1] != 0xf7 {
+			// ctx.Casio = true
+			*e = MakeSysExMessage(0, uint32(delta), manufacturer, d, bytes...)
+		} else {
+			*e = MakeSysExSingleMessage(0, uint32(delta), manufacturer, d[:len(d)-1], bytes...)
+		}
+
+	}
+
+	return nil
+}
+
 func (s *SysExMessage) UnmarshalText(bytes []byte) error {
 	s.tick = 0
 	s.delta = 0

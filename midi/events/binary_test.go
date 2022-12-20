@@ -6,6 +6,7 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -36,6 +37,8 @@ var bytes = map[lib.Tag][]byte{
 	lib.TagProgramChange:      []byte{0x83, 0x60, 0xc7, 0x19},
 	lib.TagChannelPressure:    []byte{0x83, 0x60, 0xd7, 0x64},
 	lib.TagPitchBend:          []byte{0x83, 0x60, 0xe7, 0x00, 0x08},
+
+	lib.TagSysExMessage: []byte{0x83, 0x60, 0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -203,6 +206,16 @@ func TestEventUnmarshalBinary(t *testing.T) {
 			bytes: bytes[lib.TagPitchBend],
 			expected: Event{
 				Event: midievent.MakePitchBend(0, 480, 7, 8, bytes[lib.TagPitchBend]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagSysExMessage],
+			expected: Event{
+				Event: sysex.MakeSysExMessage(0, 480, lib.Manufacturer{
+					ID:     []byte{0x7e},
+					Region: "Special Purpose",
+					Name:   "Non-RealTime Extensions",
+				}, lib.Hex{0x00, 0x09, 0x01}, bytes[lib.TagSysExMessage]...),
 			},
 		},
 	}

@@ -159,16 +159,16 @@ func vlq(bytes []byte) (uint32, []byte, error) {
 	return 0, nil, fmt.Errorf("Invalid event 'delta'")
 }
 
-func delta(bytes []byte) (lib.Delta, []byte, error) {
-	v, remaining, err := vlq(bytes)
-
-	return lib.Delta(v), remaining, err
-}
-
 func vlf(bytes []byte) ([]byte, error) {
 	if N, remaining, err := vlq(bytes); err != nil {
 		return nil, err
 	} else {
 		return remaining[:N], nil
 	}
+}
+
+func delta(bytes []byte) (lib.Delta, []byte, error) {
+	v, remaining, err := vlq(bytes)
+
+	return lib.Delta(v), remaining, err
 }

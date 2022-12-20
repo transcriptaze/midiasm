@@ -6,8 +6,8 @@ import (
 
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 	"github.com/transcriptaze/midiasm/midi/lib"
-	// "github.com/transcriptaze/midiasm/midi/events/sysex"
 )
 
 func (e *Event) UnmarshalBinary(bytes []byte) error {
@@ -94,8 +94,8 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case equals(status, lib.TypePitchBend):
 			return unmarshalBinary[midievent.PitchBend](e, bytes)
 
-		// case "SysExMessage":
-		//     return unmarshalJSON[sysex.SysExMessage](e, t.Event)
+		case equals(status, lib.TypeSysExMessage):
+			return unmarshalBinary[sysex.SysExMessage](e, bytes)
 
 		// case "SysExContinuation":
 		//     return unmarshalJSON[sysex.SysExContinuationMessage](e, t.Event)

@@ -5,7 +5,7 @@ import (
 )
 
 type TEventType interface {
-	MetaEventType | MidiEventType
+	MetaEventType | MidiEventType | SysExEventType
 
 	Equals(byte) bool
 }
@@ -58,5 +58,19 @@ func (t MidiEventType) String() string {
 }
 
 func (t MidiEventType) Equals(b byte) bool {
+	return (b & 0xf0) == byte(t)
+}
+
+type SysExEventType byte
+
+const (
+	TypeSysExMessage SysExEventType = 0xf0
+)
+
+func (t SysExEventType) String() string {
+	return fmt.Sprintf("%02X", byte(t))
+}
+
+func (t SysExEventType) Equals(b byte) bool {
 	return (b & 0xf0) == byte(t)
 }
