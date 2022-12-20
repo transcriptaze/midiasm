@@ -44,7 +44,10 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 - [ ] TSV
-      - [ ] fixed width output
+      - [x] Decode
+      - [ ] Fixed width output for stdout
+      - [ ] Unit tests
+      - [ ] Encode
 
 ### Assembler
 

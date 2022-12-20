@@ -12,6 +12,7 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events"
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
+	"github.com/transcriptaze/midiasm/midi/events/sysex"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -312,6 +313,16 @@ func fields(v events.IEvent) []string {
 	}
 
 	// ... SysEx events
+	if e, ok := v.(sysex.SysExMessage); ok {
+		details = fmt.Sprintf("%v|%v|%v, %v", e.Manufacturer.ID, e.Manufacturer.Region, e.Manufacturer.Name, e.Data)
+	}
 
+	if e, ok := v.(sysex.SysExContinuationMessage); ok {
+		details = fmt.Sprintf("%v", e.Data)
+	}
+
+	if e, ok := v.(sysex.SysExEscapeMessage); ok {
+		details = fmt.Sprintf("%v", e.Data)
+	}
 	return []string{tick, delta, tag, channel, details}
 }
