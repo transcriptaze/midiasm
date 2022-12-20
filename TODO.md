@@ -3,6 +3,7 @@
 - [ ] Optimise parsing
       - [x] Rework event factory lists as generic functions
             - [ ] MarshalBinary
+                  - [ ] context ???
             - [ ] Validate
                   - missing/wrong EndOfTrack
             - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
@@ -43,9 +44,6 @@
 - (?) https://openziti.io/golang-aha-moments-generics
 
 ### Assembler
-
-- [x] Assemble MTrk
-      - [x] MThd format field
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
