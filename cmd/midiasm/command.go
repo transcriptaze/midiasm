@@ -15,7 +15,7 @@ import (
 
 type Command interface {
 	Flagset() *flag.FlagSet
-	Execute() error
+	Execute(flagset *flag.FlagSet) error
 	Help()
 
 	MiddleC() lib.MiddleC
@@ -30,7 +30,6 @@ type command struct {
 	c4      bool
 	verbose bool
 	debug   bool
-	flags   *flag.FlagSet
 }
 
 func (c command) config() string {

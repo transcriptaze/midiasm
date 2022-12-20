@@ -12,19 +12,15 @@ type Help struct {
 var HELP = Help{}
 
 func (h *Help) Flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("help", flag.ExitOnError)
-
-	h.flags = flagset
-
-	return flagset
+	return flag.NewFlagSet("help", flag.ExitOnError)
 }
 
 func (h Help) Help() {
 }
 
-func (h Help) Execute() error {
+func (h Help) Execute(flagset *flag.FlagSet) error {
 	for _, c := range cli {
-		if c.cmd == h.flags.Arg(0) {
+		if c.cmd == flagset.Arg(0) {
 			c.command.Help()
 			return nil
 		}
