@@ -115,6 +115,35 @@ func TestSysExMessageMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestSysExMessageUnmarshalBinary(t *testing.T) {
+	expected := SysExMessage{
+		event: event{
+			delta:  480,
+			tag:    lib.TagSysExMessage,
+			Status: 0xf0,
+			bytes:  []byte{0x83, 0x60, 0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01},
+		},
+		Manufacturer: lib.Manufacturer{
+			ID:     []byte{0x7e},
+			Region: "Special Purpose",
+			Name:   "Non-RealTime Extensions",
+		},
+		Data: lib.Hex{0x00, 0x09, 0x01},
+	}
+
+	bytes := []byte{0x83, 0x60, 0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01}
+
+	e := SysExMessage{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error unencoding %v (%v)", lib.TagSysExMessage, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagSysExMessage, expected, e)
+	}
+}
+
 func TestSysExSingleMessageMarshalBinary(t *testing.T) {
 	evt := SysExMessage{
 		event: event{
