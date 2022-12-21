@@ -13,7 +13,6 @@ type Transpose struct {
 	command
 	out       string
 	semitones int
-	flags     *flag.FlagSet
 }
 
 var TRANSPOSE = Transpose{
@@ -29,8 +28,6 @@ func (t *Transpose) Flagset() *flag.FlagSet {
 
 	flagset.StringVar(&t.out, "out", "", "Output file path")
 	flagset.IntVar(&t.semitones, "semitones", 0, "Number of semitones to transpose notes (+ve is up, -ve is down")
-
-	t.flags = flagset
 
 	return flagset
 }
@@ -56,8 +53,8 @@ func (t Transpose) Help() {
 	fmt.Println()
 }
 
-func (t Transpose) Execute() error {
-	filename := t.flags.Arg(0)
+func (t Transpose) Execute(flagset *flag.FlagSet) error {
+	filename := flagset.Arg(0)
 
 	smf, err := t.decode(filename)
 	if err != nil {

@@ -13,12 +13,12 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
+	Execute(flagset *flag.FlagSet) error
 type command struct {
 	conf    string
 	c4      bool
 	verbose bool
 	debug   bool
-	flags   *flag.FlagSet
 }
 
 func (c command) Config() string {

@@ -29,8 +29,6 @@ func (a *Assemble) Flagset() *flag.FlagSet {
 
 	flagset.StringVar(&a.out, "out", "", "Output file path")
 
-	a.flags = flagset
-
 	return flagset
 }
 
@@ -54,8 +52,8 @@ func (a Assemble) Help() {
 	fmt.Println()
 }
 
-func (a Assemble) Execute() error {
-	filename := a.flags.Arg(0)
+func (a Assemble) Execute(flagset *flag.FlagSet) error {
+	filename := flagset.Arg(0)
 
 	var r io.Reader
 	if b, err := os.ReadFile(filename); err != nil {

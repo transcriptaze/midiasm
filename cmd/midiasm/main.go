@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"os"
@@ -81,7 +82,7 @@ func main() {
 	})
 
 	// ... parse command line
-	cmd, err := parse()
+	cmd, flagset, err := parse()
 	if err != nil {
 		fmt.Printf("ERROR: unable to parse command line (%v)\n", err)
 		return
@@ -118,7 +119,7 @@ func main() {
 	context.SetMiddleC(cmd.MiddleC())
 
 	// ... process
-	if err := cmd.Execute(); err != nil {
+	if err := cmd.Execute(flagset); err != nil {
 		fmt.Println()
 		fmt.Printf("   *** ERROR: %v\n", err)
 		fmt.Println()
@@ -127,16 +128,16 @@ func main() {
 	}
 }
 
-func parse() (commands.Command, error) {
+func parse() (Command, *flag.FlagSet, error) {
 	if len(os.Args) > 1 {
 		for _, c := range cli {
 			if c.cmd == os.Args[1] {
 				cmd := c.command
 				flagset := cmd.Flagset()
 				if err := flagset.Parse(os.Args[2:]); err != nil {
-					return cmd, err
+					return cmd, flagset, err
 				} else {
-					return cmd, nil
+					return cmd, flagset, nil
 				}
 			}
 		}
@@ -145,8 +146,8 @@ func parse() (commands.Command, error) {
 	cmd := &DISASSEMBLE
 	flagset := cmd.Flagset()
 	if err := flagset.Parse(os.Args[1:]); err != nil {
-		return cmd, err
+		return cmd, flagset, err
 	}
 
-	return cmd, nil
+	return cmd, flagset, nil
 }

@@ -33,8 +33,6 @@ func (d *Disassemble) Flagset() *flag.FlagSet {
 	flagset.BoolVar(&d.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&d.templates, "templates", "", "Loads the formatting templates from a file")
 
-	d.flags = flagset
-
 	return flagset
 }
 
@@ -59,8 +57,8 @@ func (d Disassemble) Help() {
 	fmt.Println()
 }
 
-func (p Disassemble) Execute() error {
-	filename := p.flags.Arg(0)
+func (p Disassemble) Execute(flagset *flag.FlagSet) error {
+	filename := flagset.Arg(0)
 
 	smf, err := p.decode(filename)
 	if err != nil {

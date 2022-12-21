@@ -64,7 +64,8 @@ func (t MidiEventType) Equals(b byte) bool {
 type SysExEventType byte
 
 const (
-	TypeSysExMessage SysExEventType = 0xf0
+	TypeSysExMessage             SysExEventType = 0xf0
+	TypeSysExContinuationMessage SysExEventType = 0xf7
 )
 
 func (t SysExEventType) String() string {
@@ -72,5 +73,5 @@ func (t SysExEventType) String() string {
 }
 
 func (t SysExEventType) Equals(b byte) bool {
-	return (b & 0xf0) == byte(t)
+	return b == byte(t)
 }

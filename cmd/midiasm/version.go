@@ -18,7 +18,7 @@ func (v *Version) Flagset() *flag.FlagSet {
 func (v Version) Help() {
 }
 
-func (v Version) Execute() error {
+func (v Version) Execute(flagset *flag.FlagSet) error {
 	fmt.Printf("midiasm %v\n", version)
 
 	return nil

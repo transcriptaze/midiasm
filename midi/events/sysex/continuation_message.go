@@ -83,6 +83,32 @@ func (s SysExContinuationMessage) MarshalBinary() ([]byte, error) {
 	}
 }
 
+func (e *SysExContinuationMessage) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypeSysExContinuationMessage.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSysExContinuation, remaining[0])
+	} else if data, err := vlf(remaining[1:]); err != nil {
+		return err
+	} else {
+		d := data
+		if len(data) > 0 {
+			terminator := data[len(d)-1]
+			if terminator == 0xf7 {
+				d = data[:len(d)-1]
+				// ctx.Casio = false
+			}
+		}
+
+		*e = MakeSysExContinuationMessage(0, uint32(delta), d, bytes...)
+
+	}
+
+	return nil
+}
+
 func (s *SysExContinuationMessage) UnmarshalText(bytes []byte) error {
 	s.tick = 0
 	s.delta = 0

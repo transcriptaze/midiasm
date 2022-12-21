@@ -38,7 +38,8 @@ var bytes = map[lib.Tag][]byte{
 	lib.TagChannelPressure:    []byte{0x83, 0x60, 0xd7, 0x64},
 	lib.TagPitchBend:          []byte{0x83, 0x60, 0xe7, 0x00, 0x08},
 
-	lib.TagSysExMessage: []byte{0x83, 0x60, 0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01},
+	lib.TagSysExMessage:      []byte{0x83, 0x60, 0xf0, 0x04, 0x7e, 0x00, 0x09, 0x01},
+	lib.TagSysExContinuation: []byte{0x83, 0x60, 0xf7, 0x04, 0x7e, 0x00, 0x09, 0x01},
 }
 
 func TestEventUnmarshalBinary(t *testing.T) {
@@ -216,6 +217,12 @@ func TestEventUnmarshalBinary(t *testing.T) {
 					Region: "Special Purpose",
 					Name:   "Non-RealTime Extensions",
 				}, lib.Hex{0x00, 0x09, 0x01}, bytes[lib.TagSysExMessage]...),
+			},
+		},
+		{
+			bytes: bytes[lib.TagSysExContinuation],
+			expected: Event{
+				Event: sysex.MakeSysExContinuationMessage(0, 480, lib.Hex{0x7e, 0x00, 0x09, 0x01}, bytes[lib.TagSysExContinuation]...),
 			},
 		},
 	}
