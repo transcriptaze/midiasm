@@ -13,7 +13,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
-	Execute(flagset *flag.FlagSet) error
 type command struct {
 	conf    string
 	c4      bool

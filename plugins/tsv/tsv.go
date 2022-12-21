@@ -22,20 +22,12 @@ type tsv struct {
 	c4      bool
 	verbose bool
 	debug   bool
-	flagset *flag.FlagSet
 }
 
-var TSV = tsv{}
-
-func init() {
-	flagset := flag.NewFlagSet("tsv", flag.ExitOnError)
-
-	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
-	flagset.BoolVar(&TSV.c4, "C4", TSV.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
-	flagset.BoolVar(&TSV.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&TSV.debug, "debug", false, "Enable debugging information")
-
-	TSV.flagset = flagset
+var TSV = tsv{
+	c4:      false,
+	verbose: false,
+	debug:   false,
 }
 
 func (t tsv) GetCommand() (string, commands.Command) {
@@ -43,7 +35,14 @@ func (t tsv) GetCommand() (string, commands.Command) {
 }
 
 func (t tsv) Flagset() *flag.FlagSet {
-	return t.flagset
+	flagset := flag.NewFlagSet("tsv", flag.ExitOnError)
+
+	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
+	flagset.BoolVar(&TSV.c4, "C4", TSV.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
+	flagset.BoolVar(&TSV.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&TSV.debug, "debug", false, "Enable debugging information")
+
+	return flagset
 }
 
 func (t tsv) Help() {
@@ -87,8 +86,8 @@ func (t tsv) Verbose() bool {
 	return t.verbose
 }
 
-func (t tsv) Execute() error {
-	filename := t.flagset.Arg(0)
+func (t tsv) Execute(flagset *flag.FlagSet) error {
+	filename := flagset.Arg(0)
 
 	if smf, err := decode(filename); err != nil {
 		return err

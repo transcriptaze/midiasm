@@ -128,7 +128,7 @@ func main() {
 	}
 }
 
-func parse() (Command, *flag.FlagSet, error) {
+func parse() (commands.Command, *flag.FlagSet, error) {
 	if len(os.Args) > 1 {
 		for _, c := range cli {
 			if c.cmd == os.Args[1] {

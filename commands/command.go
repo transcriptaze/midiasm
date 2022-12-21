@@ -8,7 +8,7 @@ import (
 
 type Command interface {
 	Flagset() *flag.FlagSet
-	Execute() error
+	Execute(flagset *flag.FlagSet) error
 	Help()
 
 	MiddleC() lib.MiddleC
