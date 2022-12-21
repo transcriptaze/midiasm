@@ -97,8 +97,8 @@ func (e *Event) UnmarshalBinary(bytes []byte) error {
 		case equals(status, lib.TypeSysExMessage):
 			return unmarshalBinary[sysex.SysExMessage](e, bytes)
 
-		// case "SysExContinuation":
-		//     return unmarshalJSON[sysex.SysExContinuationMessage](e, t.Event)
+		case equals(status, lib.TypeSysExContinuationMessage):
+			return unmarshalBinary[sysex.SysExContinuationMessage](e, bytes)
 
 		// case "SysExEscape":
 		//     return unmarshalJSON[sysex.SysExEscapeMessage](e, t.Event)

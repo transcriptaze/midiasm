@@ -86,6 +86,30 @@ func TestSysExContinuationEndMessageMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestSysExContinuationMessageUnmarshalBinary(t *testing.T) {
+	expected := SysExContinuationMessage{
+		event: event{
+			delta:  480,
+			tag:    lib.TagSysExContinuation,
+			Status: 0xf7,
+			bytes:  []byte{0x83, 0x60, 0xf7, 0x04, 0x7e, 0x00, 0x09, 0x01},
+		},
+		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
+	}
+
+	bytes := []byte{0x83, 0x60, 0xf7, 0x04, 0x7e, 0x00, 0x09, 0x01}
+
+	e := SysExContinuationMessage{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error unencoding %v (%v)", lib.TagSysExContinuation, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagSysExContinuation, expected, e)
+	}
+}
+
 func TestSysExContinuationMessageUnmarshalText(t *testing.T) {
 	text := "   81 48 F7 06 43 12 00 43 12 00            tick:920        delta:200        F7 SysExContinuation      43 12 00 43 12 00"
 	expected := SysExContinuationMessage{
