@@ -10,23 +10,14 @@ import (
 )
 
 type Notes struct {
-	command
 	out       string
 	transpose int
 	json      bool
 }
 
-var NOTES = Notes{
-	command: command{
-		c4:      false,
-		verbose: false,
-		debug:   false,
-	},
-}
+var NOTES = Notes{}
 
-func (n *Notes) Flagset() *flag.FlagSet {
-	flagset := n.command.flagset("notes")
-
+func (n *Notes) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&n.out, "out", "", "Output file path")
 	flagset.IntVar(&n.transpose, "transpose", 0, "Transpose notes up or down")
 	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
@@ -57,7 +48,7 @@ func (n Notes) Help() {
 func (n Notes) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
-	smf, err := n.decode(filename)
+	smf, err := decode(filename)
 	if err != nil {
 		return err
 	}

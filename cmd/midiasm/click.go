@@ -10,21 +10,12 @@ import (
 )
 
 type Click struct {
-	command
 	out string
 }
 
-var CLICK = Click{
-	command: command{
-		c4:      false,
-		verbose: false,
-		debug:   false,
-	},
-}
+var CLICK = Click{}
 
-func (c *Click) Flagset() *flag.FlagSet {
-	flagset := c.command.flagset("click")
-
+func (c *Click) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&c.out, "out", "", "Output file path")
 
 	return flagset
@@ -53,7 +44,7 @@ func (c Click) Help() {
 func (c Click) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
-	smf, err := c.decode(filename)
+	smf, err := decode(filename)
 	if err != nil {
 		return err
 	}

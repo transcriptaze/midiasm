@@ -6,13 +6,12 @@ import (
 )
 
 type Help struct {
-	command
 }
 
 var HELP = Help{}
 
-func (h *Help) Flagset() *flag.FlagSet {
-	return flag.NewFlagSet("help", flag.ExitOnError)
+func (h *Help) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+	return flagset
 }
 
 func (h Help) Help() {

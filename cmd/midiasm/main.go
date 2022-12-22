@@ -24,6 +24,13 @@ var cli = []struct {
 	{"version", &VERSION},
 }
 
+var options = struct {
+	conf    string
+	c4      bool
+	verbose bool
+	debug   bool
+}{}
+
 const version = "v0.1.0"
 
 func main() {
@@ -35,8 +42,8 @@ func main() {
 	}
 
 	// ... set manufacturer specific options
-	if conf := cmd.config(); conf != "" {
-		f, err := os.Open(conf)
+	if options.conf != "" {
+		f, err := os.Open(options.conf)
 		if err != nil {
 			fmt.Printf("ERROR: %v\n", err)
 			return
@@ -55,14 +62,17 @@ func main() {
 	}
 
 	// ... set global stuff
-
-	if cmd.Debug() {
+	if options.debug {
 		log.SetLogLevel(log.Debug)
-	} else if cmd.Verbose() {
+	} else if options.verbose {
 		log.SetLogLevel(log.Info)
 	}
 
-	context.SetMiddleC(cmd.MiddleC())
+	if options.c4 {
+		context.SetMiddleC(lib.C4)
+	} else {
+		context.SetMiddleC(lib.C3)
+	}
 
 	// ... process
 	if err := cmd.Execute(flagset); err != nil {
@@ -75,11 +85,17 @@ func main() {
 }
 
 func parse() (Command, *flag.FlagSet, error) {
+	flagset := flag.NewFlagSet("midiasm", flag.ExitOnError)
+
+	flagset.BoolVar(&options.c4, "C4", options.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
+	flagset.BoolVar(&options.verbose, "verbose", false, "Enable progress information")
+	flagset.BoolVar(&options.debug, "debug", false, "Enable debugging information")
+
 	if len(os.Args) > 1 {
 		for _, c := range cli {
 			if c.cmd == os.Args[1] {
 				cmd := c.command
-				flagset := cmd.Flagset()
+				flagset = cmd.Flagset(flagset)
 				if err := flagset.Parse(os.Args[2:]); err != nil {
 					return cmd, flagset, err
 				} else {
@@ -90,7 +106,7 @@ func parse() (Command, *flag.FlagSet, error) {
 	}
 
 	cmd := &DISASSEMBLE
-	flagset := cmd.Flagset()
+	flagset = cmd.Flagset(flagset)
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, flagset, err
 	}
