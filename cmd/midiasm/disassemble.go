@@ -12,23 +12,14 @@ import (
 )
 
 type Disassemble struct {
-	command
 	out       string
 	split     bool
 	templates string
 }
 
-var DISASSEMBLE = Disassemble{
-	command: command{
-		c4:      false,
-		verbose: false,
-		debug:   false,
-	},
-}
+var DISASSEMBLE = Disassemble{}
 
-func (d *Disassemble) Flagset() *flag.FlagSet {
-	flagset := d.command.flagset("disassemble")
-
+func (d *Disassemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&d.out, "out", "", "Output file path (or directory for split files)")
 	flagset.BoolVar(&d.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&d.templates, "templates", "", "Loads the formatting templates from a file")
@@ -60,7 +51,7 @@ func (d Disassemble) Help() {
 func (p Disassemble) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
-	smf, err := p.decode(filename)
+	smf, err := decode(filename)
 	if err != nil {
 		return err
 	}

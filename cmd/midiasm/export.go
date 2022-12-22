@@ -10,21 +10,12 @@ import (
 )
 
 type Export struct {
-	command
 	out string
 }
 
-var EXPORT = Export{
-	command: command{
-		c4:      false,
-		verbose: false,
-		debug:   false,
-	},
-}
+var EXPORT = Export{}
 
-func (x *Export) Flagset() *flag.FlagSet {
-	flagset := x.command.flagset("export")
-
+func (x *Export) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&x.out, "out", "", "Output file path (or directory for split files)")
 
 	return flagset
@@ -54,7 +45,7 @@ func (x Export) Help() {
 func (x Export) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
-	smf, err := x.decode(filename)
+	smf, err := decode(filename)
 	if err != nil {
 		return err
 	}

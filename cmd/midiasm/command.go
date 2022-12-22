@@ -10,50 +10,18 @@ import (
 
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
-type command struct {
-	conf    string
-	c4      bool
-	verbose bool
-	debug   bool
+type Command interface {
+	Flagset(*flag.FlagSet) *flag.FlagSet
+	Execute(*flag.FlagSet) error
+	Help()
 }
 
-func (c command) Config() string {
-	return c.conf
-}
-
-func (c command) MiddleC() lib.MiddleC {
-	if c.c4 {
-		return lib.C4
-	}
-
-	return lib.C3
-}
-
-func (c command) Debug() bool {
-	return c.debug
-}
-
-func (c command) Verbose() bool {
-	return c.verbose
-}
-
-func (c *command) flagset(name string) *flag.FlagSet {
-	flagset := flag.NewFlagSet(name, flag.ExitOnError)
-
-	flagset.BoolVar(&c.c4, "C4", c.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
-	flagset.BoolVar(&c.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&c.debug, "debug", false, "Enable debugging information")
-
-	return flagset
-}
-
-func (c *command) decode(filename string) (*midi.SMF, error) {
+func decode(filename string) (*midi.SMF, error) {
 	var r io.Reader
 
-	if b, err := c.read(filename); err != nil {
+	if b, err := read(filename); err != nil {
 		return nil, err
 	} else {
 		r = bytes.NewReader(b)
@@ -70,7 +38,7 @@ func (c *command) decode(filename string) (*midi.SMF, error) {
 	}
 }
 
-func (c *command) read(filename string) ([]byte, error) {
+func read(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err

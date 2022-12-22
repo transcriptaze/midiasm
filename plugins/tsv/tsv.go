@@ -13,34 +13,20 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/events/sysex"
-	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 type tsv struct {
-	out     string
-	conf    string
-	c4      bool
-	verbose bool
-	debug   bool
+	out string
 }
 
-var TSV = tsv{
-	c4:      false,
-	verbose: false,
-	debug:   false,
-}
+var TSV = tsv{}
 
 func (t tsv) GetCommand() (string, commands.Command) {
 	return "tsv", TSV
 }
 
-func (t tsv) Flagset() *flag.FlagSet {
-	flagset := flag.NewFlagSet("tsv", flag.ExitOnError)
-
+func (t tsv) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
-	flagset.BoolVar(&TSV.c4, "C4", TSV.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
-	flagset.BoolVar(&TSV.verbose, "verbose", false, "Enable progress information")
-	flagset.BoolVar(&TSV.debug, "debug", false, "Enable debugging information")
 
 	return flagset
 }
@@ -64,26 +50,6 @@ func (t tsv) Help() {
 	fmt.Println()
 	fmt.Println("      midiasm tsv --debug --verbose --out one-time.tsv one-time.mid")
 	fmt.Println()
-}
-
-func (t tsv) MiddleC() lib.MiddleC {
-	if t.c4 {
-		return lib.C4
-	}
-
-	return lib.C3
-}
-
-func (t tsv) Config() string {
-	return t.conf
-}
-
-func (t tsv) Debug() bool {
-	return t.debug
-}
-
-func (t tsv) Verbose() bool {
-	return t.verbose
 }
 
 func (t tsv) Execute(flagset *flag.FlagSet) error {

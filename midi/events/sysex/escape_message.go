@@ -58,25 +58,33 @@ func (s SysExEscapeMessage) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func (s *SysExEscapeMessage) UnmarshalText(bytes []byte) error {
-	s.tick = 0
-	s.delta = 0
-	s.bytes = []byte{}
-	s.tag = lib.TagSysExEscape
-	s.Status = 0xF7
+func (e *SysExEscapeMessage) UnmarshalBinary(bytes []byte) error {
+	if delta, remaining, err := delta(bytes); err != nil {
+		return err
+	} else if len(remaining) < 2 {
+		return fmt.Errorf("Invalid event (%v)", remaining)
+	} else if !lib.TypeSysExEscapeMessage.Equals(remaining[0]) {
+		return fmt.Errorf("Invalid %v event type (%02X)", lib.TagSysExEscape, remaining[0])
+	} else if data, err := vlf(remaining[1:]); err != nil {
+		return err
+	} else {
+		*e = MakeSysExEscapeMessage(0, uint32(delta), data, bytes...)
+	}
 
+	return nil
+}
+
+func (e *SysExEscapeMessage) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SysExEscape\s+(.*)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid SysExEscape event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if data, err := lib.ParseHex(match[2]); err != nil {
 		return err
 	} else {
-		s.delta = delta
-		s.Data = data
+		*e = MakeSysExEscapeMessage(0, uint32(delta), data, []byte{}...)
 	}
 
 	return nil
@@ -110,12 +118,7 @@ func (e *SysExEscapeMessage) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagSysExEscape) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.tag = lib.TagSysExEscape
-		e.Status = 0xF7
-		e.Data = t.Data
+		*e = MakeSysExEscapeMessage(0, uint32(t.Delta), t.Data, []byte{}...)
 	}
 
 	return nil

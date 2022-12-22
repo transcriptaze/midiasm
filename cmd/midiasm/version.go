@@ -6,13 +6,12 @@ import (
 )
 
 type Version struct {
-	command
 }
 
 var VERSION = Version{}
 
-func (v *Version) Flagset() *flag.FlagSet {
-	return flag.NewFlagSet("version", flag.ExitOnError)
+func (v *Version) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+	return flagset
 }
 
 func (v Version) Help() {

@@ -12,21 +12,12 @@ import (
 )
 
 type Assemble struct {
-	command
 	out string
 }
 
-var ASSEMBLE = Assemble{
-	command: command{
-		c4:      false,
-		verbose: false,
-		debug:   false,
-	},
-}
+var ASSEMBLE = Assemble{}
 
-func (a *Assemble) Flagset() *flag.FlagSet {
-	flagset := a.command.flagset("assemble")
-
+func (a *Assemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&a.out, "out", "", "Output file path")
 
 	return flagset

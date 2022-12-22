@@ -165,7 +165,7 @@ func TestSysExContinuationNameUnmarshalJSON(t *testing.T) {
 			Status: 0xf7,
 		},
 		Data: lib.Hex{0x7e, 0x00, 0x09, 0x01},
-		End:  true,
+		End:  false,
 	}
 
 	e := SysExContinuationMessage{}
