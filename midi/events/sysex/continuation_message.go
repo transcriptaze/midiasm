@@ -103,31 +103,22 @@ func (e *SysExContinuationMessage) UnmarshalBinary(bytes []byte) error {
 		}
 
 		*e = MakeSysExContinuationMessage(0, uint32(delta), d, bytes...)
-
 	}
 
 	return nil
 }
 
-func (s *SysExContinuationMessage) UnmarshalText(bytes []byte) error {
-	s.tick = 0
-	s.delta = 0
-	s.bytes = []byte{}
-	s.tag = lib.TagSysExContinuation
-	s.Status = 0xf7
-
+func (e *SysExContinuationMessage) UnmarshalText(text []byte) error {
 	re := regexp.MustCompile(`(?i)delta:([0-9]+)(?:.*?)SysExContinuation\s+(.*)`)
-	text := string(bytes)
 
-	if match := re.FindStringSubmatch(text); match == nil || len(match) < 3 {
+	if match := re.FindStringSubmatch(string(text)); match == nil || len(match) < 3 {
 		return fmt.Errorf("invalid SysExContinuation event (%v)", text)
 	} else if delta, err := lib.ParseDelta(match[1]); err != nil {
 		return err
 	} else if data, err := lib.ParseHex(match[2]); err != nil {
 		return err
 	} else {
-		s.delta = delta
-		s.Data = data
+		*e = MakeSysExContinuationMessage(0, uint32(delta), data, []byte{}...)
 	}
 
 	return nil
@@ -164,13 +155,7 @@ func (e *SysExContinuationMessage) UnmarshalJSON(bytes []byte) error {
 	} else if !equal(t.Tag, lib.TagSysExContinuation) {
 		return fmt.Errorf("invalid %v event (%v)", e.tag, string(bytes))
 	} else {
-		e.tick = 0
-		e.delta = t.Delta
-		e.bytes = []byte{}
-		e.tag = lib.TagSysExContinuation
-		e.Status = 0xF7
-		e.Data = t.Data
-		e.End = t.End
+		*e = MakeSysExContinuationMessage(0, uint32(t.Delta), t.Data, []byte{}...)
 	}
 
 	return nil

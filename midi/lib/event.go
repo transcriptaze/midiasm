@@ -66,6 +66,7 @@ type SysExEventType byte
 const (
 	TypeSysExMessage             SysExEventType = 0xf0
 	TypeSysExContinuationMessage SysExEventType = 0xf7
+	TypeSysExEscapeMessage       SysExEventType = 0xf7
 )
 
 func (t SysExEventType) String() string {

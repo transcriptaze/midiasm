@@ -56,6 +56,30 @@ func TestSysExEscapeMessageMarshalBinary(t *testing.T) {
 	}
 }
 
+func TestSysExEscapeMessageUnmarshalBinary(t *testing.T) {
+	expected := SysExEscapeMessage{
+		event: event{
+			delta:  480,
+			tag:    lib.TagSysExEscape,
+			Status: 0xf7,
+			bytes:  []byte{0x83, 0x60, 0xf7, 0x02, 0xf3, 0x01},
+		},
+		Data: lib.Hex{0xf3, 0x01},
+	}
+
+	bytes := []byte{0x83, 0x60, 0xf7, 0x02, 0xf3, 0x01}
+
+	e := SysExEscapeMessage{}
+
+	if err := e.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("error unencoding %v (%v)", lib.TagSysExEscape, err)
+	}
+
+	if !reflect.DeepEqual(e, expected) {
+		t.Errorf("incorrectly unmarshalled %v\n   expected:%+v\n   got:     %+v", lib.TagSysExEscape, expected, e)
+	}
+}
+
 func TestSysExEscapeMessageUnmarshalText(t *testing.T) {
 	text := "      00 F7 02 F3 01                        tick:1020       delta:480        F7 SysExEscape            F3 01"
 	expected := SysExEscapeMessage{
