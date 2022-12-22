@@ -4,7 +4,9 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/encoding/midi"
@@ -140,7 +142,51 @@ func export(smf *midi.SMF) error {
 	}
 
 	// ... export as TSV
-	w := csv.NewWriter(os.Stdout)
+
+	return writeSDF(header, records, os.Stdout)
+	// return writeTSV(header, records, os.Stdout)
+}
+
+func writeSDF(header []string, records [][]string, w io.Writer) error {
+	widths := make([]int, len(header))
+
+	for i, h := range header {
+		widths[i] = len(h)
+	}
+
+	for _, record := range records {
+		for i, f := range record {
+			if len(f) > widths[i] {
+				widths[i] = len(f)
+			}
+		}
+	}
+
+	formats := make([]string, len(widths))
+	for i, w := range widths {
+		formats[i] = fmt.Sprintf("%%-%vv", w)
+	}
+
+	row := []string{}
+	for i, h := range header {
+		row = append(row, fmt.Sprintf(formats[i], h))
+	}
+
+	fmt.Fprintf(w, "%v\n", strings.Join(row, "|"))
+
+	for _, record := range records {
+		row := []string{}
+		for i, f := range record {
+			row = append(row, fmt.Sprintf(formats[i], f))
+		}
+		fmt.Fprintf(w, "%v\n", strings.Join(row, "|"))
+	}
+
+	return nil
+}
+
+func writeTSV(header []string, records [][]string, out io.Writer) error {
+	w := csv.NewWriter(out)
 	w.Comma = '\t'
 
 	if err := w.Write(header); err != nil {

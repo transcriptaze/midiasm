@@ -47,6 +47,8 @@
 - [ ] TSV
       - [x] Decode
       - [ ] Fixed width output for stdout
+            - Pad missing event rows
+            - (OR) preallocate a grid and fill that in
       - [ ] Unit tests
       - [ ] Encode
 
