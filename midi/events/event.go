@@ -3,6 +3,7 @@ package events
 import (
 	"fmt"
 	"io"
+	"reflect"
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi/events/meta"
@@ -63,14 +64,13 @@ func (e Event) Bytes() lib.Hex {
 	panic(fmt.Sprintf("Invalid event (%v) - missing 'bytes'", e))
 }
 
-func IsEndOfTrack(e *Event) bool {
-	if _, ok := e.Event.(metaevent.EndOfTrack); ok {
-		return true
-	} else if _, ok := e.Event.(*metaevent.EndOfTrack); ok {
-		return true
-	}
+func Is[E TEvent](e Event) bool {
+	p := new(E)
 
-	return false
+	u := reflect.TypeOf(*p)
+	v := reflect.TypeOf(e.Event)
+
+	return u == v
 }
 
 func IsTrack0Event(e *Event) bool {
@@ -117,28 +117,6 @@ func Clean(e any) string {
 
 	return t
 }
-
-// type EventX[E TEvent] struct {
-// 	Event E
-// }
-//
-// func NewEventX[E TEvent](e E) *EventX[E] {
-// 	return &EventX[E]{
-// 		Event: e,
-// 	}
-// }
-//
-// func Tick[E TEvent](e E) uint64 {
-// 	return e.Tick()
-// }
-//
-// func Delta[E TEvent](e E) uint32 {
-// 	return e.Delta()
-// }
-//
-// func Bytes[E TEvent](e E) lib.Hex {
-// 	return e.Bytes()
-// }
 
 func VLF(r io.ByteReader) ([]byte, error) {
 	N, err := VLQ(r)

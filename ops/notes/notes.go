@@ -41,7 +41,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 	tempoMap := make([]*events.Event, 0)
 
 	for _, e := range smf.Tracks[0].Events {
-		if _, ok := e.Event.(metaevent.Tempo); ok {
+		if events.Is[metaevent.Tempo](*e) {
 			tempoMap = append(tempoMap, e)
 		}
 	}

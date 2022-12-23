@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/transcriptaze/midiasm/midi/events"
+	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 )
 
@@ -27,7 +28,7 @@ func (smf *SMF) Validate() []ValidationError {
 	for _, track := range smf.Tracks {
 		eot := false
 		for i, e := range track.Events {
-			if events.IsEndOfTrack(e) {
+			if events.Is[metaevent.EndOfTrack](*e) {
 				eot = true
 				if i+1 != len(track.Events) {
 					errors = append(errors, ValidationError(fmt.Errorf("Track %d: EndOfTrack @%d (%s) is not last event", track.TrackNumber, i+1, events.Clean(e))))
