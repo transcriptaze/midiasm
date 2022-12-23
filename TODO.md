@@ -28,6 +28,9 @@
 
 
 - [ ] NoteOn with 0 velocity -> NoteOff
+      - [x] Rework notes.go
+      - [ ] Unit tests
+      - [ ] --use-note-0
 
 - [ ] MIDI file grammar
       - (?) ASN.1

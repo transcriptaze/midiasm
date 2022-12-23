@@ -41,7 +41,7 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 	tempoMap := make([]*events.Event, 0)
 
 	for _, e := range smf.Tracks[0].Events {
-		if _, ok := e.Event.(*metaevent.Tempo); ok {
+		if _, ok := e.Event.(metaevent.Tempo); ok {
 			tempoMap = append(tempoMap, e)
 		}
 	}
@@ -88,14 +88,14 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			list := eventlist[tick]
 			for _, e := range list {
 				event := e.Event
-				if v, ok := event.(*metaevent.Tempo); ok {
+				if v, ok := event.(metaevent.Tempo); ok {
 					tempo = uint64(v.Tempo)
 				}
 			}
 
 			for _, e := range list {
 				event := e.Event
-				if v, ok := event.(*midievent.NoteOff); ok {
+				if v, ok := event.(midievent.NoteOff); ok {
 					debugf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
@@ -109,9 +109,10 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 				}
 			}
 
+			// Handle NoteOn with velocity 0 as a NoteOff
 			for _, e := range list {
 				event := e.Event
-				if v, ok := event.(*metaevent.KeySignature); ok {
+				if v, ok := event.(metaevent.KeySignature); ok {
 					if v.Accidentals < 0 {
 						ctx.UseFlats()
 					} else {
@@ -119,7 +120,31 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					}
 				}
 
-				if v, ok := event.(*midievent.NoteOn); ok {
+				if v, ok := event.(midievent.NoteOn); ok && v.Velocity == 0 {
+					debugf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
+
+					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
+					if note := pending[key]; note == nil {
+						warnf("NOTE 0FF without preceding NOTE ON for %d:%02X", v.Channel, v.Note)
+					} else {
+						note.End = t
+						note.EndTick = tick
+						delete(pending, key)
+					}
+				}
+			}
+
+			for _, e := range list {
+				event := e.Event
+				if v, ok := event.(metaevent.KeySignature); ok {
+					if v.Accidentals < 0 {
+						ctx.UseFlats()
+					} else {
+						ctx.UseSharps()
+					}
+				}
+
+				if v, ok := event.(midievent.NoteOn); ok && v.Velocity > 0 {
 					debugf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
@@ -174,7 +199,9 @@ func print(notes []*Note, w io.Writer) error {
 	for _, n := range notes {
 		start := n.Start.Truncate(time.Millisecond)
 		end := n.End.Truncate(time.Millisecond)
-		fmt.Fprintf(w, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end)
+		duration := (n.End - n.Start).Truncate(time.Millisecond)
+
+		fmt.Fprintf(w, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%-9s  duration:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end, duration)
 	}
 
 	return nil
