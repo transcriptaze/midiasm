@@ -100,59 +100,83 @@ func validate(smf *midi.SMF) error {
 }
 
 func export(smf *midi.SMF) error {
-	// ... TSV header record
-	header := []string{}
-	for range smf.Tracks {
-		header = append(header, []string{"Tick", "Delta", "Tag", "Channel", "Details"}...)
+	// ... build table
+	header := []string{"Tick", "Delta", "Tag", "Channel", "Details"}
+	columns := 0
+	rows := 0
+	for _, t := range smf.Tracks {
+		columns += len(header)
+		if len(t.Events) > rows {
+			rows = len(t.Events)
+		}
+	}
+
+	records := make([][]string, rows+1)
+	for i := range records {
+		records[i] = make([]string, columns)
+	}
+
+	// ... header record
+	for i := range smf.Tracks {
+		offset := i * len(header)
+		for j, h := range header {
+			col := offset + j
+			records[0][col] = h
+		}
 	}
 
 	// ... build track columns
-	tracks := [][][]string{}
+	for i, t := range smf.Tracks {
+		offset := i * len(header)
+		for j, e := range t.Events {
+			row := j + 1
+			list := fields(e.Event)
 
-	for _, t := range smf.Tracks {
-		track := [][]string{}
-		for _, e := range t.Events {
-			track = append(track, fields(e.Event))
-		}
-
-		tracks = append(tracks, track)
-	}
-
-	// ... zip tracks
-	rows := 0
-	for _, track := range tracks {
-		if len(track) > rows {
-			rows = len(track)
-		}
-	}
-
-	records := make([][]string, rows)
-
-	for i, _ := range records {
-		record := []string{}
-		for _, track := range tracks {
-			if i < len(track) {
-				record = append(record, track[i]...)
-			} else {
-				record = append(record, []string{"", "", ""}...)
+			for k, f := range list {
+				col := offset + k
+				records[row][col] = f
 			}
 		}
-
-		records[i] = record
 	}
+
+	// // ... zip tracks
+	// rows := 0
+	// for _, track := range tracks {
+	// 	if len(track) > rows {
+	// 		rows = len(track)
+	// 	}
+	// }
+	//
+	// records := make([][]string, rows)
+	//
+	// for i, _ := range records {
+	// 	record := []string{}
+	// 	for _, track := range tracks {
+	// 		if i < len(track) {
+	// 			record = append(record, track[i]...)
+	// 		} else {
+	// 			record = append(record, []string{"", "", ""}...)
+	// 		}
+	// 	}
+	//
+	// 	records[i] = record
+	// }
 
 	// ... export as TSV
 
-	return writeSDF(header, records, os.Stdout)
+	return writeSDF(records, os.Stdout)
 	// return writeTSV(header, records, os.Stdout)
 }
 
-func writeSDF(header []string, records [][]string, w io.Writer) error {
-	widths := make([]int, len(header))
-
-	for i, h := range header {
-		widths[i] = len(h)
+func writeSDF(records [][]string, w io.Writer) error {
+	columns := 0
+	for _, record := range records {
+		if len(record) > columns {
+			columns = len(record)
+		}
 	}
+
+	widths := make([]int, columns)
 
 	for _, record := range records {
 		for i, f := range record {
@@ -167,18 +191,12 @@ func writeSDF(header []string, records [][]string, w io.Writer) error {
 		formats[i] = fmt.Sprintf("%%-%vv", w)
 	}
 
-	row := []string{}
-	for i, h := range header {
-		row = append(row, fmt.Sprintf(formats[i], h))
-	}
-
-	fmt.Fprintf(w, "%v\n", strings.Join(row, "|"))
-
 	for _, record := range records {
 		row := []string{}
 		for i, f := range record {
 			row = append(row, fmt.Sprintf(formats[i], f))
 		}
+
 		fmt.Fprintf(w, "%v\n", strings.Join(row, "|"))
 	}
 
@@ -290,12 +308,12 @@ func fields(v events.IEvent) []string {
 	// ... MIDI events
 	if e, ok := v.(midievent.NoteOff); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v|%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
+		details = fmt.Sprintf("%v:%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
 	}
 
 	if e, ok := v.(midievent.NoteOn); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v|%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
+		details = fmt.Sprintf("%v:%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
 	}
 
 	if e, ok := v.(midievent.PolyphonicPressure); ok {
@@ -305,7 +323,7 @@ func fields(v events.IEvent) []string {
 
 	if e, ok := v.(midievent.Controller); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v|%v, %v", e.Controller.ID, e.Controller.Name, e.Value)
+		details = fmt.Sprintf("%v:%v, %v", e.Controller.ID, e.Controller.Name, e.Value)
 	}
 
 	if e, ok := v.(midievent.ProgramChange); ok {
@@ -325,7 +343,7 @@ func fields(v events.IEvent) []string {
 
 	// ... SysEx events
 	if e, ok := v.(sysex.SysExMessage); ok {
-		details = fmt.Sprintf("%v|%v|%v, %v", e.Manufacturer.ID, e.Manufacturer.Region, e.Manufacturer.Name, e.Data)
+		details = fmt.Sprintf("%v:%v:%v, %v", e.Manufacturer.ID, e.Manufacturer.Region, e.Manufacturer.Name, e.Data)
 	}
 
 	if e, ok := v.(sysex.SysExContinuationMessage); ok {

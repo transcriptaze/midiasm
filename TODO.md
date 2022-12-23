@@ -46,9 +46,9 @@
 
 - [ ] TSV
       - [x] Decode
-      - [ ] Fixed width output for stdout
-            - Pad missing event rows
-            - (OR) preallocate a grid and fill that in
+      - [x] Fixed width output for stdout
+      - [ ] TSV for file output
+      - [ ] --SDF option
       - [ ] Unit tests
       - [ ] Encode
 
