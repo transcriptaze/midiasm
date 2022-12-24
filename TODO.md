@@ -46,7 +46,7 @@
       - [ ] Unit tests
             - [x] Basic notes
       - [ ] --use-note-0
-      - [ ] Always printing debug info
+      - [x] Always printing debug info
       - [ ] debug output is weird
 ```
 debug  notes      NOTE ON  30 {30 4333 4333}  0      0.00000  0s
