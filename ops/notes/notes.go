@@ -36,9 +36,24 @@ type Note struct {
 }
 
 func (x *Notes) Execute(smf *midi.SMF) error {
+	if notes, err := extract(smf, x.Transpose); err != nil {
+		return err
+	} else {
+		if x.JSON {
+			export(notes, x.Writer)
+		} else {
+			print(notes, x.Writer)
+		}
+	}
+
+	return nil
+}
+
+func extract(smf *midi.SMF, transposition int) ([]*Note, error) {
 	ppqn := uint64(smf.MThd.Division)
 	ctx := context.NewContext()
 	tempoMap := make([]*events.Event, 0)
+	notes := make([]*Note, 0)
 
 	for _, e := range smf.Tracks[0].Events {
 		if events.Is[metaevent.Tempo](*e) {
@@ -71,7 +86,6 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 		})
 
 		pending := make(map[uint16]*Note, 0)
-		notes := make([]*Note, 0)
 
 		var tempo uint64 = 50000
 		var t time.Duration = 0
@@ -150,8 +164,8 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					note := Note{
 						Channel:       v.Channel,
-						Note:          transpose(v.Note.Value, x.Transpose),
-						FormattedNote: midievent.FormatNote(ctx, transpose(v.Note.Value, x.Transpose)),
+						Note:          transpose(v.Note.Value, transposition),
+						FormattedNote: midievent.FormatNote(ctx, transpose(v.Note.Value, transposition)),
 						Velocity:      v.Velocity,
 						Start:         t,
 						StartTick:     tick,
@@ -173,14 +187,9 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 			}
 		}
 
-		if x.JSON {
-			export(notes, x.Writer)
-		} else {
-			print(notes, x.Writer)
-		}
 	}
 
-	return nil
+	return notes, nil
 }
 
 func transpose(note uint8, transpose int) uint8 {
