@@ -1,5 +1,18 @@
 # TODO
 
+### Assembler
+
+- [ ] Assemble: text + templates
+
+### M-IDE
+- BubbleTea
+- templates
+- views (e.g. notes)
+- macros
+- snippets
+- apply(...)
+- (?) MQL
+
 - [ ] Optimise parsing
       - [x] Rework event factory lists as generic functions
             - [ ] MarshalBinary
@@ -29,7 +42,9 @@
 
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
+      - [ ] Replace Note.End with Note.Duration
       - [ ] Unit tests
+            - [x] Basic notes
       - [ ] --use-note-0
       - [ ] Always printing debug info
       - [ ] debug output is weird
@@ -45,14 +60,13 @@ debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
       - (?) Treesitter
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
-      
+      - (?) MidiQL
+
 - [ ] Fuzz parser/assembler
       - https://www.pypy.org/posts/2022/12/jit-bug-finding-smt-fuzzing.html
 
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
-
-### Assembler
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
