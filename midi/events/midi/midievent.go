@@ -31,16 +31,6 @@ type Note struct {
 	Alias string `json:"alias"`
 }
 
-var Events = map[byte]int{
-	0x80: 2,
-	0x90: 2,
-	0xA0: 1,
-	0xB0: 2,
-	0xC0: 1,
-	0xD0: 1,
-	0xE0: 2,
-}
-
 func (e event) Tick() uint64 {
 	return e.tick
 }
@@ -68,31 +58,31 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+func Parse(ctx *context.Context, tick uint64, delta uint32, status byte, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		return unmarshal[NoteOff](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[NoteOff](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0x90:
-		return unmarshal[NoteOn](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[NoteOn](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xA0:
-		return unmarshal[PolyphonicPressure](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[PolyphonicPressure](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xB0:
-		return unmarshal[Controller](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Controller](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xC0:
-		return unmarshal[ProgramChange](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[ProgramChange](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xD0:
-		return unmarshal[ChannelPressure](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[ChannelPressure](ctx, tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xE0:
-		return unmarshal[PitchBend](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[PitchBend](ctx, tick, delta, lib.Status(status), data, bytes...)
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
+	return nil, fmt.Errorf("Unrecognised MIDI event: %v", lib.Status(status))
 }
 
 // Ref. https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter

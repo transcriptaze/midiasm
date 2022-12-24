@@ -12,7 +12,6 @@ import (
 	"github.com/transcriptaze/midiasm/midi/events/meta"
 	"github.com/transcriptaze/midiasm/midi/events/midi"
 	"github.com/transcriptaze/midiasm/midi/events/sysex"
-	"github.com/transcriptaze/midiasm/midi/io"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -71,26 +70,33 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 }
 
 func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, error) {
-	rr := IO.NewReader(r)
+	rr := reader{
+		reader: r,
+		buffer: &bytes.Buffer{},
+	}
 
 	delta, err := events.VLQ(rr)
 	if err != nil {
 		return nil, err
 	}
 
-	bb, err := rr.Peek(1)
-	if err != nil {
+	var status byte
+
+	if b, err := rr.peek(); err != nil {
+		return nil, err
+	} else if b < 0x80 && ctx.RunningStatus < 0x80 {
+		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", b&0xF0)
+	} else if b < 0x80 {
+		status = byte(ctx.RunningStatus)
+	} else if status, err = rr.ReadByte(); err != nil {
 		return nil, err
 	}
-	b := bb[0]
 
 	// ... meta event
-	if b == 0xff {
+	if status == 0xff {
 		ctx.RunningStatus = 0x00
 
-		if status, err := rr.ReadByte(); err != nil {
-			return nil, err
-		} else if eventType, err := rr.ReadByte(); err != nil {
+		if eventType, err := rr.ReadByte(); err != nil {
 			return nil, err
 		} else if data, err := events.VLF(rr); err != nil {
 			return nil, err
@@ -102,12 +108,10 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	}
 
 	// ... SysEx event
-	if b == 0xf0 || b == 0xf7 {
+	if status == 0xf0 || status == 0xf7 {
 		ctx.RunningStatus = 0x00
 
-		if status, err := rr.ReadByte(); err != nil {
-			return nil, err
-		} else if data, err := events.VLF(rr); err != nil {
+		if data, err := events.VLF(rr); err != nil {
 			return nil, err
 		} else {
 			e, err := sysex.Parse(ctx, uint64(tick)+uint64(delta), delta, lib.Status(status), data, rr.Bytes()...)
@@ -117,21 +121,19 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	}
 
 	// ... MIDI event
-	if b < 0x80 && ctx.RunningStatus < 0x80 {
-		return nil, fmt.Errorf("Unrecognised MIDI event: %02X", b&0xF0)
+	var lookup = map[byte]int{
+		0x80: 2,
+		0x90: 2,
+		0xA0: 1,
+		0xB0: 2,
+		0xC0: 1,
+		0xD0: 1,
+		0xE0: 2,
 	}
 
-	status := lib.Status(b)
+	ctx.RunningStatus = lib.Status(status)
 
-	if b < 0x80 {
-		status = ctx.RunningStatus
-	} else {
-		rr.ReadByte()
-	}
-
-	ctx.RunningStatus = status
-
-	data := make([]byte, midievent.Events[byte(status&0xf0)])
+	data := make([]byte, lookup[byte(status&0xf0)])
 
 	io.ReadFull(rr, data)
 

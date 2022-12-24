@@ -1,5 +1,10 @@
 # TODO
 
+- Rework everything so that SMF & MThd & MTrk are just containers i.e. all the complication around
+  marshalling and unmarshalling happens in decoders.
+  - [x] UnmarshalBinary
+  - [ ] Rework byte reader hack
+
 ### Assembler
 
 - [ ] Assemble: text + templates
@@ -14,13 +19,11 @@
 - (?) MQL
 
 - [ ] Optimise parsing
-      - [x] Rework event factory lists as generic functions
-            - [ ] MarshalBinary
-                  - [ ] context ???
-            - [ ] Validate
-                  - missing/wrong EndOfTrack
-            - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
-                  - https://dmitrykandalov.com/coroutines-as-threads
+      - [ ] context ???
+      - [ ] Validate
+            - missing/wrong EndOfTrack
+      - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
+            - https://dmitrykandalov.com/coroutines-as-threads
       - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
