@@ -1,13 +1,29 @@
 # TODO
 
+- Rework everything so that SMF & MThd & MTrk are just containers i.e. all the complication around
+  marshalling and unmarshalling happens in decoders.
+  - [x] UnmarshalBinary
+  - [ ] Rework byte reader hack
+
+### Assembler
+
+- [ ] Assemble: text + templates
+
+### M-IDE
+- BubbleTea
+- templates
+- views (e.g. notes)
+- macros
+- snippets
+- apply(...)
+- (?) MQL
+
 - [ ] Optimise parsing
-      - [x] Rework event factory lists as generic functions
-            - [ ] MarshalBinary
-                  - [ ] context ???
-            - [ ] Validate
-                  - missing/wrong EndOfTrack
-            - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
-                  - https://dmitrykandalov.com/coroutines-as-threads
+      - [ ] context ???
+      - [ ] Validate
+            - missing/wrong EndOfTrack
+      - [ ] Only use ctx when parsing i.e. it shouldn't be a field of MTrk
+            - https://dmitrykandalov.com/coroutines-as-threads
       - [ ] Post process tick
       - [ ] NoteOn - unmarshal note and alias and throw an error if they aren't 
             blank and also don't more or less match note value
@@ -29,14 +45,13 @@
 
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
+      - [ ] Replace Note.End with Note.Duration
       - [ ] Unit tests
+            - [x] Basic notes
+            - [ ] NoteOn with velocity 0
       - [ ] --use-note-0
-      - [ ] Always printing debug info
-      - [ ] debug output is weird
-```
-debug  notes      NOTE ON  30 {30 4333 4333}  0      0.00000  0s
-debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
-```
+      - [x] Always printing debug info
+      - [x] debug output is weird
 
 - [ ] MIDI file grammar
       - (?) Treesitter
@@ -46,13 +61,13 @@ debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
       - (?) Grammar stack
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
-      
+      - (?) MidiQL
+
 - [ ] Fuzz parser/assembler
       - https://www.pypy.org/posts/2022/12/jit-bug-finding-smt-fuzzing.html
 
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
-
 - [ ] TSV
       - [x] Decode
       - [x] Fixed width output for stdout
@@ -62,7 +77,6 @@ debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
       - [ ] Unit tests
       - [ ] Encode
 
-### Assembler
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format

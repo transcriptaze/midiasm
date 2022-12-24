@@ -110,7 +110,7 @@ func extract(smf *midi.SMF, transposition int) ([]*Note, error) {
 			for _, e := range list {
 				event := e.Event
 				if v, ok := event.(midievent.NoteOff); ok {
-					debugf("NOTE OFF %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
+					debugf(*e, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					if note := pending[key]; note == nil {
@@ -135,7 +135,7 @@ func extract(smf *midi.SMF, transposition int) ([]*Note, error) {
 				}
 
 				if v, ok := event.(midievent.NoteOn); ok && v.Velocity == 0 {
-					debugf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
+					debugf(*e, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					if note := pending[key]; note == nil {
@@ -159,7 +159,7 @@ func extract(smf *midi.SMF, transposition int) ([]*Note, error) {
 				}
 
 				if v, ok := event.(midievent.NoteOn); ok && v.Velocity > 0 {
-					debugf("NOTE ON  %02X %02X  %-6d %.5f  %s", v.Channel, v.Note, tick, beat, t)
+					debugf(*e, tick, beat, t)
 
 					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
 					note := Note{
@@ -253,9 +253,21 @@ func export(notes []*Note, w io.Writer) error {
 	return nil
 }
 
-func debugf(format string, args ...any) {
-	log.Debugf(LOG_TAG, format, args...)
+func debugf(e events.Event, tick uint64, beat float64, t time.Duration) {
+	fmt := "%-8s %02X %02X %-3v %-3v %-6d %.5f  %s"
+
+	switch v := e.Event.(type) {
+	case midievent.NoteOn:
+		log.Debugf(LOG_TAG, fmt, "NOTE ON", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, tick, beat, t)
+
+	case midievent.NoteOff:
+		log.Debugf(LOG_TAG, fmt, "NOTE OFF", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, tick, beat, t)
+	}
 }
+
+// func debugf(format string, args ...any) {
+// 	log.Debugf(LOG_TAG, format, args...)
+// }
 
 func warnf(format string, args ...any) {
 	log.Warnf(LOG_TAG, format, args...)

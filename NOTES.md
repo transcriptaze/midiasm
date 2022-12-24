@@ -1,5 +1,12 @@
-## NOTES
+# NOTES
 
+## Design Notes
+
+1. Restructure so that SMF and MThd and MTrk are just containers. The marshalling, unmarshalling and 
+   processing happens elsewhere.
+   
+
+## R & D
 1. [Had it with Ableton Live](https://sound.stackexchange.com/questions/46795/had-it-with-ableton-live)
 2. [github: grimmdude/MidiWriterJS](https://github.com/grimmdude/MidiWriterJS)
 3. [stackoverflow: Converting MIDI ticks to actual playback seconds](https://stackoverflow.com/questions/2038313/converting-midi-ticks-to-actual-playback-seconds)

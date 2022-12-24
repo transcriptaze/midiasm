@@ -57,7 +57,7 @@ func Fatalf(operation string, format string, v ...interface{}) {
 }
 
 func log(l Level, operation string, msg string) {
-	if l >= logging.level {
+	if l <= logging.level {
 		syslog.Printf(logging.format, l, operation, msg)
 	}
 }
