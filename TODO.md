@@ -45,13 +45,10 @@
       - [ ] Replace Note.End with Note.Duration
       - [ ] Unit tests
             - [x] Basic notes
+            - [ ] NoteOn with velocity 0
       - [ ] --use-note-0
       - [x] Always printing debug info
-      - [ ] debug output is weird
-```
-debug  notes      NOTE ON  30 {30 4333 4333}  0      0.00000  0s
-debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
-```
+      - [x] debug output is weird
 
 - [ ] MIDI file grammar
       - (?) ASN.1
