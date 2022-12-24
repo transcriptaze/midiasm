@@ -28,6 +28,15 @@
 
 
 - [ ] NoteOn with 0 velocity -> NoteOff
+      - [x] Rework notes.go
+      - [ ] Unit tests
+      - [ ] --use-note-0
+      - [ ] Always printing debug info
+      - [ ] debug output is weird
+```
+debug  notes      NOTE ON  30 {30 4333 4333}  0      0.00000  0s
+debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
+```
 
 - [ ] MIDI file grammar
       - (?) Treesitter
