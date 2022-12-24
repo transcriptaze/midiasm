@@ -24,10 +24,10 @@ type tsv struct {
 var TSV = tsv{}
 
 func (t tsv) GetCommand() (string, commands.Command) {
-	return "tsv", TSV
+	return "tsv", &TSV
 }
 
-func (t tsv) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (t *tsv) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
 
 	return flagset
