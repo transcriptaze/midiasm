@@ -58,6 +58,7 @@ debug  notes      NOTE OFF 30 {30 4333 4333}  480    1.00000  500ms
       - [x] Fixed width output for stdout
       - [ ] TSV for file output
       - [ ] --SDF option
+      - [ ] --delimiter
       - [ ] Unit tests
       - [ ] Encode
 

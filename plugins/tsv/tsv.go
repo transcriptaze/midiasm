@@ -62,7 +62,7 @@ func (t tsv) Execute(flagset *flag.FlagSet) error {
 	} else if err := validate(smf); err != nil {
 		return err
 	} else {
-		return export(smf)
+		return export(smf, t.out)
 	}
 }
 
@@ -99,7 +99,7 @@ func validate(smf *midi.SMF) error {
 	return nil
 }
 
-func export(smf *midi.SMF) error {
+func export(smf *midi.SMF, out string) error {
 	// ... build table
 	header := []string{"Tick", "Delta", "Tag", "Channel", "Details"}
 	columns := 0
@@ -139,33 +139,17 @@ func export(smf *midi.SMF) error {
 		}
 	}
 
-	// // ... zip tracks
-	// rows := 0
-	// for _, track := range tracks {
-	// 	if len(track) > rows {
-	// 		rows = len(track)
-	// 	}
-	// }
-	//
-	// records := make([][]string, rows)
-	//
-	// for i, _ := range records {
-	// 	record := []string{}
-	// 	for _, track := range tracks {
-	// 		if i < len(track) {
-	// 			record = append(record, track[i]...)
-	// 		} else {
-	// 			record = append(record, []string{"", "", ""}...)
-	// 		}
-	// 	}
-	//
-	// 	records[i] = record
-	// }
-
 	// ... export as TSV
+	if out == "" {
+		return writeSDF(records, os.Stdout)
+	}
 
-	return writeSDF(records, os.Stdout)
-	// return writeTSV(header, records, os.Stdout)
+	if f, err := os.Create(out); err != nil {
+		return err
+	} else {
+		defer f.Close()
+		return writeTSV(header, records, f)
+	}
 }
 
 func writeSDF(records [][]string, w io.Writer) error {

@@ -121,5 +121,8 @@ transpose: build
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 
 tsv: build plugins
+	rm ./tmp/reference.tsv
 	$(CMD) tsv --debug examples/reference.mid
+	$(CMD) tsv --debug --out ./tmp/reference.tsv examples/reference.mid
+	cat ./tmp/reference.tsv
 
