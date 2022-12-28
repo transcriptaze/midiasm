@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -42,7 +41,7 @@ func MakeTimeSignature(tick uint64, delta lib.Delta, numerator, denominator, tic
 	}
 }
 
-func (e *TimeSignature) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *TimeSignature) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 4 {
 		return fmt.Errorf("Invalid TimeSignature length (%d): expected '4'", len(data))
 	}

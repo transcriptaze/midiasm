@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalSequenceNumber(t *testing.T) {
 		SequenceNumber: 23,
 	}
 
-	ctx := context.NewContext()
 	e := SequenceNumber{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{0x00, 0x17}, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte{0x00, 0x17}, []byte{0x00, 0xff, 0x00, 0x02, 0x00, 0x17}...)
 	if err != nil {
 		t.Fatalf("error encoding SequenceNumber (%v)", err)
 	}

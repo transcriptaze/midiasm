@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalMIDIChannelPrefix(t *testing.T) {
 		Channel: 13,
 	}
 
-	ctx := context.NewContext()
 	e := MIDIChannelPrefix{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{13}, []byte{0x00, 0xff, 0x20, 0x01, 0x0d}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte{13}, []byte{0x00, 0xff, 0x20, 0x01, 0x0d}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling MIDIChannelPrefix (%v)", err)
 	}

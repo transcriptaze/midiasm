@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalCopyright(t *testing.T) {
 		Copyright: "Them",
 	}
 
-	ctx := context.NewContext()
 	e := Copyright{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Them"), []byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte("Them"), []byte{0x00, 0xff, 0x02, 0x04, 0x54, 0x68, 0x65, 0x6d}...)
 	if err != nil {
 		t.Fatalf("error encoding Copyright (%v)", err)
 	}

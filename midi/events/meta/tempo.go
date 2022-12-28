@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -30,7 +29,7 @@ func MakeTempo(tick uint64, delta lib.Delta, tempo uint32, bytes ...byte) Tempo 
 	}
 }
 
-func (e *Tempo) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *Tempo) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	if len(data) != 3 {
 		return fmt.Errorf("Invalid Tempo length (%d): expected '3'", len(data))
 	}

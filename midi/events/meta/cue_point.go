@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -28,7 +27,7 @@ func MakeCuePoint(tick uint64, delta lib.Delta, cuepoint string, bytes ...byte) 
 	}
 }
 
-func (e *CuePoint) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *CuePoint) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	cuepoint := string(data)
 
 	*e = MakeCuePoint(tick, delta, cuepoint, bytes...)

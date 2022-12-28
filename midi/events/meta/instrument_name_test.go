@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalInstrumentName(t *testing.T) {
 		Name: "Didgeridoo",
 	}
 
-	ctx := context.NewContext()
 	e := InstrumentName{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Didgeridoo"), []byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte("Didgeridoo"), []byte{0x00, 0xff, 0x04, 0x0a, 0x44, 0x69, 0x64, 0x67, 0x65, 0x72, 0x69, 0x64, 0x6f, 0x6f}...)
 	if err != nil {
 		t.Fatalf("error encoding InstrumentName (%v)", err)
 	}

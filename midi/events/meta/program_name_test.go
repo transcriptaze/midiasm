@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalProgramName(t *testing.T) {
 		Name: "Escape",
 	}
 
-	ctx := context.NewContext()
 	e := ProgramName{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Escape"), []byte{0x00, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte("Escape"), []byte{0x00, 0xff, 0x08, 0x06, 0x45, 0x73, 0x63, 0x61, 0x70, 0x65}...)
 	if err != nil {
 		t.Fatalf("error encoding ProgramName (%v)", err)
 	}

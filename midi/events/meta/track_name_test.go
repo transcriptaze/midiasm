@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -24,10 +23,9 @@ func TestUnmarshalTrackName(t *testing.T) {
 		Name: "Railroad Traque",
 	}
 
-	ctx := context.NewContext()
 	e := TrackName{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("Railroad Traque"), []byte{
+	err := e.unmarshal(2400, 480, 0xff, []byte("Railroad Traque"), []byte{
 		0x00, 0xff, 0x03, 0x0f, 0x52, 0x61, 0x69, 0x6c,
 		0x72, 0x6f, 0x61, 0x64, 0x20, 0x54, 0x72, 0x61,
 		0x71, 0x75, 0x65}...)

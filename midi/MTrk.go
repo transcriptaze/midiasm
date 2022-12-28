@@ -54,6 +54,14 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 		if err == nil && e != nil {
 			tick += e.Delta()
 			eventlist = append(eventlist, e)
+
+			if k, ok := e.Event.(metaevent.KeySignature); ok {
+				if k.Accidentals < 0 {
+					chunk.Context.UseFlats()
+				} else {
+					chunk.Context.UseSharps()
+				}
+			}
 		}
 	}
 
@@ -101,7 +109,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		} else if data, err := events.VLF(rr); err != nil {
 			return nil, err
 		} else {
-			e, err := metaevent.Parse(ctx, uint64(tick)+uint64(delta), lib.Delta(delta), status, eventType, data, rr.Bytes()...)
+			e, err := metaevent.Parse(uint64(tick)+uint64(delta), lib.Delta(delta), status, eventType, data, rr.Bytes()...)
 
 			return events.NewEvent(e), err
 		}
@@ -121,7 +129,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	}
 
 	// ... MIDI event
-	var lookup = map[byte]int{
+	var length = map[byte]int{
 		0x80: 2,
 		0x90: 2,
 		0xA0: 1,
@@ -133,7 +141,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	ctx.RunningStatus = lib.Status(status)
 
-	data := make([]byte, lookup[byte(status&0xf0)])
+	data := make([]byte, length[status&0xf0])
 
 	io.ReadFull(rr, data)
 
