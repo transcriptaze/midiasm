@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -28,7 +27,7 @@ func MakeInstrumentName(tick uint64, delta lib.Delta, name string, bytes ...byte
 	}
 }
 
-func (e *InstrumentName) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *InstrumentName) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	name := string(data)
 
 	*e = MakeInstrumentName(tick, delta, name, bytes...)

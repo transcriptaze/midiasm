@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -42,9 +41,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		Key:         "C major",
 	}
 
-	ctx := context.NewContext()
-
-	event, err := Parse(ctx, 2400, 480, 0xff, 0x59, []byte{0x00, 0x00}, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}...)
+	event, err := Parse(2400, 480, 0xff, 0x59, []byte{0x00, 0x00}, []byte{0x00, 0xff, 0x59, 0x02, 0x00, 0x00}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {
@@ -55,10 +52,6 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		t.Fatalf("KeySignature event parse error - returned %T", event)
 	} else if !reflect.DeepEqual(ks, expected) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", expected, ks)
-	}
-
-	if !reflect.DeepEqual(ctx.Scale(), context.Sharps) {
-		t.Errorf("Context scale not set to 'sharps':%v", ctx)
 	}
 }
 
@@ -77,9 +70,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		Key:         "C minor",
 	}
 
-	ctx := context.NewContext()
-
-	event, err := Parse(ctx, 2400, 480, 0xff, 0x59, []byte{0xfd, 0x01}, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}...)
+	event, err := Parse(2400, 480, 0xff, 0x59, []byte{0xfd, 0x01}, []byte{0x00, 0xff, 0x59, 0x02, 0xfd, 0x01}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {
@@ -90,10 +81,6 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		t.Fatalf("KeySignature event parse error - returned %T", e)
 	} else if !reflect.DeepEqual(e, expected) {
 		t.Errorf("Invalid KeySignature event\n  expected:%#v\n  got:     %#v", expected, e)
-	}
-
-	if !reflect.DeepEqual(ctx.Scale(), context.Flats) {
-		t.Errorf("Context scale not set to 'flats':%v", ctx)
 	}
 }
 

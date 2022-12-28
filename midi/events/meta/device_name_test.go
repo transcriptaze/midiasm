@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalDeviceName(t *testing.T) {
 		Name: "TheThing",
 	}
 
-	ctx := context.NewContext()
 	e := DeviceName{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte("TheThing"), []byte{0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte("TheThing"), []byte{0x00, 0xff, 0x09, 0x08, 0x54, 0x68, 0x65, 0x54, 0x68, 0x69, 0x6e, 0x67}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling DeviceName (%v)", err)
 	}

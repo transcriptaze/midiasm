@@ -3,7 +3,6 @@ package metaevent
 import (
 	"fmt"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -29,7 +28,7 @@ type TMetaEvent interface {
 }
 
 type IMetaEvent interface {
-	unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error
+	unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -57,63 +56,63 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
-func Parse(ctx *context.Context, tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
+func Parse(tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
 	eventType := lib.MetaEventType(b & 0x7F)
 
 	switch eventType {
 	case lib.TypeSequenceNumber:
-		return unmarshal[SequenceNumber](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SequenceNumber](tick, delta, status, data, bytes...)
 
 	case lib.TypeText:
-		return unmarshal[Text](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Text](tick, delta, status, data, bytes...)
 
 	case lib.TypeCopyright:
-		return unmarshal[Copyright](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Copyright](tick, delta, status, data, bytes...)
 
 	case lib.TypeTrackName:
-		return unmarshal[TrackName](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[TrackName](tick, delta, status, data, bytes...)
 
 	case lib.TypeInstrumentName:
-		return unmarshal[InstrumentName](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[InstrumentName](tick, delta, status, data, bytes...)
 
 	case lib.TypeLyric:
-		return unmarshal[Lyric](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Lyric](tick, delta, status, data, bytes...)
 
 	case lib.TypeMarker:
-		return unmarshal[Marker](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Marker](tick, delta, status, data, bytes...)
 
 	case lib.TypeCuePoint:
-		return unmarshal[CuePoint](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[CuePoint](tick, delta, status, data, bytes...)
 
 	case lib.TypeProgramName:
-		return unmarshal[ProgramName](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[ProgramName](tick, delta, status, data, bytes...)
 
 	case lib.TypeDeviceName:
-		return unmarshal[DeviceName](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[DeviceName](tick, delta, status, data, bytes...)
 
 	case lib.TypeMIDIChannelPrefix:
-		return unmarshal[MIDIChannelPrefix](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[MIDIChannelPrefix](tick, delta, status, data, bytes...)
 
 	case lib.TypeMIDIPort:
-		return unmarshal[MIDIPort](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[MIDIPort](tick, delta, status, data, bytes...)
 
 	case lib.TypeEndOfTrack:
-		return unmarshal[EndOfTrack](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[EndOfTrack](tick, delta, status, data, bytes...)
 
 	case lib.TypeTempo:
-		return unmarshal[Tempo](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[Tempo](tick, delta, status, data, bytes...)
 
 	case lib.TypeSMPTEOffset:
-		return unmarshal[SMPTEOffset](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SMPTEOffset](tick, delta, status, data, bytes...)
 
 	case lib.TypeKeySignature:
-		return unmarshal[KeySignature](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[KeySignature](tick, delta, status, data, bytes...)
 
 	case lib.TypeTimeSignature:
-		return unmarshal[TimeSignature](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[TimeSignature](tick, delta, status, data, bytes...)
 
 	case lib.TypeSequencerSpecificEvent:
-		return unmarshal[SequencerSpecificEvent](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SequencerSpecificEvent](tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised META event: %v", eventType)
@@ -127,9 +126,9 @@ func unmarshal[
 	P interface {
 		*E
 		IMetaEvent
-	}](ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) (any, error) {
+	}](tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) (any, error) {
 	p := P(new(E))
-	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+	if err := p.unmarshal(tick, delta, status, data, bytes...); err != nil {
 		return nil, err
 	} else {
 		return *p, nil

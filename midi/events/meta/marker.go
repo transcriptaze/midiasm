@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -28,7 +27,7 @@ func MakeMarker(tick uint64, delta lib.Delta, marker string, bytes ...byte) Mark
 	}
 }
 
-func (e *Marker) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *Marker) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	marker := string(data)
 
 	*e = MakeMarker(tick, delta, marker, bytes...)

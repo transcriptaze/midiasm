@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -28,7 +27,7 @@ func MakeLyric(tick uint64, delta lib.Delta, lyric string, bytes ...byte) Lyric 
 	}
 }
 
-func (e *Lyric) unmarshal(ctx *context.Context, tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
+func (e *Lyric) unmarshal(tick uint64, delta lib.Delta, status byte, data []byte, bytes ...byte) error {
 	lyric := string(data)
 
 	*e = MakeLyric(tick, delta, lyric, bytes...)

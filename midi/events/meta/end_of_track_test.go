@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -20,10 +19,9 @@ func TestUnmarshalEndOfTrack(t *testing.T) {
 		},
 	}
 
-	ctx := context.NewContext()
 	e := EndOfTrack{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{}, []byte{0xff, 0x2f, 0x00}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte{}, []byte{0xff, 0x2f, 0x00}...)
 
 	if err != nil {
 		t.Fatalf("error encoding EndOfTrack (%v)", err)

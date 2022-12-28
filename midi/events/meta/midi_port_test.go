@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -21,10 +20,9 @@ func TestUnmarshalMIDIPort(t *testing.T) {
 		Port: 112,
 	}
 
-	ctx := context.NewContext()
 	e := MIDIPort{}
 
-	err := e.unmarshal(ctx, 2400, 480, 0xff, []byte{112}, []byte{0x00, 0xff, 0x21, 0x01, 0x70}...)
+	err := e.unmarshal(2400, 480, 0xff, []byte{112}, []byte{0x00, 0xff, 0x21, 0x01, 0x70}...)
 	if err != nil {
 		t.Fatalf("error unmarshalling MIDIPort (%v)", err)
 	}
