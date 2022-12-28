@@ -18,10 +18,13 @@ import (
 )
 
 type tsv struct {
-	out string
+	out       string
+	delimiter string
 }
 
-var TSV = tsv{}
+var TSV = tsv{
+	delimiter: "|",
+}
 
 func (t tsv) GetCommand() (string, commands.Command) {
 	return "tsv", &TSV
@@ -29,6 +32,7 @@ func (t tsv) GetCommand() (string, commands.Command) {
 
 func (t *tsv) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
+	flagset.StringVar(&TSV.delimiter, "delimiter", "", "Delimiter for SDF formatted output")
 
 	return flagset
 }
@@ -37,16 +41,17 @@ func (t tsv) Help() {
 	fmt.Println()
 	fmt.Println("  Extracts the MIDI information as TSV for use with e.g. a spreadsheet.")
 	fmt.Println()
-	fmt.Println("    midiasm tsv [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>")
+	fmt.Println("    midiasm tsv [--debug] [--verbose] [--C4] [--out <file>] [--delimiter <string>] <MIDI file>")
 	fmt.Println()
 	fmt.Println("      <MIDI file>  MIDI file to export as JSON.")
 	fmt.Println()
 	fmt.Println("    Options:")
 	fmt.Println()
-	fmt.Println("      --out <file>  Writes the TSV to a file. Default is to write to stdout.")
-	fmt.Println("      --C4          Uses C4 as middle C (Yamaha convention). Defaults to C3.")
-	fmt.Println("      --debug       Displays internal information while processing a MIDI file. Defaults to false")
-	fmt.Println("      --verbose     Enables 'verbose' logging. Defaults to false")
+	fmt.Println("      --out <file>          Writes the TSV to a file. Default is to write to stdout.")
+	fmt.Println("      --delimiter <string>  Separator to use for SDF formatted output. Defaults to '|'.")
+	fmt.Println("      --C4                  Uses C4 as middle C (Yamaha convention). Defaults to C3.")
+	fmt.Println("      --debug               Displays internal information while processing a MIDI file. Defaults to false")
+	fmt.Println("      --verbose             Enables 'verbose' logging. Defaults to false")
 	fmt.Println()
 	fmt.Println("    Example:")
 	fmt.Println()
@@ -61,8 +66,10 @@ func (t tsv) Execute(flagset *flag.FlagSet) error {
 		return err
 	} else if err := validate(smf); err != nil {
 		return err
+	} else if t.delimiter != "" {
+		return export(smf, t.delimiter, t.out)
 	} else {
-		return export(smf, t.out)
+		return export(smf, "|", t.out)
 	}
 }
 
@@ -99,7 +106,7 @@ func validate(smf *midi.SMF) error {
 	return nil
 }
 
-func export(smf *midi.SMF, out string) error {
+func export(smf *midi.SMF, delimiter string, out string) error {
 	// ... build table
 	header := []string{"Tick", "Delta", "Tag", "Channel", "Details"}
 	columns := 0
@@ -141,7 +148,7 @@ func export(smf *midi.SMF, out string) error {
 
 	// ... export as TSV
 	if out == "" {
-		return writeSDF(records, os.Stdout)
+		return writeSDF(records, delimiter, os.Stdout)
 	}
 
 	if f, err := os.Create(out); err != nil {
@@ -152,7 +159,7 @@ func export(smf *midi.SMF, out string) error {
 	}
 }
 
-func writeSDF(records [][]string, w io.Writer) error {
+func writeSDF(records [][]string, delimiter string, w io.Writer) error {
 	columns := 0
 	for _, record := range records {
 		if len(record) > columns {
@@ -181,7 +188,7 @@ func writeSDF(records [][]string, w io.Writer) error {
 			row = append(row, fmt.Sprintf(formats[i], f))
 		}
 
-		fmt.Fprintf(w, "%v\n", strings.Join(row, "|"))
+		fmt.Fprintf(w, "%v\n", strings.Join(row, delimiter))
 	}
 
 	return nil

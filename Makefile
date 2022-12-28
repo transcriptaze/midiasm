@@ -123,6 +123,7 @@ transpose: build
 tsv: build plugins
 	rm -f ./tmp/reference.tsv
 	$(CMD) tsv --debug examples/reference.mid
+	$(CMD) tsv --debug --delimiter '  ' examples/reference.mid
 	$(CMD) tsv --debug --out ./tmp/reference.tsv examples/reference.mid
 	cat ./tmp/reference.tsv
 

@@ -71,9 +71,9 @@
 - [ ] TSV
       - [x] Decode
       - [x] Fixed width output for stdout
-      - [ ] TSV for file output
+      - [x] TSV for file output
+      - [x] --delimiter
       - [ ] --SDF option
-      - [ ] --delimiter
       - [ ] Unit tests
       - [ ] Encode
 
