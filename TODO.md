@@ -73,7 +73,7 @@
       - [x] Fixed width output for stdout
       - [x] TSV for file output
       - [x] --delimiter
-      - [ ] --SDF option
+      - [ ] --tabular option
       - [ ] Unit tests
       - [ ] Encode
 
