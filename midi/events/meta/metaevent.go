@@ -56,7 +56,15 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
-func Parse(tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
+func Parse(tick uint64, status byte, b byte, data []byte, bytes ...byte) (any, error) {
+	var delta lib.Delta
+
+	if v, _, err := vlq(bytes); err != nil {
+		return nil, err
+	} else {
+		delta = lib.Delta(v)
+	}
+
 	eventType := lib.MetaEventType(b & 0x7F)
 
 	switch eventType {

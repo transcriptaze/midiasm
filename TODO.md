@@ -114,6 +114,10 @@
 - [ ] Format 2
 - [ ] NoteOn with 0 velocity -> NoteOff
 
+## SuperCollider
+
+- [ ] midi2pbind
+
 ## TODO
 
 - https://sound.stackexchange.com/questions/51637/velocity-randomizer-any-free-midi-editor-with-this-feature
