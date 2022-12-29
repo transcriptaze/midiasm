@@ -41,7 +41,7 @@ func TestParseCMajorKeySignature(t *testing.T) {
 		Key:         "C major",
 	}
 
-	event, err := Parse(2400, 0xff, 0x59, []byte{0x00, 0x00}, []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0x00, 0x00}...)
+	event, err := Parse(2400, []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0x00, 0x00}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {
@@ -70,7 +70,7 @@ func TestParseCMinorKeySignature(t *testing.T) {
 		Key:         "C minor",
 	}
 
-	event, err := Parse(2400, 0xff, 0x59, []byte{0xfd, 0x01}, []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01}...)
+	event, err := Parse(2400, []byte{0x83, 0x60, 0xff, 0x59, 0x02, 0xfd, 0x01}...)
 	if err != nil {
 		t.Fatalf("Unexpected KeySignature event parse error: %v", err)
 	} else if event == nil {

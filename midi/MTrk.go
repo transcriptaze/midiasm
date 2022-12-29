@@ -104,15 +104,15 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	if status == 0xff {
 		ctx.RunningStatus = 0x00
 
-		if eventType, err := rr.ReadByte(); err != nil {
+		if _, err := rr.ReadByte(); err != nil {
 			return nil, err
-		} else if data, err := events.VLF(rr); err != nil {
+		} else if _, err := events.VLF(rr); err != nil {
 			return nil, err
-		} else {
-			e, err := metaevent.Parse(uint64(tick)+uint64(delta), status, eventType, data, rr.Bytes()...)
-
-			return events.NewEvent(e), err
 		}
+
+		e, err := metaevent.Parse(uint64(tick)+uint64(delta), rr.Bytes()...)
+
+		return events.NewEvent(e), err
 	}
 
 	// ... SysEx event
