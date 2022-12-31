@@ -25,9 +25,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		}, 72,
 	}
 
-	ctx := context.NewContext()
-
-	event, err := Parse(ctx, 0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x81, 0x31, 0x48}...)
+	event, err := Parse(0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x81, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}
@@ -65,9 +63,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		}, 72,
 	}
 
-	ctx := context.NewContext().UseFlats()
-
-	event, err := Parse(ctx, 0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x31, 0x48}...)
+	event, err := Parse(0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}

@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -23,9 +22,7 @@ func TestParseController(t *testing.T) {
 		Value:      29,
 	}
 
-	ctx := context.NewContext()
-
-	event, err := Parse(ctx, 2400, 480, 0xb7, []byte{0x54, 0x1d}, []byte{0x00, 0xb7, 0x54, 0x1d}...)
+	event, err := Parse(2400, 480, 0xb7, []byte{0x54, 0x1d}, []byte{0x00, 0xb7, 0x54, 0x1d}...)
 	if err != nil {
 		t.Fatalf("Unexpected Controller event parse error: %v", err)
 	} else if event == nil {

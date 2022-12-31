@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -22,9 +21,7 @@ func TestParseChannelPressure(t *testing.T) {
 		Pressure: 100,
 	}
 
-	ctx := context.NewContext()
-
-	event, err := Parse(ctx, 2400, 480, 0xd7, []byte{0x64}, []byte{0x00, 0xd7, 0x64}...)
+	event, err := Parse(2400, 480, 0xd7, []byte{0x64}, []byte{0x00, 0xd7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected ChannelPressure event parse error: %v", err)
 	} else if event == nil {
