@@ -73,9 +73,11 @@
       - [x] Fixed width output for stdout
       - [x] TSV for file output
       - [x] --delimiter
-      - [ ] --tabular option
+      - [x] --tabular option
+      - [ ] Split note and velocity out as separate fields
       - [ ] Unit tests
       - [ ] Encode
+      - [ ] main_windows.go (Windows doesn't do plugins)
 
 
 ### Transpose
