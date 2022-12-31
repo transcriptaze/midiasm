@@ -52,21 +52,7 @@ func (e *Controller) unmarshal(ctx *context.Context, tick uint64, delta uint32, 
 		return fmt.Errorf("invalid channel (%v)", channel)
 	}
 
-	event := MakeController(tick, delta, channel, lib.LookupController(controller), value, bytes...)
-
-	if ctx != nil && event.Controller.ID == 0x00 {
-		c := uint8(event.Channel)
-		v := uint16(event.Value)
-		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
-	}
-
-	if ctx != nil && event.Controller.ID == 0x20 {
-		c := uint8(event.Channel)
-		v := uint16(event.Value)
-		ctx.ProgramBank[c] = (ctx.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
-	}
-
-	*e = event
+	*e = MakeController(tick, delta, channel, lib.LookupController(controller), value, bytes...)
 
 	return nil
 }

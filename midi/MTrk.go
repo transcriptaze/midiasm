@@ -62,6 +62,20 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 					chunk.Context.UseSharps()
 				}
 			}
+
+			if k, ok := e.Event.(midievent.Controller); ok {
+				if k.Controller.ID == 0x00 {
+					c := uint8(k.Channel)
+					v := uint16(k.Value)
+					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
+				}
+
+				if k.Controller.ID == 0x20 {
+					c := uint8(k.Channel)
+					v := uint16(k.Value)
+					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
+				}
+			}
 		}
 	}
 
