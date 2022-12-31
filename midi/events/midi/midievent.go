@@ -12,7 +12,7 @@ type TMidiEvent interface {
 }
 
 type IMidiEvent interface {
-	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+	unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -58,28 +58,28 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status byte, data []byte, bytes ...byte) (any, error) {
+func Parse(tick uint64, delta uint32, status byte, data []byte, bytes ...byte) (any, error) {
 	switch status & 0xf0 {
 	case 0x80:
-		return unmarshal[NoteOff](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[NoteOff](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0x90:
-		return unmarshal[NoteOn](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[NoteOn](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xA0:
-		return unmarshal[PolyphonicPressure](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[PolyphonicPressure](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xB0:
-		return unmarshal[Controller](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[Controller](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xC0:
-		return unmarshal[ProgramChange](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[ProgramChange](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xD0:
-		return unmarshal[ChannelPressure](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[ChannelPressure](tick, delta, lib.Status(status), data, bytes...)
 
 	case 0xE0:
-		return unmarshal[PitchBend](ctx, tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[PitchBend](tick, delta, lib.Status(status), data, bytes...)
 	}
 
 	return nil, fmt.Errorf("Unrecognised MIDI event: %v", lib.Status(status))
@@ -92,9 +92,9 @@ func unmarshal[
 	P interface {
 		*E
 		IMidiEvent
-	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	}](tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	p := P(new(E))
-	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+	if err := p.unmarshal(tick, delta, status, data, bytes...); err != nil {
 		return nil, err
 	} else {
 		return *p, nil
@@ -136,4 +136,22 @@ func equal(s string, tag lib.Tag) bool {
 
 func or(status lib.Status, channel lib.Channel) lib.Status {
 	return lib.Status(byte(status&0xf0) | byte(channel&0x0f))
+}
+
+func FormatNote(ctx *context.Context, n byte) string {
+	if ctx != nil {
+		return ctx.FormatNote(n)
+	}
+
+	var scale = context.Sharps
+	var note = scale[n%12]
+	var octave int
+
+	if context.MiddleC == lib.C4 {
+		octave = int(n/12) - 2
+	} else {
+		octave = int(n/12) - 1
+	}
+
+	return fmt.Sprintf("%s%d", note, octave)
 }

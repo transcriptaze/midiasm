@@ -39,7 +39,7 @@ func MakeNoteOff(tick uint64, delta uint32, channel lib.Channel, note Note, velo
 	}
 }
 
-func (e *NoteOff) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *NoteOff) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0x80 {
 		return fmt.Errorf("Invalid NoteOff status (%v): expected '8x'", status)
 	}
@@ -51,8 +51,8 @@ func (e *NoteOff) unmarshal(ctx *context.Context, tick uint64, delta uint32, sta
 	var channel = lib.Channel(status & 0x0f)
 	var note = Note{
 		Value: data[0],
-		Name:  GetNoteOff(ctx, channel, data[0]),
-		Alias: FormatNote(ctx, data[0]),
+		Name:  FormatNote(nil, data[0]),
+		Alias: FormatNote(nil, data[0]),
 	}
 	var velocity uint8
 
@@ -94,6 +94,25 @@ func (e NoteOff) Transpose(ctx *context.Context, steps int) NoteOff {
 			Value: note,
 			Name:  ctx.GetNoteOff(e.Channel, note),
 			Alias: ctx.FormatNote(note),
+		},
+		Velocity: e.Velocity,
+	}
+}
+
+func (e NoteOff) Format(ctx *context.Context) NoteOff {
+	return NoteOff{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   e.bytes,
+			tag:     e.tag,
+			Status:  e.Status,
+			Channel: e.Channel,
+		},
+		Note: Note{
+			Value: e.Note.Value,
+			Name:  ctx.GetNoteOff(e.Channel, e.Note.Value),
+			Alias: ctx.FormatNote(e.Note.Value),
 		},
 		Velocity: e.Velocity,
 	}

@@ -76,8 +76,12 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
 				}
 
+			case midievent.NoteOff:
+				e.Event = k.Format(chunk.Context)
+
 			case midievent.NoteOn:
 				chunk.Context.PutNoteOn(k.Channel, k.Note.Value)
+				e.Event = k.Format(chunk.Context)
 
 			case midievent.ProgramChange:
 				c := uint8(k.Channel)
@@ -166,7 +170,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	io.ReadFull(rr, data)
 
-	e, err := midievent.Parse(ctx, uint64(tick)+uint64(delta), delta, status, data, rr.Bytes()...)
+	e, err := midievent.Parse(uint64(tick)+uint64(delta), delta, status, data, rr.Bytes()...)
 
 	return events.NewEvent(e), err
 }

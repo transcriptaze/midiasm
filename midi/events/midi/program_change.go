@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -35,7 +34,7 @@ func MakeProgramChange(tick uint64, delta uint32, channel lib.Channel, bank uint
 	}
 }
 
-func (e *ProgramChange) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *ProgramChange) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xc0 {
 		return fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
 	}
@@ -148,7 +147,7 @@ func (e ProgramChange) SetBank(bank uint16) ProgramChange {
 			tick:    e.tick,
 			delta:   e.delta,
 			bytes:   e.bytes,
-			tag:     lib.TagProgramChange,
+			tag:     e.tag,
 			Status:  e.Status,
 			Channel: e.Channel,
 		},

@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -33,7 +32,7 @@ func MakePitchBend(tick uint64, delta uint32, channel lib.Channel, bend uint16, 
 	}
 }
 
-func (e *PitchBend) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *PitchBend) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xe0 {
 		return fmt.Errorf("Invalid PitchBend status (%v): expected 'Ex'", status)
 	}

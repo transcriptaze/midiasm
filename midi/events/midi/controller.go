@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -35,7 +34,7 @@ func MakeController(tick uint64, delta uint32, channel lib.Channel, controller l
 	}
 }
 
-func (e *Controller) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *Controller) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xb0 {
 		return fmt.Errorf("Invalid %v status (%v): expected 'Bx'", lib.TagController, status)
 	}
