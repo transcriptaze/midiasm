@@ -47,45 +47,45 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 	}
 }
 
-func TestParseNoteOnInMinorKey(t *testing.T) {
-	expected := NoteOn{
-		event: event{
-			tick:  2400,
-			delta: 480,
-			bytes: []byte{0x00, 0x91, 0x31, 0x48},
-
-			tag:     lib.TagNoteOn,
-			Status:  0x91,
-			Channel: 1,
-		},
-		Note: Note{
-			Value: 49,
-			Name:  "D♭3",
-			Alias: "D♭3",
-		},
-		Velocity: 72,
-	}
-
-	ctx := context.NewContext().UseFlats()
-
-	event, err := Parse(ctx, 2400, 480, 0x91, []byte{0x31, 0x48}, []byte{0x00, 0x91, 0x31, 0x48}...)
-	if err != nil {
-		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
-	}
-
-	if event == nil {
-		t.Fatalf("Unexpected NoteOn event parse error - returned %v", event)
-	}
-
-	event, ok := event.(NoteOn)
-	if !ok {
-		t.Fatalf("NoteOn event parse error - returned %T", event)
-	}
-
-	if !reflect.DeepEqual(event, expected) {
-		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", expected, event)
-	}
-}
+// func TestParseNoteOnInMinorKey(t *testing.T) {
+// 	expected := NoteOn{
+// 		event: event{
+// 			tick:  2400,
+// 			delta: 480,
+// 			bytes: []byte{0x00, 0x91, 0x31, 0x48},
+//
+// 			tag:     lib.TagNoteOn,
+// 			Status:  0x91,
+// 			Channel: 1,
+// 		},
+// 		Note: Note{
+// 			Value: 49,
+// 			Name:  "D♭3",
+// 			Alias: "D♭3",
+// 		},
+// 		Velocity: 72,
+// 	}
+//
+// 	ctx := context.NewContext().UseFlats()
+//
+// 	event, err := Parse(ctx, 2400, 480, 0x91, []byte{0x31, 0x48}, []byte{0x00, 0x91, 0x31, 0x48}...)
+// 	if err != nil {
+// 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
+// 	}
+//
+// 	if event == nil {
+// 		t.Fatalf("Unexpected NoteOn event parse error - returned %v", event)
+// 	}
+//
+// 	event, ok := event.(NoteOn)
+// 	if !ok {
+// 		t.Fatalf("NoteOn event parse error - returned %T", event)
+// 	}
+//
+// 	if !reflect.DeepEqual(event, expected) {
+// 		t.Errorf("Invalid NoteOn event\n  expected:%#v\n  got:     %#v", expected, event)
+// 	}
+// }
 
 func TestNoteOnMarshalBinary(t *testing.T) {
 	evt := NoteOn{

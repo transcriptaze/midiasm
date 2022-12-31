@@ -42,22 +42,6 @@ func TestParseController(t *testing.T) {
 	}
 }
 
-func TestProgramBank(t *testing.T) {
-	ctx := context.NewContext()
-
-	if _, err := Parse(ctx, 0, 0, 0xb3, []byte{0x00, 0x05}); err != nil {
-		t.Fatalf("Unexpected MIDI event parse error: %v", err)
-	}
-
-	if _, err := Parse(ctx, 0, 0, 0xb3, []byte{0x20, 0x21}); err != nil {
-		t.Fatalf("Unexpected MIDI event parse error: %v", err)
-	}
-
-	if ctx.ProgramBank[3] != 673 {
-		t.Errorf("Invalid ProgramBank in context\n  expected:%v\n  got:     %#v", 673, ctx.ProgramBank[3])
-	}
-}
-
 func TestControllerMarshalBinary(t *testing.T) {
 	evt := Controller{
 		event: event{

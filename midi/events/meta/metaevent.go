@@ -56,8 +56,28 @@ func (e event) Tag() string {
 	return fmt.Sprintf("%v", e.tag)
 }
 
-func Parse(tick uint64, delta lib.Delta, status byte, b byte, data []byte, bytes ...byte) (any, error) {
-	eventType := lib.MetaEventType(b & 0x7F)
+func Parse(tick uint64, bytes ...byte) (any, error) {
+	var delta lib.Delta
+	var status uint8
+	var eventType lib.MetaEventType
+	var data []byte
+
+	if v, remaining, err := vlq(bytes); err != nil {
+		return nil, err
+	} else if len(remaining) < 1 {
+		return nil, fmt.Errorf("Invalid metaevent - missing status")
+	} else if remaining[0] != 0xff {
+		return nil, fmt.Errorf("Invalid metaevent status byte (%02X)", remaining[0])
+	} else if len(remaining) < 2 {
+		return nil, fmt.Errorf("Invalid metaevent - missing event type")
+	} else if u, err := vlf(remaining[2:]); err != nil {
+		return nil, err
+	} else {
+		delta = lib.Delta(v)
+		status = remaining[0]
+		eventType = lib.MetaEventType(remaining[1] & 0x7F)
+		data = u
+	}
 
 	switch eventType {
 	case lib.TypeSequenceNumber:

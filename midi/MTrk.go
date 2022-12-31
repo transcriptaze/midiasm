@@ -55,12 +55,37 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 			tick += e.Delta()
 			eventlist = append(eventlist, e)
 
-			if k, ok := e.Event.(metaevent.KeySignature); ok {
+			switch k := e.Event.(type) {
+			case metaevent.KeySignature:
 				if k.Accidentals < 0 {
 					chunk.Context.UseFlats()
 				} else {
 					chunk.Context.UseSharps()
 				}
+
+			case midievent.Controller:
+				if k.Controller.ID == 0x00 {
+					c := uint8(k.Channel)
+					v := uint16(k.Value)
+					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & 0x003f) | ((v & 0x003f) << 7)
+				}
+
+				if k.Controller.ID == 0x20 {
+					c := uint8(k.Channel)
+					v := uint16(k.Value)
+					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
+				}
+
+			case midievent.NoteOff:
+				e.Event = k.Format(chunk.Context)
+
+			case midievent.NoteOn:
+				chunk.Context.PutNoteOn(k.Channel, k.Note.Value)
+				e.Event = k.Format(chunk.Context)
+
+			case midievent.ProgramChange:
+				c := uint8(k.Channel)
+				e.Event = k.SetBank(chunk.Context.ProgramBank[c])
 			}
 		}
 	}
@@ -104,15 +129,15 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	if status == 0xff {
 		ctx.RunningStatus = 0x00
 
-		if eventType, err := rr.ReadByte(); err != nil {
+		if _, err := rr.ReadByte(); err != nil {
 			return nil, err
-		} else if data, err := events.VLF(rr); err != nil {
+		} else if _, err := events.VLF(rr); err != nil {
 			return nil, err
-		} else {
-			e, err := metaevent.Parse(uint64(tick)+uint64(delta), lib.Delta(delta), status, eventType, data, rr.Bytes()...)
-
-			return events.NewEvent(e), err
 		}
+
+		e, err := metaevent.Parse(uint64(tick)+uint64(delta), rr.Bytes()...)
+
+		return events.NewEvent(e), err
 	}
 
 	// ... SysEx event
@@ -145,7 +170,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 
 	io.ReadFull(rr, data)
 
-	e, err := midievent.Parse(ctx, uint64(tick)+uint64(delta), delta, status, data, rr.Bytes()...)
+	e, err := midievent.Parse(uint64(tick)+uint64(delta), delta, status, data, rr.Bytes()...)
 
 	return events.NewEvent(e), err
 }

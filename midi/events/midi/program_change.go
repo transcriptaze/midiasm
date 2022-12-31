@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -35,7 +34,7 @@ func MakeProgramChange(tick uint64, delta uint32, channel lib.Channel, bank uint
 	}
 }
 
-func (e *ProgramChange) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *ProgramChange) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0xc0 {
 		return fmt.Errorf("Invalid %v status (%v): expected 'Cx'", lib.TagProgramChange, status)
 	}
@@ -45,14 +44,9 @@ func (e *ProgramChange) unmarshal(ctx *context.Context, tick uint64, delta uint3
 	}
 
 	var channel = lib.Channel(status & 0x0f)
-	var bank uint16
 	var program = data[0]
 
-	if ctx != nil {
-		bank = ctx.ProgramBank[uint8(channel)]
-	}
-
-	*e = MakeProgramChange(tick, delta, channel, bank, program, bytes...)
+	*e = MakeProgramChange(tick, delta, channel, 0, program, bytes...)
 
 	return nil
 }
@@ -145,4 +139,19 @@ func (e *ProgramChange) UnmarshalJSON(bytes []byte) error {
 	}
 
 	return nil
+}
+
+func (e ProgramChange) SetBank(bank uint16) ProgramChange {
+	return ProgramChange{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   e.bytes,
+			tag:     e.tag,
+			Status:  e.Status,
+			Channel: e.Channel,
+		},
+		Bank:    bank,
+		Program: e.Program,
+	}
 }

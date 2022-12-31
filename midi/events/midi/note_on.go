@@ -40,7 +40,7 @@ func MakeNoteOn(tick uint64, delta uint32, channel lib.Channel, note Note, veloc
 	}
 }
 
-func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *NoteOn) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status&0xf0 != 0x90 {
 		return fmt.Errorf("Invalid NoteOn status (%v): expected '9x'", status)
 	}
@@ -52,8 +52,8 @@ func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, stat
 	var channel = lib.Channel(status & 0x0f)
 	var note = Note{
 		Value: data[0],
-		Name:  FormatNote(ctx, data[0]),
-		Alias: FormatNote(ctx, data[0]),
+		Name:  FormatNote(nil, data[0]),
+		Alias: FormatNote(nil, data[0]),
 	}
 	var velocity uint8
 
@@ -61,10 +61,6 @@ func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, stat
 		return fmt.Errorf("Invalid NoteOn velocity (%v)", v)
 	} else {
 		velocity = v
-	}
-
-	if ctx != nil {
-		ctx.PutNoteOn(channel, note.Value)
 	}
 
 	*e = MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
@@ -209,22 +205,23 @@ func (e NoteOn) Transpose(ctx *context.Context, steps int) NoteOn {
 	}
 }
 
-func FormatNote(ctx *context.Context, n byte) string {
-	if ctx != nil {
-		return ctx.FormatNote(n)
+func (e NoteOn) Format(ctx *context.Context) NoteOn {
+	return NoteOn{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   e.bytes,
+			tag:     e.tag,
+			Status:  e.Status,
+			Channel: e.Channel,
+		},
+		Note: Note{
+			Value: e.Note.Value,
+			Name:  ctx.FormatNote(e.Note.Value),
+			Alias: ctx.FormatNote(e.Note.Value),
+		},
+		Velocity: e.Velocity,
 	}
-
-	var scale = context.Sharps
-	var note = scale[n%12]
-	var octave int
-
-	if context.MiddleC == lib.C4 {
-		octave = int(n/12) - 2
-	} else {
-		octave = int(n/12) - 1
-	}
-
-	return fmt.Sprintf("%s%d", note, octave)
 }
 
 func ParseNote(ctx *context.Context, s string) (Note, error) {
