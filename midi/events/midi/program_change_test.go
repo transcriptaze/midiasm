@@ -18,7 +18,7 @@ func TestProgramChange(t *testing.T) {
 			Status:  0xc7,
 			Channel: 7,
 		},
-		Bank:    673,
+		Bank:    0,
 		Program: 13,
 	}
 

@@ -45,14 +45,9 @@ func (e *ProgramChange) unmarshal(ctx *context.Context, tick uint64, delta uint3
 	}
 
 	var channel = lib.Channel(status & 0x0f)
-	var bank uint16
 	var program = data[0]
 
-	if ctx != nil {
-		bank = ctx.ProgramBank[uint8(channel)]
-	}
-
-	*e = MakeProgramChange(tick, delta, channel, bank, program, bytes...)
+	*e = MakeProgramChange(tick, delta, channel, 0, program, bytes...)
 
 	return nil
 }
@@ -145,4 +140,19 @@ func (e *ProgramChange) UnmarshalJSON(bytes []byte) error {
 	}
 
 	return nil
+}
+
+func (e ProgramChange) SetBank(bank uint16) ProgramChange {
+	return ProgramChange{
+		event: event{
+			tick:    e.tick,
+			delta:   e.delta,
+			bytes:   e.bytes,
+			tag:     lib.TagProgramChange,
+			Status:  e.Status,
+			Channel: e.Channel,
+		},
+		Bank:    bank,
+		Program: e.Program,
+	}
 }

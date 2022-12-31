@@ -55,15 +55,15 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 			tick += e.Delta()
 			eventlist = append(eventlist, e)
 
-			if k, ok := e.Event.(metaevent.KeySignature); ok {
+			switch k := e.Event.(type) {
+			case metaevent.KeySignature:
 				if k.Accidentals < 0 {
 					chunk.Context.UseFlats()
 				} else {
 					chunk.Context.UseSharps()
 				}
-			}
 
-			if k, ok := e.Event.(midievent.Controller); ok {
+			case midievent.Controller:
 				if k.Controller.ID == 0x00 {
 					c := uint8(k.Channel)
 					v := uint16(k.Value)
@@ -75,10 +75,13 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 					v := uint16(k.Value)
 					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
 				}
-			}
 
-			if k, ok := e.Event.(midievent.NoteOn); ok {
+			case midievent.NoteOn:
 				chunk.Context.PutNoteOn(k.Channel, k.Note.Value)
+
+			case midievent.ProgramChange:
+				c := uint8(k.Channel)
+				e.Event = k.SetBank(chunk.Context.ProgramBank[c])
 			}
 		}
 	}
