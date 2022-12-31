@@ -63,10 +63,6 @@ func (e *NoteOn) unmarshal(ctx *context.Context, tick uint64, delta uint32, stat
 		velocity = v
 	}
 
-	if ctx != nil {
-		ctx.PutNoteOn(channel, note.Value)
-	}
-
 	*e = MakeNoteOn(tick, delta, channel, note, velocity, bytes...)
 
 	return nil

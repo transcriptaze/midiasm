@@ -76,6 +76,10 @@ func (chunk *MTrk) UnmarshalBinary(data []byte) error {
 					chunk.Context.ProgramBank[c] = (chunk.Context.ProgramBank[c] & (0x003f << 7)) | (v & 0x003f)
 				}
 			}
+
+			if k, ok := e.Event.(midievent.NoteOn); ok {
+				chunk.Context.PutNoteOn(k.Channel, k.Note.Value)
+			}
 		}
 	}
 
