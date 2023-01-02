@@ -74,7 +74,7 @@ func (t tsv) Execute(flagset *flag.FlagSet) error {
 
 func (t tsv) export(smf *midi.SMF) error {
 	// ... build table
-	header := []string{"Tick", "Delta", "Tag", "Channel", "Details"}
+	header := []string{"Tick", "Delta", "Tag", "Channel", "Note", "Velocity", "Details"}
 	columns := 0
 	rows := 0
 	for _, t := range smf.Tracks {
@@ -226,6 +226,8 @@ func fields(v events.IEvent) []string {
 	delta := fmt.Sprintf("%v", v.Delta())
 	tag := v.Tag()
 	channel := ""
+	note := ""
+	velocity := ""
 	details := ""
 
 	// ... meta events
@@ -303,12 +305,16 @@ func fields(v events.IEvent) []string {
 	// ... MIDI events
 	if e, ok := v.(midievent.NoteOff); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v:%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
+		note = fmt.Sprintf("%v", e.Note.Value)
+		velocity = fmt.Sprintf("%v", e.Velocity)
+		details = fmt.Sprintf("%v", e.Note.Name)
 	}
 
 	if e, ok := v.(midievent.NoteOn); ok {
 		channel = fmt.Sprintf("%v", e.Channel)
-		details = fmt.Sprintf("%v:%v, %v", e.Note.Value, e.Note.Name, e.Velocity)
+		note = fmt.Sprintf("%v", e.Note.Value)
+		velocity = fmt.Sprintf("%v", e.Velocity)
+		details = fmt.Sprintf("%v", e.Note.Name)
 	}
 
 	if e, ok := v.(midievent.PolyphonicPressure); ok {
@@ -348,5 +354,6 @@ func fields(v events.IEvent) []string {
 	if e, ok := v.(sysex.SysExEscapeMessage); ok {
 		details = fmt.Sprintf("%v", e.Data)
 	}
-	return []string{tick, delta, tag, channel, details}
+
+	return []string{tick, delta, tag, channel, note, velocity, details}
 }
