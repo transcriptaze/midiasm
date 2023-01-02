@@ -65,11 +65,11 @@ func Parse(tick uint64, bytes ...byte) (any, error) {
 	if v, remaining, err := vlq(bytes); err != nil {
 		return nil, err
 	} else if len(remaining) < 1 {
-		return nil, fmt.Errorf("Invalid metaevent - missing status")
+		return nil, fmt.Errorf("Invalid META event - missing status")
 	} else if remaining[0] != 0xff {
-		return nil, fmt.Errorf("Invalid metaevent status byte (%02X)", remaining[0])
+		return nil, fmt.Errorf("Invalid META event status byte (%02X)", remaining[0])
 	} else if len(remaining) < 2 {
-		return nil, fmt.Errorf("Invalid metaevent - missing event type")
+		return nil, fmt.Errorf("Invalid META event - missing event type")
 	} else if u, err := vlf(remaining[2:]); err != nil {
 		return nil, err
 	} else {

@@ -12,7 +12,7 @@ func TestParsePitchBend(t *testing.T) {
 		event: event{
 			tick:  2400,
 			delta: 480,
-			bytes: []byte{0x00, 0xe7, 0x00, 0x08},
+			bytes: []byte{0x83, 0x60, 0xe7, 0x00, 0x08},
 
 			tag:     lib.TagPitchBend,
 			Status:  0xe7,
@@ -21,7 +21,7 @@ func TestParsePitchBend(t *testing.T) {
 		Bend: 8,
 	}
 
-	event, err := Parse(2400, 480, 0xe7, []byte{0x00, 0x08}, []byte{0x00, 0xe7, 0x00, 0x08}...)
+	event, err := Parse(2400, 0xe7, []byte{0x83, 0x60, 0xe7, 0x00, 0x08}...)
 	if err != nil {
 		t.Fatalf("Unexpected PitchBend event parse error: %v", err)
 	} else if event == nil {
