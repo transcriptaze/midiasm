@@ -12,8 +12,8 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 	expected := NoteOff{
 		event{
 			tick:    0,
-			delta:   0,
-			bytes:   []byte{0x00, 0x81, 0x31, 0x48},
+			delta:   480,
+			bytes:   []byte{0x83, 0x60, 0x81, 0x31, 0x48},
 			tag:     lib.TagNoteOff,
 			Status:  0x81,
 			Channel: 1,
@@ -25,7 +25,7 @@ func TestParseNoteOffInMajorKey(t *testing.T) {
 		}, 72,
 	}
 
-	event, err := Parse(0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x81, 0x31, 0x48}...)
+	event, err := Parse(0, 0x81, []byte{0x31, 0x48}, []byte{0x83, 0x60, 0x81, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		event{
 			tick:    0,
 			delta:   0,
-			bytes:   []byte{0x00, 0x81, 0x00, 0x31, 0x48},
+			bytes:   []byte{0x83, 0x60, 0x81, 0x00, 0x31, 0x48},
 			tag:     lib.TagNoteOff,
 			Status:  0x81,
 			Channel: 1,
@@ -63,7 +63,7 @@ func TestParseNoteOffInMinorKey(t *testing.T) {
 		}, 72,
 	}
 
-	event, err := Parse(0, 0, 0x81, []byte{0x31, 0x48}, []byte{0x00, 0x31, 0x48}...)
+	event, err := Parse(0, 0x81, []byte{0x31, 0x48}, []byte{0x83, 0x60, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOff event parse error: %v", err)
 	}

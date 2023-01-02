@@ -12,7 +12,7 @@ func TestParsePolyphonicPressure(t *testing.T) {
 		event: event{
 			tick:  2400,
 			delta: 480,
-			bytes: []byte{0x00, 0xa7, 0x64},
+			bytes: []byte{0x83, 0x60, 0xa7, 0x64},
 
 			tag:     lib.TagPolyphonicPressure,
 			Status:  0xa7,
@@ -21,7 +21,7 @@ func TestParsePolyphonicPressure(t *testing.T) {
 		Pressure: 100,
 	}
 
-	e, err := Parse(2400, 480, 0xa7, []byte{0x64}, []byte{0x00, 0xa7, 0x64}...)
+	e, err := Parse(2400, 0xa7, []byte{0x64}, []byte{0x83, 0x60, 0xa7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected PolyphonicPressure event parse error: %v", err)
 	} else if e == nil {

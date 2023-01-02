@@ -13,7 +13,7 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 		event: event{
 			tick:    2400,
 			delta:   480,
-			bytes:   []byte{0x00, 0x91, 0x31, 0x48},
+			bytes:   []byte{0x83, 0x60, 0x91, 0x31, 0x48},
 			tag:     lib.TagNoteOn,
 			Status:  0x91,
 			Channel: 1,
@@ -26,7 +26,7 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 		Velocity: 72,
 	}
 
-	event, err := Parse(2400, 480, 0x91, []byte{0x31, 0x48}, []byte{0x00, 0x91, 0x31, 0x48}...)
+	event, err := Parse(2400, 0x91, []byte{0x31, 0x48}, []byte{0x83, 0x60, 0x91, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}

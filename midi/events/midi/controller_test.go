@@ -12,7 +12,7 @@ func TestParseController(t *testing.T) {
 		event: event{
 			tick:  2400,
 			delta: 480,
-			bytes: []byte{0x00, 0xb7, 0x54, 0x1d},
+			bytes: []byte{0x83, 0x60, 0xb7, 0x54, 0x1d},
 
 			tag:     lib.TagController,
 			Status:  0xb7,
@@ -22,7 +22,7 @@ func TestParseController(t *testing.T) {
 		Value:      29,
 	}
 
-	event, err := Parse(2400, 480, 0xb7, []byte{0x54, 0x1d}, []byte{0x00, 0xb7, 0x54, 0x1d}...)
+	event, err := Parse(2400, 0xb7, []byte{0x54, 0x1d}, []byte{0x83, 0x60, 0xb7, 0x54, 0x1d}...)
 	if err != nil {
 		t.Fatalf("Unexpected Controller event parse error: %v", err)
 	} else if event == nil {

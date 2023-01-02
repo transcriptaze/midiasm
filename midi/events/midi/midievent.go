@@ -58,7 +58,15 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(tick uint64, delta uint32, status byte, data []byte, bytes ...byte) (any, error) {
+func Parse(tick uint64, status byte, data []byte, bytes ...byte) (any, error) {
+	var delta uint32
+
+	if v, _, err := vlq(bytes); err != nil {
+		return nil, err
+	} else {
+		delta = v
+	}
+
 	switch status & 0xf0 {
 	case 0x80:
 		return unmarshal[NoteOff](tick, delta, lib.Status(status), data, bytes...)

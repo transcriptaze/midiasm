@@ -11,8 +11,8 @@ func TestProgramChange(t *testing.T) {
 	expected := ProgramChange{
 		event: event{
 			tick:    12345,
-			delta:   5432,
-			bytes:   []byte{0x00, 0xc7, 0x0d},
+			delta:   480,
+			bytes:   []byte{0x83, 0x60, 0xc7, 0x0d},
 			tag:     lib.TagProgramChange,
 			Status:  0xc7,
 			Channel: 7,
@@ -21,7 +21,7 @@ func TestProgramChange(t *testing.T) {
 		Program: 13,
 	}
 
-	event, err := Parse(12345, 5432, 0xc7, []byte{0x0d}, []byte{0x00, 0xc7, 0x0d}...)
+	event, err := Parse(12345, 0xc7, []byte{0x0d}, []byte{0x83, 0x60, 0xc7, 0x0d}...)
 	if err != nil {
 		t.Fatalf("Unexpected ProgramChange event parse error: %v", err)
 	} else if event == nil {

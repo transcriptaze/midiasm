@@ -12,7 +12,7 @@ func TestParseChannelPressure(t *testing.T) {
 		event: event{
 			tick:  2400,
 			delta: 480,
-			bytes: []byte{0x00, 0xd7, 0x64},
+			bytes: []byte{0x83, 0x60, 0xd7, 0x64},
 
 			tag:     lib.TagChannelPressure,
 			Status:  0xd7,
@@ -21,7 +21,7 @@ func TestParseChannelPressure(t *testing.T) {
 		Pressure: 100,
 	}
 
-	event, err := Parse(2400, 480, 0xd7, []byte{0x64}, []byte{0x00, 0xd7, 0x64}...)
+	event, err := Parse(2400, 0xd7, []byte{0x64}, []byte{0x83, 0x60, 0xd7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected ChannelPressure event parse error: %v", err)
 	} else if event == nil {
