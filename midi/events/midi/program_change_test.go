@@ -21,7 +21,7 @@ func TestProgramChange(t *testing.T) {
 		Program: 13,
 	}
 
-	event, err := Parse(12345, 0xc7, []byte{0x0d}, []byte{0x83, 0x60, 0xc7, 0x0d}...)
+	event, err := Parse(12345, 0xc7, []byte{0x83, 0x60, 0xc7, 0x0d}...)
 	if err != nil {
 		t.Fatalf("Unexpected ProgramChange event parse error: %v", err)
 	} else if event == nil {

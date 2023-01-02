@@ -21,7 +21,7 @@ func TestParseChannelPressure(t *testing.T) {
 		Pressure: 100,
 	}
 
-	event, err := Parse(2400, 0xd7, []byte{0x64}, []byte{0x83, 0x60, 0xd7, 0x64}...)
+	event, err := Parse(2400, 0xd7, []byte{0x83, 0x60, 0xd7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected ChannelPressure event parse error: %v", err)
 	} else if event == nil {

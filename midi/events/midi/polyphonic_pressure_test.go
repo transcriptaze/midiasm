@@ -21,7 +21,7 @@ func TestParsePolyphonicPressure(t *testing.T) {
 		Pressure: 100,
 	}
 
-	e, err := Parse(2400, 0xa7, []byte{0x64}, []byte{0x83, 0x60, 0xa7, 0x64}...)
+	e, err := Parse(2400, 0xa7, []byte{0x83, 0x60, 0xa7, 0x64}...)
 	if err != nil {
 		t.Fatalf("Unexpected PolyphonicPressure event parse error: %v", err)
 	} else if e == nil {

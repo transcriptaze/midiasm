@@ -58,39 +58,49 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(tick uint64, status byte, data []byte, bytes ...byte) (any, error) {
-	var delta uint32
+func Parse(tick uint64, runningStatus byte, bytes ...byte) (any, error) {
+	var status lib.Status
+	var data []byte
 
-	if v, _, err := vlq(bytes); err != nil {
+	delta, remaining, err := vlq(bytes)
+	if err != nil {
 		return nil, err
+	} else if len(remaining) < 1 {
+		return nil, fmt.Errorf("Invalid MIDI event - missing status")
+	}
+
+	if remaining[0] < 0x80 {
+		status = lib.Status(runningStatus)
+		data = remaining
 	} else {
-		delta = v
+		status = lib.Status(remaining[0])
+		data = remaining[1:]
 	}
 
 	switch status & 0xf0 {
 	case 0x80:
-		return unmarshal[NoteOff](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[NoteOff](tick, delta, status, data, bytes...)
 
 	case 0x90:
-		return unmarshal[NoteOn](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[NoteOn](tick, delta, status, data, bytes...)
 
 	case 0xA0:
-		return unmarshal[PolyphonicPressure](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[PolyphonicPressure](tick, delta, status, data, bytes...)
 
 	case 0xB0:
-		return unmarshal[Controller](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[Controller](tick, delta, status, data, bytes...)
 
 	case 0xC0:
-		return unmarshal[ProgramChange](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[ProgramChange](tick, delta, status, data, bytes...)
 
 	case 0xD0:
-		return unmarshal[ChannelPressure](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[ChannelPressure](tick, delta, status, data, bytes...)
 
 	case 0xE0:
-		return unmarshal[PitchBend](tick, delta, lib.Status(status), data, bytes...)
+		return unmarshal[PitchBend](tick, delta, status, data, bytes...)
 	}
 
-	return nil, fmt.Errorf("Unrecognised MIDI event: %v", lib.Status(status))
+	return nil, fmt.Errorf("Unrecognised MIDI event: %v", status)
 }
 
 // Ref. https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter

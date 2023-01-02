@@ -26,7 +26,7 @@ func TestParseNoteOnInMajorKey(t *testing.T) {
 		Velocity: 72,
 	}
 
-	event, err := Parse(2400, 0x91, []byte{0x31, 0x48}, []byte{0x83, 0x60, 0x91, 0x31, 0x48}...)
+	event, err := Parse(2400, 0x91, []byte{0x83, 0x60, 0x91, 0x31, 0x48}...)
 	if err != nil {
 		t.Fatalf("Unexpected NoteOn event parse error: %v", err)
 	}
