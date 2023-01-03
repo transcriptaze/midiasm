@@ -75,6 +75,8 @@
       - [x] --delimiter
       - [x] --tabular option
       - [x] Split note and velocity out as separate fields
+      - [ ] --piano-roll
+      - [ ] --columns
       - [ ] Unit tests
       - [ ] Encode
       - [ ] main_windows.go (Windows doesn't do plugins)
