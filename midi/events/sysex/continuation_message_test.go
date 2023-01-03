@@ -32,9 +32,9 @@ func TestParseContinuationMessage(t *testing.T) {
 		t.Errorf("Invalid SysEx continuation message data - expected:%v, got: %v", expected, message.Data)
 	}
 
-	if ctx.Casio {
-		t.Errorf("context Casio flag not reset")
-	}
+	// if ctx.Casio {
+	// 	t.Errorf("context Casio flag not reset")
+	// }
 }
 
 func TestSysExContinuationMessageMarshalBinary(t *testing.T) {

@@ -56,27 +56,11 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 	}
 
 	switch {
-	case status == 0xf0 && ctx.Casio:
-		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
-
 	case status == 0xf0:
-		if e, err := unmarshal[SysExMessage](tick, delta, status, data, bytes...); err != nil {
-			return e, err
-		} else {
-			ctx.Casio = bytes[len(bytes)-1] != 0xf7
-			return e, nil
-		}
+		return unmarshal[SysExMessage](tick, delta, status, data, bytes...)
 
 	case status == 0xf7 && ctx.Casio:
-		if e, err := unmarshal[SysExContinuationMessage](tick, delta, status, data, bytes...); err != nil {
-			return e, err
-		} else {
-			if bytes[len(bytes)-1] == 0xf7 {
-				ctx.Casio = false
-			}
-
-			return e, nil
-		}
+		return unmarshal[SysExContinuationMessage](tick, delta, status, data, bytes...)
 
 	case status == 0xf7:
 		return unmarshal[SysExEscapeMessage](tick, delta, status, data, bytes...)

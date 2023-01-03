@@ -81,9 +81,9 @@ func TestParseSysExMessage(t *testing.T) {
 		t.Errorf("Invalid SysEx message data - expected:%v, got: %v", data, message.Data)
 	}
 
-	if !ctx.Casio {
-		t.Errorf("context Casio flag should be set")
-	}
+	// if !ctx.Casio {
+	// 	t.Errorf("context Casio flag should be set")
+	// }
 }
 
 func TestSysExMessageMarshalBinary(t *testing.T) {
