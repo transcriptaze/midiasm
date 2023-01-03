@@ -144,12 +144,25 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 	if status == 0xf0 || status == 0xf7 {
 		ctx.RunningStatus = 0x00
 
-		if data, err := events.VLF(rr); err != nil {
+		if _, err := events.VLF(rr); err != nil {
 			return nil, err
 		} else {
-			e, err := sysex.Parse(ctx, uint64(tick)+uint64(delta), delta, lib.Status(status), data, rr.Bytes()...)
+			if status == 0xf0 && ctx.Casio {
+				return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
+			}
 
-			return events.NewEvent(e), err
+			if e, err := sysex.Parse(uint64(tick)+uint64(delta), ctx.Casio, rr.Bytes()...); err != nil {
+				return nil, err
+			} else {
+				bytes := rr.Bytes()
+				if status == 0xf0 {
+					ctx.Casio = bytes[len(bytes)-1] != 0xf7
+				} else if status == 0xf7 && ctx.Casio && bytes[len(bytes)-1] == 0xf7 {
+					ctx.Casio = false
+				}
+
+				return events.NewEvent(e), err
+			}
 		}
 	}
 
@@ -164,15 +177,15 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		0xE0: 2,
 	}
 
-	ctx.RunningStatus = lib.Status(status)
-
 	for i := 0; i < length[status&0xf0]; i++ {
 		if _, err := rr.ReadByte(); err != nil {
 			return nil, err
 		}
 	}
 
-	e, err := midievent.Parse(uint64(tick)+uint64(delta), status, rr.Bytes()...)
+	e, err := midievent.Parse(uint64(tick)+uint64(delta), ctx.RunningStatus, rr.Bytes()...)
+
+	ctx.RunningStatus = status
 
 	return events.NewEvent(e), err
 }

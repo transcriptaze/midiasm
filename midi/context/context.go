@@ -38,7 +38,7 @@ var Flats = map[byte]string{
 
 type Context struct {
 	scale         map[byte]string
-	RunningStatus lib.Status
+	RunningStatus byte
 	Casio         bool
 	ProgramBank   map[uint8]uint16
 	notes         map[uint16]string

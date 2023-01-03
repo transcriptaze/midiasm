@@ -3,7 +3,6 @@ package sysex
 import (
 	"fmt"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -12,7 +11,7 @@ type TSysExEvent interface {
 }
 
 type ISysExEvent interface {
-	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+	unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -50,23 +49,38 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+func Parse(tick uint64, casio bool, bytes ...byte) (any, error) {
+	var delta uint32
+	var status lib.Status
+	var data []byte
+
+	if v, remaining, err := vlq(bytes); err != nil {
+		return nil, err
+	} else if len(remaining) < 1 {
+		return nil, fmt.Errorf("Invalid SysEx event - missing status")
+	} else if remaining[0] != 0xf0 && remaining[0] != 0xf7 {
+		return nil, fmt.Errorf("Invalid SysEx event status byte (%02X)", remaining[0])
+	} else if u, err := vlf(remaining[1:]); err != nil {
+		return nil, err
+	} else {
+		delta = v
+		status = lib.Status(remaining[0])
+		data = u
+	}
+
 	if status != 0xF0 && status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx status (%v): expected 'F0' or 'F7'", status)
 	}
 
 	switch {
-	case status == 0xf0 && ctx.Casio:
-		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
-
 	case status == 0xf0:
-		return unmarshal[SysExMessage](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SysExMessage](tick, delta, status, data, bytes...)
 
-	case status == 0xf7 && ctx.Casio:
-		return unmarshal[SysExContinuationMessage](ctx, tick, delta, status, data, bytes...)
+	case status == 0xf7 && casio:
+		return unmarshal[SysExContinuationMessage](tick, delta, status, data, bytes...)
 
 	case status == 0xf7:
-		return unmarshal[SysExEscapeMessage](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SysExEscapeMessage](tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
@@ -80,9 +94,9 @@ func unmarshal[
 	P interface {
 		*E
 		ISysExEvent
-	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	}](tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	p := P(new(E))
-	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+	if err := p.unmarshal(tick, delta, status, data, bytes...); err != nil {
 		return nil, err
 	} else {
 		return *p, nil

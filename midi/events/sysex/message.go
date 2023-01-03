@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -46,7 +45,7 @@ func MakeSysExSingleMessage(tick uint64, delta uint32, manufacturer lib.Manufact
 	}
 }
 
-func (e *SysExMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *SysExMessage) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xf0 {
 		return fmt.Errorf("Invalid SysExMessage event type (%02x): expected 'F0'", status)
 	}
@@ -60,7 +59,6 @@ func (e *SysExMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32
 	d := data[1:]
 
 	if d[len(d)-1] != 0xf7 {
-		ctx.Casio = true
 		*e = MakeSysExMessage(tick, delta, manufacturer, d, bytes...)
 	} else {
 		*e = MakeSysExSingleMessage(tick, delta, manufacturer, d[:len(d)-1], bytes...)

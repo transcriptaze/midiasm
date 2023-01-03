@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -27,13 +26,9 @@ func MakeSysExEscapeMessage(tick uint64, delta uint32, data lib.Hex, bytes ...by
 	}
 }
 
-func (e *SysExEscapeMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *SysExEscapeMessage) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xF7 {
 		return fmt.Errorf("Invalid SysExEscapeMessage event type (%02x): expected 'F7'", status)
-	}
-
-	if ctx.Casio {
-		return fmt.Errorf("F7 is not valid for SysExEscapeMessage event in Casio mode")
 	}
 
 	*e = MakeSysExEscapeMessage(tick, delta, data, bytes...)

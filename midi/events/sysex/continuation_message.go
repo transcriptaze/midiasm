@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -43,7 +42,7 @@ func MakeSysExContinuationEndMessage(tick uint64, delta uint32, data lib.Hex, by
 	}
 }
 
-func (e *SysExContinuationMessage) unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
+func (e *SysExContinuationMessage) unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error {
 	if status != 0xf7 {
 		return fmt.Errorf("Invalid SysExContinuationMessage event type (%02x): expected 'F7'", status)
 	}
@@ -53,7 +52,6 @@ func (e *SysExContinuationMessage) unmarshal(ctx *context.Context, tick uint64, 
 		terminator := data[len(d)-1]
 		if terminator == 0xf7 {
 			d = data[:len(d)-1]
-			ctx.Casio = false
 		}
 	}
 
