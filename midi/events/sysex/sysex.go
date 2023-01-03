@@ -12,7 +12,7 @@ type TSysExEvent interface {
 }
 
 type ISysExEvent interface {
-	unmarshal(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
+	unmarshal(tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) error
 }
 
 type event struct {
@@ -60,13 +60,26 @@ func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, d
 		return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 
 	case status == 0xf0:
-		return unmarshal[SysExMessage](ctx, tick, delta, status, data, bytes...)
+		if e, err := unmarshal[SysExMessage](tick, delta, status, data, bytes...); err != nil {
+			return e, err
+		} else {
+			ctx.Casio = bytes[len(bytes)-1] != 0xf7
+			return e, nil
+		}
 
 	case status == 0xf7 && ctx.Casio:
-		return unmarshal[SysExContinuationMessage](ctx, tick, delta, status, data, bytes...)
+		if e, err := unmarshal[SysExContinuationMessage](tick, delta, status, data, bytes...); err != nil {
+			return e, err
+		} else {
+			if bytes[len(bytes)-1] == 0xf7 {
+				ctx.Casio = false
+			}
+
+			return e, nil
+		}
 
 	case status == 0xf7:
-		return unmarshal[SysExEscapeMessage](ctx, tick, delta, status, data, bytes...)
+		return unmarshal[SysExEscapeMessage](tick, delta, status, data, bytes...)
 
 	default:
 		return nil, fmt.Errorf("Unrecognised SYSEX event: %v", status)
@@ -80,9 +93,9 @@ func unmarshal[
 	P interface {
 		*E
 		ISysExEvent
-	}](ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+	}](tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
 	p := P(new(E))
-	if err := p.unmarshal(ctx, tick, delta, status, data, bytes...); err != nil {
+	if err := p.unmarshal(tick, delta, status, data, bytes...); err != nil {
 		return nil, err
 	} else {
 		return *p, nil
