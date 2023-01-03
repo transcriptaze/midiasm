@@ -164,15 +164,15 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 		0xE0: 2,
 	}
 
-	ctx.RunningStatus = lib.Status(status)
-
 	for i := 0; i < length[status&0xf0]; i++ {
 		if _, err := rr.ReadByte(); err != nil {
 			return nil, err
 		}
 	}
 
-	e, err := midievent.Parse(uint64(tick)+uint64(delta), status, rr.Bytes()...)
+	e, err := midievent.Parse(uint64(tick)+uint64(delta), ctx.RunningStatus, rr.Bytes()...)
+
+	ctx.RunningStatus = status
 
 	return events.NewEvent(e), err
 }
