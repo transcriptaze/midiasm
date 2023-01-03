@@ -4,16 +4,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
 func TestParseContinuationMessage(t *testing.T) {
-	ctx := context.NewContext()
-	ctx.Casio = true
-	bytes := []byte{0x83, 0x60, 0xf7, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
-
-	event, err := Parse(ctx, 0, bytes...)
+	event, err := Parse(0, true, []byte{0x83, 0x60, 0xf7, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx continuation message parse error: %v", err)
 	}
@@ -31,10 +26,6 @@ func TestParseContinuationMessage(t *testing.T) {
 	if !reflect.DeepEqual(message.Data, expected) {
 		t.Errorf("Invalid SysEx continuation message data - expected:%v, got: %v", expected, message.Data)
 	}
-
-	// if ctx.Casio {
-	// 	t.Errorf("context Casio flag not reset")
-	// }
 }
 
 func TestSysExContinuationMessageMarshalBinary(t *testing.T) {

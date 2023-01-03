@@ -151,7 +151,7 @@ func parse(r *bufio.Reader, tick uint32, ctx *context.Context) (*events.Event, e
 				return nil, fmt.Errorf("Invalid SysExMessage event data: F0 start byte without terminating F7")
 			}
 
-			if e, err := sysex.Parse(ctx, uint64(tick)+uint64(delta), rr.Bytes()...); err != nil {
+			if e, err := sysex.Parse(uint64(tick)+uint64(delta), ctx.Casio, rr.Bytes()...); err != nil {
 				return nil, err
 			} else {
 				bytes := rr.Bytes()

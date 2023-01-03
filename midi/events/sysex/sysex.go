@@ -3,7 +3,6 @@ package sysex
 import (
 	"fmt"
 
-	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
 )
 
@@ -50,7 +49,7 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, bytes ...byte) (any, error) {
+func Parse(tick uint64, casio bool, bytes ...byte) (any, error) {
 	var delta uint32
 	var status lib.Status
 	var data []byte
@@ -77,7 +76,7 @@ func Parse(ctx *context.Context, tick uint64, bytes ...byte) (any, error) {
 	case status == 0xf0:
 		return unmarshal[SysExMessage](tick, delta, status, data, bytes...)
 
-	case status == 0xf7 && ctx.Casio:
+	case status == 0xf7 && casio:
 		return unmarshal[SysExContinuationMessage](tick, delta, status, data, bytes...)
 
 	case status == 0xf7:
