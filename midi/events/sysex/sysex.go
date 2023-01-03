@@ -50,7 +50,25 @@ func (e event) MarshalBinary() ([]byte, error) {
 	}
 }
 
-func Parse(ctx *context.Context, tick uint64, delta uint32, status lib.Status, data []byte, bytes ...byte) (any, error) {
+func Parse(ctx *context.Context, tick uint64, bytes ...byte) (any, error) {
+	var delta uint32
+	var status lib.Status
+	var data []byte
+
+	if v, remaining, err := vlq(bytes); err != nil {
+		return nil, err
+	} else if len(remaining) < 1 {
+		return nil, fmt.Errorf("Invalid SysEx event - missing status")
+	} else if remaining[0] != 0xf0 && remaining[0] != 0xf7 {
+		return nil, fmt.Errorf("Invalid SysEx event status byte (%02X)", remaining[0])
+	} else if u, err := vlf(remaining[1:]); err != nil {
+		return nil, err
+	} else {
+		delta = v
+		status = lib.Status(remaining[0])
+		data = u
+	}
+
 	if status != 0xF0 && status != 0xF7 {
 		return nil, fmt.Errorf("Invalid SysEx status (%v): expected 'F0' or 'F7'", status)
 	}

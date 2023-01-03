@@ -11,9 +11,9 @@ import (
 func TestParseContinuationMessage(t *testing.T) {
 	ctx := context.NewContext()
 	ctx.Casio = true
-	bytes := []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
+	bytes := []byte{0x83, 0x60, 0xf7, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
 
-	event, err := Parse(ctx, 0, 0, 0xf7, bytes[1:], bytes...)
+	event, err := Parse(ctx, 0, bytes...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx continuation message parse error: %v", err)
 	}

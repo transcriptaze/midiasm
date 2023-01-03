@@ -10,9 +10,9 @@ import (
 
 func TestParseEscapeMessage(t *testing.T) {
 	ctx := context.NewContext()
-	bytes := []byte{0x02, 0xf3, 0x01}
+	bytes := []byte{0x83, 0x60, 0xf7, 0x02, 0xf3, 0x01}
 
-	event, err := Parse(ctx, 0, 0, 0xf7, bytes[1:], bytes...)
+	event, err := Parse(ctx, 0, bytes...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx escape message parse error: %v", err)
 	}

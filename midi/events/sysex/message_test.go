@@ -10,9 +10,9 @@ import (
 
 func TestParseSysExSingleMessage(t *testing.T) {
 	ctx := context.NewContext()
-	bytes := []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
+	bytes := []byte{0x83, 0x60, 0xf0, 0x05, 0x7e, 0x00, 0x09, 0x01, 0xf7}
 
-	event, err := Parse(ctx, 0, 0, 0xf0, bytes[1:], bytes...)
+	event, err := Parse(ctx, 0, bytes...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx single message parse error: %v", err)
 	}
@@ -51,9 +51,9 @@ func TestParseSysExSingleMessage(t *testing.T) {
 
 func TestParseSysExMessage(t *testing.T) {
 	ctx := context.NewContext()
-	bytes := []byte{0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}
+	bytes := []byte{0x83, 0x60, 0xf0, 0x05, 0x7e, 0x00, 0x09, 0x01, 0x43}
 
-	event, err := Parse(ctx, 0, 0, 0xf0, bytes[1:], bytes...)
+	event, err := Parse(ctx, 0, bytes...)
 	if err != nil {
 		t.Fatalf("Unexpected SysEx message parse error: %v", err)
 	}
