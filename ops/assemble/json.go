@@ -92,9 +92,18 @@ func (a JSONAssembler) parseMThd(h mthd) (*midi.MThd, error) {
 		return nil, fmt.Errorf("missing 'metrical-time' field in header")
 	} else {
 		ppqn = *h.PPQN
+
+		if ppqn&0x8000 == 0x8000 {
+			fps := ppqn & 0xff00 >> 8
+			if fps != 0xe8 && fps != 0xe7 && fps != 0xe6 && fps != 0xe5 {
+				return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected E8, E7, E6 or E5", fps)
+			}
+		}
 	}
 
-	return midi.NewMThd(format, 0, ppqn)
+	mthd := midi.MakeMThd(format, 0, ppqn)
+
+	return &mthd, nil
 }
 
 func (a JSONAssembler) parseMTrk(track mtrk) (*midi.MTrk, error) {

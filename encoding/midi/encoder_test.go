@@ -25,10 +25,10 @@ func TestEncodeEmptySMF(t *testing.T) {
 func TestEncodeMThdOnly(t *testing.T) {
 	expected := []byte{0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x00, 0x01, 0xe0}
 	w := bytes.Buffer{}
-	mthd, _ := midi.NewMThd(1, 0, 480)
+	mthd := midi.MakeMThd(1, 0, 480)
 
 	smf := midi.SMF{
-		MThd: mthd,
+		MThd: &mthd,
 	}
 
 	if err := NewEncoder(&w).Encode(smf); err != nil {
@@ -42,12 +42,12 @@ func TestEncodeMThdOnly(t *testing.T) {
 
 func TestEncodeInvalidMThd(t *testing.T) {
 	w := bytes.Buffer{}
-	mthd, _ := midi.NewMThd(1, 0, 480)
+	mthd := midi.MakeMThd(1, 0, 480)
 	track1, _ := midi.NewMTrk()
 	track2, _ := midi.NewMTrk()
 
 	smf := midi.SMF{
-		MThd:   mthd,
+		MThd:   &mthd,
 		Tracks: []*midi.MTrk{track1, track2},
 	}
 
