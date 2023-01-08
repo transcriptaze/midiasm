@@ -1,8 +1,8 @@
 package midifile
 
 import (
-	"bufio"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 
@@ -24,42 +24,57 @@ func NewDecoder() Decoder {
 
 func (d *decoder) Decode(reader io.Reader) (*midi.SMF, error) {
 	smf := midi.SMF{}
-	chunks := make(chan []byte)
-	errors := make(chan error)
+	chunks := [][]byte{}
 
-	defer close(errors)
+	r := chunker{reader: reader}
 
-	go d.read(reader, chunks, errors)
-
-	list := [][]byte{}
-
-loop:
 	for {
-		select {
-		case chunk, ok := <-chunks:
-			if ok {
-				list = append(list, chunk)
-			} else {
-				break loop
-			}
-
-		case err := <-errors:
+		if chunk, err := r.next(); err != nil && !errors.Is(err, io.EOF) {
 			return nil, err
+		} else if err != nil {
+			break
+		} else if chunk != nil {
+			chunks = append(chunks, chunk)
 		}
 	}
 
-	// .. extract header
+	// .. extract MThd
+	ix := 0
 
-	for _, chunk := range list {
-		var mthd midi.MThd
-		if err := mthd.UnmarshalBinary(chunk); err == nil {
+	for ix < len(chunks) {
+		chunk := chunks[ix]
+		ix++
+
+		tag := string(chunk[0:4])
+		length := binary.BigEndian.Uint32(chunk[4:8])
+
+		if tag == "MThd" && length >= 6 {
+			format := binary.BigEndian.Uint16(chunk[8:10])
+			tracks := binary.BigEndian.Uint16(chunk[10:12])
+			division := binary.BigEndian.Uint16(chunk[12:14])
+
+			if format != 0 && format != 1 && format != 2 {
+				return nil, fmt.Errorf("Invalid MThd format (%v): expected 0,1 or 2", format)
+			}
+
+			if division&0x8000 == 0x8000 {
+				fps := division & 0xff00 >> 8
+				if fps != 0xe8 && fps != 0xe7 && fps != 0xe6 && fps != 0xe5 {
+					return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected E8, E7, E6 or E5", fps)
+				}
+			}
+
+			mthd := midi.MakeMThd(format, tracks, division, chunk...)
 			smf.MThd = &mthd
+			break
 		}
-		break
 	}
 
 	// .. extract tracks
-	for _, chunk := range list[1:] {
+	for ix < len(chunks) {
+		chunk := chunks[ix]
+		ix++
+
 		if string(chunk[0:4]) == "MTrk" {
 			mtrk := midi.MTrk{
 				TrackNumber: lib.TrackNumber(len(smf.Tracks)),
@@ -81,30 +96,23 @@ loop:
 	return &smf, nil
 }
 
-func (d *decoder) read(reader io.Reader, chunks chan []byte, errors chan error) {
-	defer close(chunks)
+type chunker struct {
+	reader io.Reader
+}
 
-	r := bufio.NewReader(reader)
+func (r *chunker) next() ([]byte, error) {
+	buffer := make([]uint8, 8)
 
-	for {
-		peek, err := r.Peek(8)
-		switch {
-		case err != nil && err != io.EOF:
-			errors <- err
-			return
-
-		case err != nil && err == io.EOF:
-			return
-
-		default:
-			length := binary.BigEndian.Uint32(peek[4:8])
-			chunk := make([]byte, length+8)
-			if _, err := io.ReadFull(r, chunk); err != nil {
-				errors <- err
-				return
-			} else {
-				chunks <- chunk
-			}
-		}
+	if _, err := io.ReadFull(r.reader, buffer); err != nil {
+		return nil, err
 	}
+
+	N := binary.BigEndian.Uint32(buffer[4:])
+	chunk := make([]byte, N)
+
+	if _, err := io.ReadFull(r.reader, chunk); err != nil {
+		return nil, err
+	}
+
+	return append(buffer, chunk...), nil
 }
