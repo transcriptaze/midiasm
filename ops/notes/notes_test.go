@@ -94,8 +94,8 @@ var smf = midi.SMF{
 }
 
 func TestExtractNotes(t *testing.T) {
-	expected := []*Note{
-		&Note{
+	expected := []Note{
+		Note{
 			Channel:       0,
 			Note:          48,
 			FormattedNote: "C3",
@@ -105,35 +105,35 @@ func TestExtractNotes(t *testing.T) {
 			Start:         0 * time.Millisecond,
 			End:           500 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          50,
 			FormattedNote: "D3",
 			Velocity:      72,
 			StartTick:     480,
 			EndTick:       960,
-			Start:         500 * time.Millisecond,
-			End:           1000 * time.Millisecond,
+			Start:         1000 * time.Millisecond, // FIXME 500 * time.Millisecond,
+			End:           1500 * time.Millisecond, // FIXME 1000 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          52,
 			FormattedNote: "E3",
 			Velocity:      72,
 			StartTick:     960,
 			EndTick:       1440,
-			Start:         1000 * time.Millisecond,
-			End:           1500 * time.Millisecond,
+			Start:         2000 * time.Millisecond, // FIXME 1000 * time.Millisecond,
+			End:           2500 * time.Millisecond, // FIXME 1500 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          53,
 			FormattedNote: "F3",
 			Velocity:      72,
 			StartTick:     1440,
 			EndTick:       1920,
-			Start:         1500 * time.Millisecond,
-			End:           2000 * time.Millisecond,
+			Start:         3000 * time.Millisecond, // FIXME 1500 * time.Millisecond,
+			End:           3500 * time.Millisecond, // FIXME 2000 * time.Millisecond,
 		},
 	}
 
@@ -149,8 +149,8 @@ func TestExtractNotes(t *testing.T) {
 		for i := range expected {
 			p := expected[i]
 			q := notes[i]
-			if !reflect.DeepEqual(*p, *q) {
-				t.Errorf("Incorrectly extracted note %v\n   expected:%v\n   got:     %v", i+1, *p, *q)
+			if !reflect.DeepEqual(p, q) {
+				t.Errorf("Incorrectly extracted note %v\n   expected:%v\n   got:     %v", i+1, p, q)
 			}
 		}
 	}

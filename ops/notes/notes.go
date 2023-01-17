@@ -35,6 +35,14 @@ type Note struct {
 	End           time.Duration
 }
 
+type event struct {
+	tick  uint64
+	delta uint64
+	at    time.Duration
+	event any
+	ctx   context.Context
+}
+
 func (x *Notes) Execute(smf *midi.SMF) error {
 	if notes, err := extract(smf, x.Transpose); err != nil {
 		return err
@@ -49,144 +57,177 @@ func (x *Notes) Execute(smf *midi.SMF) error {
 	return nil
 }
 
-func extract(smf *midi.SMF, transposition int) ([]*Note, error) {
-	ppqn := uint64(smf.MThd.Division)
-	ctx := context.NewContext()
-	tempoMap := make([]*events.Event, 0)
-	notes := make([]*Note, 0)
+func extract(smf *midi.SMF, transposition int) ([]Note, error) {
+	notes := make([]Note, 0)
 
-	for _, e := range smf.Tracks[0].Events {
-		if events.Is[metaevent.Tempo](*e) {
-			tempoMap = append(tempoMap, e)
+	// ... build tempo map
+	tempoMap := buildTempoMap(*smf)
+
+	// ... extract track notes
+	for _, track := range smf.Tracks[1:] {
+		if events, err := buildTrackEvents(*track, tempoMap, smf.MThd.PPQN); err != nil {
+			return nil, err
+		} else if list, err := buildNoteList(events, transposition); err != nil {
+			return nil, err
+		} else {
+			notes = append(notes, list...)
 		}
 	}
 
-	for _, track := range smf.Tracks[1:] {
-		eventlist := make(map[uint64][]*events.Event, 0)
+	return notes, nil
+}
 
-		for _, e := range tempoMap {
-			tick := e.Tick()
-			list := eventlist[tick]
-			eventlist[tick] = append(list, e)
+func buildTempoMap(smf midi.SMF) []events.Event {
+	list := []events.Event{}
+
+	for _, e := range smf.Tracks[0].Events {
+		if _, ok := e.Event.(metaevent.Tempo); ok {
+			list = append(list, *e)
 		}
+	}
 
-		for _, e := range track.Events {
-			tick := e.Tick()
-			list := eventlist[tick]
-			eventlist[tick] = append(list, e)
-		}
+	return list
+}
 
-		var ticks []uint64
-		for tick, _ := range eventlist {
-			ticks = append(ticks, tick)
-		}
+//			if dt := (tick * tempo) % ppqn; dt > 0 {
+//				warnf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick)
+//			}
 
-		sort.SliceStable(ticks, func(i, j int) bool {
-			return ticks[i] < ticks[j]
+func buildTrackEvents(track midi.MTrk, tempoMap []events.Event, ppqn uint16) ([]event, error) {
+	ctx := context.NewContext()
+
+	// ... build event list
+	list := []event{}
+	for _, e := range track.Events {
+		list = append(list, event{
+			tick:  e.Tick(),
+			delta: uint64(e.Delta()),
+			event: e.Event,
 		})
+	}
 
-		pending := make(map[uint16]*Note, 0)
+	for _, e := range tempoMap {
+		list = append(list, event{
+			tick:  e.Tick(),
+			delta: 0,
+			event: e.Event,
+		})
+	}
 
-		var tempo uint64 = 50000
-		var t time.Duration = 0
-		var beat float64 = 0.0
+	sort.SliceStable(list, func(i, j int) bool {
+		return list[i].tick < list[j].tick
+	})
 
-		for _, tick := range ticks {
-			beat = float64(tick) / float64(ppqn)
-			t = time.Duration(1000 * tick * tempo / ppqn)
+	// ... assign event timestamps
+	tempo := uint64(50000)
+	at := time.Duration(0)
 
-			if dt := (tick * tempo) % ppqn; dt > 0 {
-				warnf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick)
-			}
+	for i, e := range list {
+		delta := time.Duration(1000 * e.delta * tempo / uint64(ppqn))
+		at += delta
 
-			list := eventlist[tick]
-			for _, e := range list {
-				event := e.Event
-				if v, ok := event.(metaevent.Tempo); ok {
-					tempo = uint64(v.Tempo)
-				}
-			}
+		if v, ok := e.event.(metaevent.Tempo); ok {
+			tempo = uint64(v.Tempo)
+		}
 
-			for _, e := range list {
-				event := e.Event
-				if v, ok := event.(midievent.NoteOff); ok {
-					debugf(*e, tick, beat, t)
-
-					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
-					if note := pending[key]; note == nil {
-						warnf("NOTE OFF without preceding NOTE ON for %d:%02X", v.Channel, v.Note)
-					} else {
-						note.End = t
-						note.EndTick = tick
-						delete(pending, key)
-					}
-				}
-			}
-
-			// Handle NoteOn with velocity 0 as a NoteOff
-			for _, e := range list {
-				event := e.Event
-				if v, ok := event.(metaevent.KeySignature); ok {
-					if v.Accidentals < 0 {
-						ctx.UseFlats()
-					} else {
-						ctx.UseSharps()
-					}
-				}
-
-				if v, ok := event.(midievent.NoteOn); ok && v.Velocity == 0 {
-					debugf(*e, tick, beat, t)
-
-					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
-					if note := pending[key]; note == nil {
-						warnf("NOTE 0FF without preceding NOTE ON for %d:%02X", v.Channel, v.Note)
-					} else {
-						note.End = t
-						note.EndTick = tick
-						delete(pending, key)
-					}
-				}
-			}
-
-			for _, e := range list {
-				event := e.Event
-				if v, ok := event.(metaevent.KeySignature); ok {
-					if v.Accidentals < 0 {
-						ctx.UseFlats()
-					} else {
-						ctx.UseSharps()
-					}
-				}
-
-				if v, ok := event.(midievent.NoteOn); ok && v.Velocity > 0 {
-					debugf(*e, tick, beat, t)
-
-					key := uint16(v.Channel)<<8 + uint16(v.Note.Value)
-					note := Note{
-						Channel:       v.Channel,
-						Note:          transpose(v.Note.Value, transposition),
-						FormattedNote: midievent.FormatNote(ctx, transpose(v.Note.Value, transposition)),
-						Velocity:      v.Velocity,
-						Start:         t,
-						StartTick:     tick,
-					}
-
-					if pending[key] != nil {
-						warnf("NOTE ON without preceding NOTE OFF for %d:%02X", v.Channel, v.Note)
-					}
-
-					pending[key] = &note
-					notes = append(notes, &note)
-				}
+		if v, ok := e.event.(metaevent.KeySignature); ok {
+			if v.Accidentals < 0 {
+				ctx.UseFlats()
+			} else {
+				ctx.UseSharps()
 			}
 		}
 
-		if len(pending) > 0 {
-			for k, n := range pending {
+		list[i].at = at.Round(1 * time.Millisecond)
+		list[i].ctx = *ctx
+	}
+
+	// ... extract NoteOn and NoteOff events
+	notes := []event{}
+	for i := range list {
+		e := list[i]
+		switch e.event.(type) {
+		case midievent.NoteOn:
+			notes = append(notes, e)
+
+		case midievent.NoteOff:
+			notes = append(notes, e)
+
+		case metaevent.EndOfTrack:
+			break
+		}
+	}
+
+	return notes, nil
+}
+
+func buildNoteList(events []event, transposition int) ([]Note, error) {
+	notes := []Note{}
+
+	pending := map[lib.Channel]map[uint8]event{}
+	for i := 0; i < 16; i++ {
+		pending[lib.Channel(i)] = map[uint8]event{}
+	}
+
+	for i := range events {
+		e := events[i]
+		if v, ok := e.event.(midievent.NoteOn); ok && v.Velocity > 0 {
+			if _, ok := pending[v.Channel][v.Note.Value]; !ok {
+				pending[v.Channel][v.Note.Value] = e
+			} else {
+				warnf("NoteOn without preceding NoteOff for %d:%02X", v.Channel, v.Note)
+			}
+		}
+
+		if v, ok := e.event.(midievent.NoteOn); ok && v.Velocity == 0 {
+			if p, ok := pending[v.Channel][v.Note.Value]; ok {
+				on := p.event.(midievent.NoteOn)
+				notes = append(notes, Note{
+					Channel:       on.Channel,
+					Note:          transpose(on.Note.Value, transposition),
+					FormattedNote: midievent.FormatNote(&p.ctx, transpose(on.Note.Value, transposition)),
+					Velocity:      on.Velocity,
+					Start:         p.at,
+					StartTick:     p.tick,
+					EndTick:       e.tick,
+					End:           e.at,
+				})
+
+				delete(pending[v.Channel], v.Note.Value)
+			} else {
+				warnf("NoteOff without preceding NoteOn for %d:%02X", v.Channel, v.Note)
+			}
+		}
+
+		if v, ok := e.event.(midievent.NoteOff); ok {
+			debugf(e)
+			if p, ok := pending[v.Channel][v.Note.Value]; ok {
+				on := p.event.(midievent.NoteOn)
+				notes = append(notes, Note{
+					Channel:       on.Channel,
+					Note:          transpose(on.Note.Value, transposition),
+					FormattedNote: midievent.FormatNote(&p.ctx, transpose(on.Note.Value, transposition)),
+					Velocity:      on.Velocity,
+					Start:         p.at,
+					StartTick:     p.tick,
+					EndTick:       e.tick,
+					End:           e.at,
+				})
+
+				delete(pending[v.Channel], v.Note.Value)
+			} else {
+				warnf("NoteOff without preceding NoteOn for %d:%02X", v.Channel, v.Note)
+			}
+		}
+	}
+
+	for i := 0; i < 16; i++ {
+		list := pending[lib.Channel(i)]
+		if len(list) > 0 {
+			for k, n := range list {
 				warnf("Incomplete note: %04X %#v", k, n)
 			}
 		}
-
 	}
 
 	return notes, nil
@@ -204,7 +245,7 @@ func transpose(note uint8, transpose int) uint8 {
 	}
 }
 
-func print(notes []*Note, w io.Writer) error {
+func print(notes []Note, w io.Writer) error {
 	for _, n := range notes {
 		start := n.Start.Truncate(time.Millisecond)
 		end := n.End.Truncate(time.Millisecond)
@@ -216,7 +257,7 @@ func print(notes []*Note, w io.Writer) error {
 	return nil
 }
 
-func export(notes []*Note, w io.Writer) error {
+func export(notes []Note, w io.Writer) error {
 	type note struct {
 		Channel  lib.Channel `json:"channel"`
 		MidiNote byte        `json:"midi-note"`
@@ -253,21 +294,17 @@ func export(notes []*Note, w io.Writer) error {
 	return nil
 }
 
-func debugf(e events.Event, tick uint64, beat float64, t time.Duration) {
-	fmt := "%-8s %02X %02X %-3v %-3v %-6d %.5f  %s"
+func debugf(e event) {
+	fmt := "%-8s %02X %02X %-3v %-3v %-6d %s"
 
-	switch v := e.Event.(type) {
+	switch v := e.event.(type) {
 	case midievent.NoteOn:
-		log.Debugf(LOG_TAG, fmt, "NOTE ON", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, tick, beat, t)
+		log.Debugf(LOG_TAG, fmt, "NOTE ON", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, e.tick, e.at)
 
 	case midievent.NoteOff:
-		log.Debugf(LOG_TAG, fmt, "NOTE OFF", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, tick, beat, t)
+		log.Debugf(LOG_TAG, fmt, "NOTE OFF", v.Channel, v.Note.Value, v.Note.Name, v.Velocity, e.tick, e.at)
 	}
 }
-
-// func debugf(format string, args ...any) {
-// 	log.Debugf(LOG_TAG, format, args...)
-// }
 
 func warnf(format string, args ...any) {
 	log.Warnf(LOG_TAG, format, args...)

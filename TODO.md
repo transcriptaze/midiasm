@@ -1,9 +1,33 @@
 # TODO
 
+- [ ] NoteOn with 0 velocity -> NoteOff
+      - [x] Rework notes.go
+      - [ ] Fix unit tests
+      - [ ] Note.Duration
+      - [ ] Unit tests
+            - [x] Basic notes
+            - [ ] NoteOn with velocity 0
+            - [ ] Tempo changes
+      - [ ] --use-note-0
+      - [x] Always printing debug info
+      - [x] debug output is weird
+      - [ ] Calculate bar/beat
+
 - Rework everything so that SMF & MThd & MTrk are just containers i.e. all the complication around
   marshalling and unmarshalling happens in decoders.
   - [x] UnmarshalBinary
   - [ ] Rework byte reader hack
+
+- https://music.stackexchange.com/questions/39446/where-am-i-going-wrong-in-interpreting-this-midi-string?rq=1
+```
+[controller] Messages 123 through 127 also function as All Notes Off messages. They will turn off all voices controlled by the assigned Basic Channel. These messages should not be sent periodically, but only for a specific purpose. In no case should they be used in lieu of Note Off commands to turn off notes which have been previously turned on. Any All Notes Off command (123-127) may by ignored by a receiver with no possibility of notes staying on, since any Note On command must have a corresponding specific Note Off command.
+```
+
+- https://github.com/WerWolv/ImHex-Patterns
+
+- Check tick to time conversion
+  - https://sites.uci.edu/camp2014/2014/05/19/timing-in-midi-files/
+  - https://music.stackexchange.com/questions/39446/where-am-i-going-wrong-in-interpreting-this-midi-string?rq=1
 
 ### Assembler
 
@@ -43,16 +67,6 @@
             - https://stackoverflow.com/questions/71444847/go-with-generics-type-t-is-pointer-to-type-parameter-not-type-parameter
 
 
-- [ ] NoteOn with 0 velocity -> NoteOff
-      - [x] Rework notes.go
-      - [ ] Replace Note.End with Note.Duration
-      - [ ] Unit tests
-            - [x] Basic notes
-            - [ ] NoteOn with velocity 0
-      - [ ] --use-note-0
-      - [x] Always printing debug info
-      - [x] debug output is weird
-
 - [ ] MIDI file grammar
       - (?) ASN.1
       - (?) EBNF
@@ -67,6 +81,7 @@
 
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
+- (?) https://hackaday.com/2023/01/10/imhex-an-open-hex-editor-for-the-modern-hacker/
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
