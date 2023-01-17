@@ -2,7 +2,7 @@
 
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
-      - [ ] Fix unit tests
+      - [x] Fix unit tests
       - [ ] Note.Duration
       - [ ] Unit tests
             - [x] Basic notes

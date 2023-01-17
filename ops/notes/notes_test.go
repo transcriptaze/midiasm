@@ -47,7 +47,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(480, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(480, 0, 0, midievent.Note{
 						Value: 50,
 						Name:  "D3",
 						Alias: "D3",
@@ -61,7 +61,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(960, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(960, 0, 0, midievent.Note{
 						Value: 52,
 						Name:  "E3",
 						Alias: "E3",
@@ -75,7 +75,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(1440, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(1440, 0, 0, midievent.Note{
 						Value: 53,
 						Name:  "F3",
 						Alias: "F3",
@@ -112,8 +112,8 @@ func TestExtractNotes(t *testing.T) {
 			Velocity:      72,
 			StartTick:     480,
 			EndTick:       960,
-			Start:         1000 * time.Millisecond, // FIXME 500 * time.Millisecond,
-			End:           1500 * time.Millisecond, // FIXME 1000 * time.Millisecond,
+			Start:         500 * time.Millisecond,
+			End:           1000 * time.Millisecond,
 		},
 		Note{
 			Channel:       0,
@@ -122,8 +122,8 @@ func TestExtractNotes(t *testing.T) {
 			Velocity:      72,
 			StartTick:     960,
 			EndTick:       1440,
-			Start:         2000 * time.Millisecond, // FIXME 1000 * time.Millisecond,
-			End:           2500 * time.Millisecond, // FIXME 1500 * time.Millisecond,
+			Start:         1000 * time.Millisecond,
+			End:           1500 * time.Millisecond,
 		},
 		Note{
 			Channel:       0,
@@ -132,8 +132,8 @@ func TestExtractNotes(t *testing.T) {
 			Velocity:      72,
 			StartTick:     1440,
 			EndTick:       1920,
-			Start:         3000 * time.Millisecond, // FIXME 1500 * time.Millisecond,
-			End:           3500 * time.Millisecond, // FIXME 2000 * time.Millisecond,
+			Start:         1500 * time.Millisecond,
+			End:           2000 * time.Millisecond,
 		},
 	}
 
