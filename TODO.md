@@ -3,7 +3,7 @@
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
       - [x] Fix unit tests
-      - [ ] Note.Duration
+      - [x] Note.Duration
       - [ ] Unit tests
             - [x] Basic notes
             - [ ] NoteOn with velocity 0
@@ -12,6 +12,7 @@
       - [x] Always printing debug info
       - [x] debug output is weird
       - [ ] Calculate bar/beat
+      - [ ] Figure the dt error in `buildTrackEvents`
 
 - Rework everything so that SMF & MThd & MTrk are just containers i.e. all the complication around
   marshalling and unmarshalling happens in decoders.

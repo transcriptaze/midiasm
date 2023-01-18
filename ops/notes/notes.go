@@ -33,6 +33,7 @@ type Note struct {
 	EndTick       uint64
 	Start         time.Duration
 	End           time.Duration
+	Duration      time.Duration
 }
 
 type event struct {
@@ -89,10 +90,6 @@ func buildTempoMap(smf midi.SMF) []events.Event {
 	return list
 }
 
-//			if dt := (tick * tempo) % ppqn; dt > 0 {
-//				warnf("%-5dµs loss of precision converting from tick time to physical time at tick %d", dt, tick)
-//			}
-
 func buildTrackEvents(track midi.MTrk, tempoMap []events.Event, ppqn uint16) ([]event, error) {
 	ctx := context.NewContext()
 
@@ -125,6 +122,10 @@ func buildTrackEvents(track midi.MTrk, tempoMap []events.Event, ppqn uint16) ([]
 	for i, e := range list {
 		delta := time.Duration(1000 * e.delta * tempo / uint64(ppqn))
 		at += delta
+
+		// if dt := (delta * tempo) % ppqn; dt > 0 {
+		// 	warnf("%-5dµs loss of precision converting from MIDI tick to physical time at tick %d", dt, e.tick)
+		// }
 
 		if v, ok := e.event.(metaevent.Tempo); ok {
 			tempo = uint64(v.Tempo)
@@ -187,10 +188,11 @@ func buildNoteList(events []event, transposition int) ([]Note, error) {
 					Note:          transpose(on.Note.Value, transposition),
 					FormattedNote: midievent.FormatNote(&p.ctx, transpose(on.Note.Value, transposition)),
 					Velocity:      on.Velocity,
-					Start:         p.at,
 					StartTick:     p.tick,
 					EndTick:       e.tick,
+					Start:         p.at,
 					End:           e.at,
+					Duration:      e.at - p.at,
 				})
 
 				delete(pending[v.Channel], v.Note.Value)
@@ -212,6 +214,7 @@ func buildNoteList(events []event, transposition int) ([]Note, error) {
 					StartTick:     p.tick,
 					EndTick:       e.tick,
 					End:           e.at,
+					Duration:      e.at - p.at,
 				})
 
 				delete(pending[v.Channel], v.Note.Value)
@@ -249,7 +252,7 @@ func print(notes []Note, w io.Writer) error {
 	for _, n := range notes {
 		start := n.Start.Truncate(time.Millisecond)
 		end := n.End.Truncate(time.Millisecond)
-		duration := (n.End - n.Start).Truncate(time.Millisecond)
+		duration := n.Duration.Truncate(time.Millisecond)
 
 		fmt.Fprintf(w, "%-4s channel:%-2d  note:%02X  velocity:%-3d  start:%-9s  end:%-9s  duration:%s\n", n.FormattedNote, n.Channel, n.Note, n.Velocity, start, end, duration)
 	}
@@ -265,6 +268,7 @@ func export(notes []Note, w io.Writer) error {
 		Velocity byte        `json:"velocity"`
 		Start    float64     `json:"start"`
 		End      float64     `json:"end"`
+		Duration float64     `json:"duration"`
 	}
 
 	object := struct {
@@ -274,6 +278,7 @@ func export(notes []Note, w io.Writer) error {
 	for _, n := range notes {
 		start := n.Start.Truncate(time.Millisecond)
 		end := n.End.Truncate(time.Millisecond)
+		duration := n.Duration.Truncate(time.Millisecond)
 
 		object.Notes = append(object.Notes, note{
 			Channel:  n.Channel,
@@ -282,6 +287,7 @@ func export(notes []Note, w io.Writer) error {
 			Velocity: n.Velocity,
 			Start:    start.Seconds(),
 			End:      end.Seconds(),
+			Duration: duration.Seconds(),
 		})
 	}
 

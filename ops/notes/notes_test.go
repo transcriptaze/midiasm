@@ -104,6 +104,7 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       480,
 			Start:         0 * time.Millisecond,
 			End:           500 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
 		Note{
 			Channel:       0,
@@ -114,6 +115,7 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       960,
 			Start:         500 * time.Millisecond,
 			End:           1000 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
 		Note{
 			Channel:       0,
@@ -124,6 +126,7 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       1440,
 			Start:         1000 * time.Millisecond,
 			End:           1500 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
 		Note{
 			Channel:       0,
@@ -134,6 +137,7 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       1920,
 			Start:         1500 * time.Millisecond,
 			End:           2000 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
 	}
 
