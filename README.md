@@ -211,6 +211,7 @@ Command line:
 
 1. [Miller](https://github.com/johnkerl/miller)
 
+
 ## References
 
 1. [The Complete MIDI 1.0 Detailed Specification](https://www.midi.org/specifications/item/the-midi-1-0-specification)
@@ -220,10 +221,12 @@ Command line:
 5. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
 6. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
 
+
 ## Alternatives
 1. [(github) mido](https://github.com/mido/mido)
 2. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
 3. [Werkmeister](https://werckme.github.io/werckmeister)
 4. [pymidi](https://pypi.org/project/py-midi)
-
-
+5. [DryWetMIDI](https://github.com/melanchall/drywetmidi)
+6. [Online MIDI Editor](http://midi.mathewvp.com/)
+7. [go-midi](https://github.com/moutend/go-midi)

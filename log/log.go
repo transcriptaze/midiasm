@@ -25,7 +25,7 @@ var logging = struct {
 type Level int
 
 func (l Level) String() string {
-	return [...]string{"", "FATAL", "ERROR", "WARN", "info", "debug"}[l]
+	return [...]string{"", "FATAL", "ERROR", "WARN", "INFO", "DEBUG"}[l]
 }
 
 func init() {

@@ -47,7 +47,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(480, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(480, 0, 0, midievent.Note{
 						Value: 50,
 						Name:  "D3",
 						Alias: "D3",
@@ -61,7 +61,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(960, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(960, 0, 0, midievent.Note{
 						Value: 52,
 						Name:  "E3",
 						Alias: "E3",
@@ -75,7 +75,7 @@ var smf = midi.SMF{
 					}, 64),
 				},
 				&events.Event{
-					Event: midievent.MakeNoteOn(1440, 480, 0, midievent.Note{
+					Event: midievent.MakeNoteOn(1440, 0, 0, midievent.Note{
 						Value: 53,
 						Name:  "F3",
 						Alias: "F3",
@@ -88,14 +88,28 @@ var smf = midi.SMF{
 						Alias: "F3",
 					}, 64),
 				},
+				&events.Event{
+					Event: midievent.MakeNoteOn(1920, 0, 0, midievent.Note{
+						Value: 55,
+						Name:  "G3",
+						Alias: "G3",
+					}, 72),
+				},
+				&events.Event{ // NoteOn with zero velocity
+					Event: midievent.MakeNoteOn(2400, 480, 0, midievent.Note{
+						Value: 55,
+						Name:  "G3",
+						Alias: "G3",
+					}, 0),
+				},
 			},
 		},
 	},
 }
 
 func TestExtractNotes(t *testing.T) {
-	expected := []*Note{
-		&Note{
+	expected := []Note{
+		Note{
 			Channel:       0,
 			Note:          48,
 			FormattedNote: "C3",
@@ -104,8 +118,9 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       480,
 			Start:         0 * time.Millisecond,
 			End:           500 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          50,
 			FormattedNote: "D3",
@@ -114,8 +129,9 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       960,
 			Start:         500 * time.Millisecond,
 			End:           1000 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          52,
 			FormattedNote: "E3",
@@ -124,8 +140,9 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       1440,
 			Start:         1000 * time.Millisecond,
 			End:           1500 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
-		&Note{
+		Note{
 			Channel:       0,
 			Note:          53,
 			FormattedNote: "F3",
@@ -134,6 +151,18 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       1920,
 			Start:         1500 * time.Millisecond,
 			End:           2000 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
+		},
+		Note{
+			Channel:       0,
+			Note:          55,
+			FormattedNote: "G3",
+			Velocity:      72,
+			StartTick:     1920,
+			EndTick:       2400,
+			Start:         2000 * time.Millisecond,
+			End:           2500 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
 		},
 	}
 
@@ -149,8 +178,8 @@ func TestExtractNotes(t *testing.T) {
 		for i := range expected {
 			p := expected[i]
 			q := notes[i]
-			if !reflect.DeepEqual(*p, *q) {
-				t.Errorf("Incorrectly extracted note %v\n   expected:%v\n   got:     %v", i+1, *p, *q)
+			if !reflect.DeepEqual(p, q) {
+				t.Errorf("Incorrectly extracted note %v\n   expected:%v\n   got:     %v", i+1, p, q)
 			}
 		}
 	}
