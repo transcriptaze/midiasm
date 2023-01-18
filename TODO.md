@@ -6,13 +6,15 @@
       - [x] Note.Duration
       - [ ] Unit tests
             - [x] Basic notes
-            - [ ] NoteOn with velocity 0
+            - [x] NoteOn with velocity 0
             - [ ] Tempo changes
+            - [ ] EndOfTrack
       - [ ] --use-note-0
       - [x] Always printing debug info
       - [x] debug output is weird
       - [ ] Calculate bar/beat
-      - [ ] Figure the dt error in `buildTrackEvents`
+      - [x] Figure the dt error in `buildTrackEvents`
+      - [ ] Rework algorithm using tick so that delta time error doesn't accumulate
 
 - Rework everything so that SMF & MThd & MTrk are just containers i.e. all the complication around
   marshalling and unmarshalling happens in decoders.

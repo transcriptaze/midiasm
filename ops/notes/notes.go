@@ -120,12 +120,13 @@ func buildTrackEvents(track midi.MTrk, tempoMap []events.Event, ppqn uint16) ([]
 	at := time.Duration(0)
 
 	for i, e := range list {
+		// beat = float64(tick) / float64(ppqn)
 		delta := time.Duration(1000 * e.delta * tempo / uint64(ppqn))
 		at += delta
 
-		// if dt := (delta * tempo) % ppqn; dt > 0 {
-		// 	warnf("%-5dµs loss of precision converting from MIDI tick to physical time at tick %d", dt, e.tick)
-		// }
+		if dt := (uint64(delta) * tempo) % uint64(ppqn); dt > 0 {
+			warnf("%-5dµs loss of precision converting from MIDI tick to physical time at tick %d", dt, e.tick)
+		}
 
 		if v, ok := e.event.(metaevent.Tempo); ok {
 			tempo = uint64(v.Tempo)

@@ -88,6 +88,20 @@ var smf = midi.SMF{
 						Alias: "F3",
 					}, 64),
 				},
+				&events.Event{
+					Event: midievent.MakeNoteOn(1920, 0, 0, midievent.Note{
+						Value: 55,
+						Name:  "G3",
+						Alias: "G3",
+					}, 72),
+				},
+				&events.Event{ // NoteOn with zero velocity
+					Event: midievent.MakeNoteOn(2400, 480, 0, midievent.Note{
+						Value: 55,
+						Name:  "G3",
+						Alias: "G3",
+					}, 0),
+				},
 			},
 		},
 	},
@@ -137,6 +151,17 @@ func TestExtractNotes(t *testing.T) {
 			EndTick:       1920,
 			Start:         1500 * time.Millisecond,
 			End:           2000 * time.Millisecond,
+			Duration:      500 * time.Millisecond,
+		},
+		Note{
+			Channel:       0,
+			Note:          55,
+			FormattedNote: "G3",
+			Velocity:      72,
+			StartTick:     1920,
+			EndTick:       2400,
+			Start:         2000 * time.Millisecond,
+			End:           2500 * time.Millisecond,
 			Duration:      500 * time.Millisecond,
 		},
 	}
