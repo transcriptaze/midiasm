@@ -43,7 +43,7 @@ release: build-all
 debug: build
 # 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
 # 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
-	go test -v ./ops/notes/... -run TestExtractNotes
+	go test -v ./ops/notes/... -run TestNotesWithTempoChanges
 
 delve: build
 	dlv test github.com/transcriptaze/midiasm/ops/notes -- run TestExtractNotes

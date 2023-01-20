@@ -1,5 +1,7 @@
 # TODO
 
+- !!!! https://github.com/SuperDisk/tar.pl
+
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
       - [x] Fix unit tests
@@ -7,7 +9,7 @@
       - [ ] Unit tests
             - [x] Basic notes
             - [x] NoteOn with velocity 0
-            - [ ] Tempo changes
+            - [x] Tempo changes
             - [ ] EndOfTrack
       - [ ] --use-note-0
       - [x] Always printing debug info
