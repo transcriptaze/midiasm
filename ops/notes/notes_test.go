@@ -211,3 +211,27 @@ func TestNotesWithTempoChanges(t *testing.T) {
 		t.Errorf("incorrectly extracted notes\nexpected:\n%+v\ngot:\n%+v", string(reference), b.String())
 	}
 }
+
+//go:embed test-files/notes-with-missing-note-offs.mid
+var testfile2 []byte
+
+//go:embed test-files/notes-with-missing-note-offs.txt
+var reference2 []byte
+
+func TestExtractNotesWithMissingNoteOff(t *testing.T) {
+	smf, _ := midifile.NewDecoder().Decode(bytes.NewReader(testfile2))
+
+	notes, err := extract(smf, 0)
+	if err != nil {
+		t.Fatalf("Error extracting notes from SMF (%v)", err)
+	}
+
+	var b bytes.Buffer
+	if err := print(notes, &b); err != nil {
+		t.Fatalf("Error extracting notes from SMF (%v)", err)
+	}
+
+	if !reflect.DeepEqual(b.Bytes(), reference2) {
+		t.Errorf("incorrectly extracted notes\nexpected:\n%+v\ngot:\n%+v", string(reference2), b.String())
+	}
+}

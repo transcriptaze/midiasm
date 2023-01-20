@@ -220,10 +220,10 @@ Command line:
 4. [StackExchange::Music Transposing key signatures - how to do so quickly?](https://music.stackexchange.com/questions/110078/transposing-key-signatures-how-to-do-so-quickly)
 5. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
 6. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
-
+7. [Timing in MIDI files](https://sites.uci.edu/camp2014/2014/05/19/timing-in-midi-files)
 
 ## Alternatives
-1. [(github) mido](https://github.com/mido/mido)
+1. [mido](https://github.com/mido/mido)
 2. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
 3. [Werkmeister](https://werckme.github.io/werckmeister)
 4. [pymidi](https://pypi.org/project/py-midi)
