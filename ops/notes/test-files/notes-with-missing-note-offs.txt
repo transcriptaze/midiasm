@@ -1,0 +1,7 @@
+D3   channel:0   note:32  velocity:76   start:1s         end:1.25s      duration:250ms
+F3   channel:0   note:35  velocity:76   start:1.5s       end:1.625s     duration:125ms
+G3   channel:0   note:37  velocity:76   start:1.625s     end:1.75s      duration:125ms
+A3   channel:0   note:39  velocity:76   start:1.75s      end:1.875s     duration:125ms
+C3   channel:0   note:30  velocity:76   start:0s         end:2s         duration:2s
+E3   channel:0   note:34  velocity:76   start:1.25s      end:2s         duration:750ms
+B3   channel:0   note:3B  velocity:76   start:1.875s     end:2s         duration:125ms

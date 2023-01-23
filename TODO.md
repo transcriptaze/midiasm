@@ -1,5 +1,16 @@
 # TODO
 
+- !!!! https://github.com/SuperDisk/tar.pl
+
+- [ ] Fix bug in tick
+```
+      00 90 39 4C                           tick:23760      delta:0          90 NoteOn                 channel:0  note:A3, velocity:76
+   9C 10 80 2D 40                           tick:27360      delta:3600       80 NoteOff                channel:0  note:A2, velocity:64
+      00 80 34 40                           tick:27360      delta:0          80 NoteOff                channel:0  note:E3, velocity:64
+      00 80 39 40                           tick:27360      delta:0          80 NoteOff                channel:0  note:A3, velocity:64
+      00 FF 2F 00                           tick:27360      delta:0          2F EndOfTrack
+
+```
 - [ ] NoteOn with 0 velocity -> NoteOff
       - [x] Rework notes.go
       - [x] Fix unit tests
@@ -7,9 +18,10 @@
       - [ ] Unit tests
             - [x] Basic notes
             - [x] NoteOn with velocity 0
-            - [ ] Tempo changes
+            - [x] Tempo changes
             - [ ] EndOfTrack
       - [ ] --use-note-0
+      - [ ] --sort
       - [x] Always printing debug info
       - [x] debug output is weird
       - [ ] Calculate bar/beat
@@ -29,7 +41,6 @@
 - https://github.com/WerWolv/ImHex-Patterns
 
 - Check tick to time conversion
-  - https://sites.uci.edu/camp2014/2014/05/19/timing-in-midi-files/
   - https://music.stackexchange.com/questions/39446/where-am-i-going-wrong-in-interpreting-this-midi-string?rq=1
 
 ### Assembler
