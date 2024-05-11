@@ -1,0 +1,60 @@
+name: nightly
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v5
+      with:
+        go-version: ^1.22
+
+    - name: Build
+      run: make build-all
+
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/linux/development/midiasm
+        name: midiasm_linux-x64-nightly
+
+    - name: Upload MacOS Intel artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/darwin-x64/development/uhppote-cli
+        name: midiasm_darwin-x64-nightly
+
+    - name: Upload MacOS Apple silicon artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/darwin-arm64/development/uhppote-cli
+        name: midiasm_darwin-arm64-nightly
+
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/windows/development/uhppote-cli.exe
+        name: midiasm_windows-nightly.exe
+
+    - name: Upload ARM artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/arm/development/uhppote-cli
+        name: midiasm_arm-nightly
+
+    - name: Upload ARM7 artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/arm7/development/uhppote-cli
+        name: midiasm_arm7-nightly
