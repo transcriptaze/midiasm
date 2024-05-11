@@ -230,3 +230,4 @@ Command line:
 5. [DryWetMIDI](https://github.com/melanchall/drywetmidi)
 6. [Online MIDI Editor](http://midi.mathewvp.com/)
 7. [go-midi](https://github.com/moutend/go-midi)
+8. [midiutil](https://pypi.org/project/MIDIUtil)

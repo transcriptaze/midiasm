@@ -1,6 +1,9 @@
 # TODO
 
 - !!!! https://github.com/SuperDisk/tar.pl
+- https://www.masteringemacs.org/article/combobulate-structured-movement-editing-treesitter
+- https://github.com/wader/fq
+- [Interval Parsing Grammars for File Format Parsing](https://dl.acm.org/doi/pdf/10.1145/3591264)
 
 - [ ] Fix bug in tick
 ```
@@ -38,6 +41,8 @@
 [controller] Messages 123 through 127 also function as All Notes Off messages. They will turn off all voices controlled by the assigned Basic Channel. These messages should not be sent periodically, but only for a specific purpose. In no case should they be used in lieu of Note Off commands to turn off notes which have been previously turned on. Any All Notes Off command (123-127) may by ignored by a receiver with no possibility of notes staying on, since any Note On command must have a corresponding specific Note Off command.
 ```
 
+- https://music.stackexchange.com/questions/127381/duration-of-a-midi-file-by-parsing-it-and-making-a-stream-of-parsed-notes-and-ch
+- https://music.stackexchange.com/questions/86241/how-can-i-split-a-midi-file-programatically?rq=1
 - https://github.com/WerWolv/ImHex-Patterns
 
 - Check tick to time conversion
@@ -48,6 +53,7 @@
 - [ ] Assemble: text + templates
 
 ### M-IDE
+- https://github.com/alecthomas/chroma
 - BubbleTea
 - templates
 - views (e.g. notes)
