@@ -1,0 +1,33 @@
+Tick	Delta	Tag	Channel	Note	Velocity	Details
+Tick	Delta	Tag	Channel	Note	Velocity	Details	Tick	Delta	Tag	Channel	Note	Velocity	Details
+0	0	TrackName				Reference-1	0	0	SequenceNumber				23
+0	0	Tempo				500000	0	0	Text				This and That
+0	0	TimeSignature				4/4, 24 ticks/click, 8 32nds/quarter	0	0	Copyright				Them
+0	0	SMPTEOffset				offset 13:45:59  frame rate 25:7:39	0	0	TrackName				Acoustic Guitar
+0	0	EndOfTrack					0	0	InstrumentName				Didgeridoo
+							0	0	Lyric				La-la-la
+							0	0	Marker				Here Be Dragons
+							0	0	CuePoint				More cowbell
+							0	0	ProgramName				Escape
+							0	0	DeviceName				TheThing
+							0	0	MIDIChannelPrefix				13
+							0	0	MIDIPort				112
+							0	0	KeySignature				A minor
+							0	0	SequencerSpecificEvent				Mark Of The Unicorn (MOTU) [3A 4C 5E]
+							0	0	Controller	0			0:Bank Select (MSB), 5
+							0	0	Controller	0			32:Bank Select (LSB), 33
+							0	0	ProgramChange	0			673, 25
+							0	0	Controller	0			101:Registered Parameter Number (MSB), 0
+							0	0	PolyphonicPressure	0			100
+							0	0	ChannelPressure	0			7
+							0	0	NoteOn	0	48	72	C3
+							0	0	NoteOn	2	49	72	C♯3
+							0	0	NoteOn	2	48	100	C3
+							240	240	PitchBend	0			8
+							720	480	NoteOff	0	48	64	C3
+							720	0	SysExMessage				[126]:Special Purpose:Non-RealTime Extensions, 00 09 01
+							720	0	SysExMessage				[67]:Japanese:Yamaha, 12 00
+							920	200	SysExContinuation				43 12 00 43 12 00
+							1020	100	SysExContinuation				43 12 00
+							1020	0	SysExEscape				F3 01
+							1020	0	EndOfTrack				

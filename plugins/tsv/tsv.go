@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -63,16 +64,34 @@ func (t tsv) Help() {
 func (t tsv) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
-	if smf, err := decode(filename); err != nil {
+	if b, err := os.ReadFile(filename); err != nil {
+		return err
+	} else if smf, err := decode(bytes.NewBuffer(b)); err != nil {
 		return err
 	} else if err := validate(smf); err != nil {
 		return err
+	} else if header, records, err := t.export(smf); err != nil {
+		return err
 	} else {
-		return t.export(smf)
+		if t.out == "" {
+			return writeTable(records, os.Stdout)
+		} else if f, err := os.Create(t.out); err != nil {
+			return err
+		} else {
+			defer f.Close()
+
+			if t.tabular {
+				return writeTable(records, f)
+			} else if t.delimiter == "" || t.delimiter == `\t` {
+				return writeTSV(header, records, '\t', f)
+			} else {
+				return writeTSV(header, records, []rune(t.delimiter)[0], f)
+			}
+		}
 	}
 }
 
-func (t tsv) export(smf *midi.SMF) error {
+func (t tsv) export(smf *midi.SMF) ([]string, [][]string, error) {
 	// ... build table
 	header := []string{"Tick", "Delta", "Tag", "Channel", "Note", "Velocity", "Details"}
 	columns := 0
@@ -112,40 +131,20 @@ func (t tsv) export(smf *midi.SMF) error {
 		}
 	}
 
-	// ... export
-	if t.out == "" {
-		return writeTable(records, os.Stdout)
-	} else if f, err := os.Create(t.out); err != nil {
-		return err
-	} else {
-		defer f.Close()
-
-		if t.tabular {
-			return writeTable(records, f)
-		} else if t.delimiter == "" || t.delimiter == `\t` {
-			return writeTSV(header, records, '\t', f)
-		} else {
-			return writeTSV(header, records, []rune(t.delimiter)[0], f)
-		}
-	}
+	return header, records, nil
 }
 
-func decode(filename string) (*midi.SMF, error) {
-	if f, err := os.Open(filename); err != nil {
+func decode(r io.Reader) (*midi.SMF, error) {
+	decoder := midifile.NewDecoder()
+
+	if smf, err := decoder.Decode(r); err != nil {
 		return nil, err
+	} else if smf == nil {
+		return nil, fmt.Errorf("failed to decode MIDI file")
 	} else {
-		defer f.Close()
-
-		decoder := midifile.NewDecoder()
-
-		if smf, err := decoder.Decode(f); err != nil {
-			return nil, err
-		} else if smf == nil {
-			return nil, fmt.Errorf("failed to decode MIDI file")
-		} else {
-			return smf, nil
-		}
+		return smf, nil
 	}
+	// }
 }
 
 func validate(smf *midi.SMF) error {
