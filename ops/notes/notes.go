@@ -156,6 +156,7 @@ func buildTrackEvents(track midi.MTrk, tempoMap []events.Event, ppqn uint16) ([]
 			notes = append(notes, e)
 
 		case metaevent.EndOfTrack:
+			notes = append(notes, e)
 			break
 		}
 	}
@@ -173,6 +174,7 @@ func buildNoteList(events []event, transposition int) ([]Note, error) {
 
 	for i := range events {
 		e := events[i]
+
 		if v, ok := e.event.(midievent.NoteOn); ok && v.Velocity > 0 {
 			if _, ok := pending[v.Channel][v.Note.Value]; !ok {
 				pending[v.Channel][v.Note.Value] = e
@@ -223,13 +225,41 @@ func buildNoteList(events []event, transposition int) ([]Note, error) {
 				warnf("NoteOff without preceding NoteOn for %d:%02X", v.Channel, v.Note)
 			}
 		}
+
+		if _, ok := e.event.(metaevent.EndOfTrack); ok {
+			debugf(e)
+
+			for i := 0; i < 16; i++ {
+				list := pending[lib.Channel(i)]
+				if len(list) > 0 {
+					for k, p := range list {
+						warnf("EndOfTrack automatically ending note (channel:%v, note:%02X, tick:%v, at:%v)", i, k, p.tick, p.at)
+						on := p.event.(midievent.NoteOn)
+
+						notes = append(notes, Note{
+							Channel:       on.Channel,
+							Note:          transpose(on.Note.Value, transposition),
+							FormattedNote: midievent.FormatNote(&p.ctx, transpose(on.Note.Value, transposition)),
+							Velocity:      on.Velocity,
+							Start:         p.at,
+							StartTick:     p.tick,
+							EndTick:       e.tick,
+							End:           e.at,
+							Duration:      e.at - p.at,
+						})
+
+						delete(list, on.Note.Value)
+					}
+				}
+			}
+		}
 	}
 
 	for i := 0; i < 16; i++ {
 		list := pending[lib.Channel(i)]
 		if len(list) > 0 {
 			for k, n := range list {
-				warnf("Incomplete note: %04X %#v", k, n)
+				warnf("Incomplete note (channel:%v, note:%02X, tick:%v, at:%v)", i, k, n.tick, n.at)
 			}
 		}
 	}

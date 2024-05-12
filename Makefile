@@ -34,20 +34,26 @@ coverage: build
 build-all: build test
 	mkdir -p dist/linux/$(DIST)
 	mkdir -p dist/darwin/$(DIST)
+	mkdir -p dist/darwin-x64/$(DIST)
+	mkdir -p dist/darwin-arm64/$(DIST)
 	mkdir -p dist/windows/$(DIST)
-	env GOOS=linux   GOARCH=amd64 GOWORK=off go build -trimpath -o dist/linux/$(DIST)   ./cmd/...
-	env GOOS=darwin  GOARCH=amd64 GOWORK=off go build -trimpath -o dist/darwin/$(DIST)  ./cmd/...
-	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/windows/$(DIST) ./cmd/...
+	mkdir -p dist/arm/$(DIST)
+	mkdir -p dist/arm7/$(DIST)
+	env GOOS=linux   GOARCH=amd64         GOWORK=off go build -trimpath -o dist/linux/$(DIST)        ./...
+	env GOOS=linux   GOARCH=arm64         GOWORK=off go build -trimpath -o dist/arm/$(DIST)          ./...
+	env GOOS=linux   GOARCH=arm   GOARM=7 GOWORK=off go build -trimpath -o dist/arm7/$(DIST)         ./...
+	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -trimpath -o dist/darwin-x64/$(DIST)   ./...
+	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -trimpath -o dist/darwin-arm64/$(DIST) ./...
+	env GOOS=windows GOARCH=amd64         GOWORK=off go build -trimpath -o dist/windows/$(DIST)      ./...
 
 release: build-all
-	tar --directory=dist/linux   --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz   $(DIST)
-	tar --directory=dist/darwin  --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin.tar.gz  $(DIST)
-	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
+	tar --directory=dist/linux        --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz         $(DIST)
+	tar --directory=dist/darwin-x64   --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin_x64.tar.gz    $(DIST)
+	tar --directory=dist/darwin-arm64 --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin._arm64tar.gz  $(DIST)
+	tar --directory=dist/windows      --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz       $(DIST)
 
 debug: build
-# 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
-# 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
-	go test -v ./ops/notes/... -run TestNotesWithTempoChanges
+	go test -v ./ops/notes/... -run TestExtractNotesWithMissingNoteOff
 
 delve: build
 	dlv test github.com/transcriptaze/midiasm/ops/notes -- run TestExtractNotes
