@@ -1,5 +1,19 @@
 # TODO
 
+- [ ] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
+      - [x] Move commands to _commands_ package
+      - [ ] Add _tsv_ command
+      - [ ] Remove TSV plugin
+      - [ ] Remove plugin support
+      - [ ] Update Makefile
+      - [ ] CHANGELOG
+      - [ ] README
+
+- [ ] Remove plugin architecture
+- [ ] _humanise_ command
+
+## NTS
+
 - !!!! https://github.com/SuperDisk/tar.pl
 - https://www.masteringemacs.org/article/combobulate-structured-movement-editing-treesitter
 - https://github.com/wader/fq

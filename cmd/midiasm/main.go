@@ -18,12 +18,12 @@ var cli = []struct {
 	cmd     string
 	command commands.Command
 }{
-	{"disassemble", &DISASSEMBLE},
-	{"assemble", &ASSEMBLE},
-	{"notes", &NOTES},
-	{"click", &CLICK},
-	{"export", &EXPORT},
-	{"transpose", &TRANSPOSE},
+	{"disassemble", &commands.DISASSEMBLE},
+	{"assemble", &commands.ASSEMBLE},
+	{"notes", &commands.NOTES},
+	{"click", &commands.CLICK},
+	{"export", &commands.EXPORT},
+	{"transpose", &commands.TRANSPOSE},
 }
 
 var options = struct {
@@ -159,7 +159,7 @@ func parse() (commands.Command, *flag.FlagSet, error) {
 		}
 	}
 
-	cmd := &DISASSEMBLE
+	cmd := &commands.DISASSEMBLE
 	flagset = cmd.Flagset(flagset)
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, flagset, err
