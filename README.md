@@ -26,8 +26,8 @@ Executables for all the supported operating systems are packaged in the [release
 ### Building from source
 
 Required tools:
-- [Go 1.19+](https://go.dev)
-- make (optional but recommended)
+- [Go 1.22+](https://go.dev)
+- _make_ (optional but recommended)
 
 To build using the included Makefile:
 
@@ -92,8 +92,6 @@ Command line:
 ```
 
 ### `assemble`
-
-_IN DEVELOPMENT_
 
 Assembles a MIDI file from a text or JSON source.
 
@@ -228,6 +226,7 @@ Command line:
 3. [Werkmeister](https://werckme.github.io/werckmeister)
 4. [pymidi](https://pypi.org/project/py-midi)
 5. [DryWetMIDI](https://github.com/melanchall/drywetmidi)
-6. [Online MIDI Editor](http://midi.mathewvp.com/)
+6. [Online MIDI Editor](http://midi.mathewvp.com)
 7. [go-midi](https://github.com/moutend/go-midi)
 8. [midiutil](https://pypi.org/project/MIDIUtil)
+9. [music21](https://web.mit.edu/music21)
