@@ -3,8 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
+	"plugin"
 
+	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
@@ -12,7 +16,7 @@ import (
 
 var cli = []struct {
 	cmd     string
-	command Command
+	command commands.Command
 }{
 	{"disassemble", &DISASSEMBLE},
 	{"assemble", &ASSEMBLE},
@@ -20,8 +24,6 @@ var cli = []struct {
 	{"click", &CLICK},
 	{"export", &EXPORT},
 	{"transpose", &TRANSPOSE},
-	{"help", &HELP},
-	{"version", &VERSION},
 }
 
 var options = struct {
@@ -33,7 +35,59 @@ var options = struct {
 
 const version = "v0.1.0"
 
+type Plugin interface {
+	GetCommand() (string, commands.Command)
+}
+
 func main() {
+	// ... load plugins
+	bindir := filepath.Dir(os.Args[0])
+	plugins := filepath.Join(bindir, "plugins")
+
+	fs.WalkDir(os.DirFS(plugins), ".", func(path string, d fs.DirEntry, err error) error {
+		file := filepath.Join(plugins, path)
+
+		if err != nil {
+			return err
+		} else if !d.Type().IsRegular() {
+			return nil
+		} else if p, err := plugin.Open(file); err != nil {
+			fmt.Printf("Error loading plugin %q (%v)", path, err)
+		} else if tsv, err := p.Lookup("TSV"); err != nil {
+			fmt.Printf("Error loading plugin %q (%v)", path, err)
+		} else if plugin, ok := tsv.(Plugin); ok {
+			cmd, command := plugin.GetCommand()
+
+			cli = append(cli, struct {
+				cmd     string
+				command commands.Command
+			}{
+				cmd:     cmd,
+				command: command,
+			})
+		}
+
+		return nil
+	})
+
+	// ... add 'help' and 'version' commands to CLI
+
+	cli = append(cli, struct {
+		cmd     string
+		command commands.Command
+	}{
+		cmd:     "help",
+		command: &HELP,
+	})
+
+	cli = append(cli, struct {
+		cmd     string
+		command commands.Command
+	}{
+		cmd:     "version",
+		command: &VERSION,
+	})
+
 	// ... parse command line
 	cmd, flagset, err := parse()
 	if err != nil {
@@ -84,7 +138,7 @@ func main() {
 	}
 }
 
-func parse() (Command, *flag.FlagSet, error) {
+func parse() (commands.Command, *flag.FlagSet, error) {
 	flagset := flag.NewFlagSet("midiasm", flag.ExitOnError)
 
 	flagset.BoolVar(&options.c4, "C4", options.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")

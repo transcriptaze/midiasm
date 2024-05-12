@@ -14,7 +14,11 @@ format:
 
 build: format
 	mkdir -p bin
-	go build -o bin ./... 
+	go build -o bin ./cmd/...
+
+plugins: format
+	mkdir -p bin/plugins
+	go build -buildmode=plugin -o bin/plugins/ ./plugins/...
 
 test: build
 	go clean -testcache
@@ -29,7 +33,6 @@ coverage: build
 
 build-all: build test
 	mkdir -p dist/$(DIST)/linux/midiasm
-	mkdir -p dist/$(DIST)/darwin-x64/midiasm
 	mkdir -p dist/$(DIST)/darwin-arm64/midiasm
 	mkdir -p dist/$(DIST)/windows/midiasm
 	mkdir -p dist/$(DIST)/arm/midiasm
@@ -59,12 +62,14 @@ delve: build
 
 help: build
 	$(CMD) help
+	$(CMD) help commands
 	$(CMD) help disassemble
 	$(CMD) help assemble
 	$(CMD) help export
 	$(CMD) help notes
 	$(CMD) help click
 	$(CMD) help transpose
+	$(CMD) help tsv
 
 version: build
 	$(CMD) version
@@ -121,4 +126,12 @@ export: build
 transpose: build
 	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+1.mid examples/greensleeves.mid
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+
+tsv: build plugins
+	rm -f ./tmp/reference.tsv
+	$(CMD) tsv --debug examples/reference.mid
+	$(CMD) tsv --debug --out ./tmp/reference.tsv examples/reference.mid
+# 	$(CMD) tsv --debug --tabular       --out ./tmp/reference.tsv examples/reference.mid
+# 	$(CMD) tsv --debug --delimiter '|' --out ./tmp/reference.tsv examples/reference.mid
+	cat ./tmp/reference.tsv
 

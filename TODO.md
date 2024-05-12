@@ -88,10 +88,11 @@
 
 
 - [ ] MIDI file grammar
+      - (?) Treesitter
+            - https://tree-sitter.github.io/tree-sitter/
       - (?) ASN.1
       - (?) EBNF
       - (?) Grammar stack
-      - (?) Treesitter
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
       - (?) MidiQL
@@ -101,7 +102,20 @@
 
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
+- [ ] TSV
 - (?) https://hackaday.com/2023/01/10/imhex-an-open-hex-editor-for-the-modern-hacker/
+      - [x] Decode
+      - [x] Fixed width output for stdout
+      - [x] TSV for file output
+      - [x] --delimiter
+      - [x] --tabular option
+      - [x] Split note and velocity out as separate fields
+      - [ ] --piano-roll
+      - [ ] --columns
+      - [ ] Unit tests
+      - [ ] Encode
+      - [ ] main_windows.go (Windows doesn't do plugins)
+
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
@@ -120,7 +134,6 @@
 
 
 ### Export
-- [ ] TSV
 
 ### Disassembler
 
