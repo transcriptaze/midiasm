@@ -22,40 +22,40 @@ jobs:
         cache: false
 
     - name: Build
-      run: make build-all
+      run: make build-all DIST=nightly
 
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/linux/development/midiasm
+        path: dist/nightly/linux
         name: midiasm_linux-x64-nightly
 
     - name: Upload MacOS Intel artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/darwin-x64/development/midiasm
+        path: dist/nightly/darwin-x64
         name: midiasm_darwin-x64-nightly
 
     - name: Upload MacOS Apple silicon artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/darwin-arm64/development/midiasm
+        path: dist/nightly/darwin-arm64
         name: midiasm_darwin-arm64-nightly
 
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/windows/development/midiasm.exe
-        name: midiasm_windows-nightly.exe
+        path: dist/nightly/windows
+        name: midiasm_windows-nightly
 
     - name: Upload ARM artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/arm/development/midiasm
+        path: dist/nightly/arm
         name: midiasm_arm-nightly
 
     - name: Upload ARM7 artifact
       uses: actions/upload-artifact@v4
       with:
-        path: dist/arm7/development/midiasm
+        path: dist/nightly/arm7
         name: midiasm_arm7-nightly

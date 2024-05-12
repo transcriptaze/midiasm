@@ -28,25 +28,27 @@ coverage: build
 	go test -cover ./...
 
 build-all: build test
-	mkdir -p dist/linux/$(DIST)
-	mkdir -p dist/darwin/$(DIST)
-	mkdir -p dist/darwin-x64/$(DIST)
-	mkdir -p dist/darwin-arm64/$(DIST)
-	mkdir -p dist/windows/$(DIST)
-	mkdir -p dist/arm/$(DIST)
-	mkdir -p dist/arm7/$(DIST)
-	env GOOS=linux   GOARCH=amd64         GOWORK=off go build -trimpath -o dist/linux/$(DIST)        ./...
-	env GOOS=linux   GOARCH=arm64         GOWORK=off go build -trimpath -o dist/arm/$(DIST)          ./...
-	env GOOS=linux   GOARCH=arm   GOARM=7 GOWORK=off go build -trimpath -o dist/arm7/$(DIST)         ./...
-	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -trimpath -o dist/darwin-x64/$(DIST)   ./...
-	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -trimpath -o dist/darwin-arm64/$(DIST) ./...
-	env GOOS=windows GOARCH=amd64         GOWORK=off go build -trimpath -o dist/windows/$(DIST)      ./...
+	mkdir -p dist/$(DIST)/linux/midiasm
+	mkdir -p dist/$(DIST)/darwin-x64/midiasm
+	mkdir -p dist/$(DIST)/darwin-arm64/midiasm
+	mkdir -p dist/$(DIST)/windows/midiasm
+	mkdir -p dist/$(DIST)/arm/midiasm
+	mkdir -p dist/$(DIST)/arm7/midiasm
+
+	env GOOS=linux   GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/linux/midiasm        ./...
+	env GOOS=linux   GOARCH=arm64         GOWORK=off go build -trimpath -o dist/$(DIST)/arm/midiasm          ./...
+	env GOOS=linux   GOARCH=arm   GOARM=7 GOWORK=off go build -trimpath -o dist/$(DIST)/arm7/midiasm         ./...
+	env GOOS=windows GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/windows/midiasm      ./...
+	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-x64/midiasm   ./...
+	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-arm64/midiasm ./...
 
 release: build-all
-	tar --directory=dist/linux        --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz         $(DIST)
-	tar --directory=dist/darwin-x64   --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin_x64.tar.gz    $(DIST)
-	tar --directory=dist/darwin-arm64 --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin._arm64tar.gz  $(DIST)
-	tar --directory=dist/windows      --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz       $(DIST)
+	tar --directory=dist/$(DIST)/linux        --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz         midiasm
+	tar --directory=dist/$(DIST)/arm          --exclude=".DS_Store" -cvzf dist/$(DIST)-arm.tar.gz           midiasm
+	tar --directory=dist/$(DIST)/arm7         --exclude=".DS_Store" -cvzf dist/$(DIST)-arm7.tar.gz          midiasm
+	tar --directory=dist/$(DIST)/darwin-x64   --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin_x64.tar.gz    midiasm
+	tar --directory=dist/$(DIST)/darwin-arm64 --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin._arm64tar.gz  midiasm
+	cd dist/$(DIST)/windows; zip --recurse-paths ../../$(DIST)-windows.zip midiasm
 
 debug: build
 	go test -v ./ops/notes/... -run TestExtractNotesWithMissingNoteOff
