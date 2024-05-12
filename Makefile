@@ -33,7 +33,6 @@ coverage: build
 
 build-all: build test
 	mkdir -p dist/linux/$(DIST)
-	mkdir -p dist/darwin/$(DIST)
 	mkdir -p dist/darwin-x64/$(DIST)
 	mkdir -p dist/darwin-arm64/$(DIST)
 	mkdir -p dist/windows/$(DIST)
