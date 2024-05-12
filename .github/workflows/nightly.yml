@@ -28,34 +28,34 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/linux
-        name: midiasm_linux-x64-nightly
+        name: midiasm_linux-x64-nightly.zip
 
     - name: Upload MacOS Intel artifact
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/darwin-x64
-        name: midiasm_darwin-x64-nightly
+        name: midiasm_darwin-x64-nightly.zip
 
     - name: Upload MacOS Apple silicon artifact
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/darwin-arm64
-        name: midiasm_darwin-arm64-nightly
+        name: midiasm_darwin-arm64-nightly.zip
 
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/windows
-        name: midiasm_windows-nightly
+        name: midiasm_windows-nightly.zip
 
     - name: Upload ARM artifact
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/arm
-        name: midiasm_arm-nightly
+        name: midiasm_arm-nightly.zip
 
     - name: Upload ARM7 artifact
       uses: actions/upload-artifact@v4
       with:
         path: dist/nightly/arm7
-        name: midiasm_arm7-nightly
+        name: midiasm_arm7-nightly.zip
