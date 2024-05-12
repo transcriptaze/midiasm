@@ -65,6 +65,7 @@ Supported commands:
 - [`notes`](#notes)
 - [`click`](#click)
 - [`transpose`](#transpose)
+- [`tsv`](#tsv)
 
 Defaults to `disassemble` if the command is not provided.
 
@@ -205,9 +206,34 @@ Command line:
   midiasm transpose --debug --verbose --semitones +5 --out one-time+5.mid one-time.mid
 ```
 
+### `tsv`
+
+Extracts the MIDI information as a TSV or fixed width file for use with other tools (e.g. [miller](https://github.com/johnkerl/miller))
+
+Command line:
+
+` midiasm tsv [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
+
+```
+  --out <file>   Output filepath. Default is to write to stdout.
+  --delimiter    Column delimiter for TSV files. Defaults to TAB.
+  --tabular      Formats the outputs as fixed width columns
+
+  Options:
+
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
+
+  Example:
+
+  midiasm tsv --debug --verbose --out one-time.tsv one-time.mid
+```
+
 ## Tools
 
-1. [Miller](https://github.com/johnkerl/miller)
+1. [jq](https://jqlang.github.io/jq)
+2. [miller](https://github.com/johnkerl/miller)
 
 
 ## References

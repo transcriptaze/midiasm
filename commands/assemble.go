@@ -8,22 +8,22 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/transcriptaze/midiasm/ops/assemble"
+	impl "github.com/transcriptaze/midiasm/ops/assemble"
 )
 
-type Assemble struct {
+type assemble struct {
 	out string
 }
 
-var ASSEMBLE = Assemble{}
+var Assemble = assemble{}
 
-func (a *Assemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (a *assemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&a.out, "out", "", "Output file path")
 
 	return flagset
 }
 
-func (a Assemble) Help() {
+func (a assemble) Help() {
 	fmt.Println()
 	fmt.Println("  Assembles a MIDI file from a text or JSON source.")
 	fmt.Println()
@@ -43,7 +43,7 @@ func (a Assemble) Help() {
 	fmt.Println()
 }
 
-func (a Assemble) Execute(flagset *flag.FlagSet) error {
+func (a assemble) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
 	var r io.Reader
@@ -53,14 +53,14 @@ func (a Assemble) Execute(flagset *flag.FlagSet) error {
 		r = bytes.NewBuffer(b)
 	}
 
-	var assembler assemble.Assembler
+	var assembler impl.Assembler
 
 	switch filepath.Ext(filename) {
 	case ".json":
-		assembler = assemble.NewJSONAssembler()
+		assembler = impl.NewJSONAssembler()
 
 	default:
-		assembler = assemble.NewTextAssembler()
+		assembler = impl.NewTextAssembler()
 	}
 
 	midi, err := assembler.Assemble(r)

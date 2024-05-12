@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ func TestTSV(t *testing.T) {
 	var v = tsv{}
 	var b bytes.Buffer
 
-	if smf, err := decode(bytes.NewBuffer(_SMF)); err != nil {
+	if smf, err := v.decode(bytes.NewBuffer(_SMF)); err != nil {
 		t.Fatalf("%v", err)
 	} else if header, records, err := v.export(smf); err != nil {
 		t.Fatalf("%v", err)

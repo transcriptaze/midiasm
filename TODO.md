@@ -1,13 +1,13 @@
 # TODO
 
-- [ ] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
+- [x] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
       - [x] Move commands to _commands_ package
-      - [ ] Add _tsv_ command
-      - [ ] Remove TSV plugin
-      - [ ] Remove plugin support
-      - [ ] Update Makefile
-      - [ ] CHANGELOG
-      - [ ] README
+      - [x] Add _tsv_ command
+      - [x] Remove TSV plugin
+      - [x] Remove plugin support
+      - [x] Update Makefile
+      - [x] CHANGELOG
+      - [x] README
 
 - [ ] Remove plugin architecture
 - [ ] _humanise_ command

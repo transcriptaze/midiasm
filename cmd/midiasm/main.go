@@ -3,10 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/fs"
 	"os"
-	"path/filepath"
-	"plugin"
 
 	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/log"
@@ -18,12 +15,15 @@ var cli = []struct {
 	cmd     string
 	command commands.Command
 }{
-	{"disassemble", &commands.DISASSEMBLE},
-	{"assemble", &commands.ASSEMBLE},
-	{"notes", &commands.NOTES},
-	{"click", &commands.CLICK},
-	{"export", &commands.EXPORT},
-	{"transpose", &commands.TRANSPOSE},
+	{"disassemble", &commands.Disassemble},
+	{"assemble", &commands.Assemble},
+	{"notes", &commands.Notes},
+	{"click", &commands.Click},
+	{"export", &commands.Export},
+	{"transpose", &commands.Transpose},
+	{"tsv", &commands.TSV},
+	{"help", &Help},
+	{"version", &Version},
 }
 
 var options = struct {
@@ -33,61 +33,9 @@ var options = struct {
 	debug   bool
 }{}
 
-const version = "v0.1.0"
-
-type Plugin interface {
-	GetCommand() (string, commands.Command)
-}
+const VERSION = "v0.3.x"
 
 func main() {
-	// ... load plugins
-	bindir := filepath.Dir(os.Args[0])
-	plugins := filepath.Join(bindir, "plugins")
-
-	fs.WalkDir(os.DirFS(plugins), ".", func(path string, d fs.DirEntry, err error) error {
-		file := filepath.Join(plugins, path)
-
-		if err != nil {
-			return err
-		} else if !d.Type().IsRegular() {
-			return nil
-		} else if p, err := plugin.Open(file); err != nil {
-			fmt.Printf("Error loading plugin %q (%v)", path, err)
-		} else if tsv, err := p.Lookup("TSV"); err != nil {
-			fmt.Printf("Error loading plugin %q (%v)", path, err)
-		} else if plugin, ok := tsv.(Plugin); ok {
-			cmd, command := plugin.GetCommand()
-
-			cli = append(cli, struct {
-				cmd     string
-				command commands.Command
-			}{
-				cmd:     cmd,
-				command: command,
-			})
-		}
-
-		return nil
-	})
-
-	// ... add 'help' and 'version' commands to CLI
-
-	cli = append(cli, struct {
-		cmd     string
-		command commands.Command
-	}{
-		cmd:     "help",
-		command: &HELP,
-	})
-
-	cli = append(cli, struct {
-		cmd     string
-		command commands.Command
-	}{
-		cmd:     "version",
-		command: &VERSION,
-	})
-
 	// ... parse command line
 	cmd, flagset, err := parse()
 	if err != nil {
@@ -159,7 +107,7 @@ func parse() (commands.Command, *flag.FlagSet, error) {
 		}
 	}
 
-	cmd := &commands.DISASSEMBLE
+	cmd := &commands.Disassemble
 	flagset = cmd.Flagset(flagset)
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, flagset, err

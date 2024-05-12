@@ -6,22 +6,22 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/ops/click"
+	impl "github.com/transcriptaze/midiasm/ops/click"
 )
 
-type Click struct {
+type click struct {
 	out string
 }
 
-var CLICK = Click{}
+var Click = click{}
 
-func (c *Click) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (c *click) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&c.out, "out", "", "Output file path")
 
 	return flagset
 }
 
-func (c Click) Help() {
+func (c click) Help() {
 	fmt.Println()
 	fmt.Println("  Extracts the _beats_ from the MIDI file in a format that can be used to create a click track.")
 	fmt.Println()
@@ -41,7 +41,7 @@ func (c Click) Help() {
 	fmt.Println()
 }
 
-func (c Click) Execute(flagset *flag.FlagSet) error {
+func (c click) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
 	smf, err := decode(filename)
@@ -61,7 +61,7 @@ func (c Click) Execute(flagset *flag.FlagSet) error {
 	return c.execute(smf)
 }
 
-func (c Click) execute(smf *midi.SMF) error {
+func (c click) execute(smf *midi.SMF) error {
 	var w = os.Stdout
 	var err error
 
@@ -73,7 +73,7 @@ func (c Click) execute(smf *midi.SMF) error {
 		defer w.Close()
 	}
 
-	track := click.ClickTrack{w}
+	track := impl.ClickTrack{w}
 
 	return track.Execute(smf)
 }

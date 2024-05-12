@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"bytes"
@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/encoding/midi"
 	"github.com/transcriptaze/midiasm/midi"
 	"github.com/transcriptaze/midiasm/midi/events"
@@ -25,10 +24,6 @@ type tsv struct {
 }
 
 var TSV = tsv{}
-
-func (t tsv) GetCommand() (string, commands.Command) {
-	return "tsv", &TSV
-}
 
 func (t *tsv) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&TSV.out, "out", "", "Output file path (or directory for split files)")
@@ -66,9 +61,9 @@ func (t tsv) Execute(flagset *flag.FlagSet) error {
 
 	if b, err := os.ReadFile(filename); err != nil {
 		return err
-	} else if smf, err := decode(bytes.NewBuffer(b)); err != nil {
+	} else if smf, err := t.decode(bytes.NewBuffer(b)); err != nil {
 		return err
-	} else if err := validate(smf); err != nil {
+	} else if err := t.validate(smf); err != nil {
 		return err
 	} else if header, records, err := t.export(smf); err != nil {
 		return err
@@ -134,7 +129,7 @@ func (t tsv) export(smf *midi.SMF) ([]string, [][]string, error) {
 	return header, records, nil
 }
 
-func decode(r io.Reader) (*midi.SMF, error) {
+func (t *tsv) decode(r io.Reader) (*midi.SMF, error) {
 	decoder := midifile.NewDecoder()
 
 	if smf, err := decoder.Decode(r); err != nil {
@@ -147,7 +142,7 @@ func decode(r io.Reader) (*midi.SMF, error) {
 	// }
 }
 
-func validate(smf *midi.SMF) error {
+func (t *tsv) validate(smf *midi.SMF) error {
 	errors := smf.Validate()
 
 	if len(errors) > 0 {

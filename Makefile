@@ -1,4 +1,4 @@
-DIST ?= development
+DIST ?= development_v0.3.x
 CMD   = ./bin/midiasm
 
 all: test      \
@@ -16,10 +16,6 @@ build: format
 	mkdir -p bin
 	go build -o bin ./cmd/...
 
-plugins: format
-	mkdir -p bin/plugins
-	go build -buildmode=plugin -o bin/plugins/ ./plugins/...
-
 test: build
 	go clean -testcache
 	go test ./...
@@ -31,7 +27,7 @@ coverage: build
 	go clean -testcache
 	go test -cover ./...
 
-build-all: build plugins test
+build-all: build test
 	mkdir -p dist/$(DIST)/linux/midiasm
 	mkdir -p dist/$(DIST)/arm/midiasm
 	mkdir -p dist/$(DIST)/arm7/midiasm
@@ -45,13 +41,6 @@ build-all: build plugins test
 	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-x64/midiasm   ./cmd/...
 	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-arm64/midiasm ./cmd/...
 	env GOOS=windows GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/windows/midiasm      ./cmd/...
-
-# 	env GOOS=linux   GOARCH=amd64         GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/linux/plugins        ./plugins/...
-# 	env GOOS=linux   GOARCH=arm64         GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/arm/plugins          ./plugins/...
-# 	env GOOS=linux   GOARCH=arm   GOARM=7 GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/arm7/plugins         ./plugins/...
-# 	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/darwin-x64/plugins   ./plugins/...
-# 	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/darwin-arm64/plugins ./plugins/...
-# 	env GOOS=windows GOARCH=amd64         GOWORK=off go build -buildmode=plugin -o dist/$(DIST)/windows/plugins      ./plugins/...
 
 release: build-all
 	tar --directory=dist/$(DIST)/linux        --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz        midiasm
@@ -135,7 +124,7 @@ transpose: build
 	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+1.mid examples/greensleeves.mid
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
 
-tsv: build plugins
+tsv: build
 	rm -f ./tmp/reference.tsv
 	$(CMD) tsv --debug examples/reference.mid
 	$(CMD) tsv --debug --out ./tmp/reference.tsv examples/reference.mid
