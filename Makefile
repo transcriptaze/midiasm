@@ -132,3 +132,6 @@ tsv: build
 # 	$(CMD) tsv --debug --delimiter '|' --out ./tmp/reference.tsv examples/reference.mid
 	cat ./tmp/reference.tsv
 
+humanise: build
+	$(CMD) humanise --debug examples/reference.mid
+

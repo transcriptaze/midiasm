@@ -22,6 +22,7 @@ var cli = []struct {
 	{"export", &commands.Export},
 	{"transpose", &commands.Transpose},
 	{"tsv", &commands.TSV},
+	{"humanise", &commands.Humanise},
 	{"help", &Help},
 	{"version", &Version},
 }

@@ -1,16 +1,9 @@
 # TODO
 
 - [x] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
-      - [x] Move commands to _commands_ package
-      - [x] Add _tsv_ command
-      - [x] Remove TSV plugin
-      - [x] Remove plugin support
-      - [x] Update Makefile
-      - [x] CHANGELOG
-      - [x] README
-
-- [ ] Remove plugin architecture
+- [x] Remove plugin architecture
 - [ ] _humanise_ command
+
 
 ## NTS
 
@@ -18,6 +11,7 @@
 - https://www.masteringemacs.org/article/combobulate-structured-movement-editing-treesitter
 - https://github.com/wader/fq
 - [Interval Parsing Grammars for File Format Parsing](https://dl.acm.org/doi/pdf/10.1145/3591264)
+- https://www.gnu.org/software/gettext/libtextstyle/manual/libtextstyle.html#Introduction
 
 - [ ] Fix bug in tick
 ```
