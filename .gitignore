@@ -1,6 +1,7 @@
 .DS_Store
 bin
 dist
+workdir
 tmp
 examples/entangled.mid
 examples/jukskei.mid
