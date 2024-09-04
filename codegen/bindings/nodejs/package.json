@@ -1,0 +1,33 @@
+{
+  "name": "midiasm",
+  "version": "0.3.0",
+  "description": "MIDI assembler/disassembler",
+  "author": "transcriptaze",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transcriptaze/midiasm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/transcriptaze/midiasm/issues"
+  },
+  "homepage": "https://github.com/transcriptaze/midiasm#readme",
+  "keywords": [
+    "MIDI"
+  ],
+  "main": "./index.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha 'test/**/*_spec.js'"
+  },
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "chai": "^5.1.1",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
+    "mocha": "^10.7.3"
+  }
+}
