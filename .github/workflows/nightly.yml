@@ -1,0 +1,61 @@
+name: nightly
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v5
+      with:
+        go-version: ^1.22
+        cache: false
+
+    - name: Build
+      run: make build-all DIST=nightly_v0.3.x
+
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/linux
+        name: midiasm_v0.3.x-nightly_linux-x64
+
+    - name: Upload MacOS Intel artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/darwin-x64
+        name: midiasm_v0.3.x-nightly_darwin-x64
+
+    - name: Upload MacOS Apple silicon artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/darwin-arm64
+        name: midiasm_v0.3.x-nightly_darwin-arm64
+
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/windows
+        name: midiasm_v0.3.x-nightly_windows
+
+    - name: Upload ARM artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/arm
+        name: midiasm_v0.3.x-nightly_arm
+
+    - name: Upload ARM7 artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist/nightly_v0.3.x/arm7
+        name: midiasm_v0.3.x-nightly_arm7

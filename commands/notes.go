@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"flag"
@@ -6,18 +6,18 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/ops/notes"
+	impl "github.com/transcriptaze/midiasm/ops/notes"
 )
 
-type Notes struct {
+type notes struct {
 	out       string
 	transpose int
 	json      bool
 }
 
-var NOTES = Notes{}
+var Notes = notes{}
 
-func (n *Notes) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (n *notes) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&n.out, "out", "", "Output file path")
 	flagset.IntVar(&n.transpose, "transpose", 0, "Transpose notes up or down")
 	flagset.BoolVar(&n.json, "json", false, "Formats the output as JSON")
@@ -25,7 +25,7 @@ func (n *Notes) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	return flagset
 }
 
-func (n Notes) Help() {
+func (n notes) Help() {
 	fmt.Println()
 	fmt.Println("  Extracts the NoteOn and NoteOff events to generate a list of notes with start times and durations.")
 	fmt.Println()
@@ -45,7 +45,7 @@ func (n Notes) Help() {
 	fmt.Println()
 }
 
-func (n Notes) Execute(flagset *flag.FlagSet) error {
+func (n notes) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
 	smf, err := decode(filename)
@@ -65,7 +65,7 @@ func (n Notes) Execute(flagset *flag.FlagSet) error {
 	return n.execute(smf)
 }
 
-func (n Notes) execute(smf *midi.SMF) error {
+func (n notes) execute(smf *midi.SMF) error {
 	w := os.Stdout
 	err := error(nil)
 
@@ -78,7 +78,7 @@ func (n Notes) execute(smf *midi.SMF) error {
 		defer w.Close()
 	}
 
-	op := notes.Notes{
+	op := impl.Notes{
 		JSON:      n.json,
 		Transpose: n.transpose,
 		Writer:    w,

@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+
+### Updated
+1. Reworked TSV plugin as a builtin command.
+
+
+## [0.2.0](https://github.com/transcriptaze/midiasm/releases/tag/v0.2.0) - 2024-05-12
+
+### Added
+1. `assemble` command.
+
 ### Updated
 1. Fixed bug in note extraction for MIDI files with varying tempo.
 

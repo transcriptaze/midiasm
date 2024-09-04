@@ -1,4 +1,4 @@
-DIST ?= development
+DIST ?= development_v0.3.x
 CMD   = ./bin/midiasm
 
 all: test      \
@@ -14,7 +14,7 @@ format:
 
 build: format
 	mkdir -p bin
-	go build -o bin ./... 
+	go build -o bin ./cmd/...
 
 test: build
 	go clean -testcache
@@ -28,22 +28,30 @@ coverage: build
 	go test -cover ./...
 
 build-all: build test
-	mkdir -p dist/linux/$(DIST)
-	mkdir -p dist/darwin/$(DIST)
-	mkdir -p dist/windows/$(DIST)
-	env GOOS=linux   GOARCH=amd64 GOWORK=off go build -trimpath -o dist/linux/$(DIST)   ./...
-	env GOOS=darwin  GOARCH=amd64 GOWORK=off go build -trimpath -o dist/darwin/$(DIST)  ./...
-	env GOOS=windows GOARCH=amd64 GOWORK=off go build -trimpath -o dist/windows/$(DIST) ./...
+	mkdir -p dist/$(DIST)/linux/midiasm
+	mkdir -p dist/$(DIST)/arm/midiasm
+	mkdir -p dist/$(DIST)/arm7/midiasm
+	mkdir -p dist/$(DIST)/darwin-x64/midiasm
+	mkdir -p dist/$(DIST)/darwin-arm64/midiasm
+	mkdir -p dist/$(DIST)/windows/midiasm
+
+	env GOOS=linux   GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/linux/midiasm        ./cmd/...
+	env GOOS=linux   GOARCH=arm64         GOWORK=off go build -trimpath -o dist/$(DIST)/arm/midiasm          ./cmd/...
+	env GOOS=linux   GOARCH=arm   GOARM=7 GOWORK=off go build -trimpath -o dist/$(DIST)/arm7/midiasm         ./cmd/...
+	env GOOS=darwin  GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-x64/midiasm   ./cmd/...
+	env GOOS=darwin  GOARCH=arm64         GOWORK=off go build -trimpath -o dist/$(DIST)/darwin-arm64/midiasm ./cmd/...
+	env GOOS=windows GOARCH=amd64         GOWORK=off go build -trimpath -o dist/$(DIST)/windows/midiasm      ./cmd/...
 
 release: build-all
-	tar --directory=dist/linux   --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz   $(DIST)
-	tar --directory=dist/darwin  --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin.tar.gz  $(DIST)
-	tar --directory=dist/windows --exclude=".DS_Store" -cvzf dist/$(DIST)-windows.tar.gz $(DIST)
+	tar --directory=dist/$(DIST)/linux        --exclude=".DS_Store" -cvzf dist/$(DIST)-linux.tar.gz        midiasm
+	tar --directory=dist/$(DIST)/arm          --exclude=".DS_Store" -cvzf dist/$(DIST)-arm.tar.gz          midiasm
+	tar --directory=dist/$(DIST)/arm7         --exclude=".DS_Store" -cvzf dist/$(DIST)-arm7.tar.gz         midiasm
+	tar --directory=dist/$(DIST)/darwin-x64   --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin-x64.tar.gz   midiasm
+	tar --directory=dist/$(DIST)/darwin-arm64 --exclude=".DS_Store" -cvzf dist/$(DIST)-darwin-arm64.tar.gz midiasm
+	cd dist/$(DIST)/windows; zip --recurse-paths ../../$(DIST)-windows.zip midiasm
 
 debug: build
-# 	./bin/midiasm transpose --debug --semitones +1 -out tmp/xyz.mid examples/greensleeves.mid
-# 	diff tmp/xyz.mid tmp/greensleeves+12.mid                                                 
-	go test -v ./ops/notes/... -run TestNotesWithTempoChanges
+	go test -v ./ops/notes/... -run TestExtractNotesWithMissingNoteOff
 
 delve: build
 	dlv test github.com/transcriptaze/midiasm/ops/notes -- run TestExtractNotes
@@ -51,12 +59,14 @@ delve: build
 
 help: build
 	$(CMD) help
+	$(CMD) help commands
 	$(CMD) help disassemble
 	$(CMD) help assemble
 	$(CMD) help export
 	$(CMD) help notes
 	$(CMD) help click
 	$(CMD) help transpose
+	$(CMD) help tsv
 
 version: build
 	$(CMD) version
@@ -113,4 +123,15 @@ export: build
 transpose: build
 	$(CMD) transpose --debug --semitones +1 -out ./tmp/greensleeves+1.mid examples/greensleeves.mid
 	$(CMD) transpose --debug --semitones +12 -out ./tmp/greensleeves+12.mid examples/greensleeves.mid
+
+tsv: build
+	rm -f ./tmp/reference.tsv
+	$(CMD) tsv --debug examples/reference.mid
+	$(CMD) tsv --debug --out ./tmp/reference.tsv examples/reference.mid
+# 	$(CMD) tsv --debug --tabular       --out ./tmp/reference.tsv examples/reference.mid
+# 	$(CMD) tsv --debug --delimiter '|' --out ./tmp/reference.tsv examples/reference.mid
+	cat ./tmp/reference.tsv
+
+humanise: build
+	$(CMD) humanise --debug examples/reference.mid
 

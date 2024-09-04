@@ -1,6 +1,17 @@
 # TODO
 
+- [x] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
+- [x] Remove plugin architecture
+- [ ] _humanise_ command
+
+
+## NTS
+
 - !!!! https://github.com/SuperDisk/tar.pl
+- https://www.masteringemacs.org/article/combobulate-structured-movement-editing-treesitter
+- https://github.com/wader/fq
+- [Interval Parsing Grammars for File Format Parsing](https://dl.acm.org/doi/pdf/10.1145/3591264)
+- https://www.gnu.org/software/gettext/libtextstyle/manual/libtextstyle.html#Introduction
 
 - [ ] Fix bug in tick
 ```
@@ -38,6 +49,8 @@
 [controller] Messages 123 through 127 also function as All Notes Off messages. They will turn off all voices controlled by the assigned Basic Channel. These messages should not be sent periodically, but only for a specific purpose. In no case should they be used in lieu of Note Off commands to turn off notes which have been previously turned on. Any All Notes Off command (123-127) may by ignored by a receiver with no possibility of notes staying on, since any Note On command must have a corresponding specific Note Off command.
 ```
 
+- https://music.stackexchange.com/questions/127381/duration-of-a-midi-file-by-parsing-it-and-making-a-stream-of-parsed-notes-and-ch
+- https://music.stackexchange.com/questions/86241/how-can-i-split-a-midi-file-programatically?rq=1
 - https://github.com/WerWolv/ImHex-Patterns
 
 - Check tick to time conversion
@@ -48,6 +61,7 @@
 - [ ] Assemble: text + templates
 
 ### M-IDE
+- https://github.com/alecthomas/chroma
 - BubbleTea
 - templates
 - views (e.g. notes)
@@ -82,10 +96,11 @@
 
 
 - [ ] MIDI file grammar
+      - (?) Treesitter
+            - https://tree-sitter.github.io/tree-sitter/
       - (?) ASN.1
       - (?) EBNF
       - (?) Grammar stack
-      - (?) Treesitter
       - (?) https://github.com/codemechanic/midi-sysex-grammar
       - (?) https://www.synalysis.net/grammars/
       - (?) MidiQL
@@ -95,7 +110,20 @@
 
 - (?) https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output
 - (?) https://openziti.io/golang-aha-moments-generics
+- [ ] TSV
 - (?) https://hackaday.com/2023/01/10/imhex-an-open-hex-editor-for-the-modern-hacker/
+      - [x] Decode
+      - [x] Fixed width output for stdout
+      - [x] TSV for file output
+      - [x] --delimiter
+      - [x] --tabular option
+      - [x] Split note and velocity out as separate fields
+      - [ ] --piano-roll
+      - [ ] --columns
+      - [ ] Unit tests
+      - [ ] Encode
+      - [ ] main_windows.go (Windows doesn't do plugins)
+
 
 ### Transpose
 - [ ] Transpose while decoding - otherwise lose track of stuff like note format
@@ -114,7 +142,6 @@
 
 
 ### Export
-- [ ] TSV
 
 ### Disassembler
 

@@ -5,20 +5,20 @@ import (
 	"fmt"
 )
 
-type Version struct {
+type version struct {
 }
 
-var VERSION = Version{}
+var Version = version{}
 
-func (v *Version) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (v *version) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	return flagset
 }
 
-func (v Version) Help() {
+func (v version) Help() {
 }
 
-func (v Version) Execute(flagset *flag.FlagSet) error {
-	fmt.Printf("midiasm %v\n", version)
+func (v version) Execute(flagset *flag.FlagSet) error {
+	fmt.Printf("midiasm %v\n", VERSION)
 
 	return nil
 }

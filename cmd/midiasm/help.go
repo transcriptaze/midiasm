@@ -5,19 +5,19 @@ import (
 	"fmt"
 )
 
-type Help struct {
+type help struct {
 }
 
-var HELP = Help{}
+var Help = help{}
 
-func (h *Help) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (h *help) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	return flagset
 }
 
-func (h Help) Help() {
+func (h help) Help() {
 }
 
-func (h Help) Execute(flagset *flag.FlagSet) error {
+func (h help) Execute(flagset *flag.FlagSet) error {
 	for _, c := range cli {
 		if c.cmd == flagset.Arg(0) {
 			c.command.Help()
@@ -30,7 +30,7 @@ func (h Help) Execute(flagset *flag.FlagSet) error {
 	return nil
 }
 
-func (h Help) help() {
+func (h help) help() {
 	fmt.Println()
 	fmt.Println("  Usage: midiasm <command> <options>")
 	fmt.Println()

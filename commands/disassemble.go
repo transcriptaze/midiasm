@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"flag"
@@ -8,18 +8,18 @@ import (
 	"strings"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/ops/disassemble"
+	impl "github.com/transcriptaze/midiasm/ops/disassemble"
 )
 
-type Disassemble struct {
+type disassemble struct {
 	out       string
 	split     bool
 	templates string
 }
 
-var DISASSEMBLE = Disassemble{}
+var Disassemble = disassemble{}
 
-func (d *Disassemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (d *disassemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&d.out, "out", "", "Output file path (or directory for split files)")
 	flagset.BoolVar(&d.split, "split", false, "Create separate file for each track. Defaults to the same directory as the MIDI file.")
 	flagset.StringVar(&d.templates, "templates", "", "Loads the formatting templates from a file")
@@ -27,7 +27,7 @@ func (d *Disassemble) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	return flagset
 }
 
-func (d Disassemble) Help() {
+func (d disassemble) Help() {
 	fmt.Println()
 	fmt.Println("  Disassembles a MIDI file and displays the tracks in a human readable format.")
 	fmt.Println()
@@ -48,7 +48,7 @@ func (d Disassemble) Help() {
 	fmt.Println()
 }
 
-func (p Disassemble) Execute(flagset *flag.FlagSet) error {
+func (p disassemble) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
 	smf, err := decode(filename)
@@ -65,7 +65,7 @@ func (p Disassemble) Execute(flagset *flag.FlagSet) error {
 		fmt.Fprintln(os.Stderr)
 	}
 
-	op, err := disassemble.NewDisassemble()
+	op, err := impl.NewDisassemble()
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (p Disassemble) Execute(flagset *flag.FlagSet) error {
 	}
 }
 
-func (p Disassemble) write(op *disassemble.Disassemble, smf *midi.SMF) error {
+func (p disassemble) write(op *impl.Disassemble, smf *midi.SMF) error {
 	out := os.Stdout
 
 	if p.out != "" {
@@ -108,7 +108,7 @@ func (p Disassemble) write(op *disassemble.Disassemble, smf *midi.SMF) error {
 	return op.Print(smf, "document", out)
 }
 
-func (p Disassemble) separate(op *disassemble.Disassemble, smf *midi.SMF, file string) error {
+func (p disassemble) separate(op *impl.Disassemble, smf *midi.SMF, file string) error {
 	// Get base filename and Create out directory
 	base := strings.TrimSuffix(path.Base(file), path.Ext(file))
 	dir := path.Dir(file)

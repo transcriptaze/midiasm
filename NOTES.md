@@ -19,3 +19,4 @@
 9. [Web editors](https://www.hiro.so/blog/write-clarity-smart-contracts-with-zero-installations-how-we-built-an-in-browser-language-server-using-wasm)
 10. https://github.com/Fabien-Chouteau/MIDI_signal_flow
 11. https://github.com/Fabien-Chouteau/MIDIVisualizer
+12. https://www.youtube.com/watch?v=72y2EC5fkcE

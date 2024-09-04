@@ -26,8 +26,8 @@ Executables for all the supported operating systems are packaged in the [release
 ### Building from source
 
 Required tools:
-- [Go 1.19+](https://go.dev)
-- make (optional but recommended)
+- [Go 1.22+](https://go.dev)
+- _make_ (optional but recommended)
 
 To build using the included Makefile:
 
@@ -65,6 +65,7 @@ Supported commands:
 - [`notes`](#notes)
 - [`click`](#click)
 - [`transpose`](#transpose)
+- [`tsv`](#tsv)
 
 Defaults to `disassemble` if the command is not provided.
 
@@ -92,8 +93,6 @@ Command line:
 ```
 
 ### `assemble`
-
-_IN DEVELOPMENT_
 
 Assembles a MIDI file from a text or JSON source.
 
@@ -207,9 +206,34 @@ Command line:
   midiasm transpose --debug --verbose --semitones +5 --out one-time+5.mid one-time.mid
 ```
 
+### `tsv`
+
+Extracts the MIDI information as a TSV or fixed width file for use with other tools (e.g. [miller](https://github.com/johnkerl/miller))
+
+Command line:
+
+` midiasm tsv [--debug] [--verbose] [--C4] [--out <file>] <MIDI file>`
+
+```
+  --out <file>   Output filepath. Default is to write to stdout.
+  --delimiter    Column delimiter for TSV files. Defaults to TAB.
+  --tabular      Formats the outputs as fixed width columns
+
+  Options:
+
+  --C4       Uses C4 as middle C (Yamaha convention). Defaults to C3.
+  --debug    Displays internal information while processing a MIDI file. Defaults to false
+  --verbose  Enables 'verbose' logging. Defaults to false
+
+  Example:
+
+  midiasm tsv --debug --verbose --out one-time.tsv one-time.mid
+```
+
 ## Tools
 
-1. [Miller](https://github.com/johnkerl/miller)
+1. [jq](https://jqlang.github.io/jq)
+2. [miller](https://github.com/johnkerl/miller)
 
 
 ## References
@@ -228,5 +252,7 @@ Command line:
 3. [Werkmeister](https://werckme.github.io/werckmeister)
 4. [pymidi](https://pypi.org/project/py-midi)
 5. [DryWetMIDI](https://github.com/melanchall/drywetmidi)
-6. [Online MIDI Editor](http://midi.mathewvp.com/)
+6. [Online MIDI Editor](http://midi.mathewvp.com)
 7. [go-midi](https://github.com/moutend/go-midi)
+8. [midiutil](https://pypi.org/project/MIDIUtil)
+9. [music21](https://web.mit.edu/music21)

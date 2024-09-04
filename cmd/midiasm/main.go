@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/transcriptaze/midiasm/commands"
 	"github.com/transcriptaze/midiasm/log"
 	"github.com/transcriptaze/midiasm/midi/context"
 	"github.com/transcriptaze/midiasm/midi/lib"
@@ -12,16 +13,18 @@ import (
 
 var cli = []struct {
 	cmd     string
-	command Command
+	command commands.Command
 }{
-	{"disassemble", &DISASSEMBLE},
-	{"assemble", &ASSEMBLE},
-	{"notes", &NOTES},
-	{"click", &CLICK},
-	{"export", &EXPORT},
-	{"transpose", &TRANSPOSE},
-	{"help", &HELP},
-	{"version", &VERSION},
+	{"disassemble", &commands.Disassemble},
+	{"assemble", &commands.Assemble},
+	{"notes", &commands.Notes},
+	{"click", &commands.Click},
+	{"export", &commands.Export},
+	{"transpose", &commands.Transpose},
+	{"tsv", &commands.TSV},
+	{"humanise", &commands.Humanise},
+	{"help", &Help},
+	{"version", &Version},
 }
 
 var options = struct {
@@ -31,7 +34,7 @@ var options = struct {
 	debug   bool
 }{}
 
-const version = "v0.1.0"
+const VERSION = "v0.3.x"
 
 func main() {
 	// ... parse command line
@@ -84,7 +87,7 @@ func main() {
 	}
 }
 
-func parse() (Command, *flag.FlagSet, error) {
+func parse() (commands.Command, *flag.FlagSet, error) {
 	flagset := flag.NewFlagSet("midiasm", flag.ExitOnError)
 
 	flagset.BoolVar(&options.c4, "C4", options.c4, "Sets middle C to C4 (Yamaho convention). Defaults to C3")
@@ -105,7 +108,7 @@ func parse() (Command, *flag.FlagSet, error) {
 		}
 	}
 
-	cmd := &DISASSEMBLE
+	cmd := &commands.Disassemble
 	flagset = cmd.Flagset(flagset)
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return cmd, flagset, err

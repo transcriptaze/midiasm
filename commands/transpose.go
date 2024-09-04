@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"flag"
@@ -6,24 +6,24 @@ import (
 	"os"
 
 	"github.com/transcriptaze/midiasm/midi"
-	"github.com/transcriptaze/midiasm/ops/transpose"
+	impl "github.com/transcriptaze/midiasm/ops/transpose"
 )
 
-type Transpose struct {
+type transpose struct {
 	out       string
 	semitones int
 }
 
-var TRANSPOSE = Transpose{}
+var Transpose = transpose{}
 
-func (t *Transpose) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
+func (t *transpose) Flagset(flagset *flag.FlagSet) *flag.FlagSet {
 	flagset.StringVar(&t.out, "out", "", "Output file path")
 	flagset.IntVar(&t.semitones, "semitones", 0, "Number of semitones to transpose notes (+ve is up, -ve is down")
 
 	return flagset
 }
 
-func (t Transpose) Help() {
+func (t transpose) Help() {
 	fmt.Println()
 	fmt.Println("  Transposes the key of the notes (and key signature) and writes it back as MIDI file.")
 	fmt.Println()
@@ -44,7 +44,7 @@ func (t Transpose) Help() {
 	fmt.Println()
 }
 
-func (t Transpose) Execute(flagset *flag.FlagSet) error {
+func (t transpose) Execute(flagset *flag.FlagSet) error {
 	filename := flagset.Arg(0)
 
 	smf, err := decode(filename)
@@ -64,8 +64,8 @@ func (t Transpose) Execute(flagset *flag.FlagSet) error {
 	return t.execute(smf)
 }
 
-func (t Transpose) execute(smf *midi.SMF) error {
-	op := transpose.Transpose{}
+func (t transpose) execute(smf *midi.SMF) error {
+	op := impl.Transpose{}
 
 	transposed, err := op.Execute(smf, t.semitones)
 	if err != nil {
