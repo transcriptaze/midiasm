@@ -9,14 +9,6 @@ MIDI assembler/disassembler to convert between standard MIDI files and a text/JS
 A Go reimplementation of Jeff Glatt's long defunct Windows-only MIDIASM (last seen archived at [MIDI Technical Fanatic's Brainwashing Center](http://midi.teragonaudio.com)). Because sometimes it's easier to just programmatically deal with
 text or JSON.
 
-## Releases
-
-*In development*
-
-| *Version* | *Description*                                                                             |
-| --------- | ----------------------------------------------------------------------------------------- |
-| v0.1.0    | Initial release with support for dissassemble, export, notes, click and transpose         |
-
 ## Installation
 
 Executables for all the supported operating systems are packaged in the [releases](https://github.com/transcriptaze/midiasm/releases). Installation is straightforward - download the archive and extract it to a directory of your choice. 
@@ -26,7 +18,7 @@ Executables for all the supported operating systems are packaged in the [release
 ### Building from source
 
 Required tools:
-- [Go 1.22+](https://go.dev)
+- [Go 1.23+](https://go.dev)
 - _make_ (optional but recommended)
 
 To build using the included Makefile:
