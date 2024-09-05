@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@stylistic/eslint-plugin": "^2.7.2",
     "chai": "^5.1.1",
     "eslint": "^9.9.1",
     "globals": "^15.9.0",
