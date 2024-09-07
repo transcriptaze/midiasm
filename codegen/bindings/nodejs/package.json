@@ -18,7 +18,8 @@
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "test": "mocha 'test/**/*_spec.js'"
+    "test": "mocha 'test/**/*_spec.js'",
+    "integration-tests": "mocha 'integration-tests/**/*_spec.js'"
   },
   "engines": {
     "node": ">=20.11.1"

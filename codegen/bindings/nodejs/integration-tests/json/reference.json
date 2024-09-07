@@ -1,0 +1,10 @@
+{
+    "header": {
+        "tag": "MThd",
+        "length": 6,
+        "format": 1,
+        "tracks": 2,
+        "ppqn": 480
+    },
+    "tracks": []
+}

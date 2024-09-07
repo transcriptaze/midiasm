@@ -14,6 +14,8 @@ test: build
 	npm test
 
 integration-tests: test
+	npx eslint --fix integration-tests/**/*.js  
+	npm run integration-tests
 
 jsdoc: build
 	npx jsdoc src --destination jsdoc --package package.json --readme README.md
