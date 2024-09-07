@@ -1,11 +1,21 @@
 import { Reader } from './midiasm.js'
 
+/* MIDI reader implementation for a byte array.
+ *
+ */
 export class ByteReader extends Reader {
   constructor(bytes) {
     super()
 
     this.view = new DataView(new Uint8Array(bytes).buffer)
     this.position = 0
+  }
+
+  /* Returns true if the internal position marker is at or beyond the end of the byte array.
+   *
+   */
+  eof() {
+    return this.position >= this.view.byteLength
   }
 
   /* Fetches N bytes from the internal byte array without updating the position

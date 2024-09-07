@@ -3,13 +3,25 @@ import { expect } from 'chai'
 import { disassemble, ByteReader } from '../index.js'
 
 const MThd_PPQN = [
-  0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06,
+  0x4d, 0x54, 0x68, 0x64,
+  0x00, 0x00, 0x00, 0x06,
   0x00, 0x01, 0x00, 0x02, 0x01, 0xe0,
 ]
 
 const MThd_SMPTE = [
-  0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06,
+  0x4d, 0x54, 0x68, 0x64,
+  0x00, 0x00, 0x00, 0x06,
   0x00, 0x01, 0x00, 0x02, 0xe6, 0x04,
+]
+
+const MIDI = [
+  0x4d, 0x54, 0x68, 0x64,
+  0x00, 0x00, 0x00, 0x06,
+  0x00, 0x01, 0x00, 0x02, 0x01, 0xe0,
+  0x4d, 0x54, 0x72, 0x6b,
+  0x00, 0x00, 0x00, 0x00,
+  0x4d, 0x54, 0x72, 0x6b,
+  0x00, 0x00, 0x00, 0x00,
 ]
 
 describe('disassemble', function () {
@@ -52,6 +64,36 @@ describe('disassemble', function () {
           },
         },
         tracks: [],
+      }
+
+      const midi = disassemble(reader)
+
+      expect(midi).to.deep.equal(expected)
+    })
+  })
+
+  describe('#disassembles MIDI MTrk chunk', function () {
+    it('should extract the MIDI MTrk chunks"', function () {
+      const reader = new ByteReader(MIDI)
+
+      const expected = {
+        header: {
+          tag: 'MThd',
+          length: 6,
+          format: 1,
+          tracks: 2,
+          ppqn: 480,
+        },
+        tracks: [
+          {
+            tag: 'MTrk',
+            length: 0,
+          },
+          {
+            tag: 'MTrk',
+            length: 0,
+          },
+        ],
       }
 
       const midi = disassemble(reader)

@@ -24,11 +24,17 @@ export function disassemble(reader) {
 
   // ... decode tracks
   const tracks = []
-  // d.FieldArray("tracks", func(d *decode.D) {
-  //     for d.BitsLeft() > 0 {
-  //         d.FieldStruct("track", decodeMTrk)
-  //     }
-  // })
+  while (!reader.eof()) {
+    const bytes = reader.peek(4)
+    const tag = Buffer.from(bytes).toString('utf8')
+
+    if (tag === 'MTrk') {
+      tracks.push(decodeMTrk(reader))
+    }
+    else {
+      decodeUnknown(reader)
+    }
+  }
 
   return {
     header: header,
@@ -50,7 +56,7 @@ function decodeMThd(reader) {
     header.format = reader.U16()
     header.tracks = reader.U16()
 
-    const division = reader.peekU16()
+    const division = reader.U16()
 
     if ((division & 0x8000) == 0x8000) {
       header.timecode = {}
@@ -84,5 +90,27 @@ function decodeMThd(reader) {
 }
 
 function decodeMTrk(reader) {
+  const track = {}
+  const bytes = reader.read(4)
+  const tag = Buffer.from(bytes).toString('utf8')
 
+  if (tag !== 'MTrk') {
+    throw new Error(`missing MTrk tag`)
+  }
+  else {
+    track.tag = tag
+    track.length = reader.U32()
+  }
+
+  return track
+}
+
+function decodeUnknown(reader) {
+  const bytes = reader.read(4)
+  const tag = Buffer.from(bytes).toString('utf8')
+
+  return {
+    tag: tag,
+    length: reader.U32(),
+  }
 }

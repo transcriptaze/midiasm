@@ -2,6 +2,10 @@ export class Reader {
   constructor() {
   }
 
+  eof() {
+    throw new Error('** not implemented **')
+  }
+
   peek(N) {
     throw new Error('** not implemented **')
   }
