@@ -46,30 +46,39 @@ function decodeMThd(reader) {
   }
   else {
     header.tag = tag
+    header.length = reader.U32()
+    header.format = reader.U16()
+    header.tracks = reader.U16()
+
+    const division = reader.peekU16()
+
+    if ((division & 0x8000) == 0x8000) {
+      header.timecode = {}
+
+      switch ((division >> 8) & 0x00ff) {
+        case 0xe8:
+          header.timecode.fps = 24
+          break
+
+        case 0xe7:
+          header.timecode.fps = 25
+          break
+
+        case 0xe6:
+          header.timecode.fps = 29
+          break
+
+        case 0xe5:
+          header.timecode.fps = 30
+          break
+      }
+
+      header.timecode.resolution = division & 0x00ff
+    }
+    else {
+      header.ppqn = division
+    }
   }
-  //
-  // d.FieldUTF8("tag", 4)
-  // length := d.FieldS32("length")
-  //
-  // d.FramedFn(length*8, func(d *decode.D) {
-  //     format := d.FieldU16("format")
-  //     if format != 0 && format != 1 && format != 2 {
-  //         d.Errorf("invalid MThd format %v (expected 0,1 or 2)", format)
-  //     }
-  //
-  //     tracks := d.FieldU16("tracks")
-  //     if format == 0 && tracks > 1 {
-  //         d.Errorf("MIDI format 0 expects 1 track (got %v)", tracks)
-  //     }
-  //
-  //     division := d.FieldU16("divisions")
-  //     if division&0x8000 == 0x8000 {
-  //         SMPTE := (division & 0xff00) >> 8
-  //         if SMPTE != 0xe8 && SMPTE != 0xe7 && SMPTE != 0xe6 && SMPTE != 0xe5 {
-  //             d.Errorf("invalid MThd division SMPTE timecode type %02X (expected E8,E7, E6 or E5)", SMPTE)
-  //         }
-  //     }
-  // })
 
   return header
 }

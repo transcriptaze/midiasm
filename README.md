@@ -237,6 +237,7 @@ Command line:
 5. [An Introduction to MIDI](https://www.midi.org/articles/an-intro-to-midi)
 6. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
 7. [Timing in MIDI files](https://sites.uci.edu/camp2014/2014/05/19/timing-in-midi-files)
+8. [github: test-midi-files](https://github.com/jazz-soft/test-midi-files)
 
 ## Alternatives
 1. [mido](https://github.com/mido/mido)
