@@ -88,10 +88,12 @@ describe('disassemble', function () {
           {
             tag: 'MTrk',
             length: 0,
+            events: [],
           },
           {
             tag: 'MTrk',
             length: 0,
+            events: [],
           },
         ],
       }

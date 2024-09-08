@@ -3,6 +3,8 @@
  * @module midiasm
  */
 
+import { ByteReader } from './byte-reader.js'
+
 /**
    * Parses a MIDI file byte array into an object.
    *
@@ -93,24 +95,46 @@ function decodeMTrk(reader) {
   const track = {}
   const bytes = reader.read(4)
   const tag = Buffer.from(bytes).toString('utf8')
+  const length = reader.U32()
+  const data = reader.read(length)
 
-  if (tag !== 'MTrk') {
-    throw new Error(`missing MTrk tag`)
-  }
-  else {
-    track.tag = tag
-    track.length = reader.U32()
+  const events = []
+  const r = new ByteReader(data)
+
+  const ctx = {
+    tick: 0,
+    running: 0x000,
+    casio: false,
   }
 
-  return track
+  while (!r.eof()) {
+    const evt = decodeEvent(r, ctx)
+
+    if (evt != null) {
+      events.push(evt)
+    }
+  }
+
+  return {
+    tag: tag,
+    length: length,
+    events: events,
+  }
 }
 
 function decodeUnknown(reader) {
   const bytes = reader.read(4)
   const tag = Buffer.from(bytes).toString('utf8')
+  const length = reader.U32()
+  const data = reader.read(length)
 
   return {
     tag: tag,
-    length: reader.U32(),
+    length: length,
+    data: data,
   }
+}
+
+function decodeEvent(reader, context) {
+  throw new Error('*** not implemented ***')
 }
