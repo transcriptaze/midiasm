@@ -238,13 +238,16 @@ Command line:
 6. [Roland: Midi Guidebook](https://ia902502.us.archive.org/3/items/manuallib-id-2725326/2725326_text.pdf)
 7. [Timing in MIDI files](https://sites.uci.edu/camp2014/2014/05/19/timing-in-midi-files)
 
+
 ## Alternatives
-1. [mido](https://github.com/mido/mido)
-2. [midicsv](https://www.fourmilab.ch/webtools/midicsv)
-3. [Werkmeister](https://werckme.github.io/werckmeister)
-4. [pymidi](https://pypi.org/project/py-midi)
-5. [DryWetMIDI](https://github.com/melanchall/drywetmidi)
-6. [Online MIDI Editor](http://midi.mathewvp.com)
-7. [go-midi](https://github.com/moutend/go-midi)
-8. [midiutil](https://pypi.org/project/MIDIUtil)
-9. [music21](https://web.mit.edu/music21)
+1.  [mido](https://github.com/mido/mido)
+2.  [midicsv](https://www.fourmilab.ch/webtools/midicsv)
+3.  [Werkmeister](https://werckme.github.io/werckmeister)
+4.  [pymidi](https://pypi.org/project/py-midi)
+5.  [DryWetMIDI](https://github.com/melanchall/drywetmidi)
+6.  [Online MIDI Editor](http://midi.mathewvp.com)
+7.  [go-midi](https://github.com/moutend/go-midi)
+8.  [midiutil](https://pypi.org/project/MIDIUtil)
+9.  [music21](https://web.mit.edu/music21)
+10. [fq](https://github.com/wader/fq)
+
