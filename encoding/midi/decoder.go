@@ -59,8 +59,8 @@ func (d *decoder) Decode(reader io.Reader) (*midi.SMF, error) {
 
 			if division&0x8000 == 0x8000 {
 				fps := division & 0xff00 >> 8
-				if fps != 0xe8 && fps != 0xe7 && fps != 0xe6 && fps != 0xe5 {
-					return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected E8, E7, E6 or E5", fps)
+				if fps != 0xe8 && fps != 0xe7 && fps != 0xe3 && fps != 0xe2 {
+					return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected E8, E7, E3 or E2", fps)
 				}
 			}
 

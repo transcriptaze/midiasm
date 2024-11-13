@@ -20,3 +20,4 @@
 10. https://github.com/Fabien-Chouteau/MIDI_signal_flow
 11. https://github.com/Fabien-Chouteau/MIDIVisualizer
 12. https://www.youtube.com/watch?v=72y2EC5fkcE
+13. https://en.wikipedia.org/wiki/Stochastic_computing

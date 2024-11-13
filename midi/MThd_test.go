@@ -32,31 +32,6 @@ func TestMThdMarshal(t *testing.T) {
 	}
 }
 
-// func TestMThdUnmarshal(t *testing.T) {
-// 	bytes := []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60}
-// 	expected := MThd{
-// 		Tag:           "MThd",
-// 		Length:        6,
-// 		Format:        1,
-// 		Tracks:        17,
-// 		Division:      0x0060,
-// 		PPQN:          96,
-// 		SMPTETimeCode: false,
-// 		SubFrames:     0,
-// 		FPS:           0,
-// 		Bytes:         []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0x00, 0x60},
-// 	}
-//
-// 	mthd := MThd{}
-// 	if err := mthd.UnmarshalBinary(bytes); err != nil {
-// 		t.Fatalf("Unexpected error unmarshaling MThd: %v", err)
-// 	}
-//
-// 	if !reflect.DeepEqual(mthd, expected) {
-// 		t.Errorf("MThd incorrectly unmarshaled\n   expected:%+v\n   got:     %+v", expected, mthd)
-// 	}
-// }
-
 // func TestMThdUnmarshalSMTPE(t *testing.T) {
 // 	bytes := []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0xe7, 0x28}
 // 	expected := MThd{

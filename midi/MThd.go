@@ -58,10 +58,10 @@ func MakeMThd(format uint16, tracks uint16, division uint16, bytes ...byte) MThd
 		case 0xe7:
 			mthd.FPS = 25
 			mthd.DropFrame = false
-		case 0xe6:
-			mthd.FPS = 30
+		case 0xe3:
+			mthd.FPS = 29
 			mthd.DropFrame = true
-		case 0xe5:
+		case 0xe2:
 			mthd.FPS = 30
 			mthd.DropFrame = false
 		}

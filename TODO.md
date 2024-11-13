@@ -1,8 +1,21 @@
 # TODO
 
-- [x] Rework TSV plugin as built-in command (cf. https://github.com/transcriptaze/midiasm/issues/3)
-- [x] Remove plugin architecture
+- [ ] Fix SMPTE encoding/decoding (cf. https://github.com/transcriptaze/midiasm/issues/6)
+    - [x] Fix SMPTE offset metaevent binary encoding
+    - [x] Fix SMPTE offset metaevent decoding
+    - (?) Use enums for SMPTE offset frame rate
+    - [ ] Rework MThd struct to explicitly differentiate PPQN and SMPTE time divisions
+    - [ ] Encode MThd SMPTE time divisions correctly
+    - [ ] Decode MThd SMPTE time divisions correctly
+    - [ ] Update JSON encoding/decoding
+    - [ ] Update text encoding/decoding
+    - [ ] Update TSV encoding/decoding
+
 - [ ] _humanise_ command
+      - https://en.wikipedia.org/wiki/Stochastic_computing
+
+- [ ] MIDI-2.0
+      - https://github.com/midi2-dev/MIDI2.0Workbench
 
 
 ## NTS
