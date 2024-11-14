@@ -76,7 +76,7 @@ func (a JSONAssembler) Assemble(r io.Reader) ([]byte, error) {
 
 func (a JSONAssembler) parseMThd(h mthd) (*midi.MThd, error) {
 	var format uint16
-	var ppqn uint16
+	var division uint16
 
 	if h.Tag == nil || *h.Tag != "MThd" {
 		return nil, fmt.Errorf("missing or invalid 'MThd' tag in header")
@@ -91,17 +91,17 @@ func (a JSONAssembler) parseMThd(h mthd) (*midi.MThd, error) {
 	if h.PPQN == nil {
 		return nil, fmt.Errorf("missing 'metrical-time' field in header")
 	} else {
-		ppqn = *h.PPQN
+		division = *h.PPQN
 
-		if ppqn&0x8000 == 0x8000 {
-			fps := ppqn & 0xff00 >> 8
+		if division&0x8000 == 0x8000 {
+			fps := division & 0xff00 >> 8
 			if fps != 0xe8 && fps != 0xe7 && fps != 0xe3 && fps != 0xe2 {
 				return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%v): expected 24, 25, 29 or 30", fps)
 			}
 		}
 	}
 
-	mthd := midi.MakeMThd(format, 0, ppqn)
+	mthd := midi.MakeMThd(format, 0, division)
 
 	return &mthd, nil
 }

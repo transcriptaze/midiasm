@@ -137,7 +137,7 @@ func (a TextAssembler) parseMThd(chunk []string) (*midi.MThd, error) {
 	for _, line := range chunk {
 		if strings.Contains(line, "MThd") {
 			var format uint16
-			var ppqn uint16
+			var division uint16
 
 			if match := regexp.MustCompile(`format:(0|1|2)`).FindStringSubmatch(line); match == nil || len(match) < 2 {
 				return nil, fmt.Errorf("missing or invalid 'format' field in MThd")
@@ -152,17 +152,17 @@ func (a TextAssembler) parseMThd(chunk []string) (*midi.MThd, error) {
 			} else if v, err := strconv.ParseUint(match[1], 10, 16); err != nil {
 				return nil, err
 			} else {
-				ppqn = uint16(v)
+				division = uint16(v)
 
-				if ppqn&0x8000 == 0x8000 {
-					fps := ppqn & 0xff00 >> 8
+				if division&0x8000 == 0x8000 {
+					fps := division & 0xff00 >> 8
 					if fps != 0xe8 && fps != 0xe7 && fps != 0xe3 && fps != 0xe2 {
 						return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%02X): expected 24, 25, 29 or 30", fps)
 					}
 				}
 			}
 
-			mthd := midi.MakeMThd(format, 0, ppqn)
+			mthd := midi.MakeMThd(format, 0, division)
 
 			return &mthd, nil
 		}

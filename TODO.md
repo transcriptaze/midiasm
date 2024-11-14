@@ -3,13 +3,14 @@
 - [ ] Fix SMPTE encoding/decoding (cf. https://github.com/transcriptaze/midiasm/issues/6)
     - [x] Fix SMPTE offset metaevent binary encoding
     - [x] Fix SMPTE offset metaevent decoding
-    - (?) Use enums for SMPTE offset frame rate
-    - [ ] Rework MThd struct to explicitly differentiate PPQN and SMPTE time divisions
+    - [x] MThd binary unmarshal
+    - [ ] Rework decoder to use MThd binary unmarshal
     - [ ] Encode MThd SMPTE time divisions correctly
-    - [ ] Decode MThd SMPTE time divisions correctly
     - [ ] Update JSON encoding/decoding
     - [ ] Update text encoding/decoding
     - [ ] Update TSV encoding/decoding
+    - (?) Use enums for SMPTE offset frame rate
+    - [ ] Rework MThd struct to explicitly differentiate PPQN and SMPTE time divisions
 
 - [ ] _humanise_ command
       - https://en.wikipedia.org/wiki/Stochastic_computing

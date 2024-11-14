@@ -32,6 +32,170 @@ func TestMThdMarshal(t *testing.T) {
 	}
 }
 
+func TestUnmarshalMThdFormat0(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64,
+		0x00, 0x00, 0x00, 0x06,
+		0x00, 0x00,
+		0x00, 0x01,
+		0x01, 0xe0,
+	}
+
+	expected := MThd{
+		Tag:      "MThd",
+		Length:   6,
+		Format:   0,
+		Tracks:   1,
+		Division: 480,
+		PPQN:     480,
+		// SMPTETimeCode bool    // TODO make getter/TextUnmarshal
+		// SubFrames     uint16  // TODO make getter/TextUnmarshal
+		// FPS           uint8   // TODO make getter/TextUnmarshal
+		// DropFrame     bool    // TODO make getter/TextUnmarshal
+		Bytes: bytes,
+	}
+
+	mthd := MThd{}
+
+	if err := mthd.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("unexpected error unmarshaling MThd: %v", err)
+	}
+
+	if !reflect.DeepEqual(mthd, expected) {
+		t.Errorf("incorrectly unmarshaled MThd chunk\n   expected:%#v\n   got:     %#v", expected, mthd)
+	}
+}
+
+func TestUnmarshalMThdSMPTE24FPS(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64,
+		0x00, 0x00, 0x00, 0x06,
+		0x00, 0x00,
+		0x00, 0x01,
+		0xe8, 0x50,
+	}
+
+	expected := MThd{
+		Tag:           "MThd",
+		Length:        6,
+		Format:        0,
+		Tracks:        1,
+		Division:      0xe850,
+		SMPTETimeCode: true,
+		FPS:           24,
+		SubFrames:     80,
+		Bytes:         bytes,
+	}
+
+	mthd := MThd{}
+
+	if err := mthd.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("unexpected error unmarshaling MThd: %v", err)
+	}
+
+	if !reflect.DeepEqual(mthd, expected) {
+		t.Errorf("incorrectly unmarshaled MThd chunk\n   expected:%#v\n   got:     %#v", expected, mthd)
+	}
+}
+
+func TestUnmarshalMThdSMPTE25FPS(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64,
+		0x00, 0x00, 0x00, 0x06,
+		0x00, 0x00,
+		0x00, 0x01,
+		0xe7, 0x28,
+	}
+
+	expected := MThd{
+		Tag:           "MThd",
+		Length:        6,
+		Format:        0,
+		Tracks:        1,
+		Division:      0xe728,
+		SMPTETimeCode: true,
+		FPS:           25,
+		SubFrames:     40,
+		Bytes:         bytes,
+	}
+
+	mthd := MThd{}
+
+	if err := mthd.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("unexpected error unmarshaling MThd: %v", err)
+	}
+
+	if !reflect.DeepEqual(mthd, expected) {
+		t.Errorf("incorrectly unmarshaled MThd chunk\n   expected:%#v\n   got:     %#v", expected, mthd)
+	}
+}
+
+func TestUnmarshalMThdSMPTE29FPS(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64,
+		0x00, 0x00, 0x00, 0x06,
+		0x00, 0x00,
+		0x00, 0x01,
+		0xe3, 0x50,
+	}
+
+	expected := MThd{
+		Tag:           "MThd",
+		Length:        6,
+		Format:        0,
+		Tracks:        1,
+		Division:      0xe350,
+		SMPTETimeCode: true,
+		FPS:           29,
+		DropFrame:     true,
+		SubFrames:     80,
+		Bytes:         bytes,
+	}
+
+	mthd := MThd{}
+
+	if err := mthd.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("unexpected error unmarshaling MThd: %v", err)
+	}
+
+	if !reflect.DeepEqual(mthd, expected) {
+		t.Errorf("incorrectly unmarshaled MThd chunk\n   expected:%#v\n   got:     %#v", expected, mthd)
+	}
+}
+
+func TestUnmarshalMThdSMPTE30FPS(t *testing.T) {
+	bytes := []byte{
+		0x4d, 0x54, 0x68, 0x64,
+		0x00, 0x00, 0x00, 0x06,
+		0x00, 0x00,
+		0x00, 0x01,
+		0xe2, 0x50,
+	}
+
+	expected := MThd{
+		Tag:           "MThd",
+		Length:        6,
+		Format:        0,
+		Tracks:        1,
+		Division:      0xe250,
+		SMPTETimeCode: true,
+		FPS:           30,
+		SubFrames:     80,
+		// DropFrame     bool    // TODO make getter/TextUnmarshal
+		Bytes: bytes,
+	}
+
+	mthd := MThd{}
+
+	if err := mthd.UnmarshalBinary(bytes); err != nil {
+		t.Fatalf("unexpected error unmarshaling MThd: %v", err)
+	}
+
+	if !reflect.DeepEqual(mthd, expected) {
+		t.Errorf("incorrectly unmarshaled MThd chunk\n   expected:%#v\n   got:     %#v", expected, mthd)
+	}
+}
+
 // func TestMThdUnmarshalSMTPE(t *testing.T) {
 // 	bytes := []byte{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x11, 0xe7, 0x28}
 // 	expected := MThd{

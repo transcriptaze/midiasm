@@ -51,7 +51,8 @@ release: build-all
 	cd dist/$(DIST)/windows; zip --recurse-paths ../../$(DIST)-windows.zip midiasm
 
 debug: build
-	go test -v ./ops/notes/... -run TestExtractNotesWithMissingNoteOff
+#	go test -v ./ops/notes/... -run TestExtractNotesWithMissingNoteOff
+	go test ./midi -run TestUnmarshalMThd
 
 delve: build
 	dlv test github.com/transcriptaze/midiasm/ops/notes -- run TestExtractNotes
