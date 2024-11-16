@@ -4,7 +4,7 @@
     - [x] Fix SMPTE offset metaevent binary encoding
     - [x] Fix SMPTE offset metaevent decoding
     - [x] MThd binary unmarshal
-    - [ ] Rework decoder to use MThd binary unmarshal
+    - [x] Rework decoder to use MThd binary unmarshal
     - [ ] Encode MThd SMPTE time divisions correctly
     - [ ] Update JSON encoding/decoding
     - [ ] Update text encoding/decoding

@@ -39,53 +39,33 @@ func (d *decoder) Decode(reader io.Reader) (*midi.SMF, error) {
 	}
 
 	// .. extract MThd
-	ix := 0
+	if len(chunks) < 1 {
+		return nil, fmt.Errorf("Missing MThd chunk")
+	} else {
+		var mthd midi.MThd
 
-	for ix < len(chunks) {
-		chunk := chunks[ix]
-		ix++
-
-		tag := string(chunk[0:4])
-		length := binary.BigEndian.Uint32(chunk[4:8])
-
-		if tag == "MThd" && length >= 6 {
-			format := binary.BigEndian.Uint16(chunk[8:10])
-			tracks := binary.BigEndian.Uint16(chunk[10:12])
-			division := binary.BigEndian.Uint16(chunk[12:14])
-
-			if format != 0 && format != 1 && format != 2 {
-				return nil, fmt.Errorf("Invalid MThd format (%v): expected 0,1 or 2", format)
-			}
-
-			if division&0x8000 == 0x8000 {
-				fps := division & 0xff00 >> 8
-				if fps != 0xe8 && fps != 0xe7 && fps != 0xe3 && fps != 0xe2 {
-					return nil, fmt.Errorf("Invalid MThd division SMPTE timecode type (%v): expected 24,25,29 or 30 FPS", fps)
-				}
-			}
-
-			mthd := midi.MakeMThd(format, tracks, division, chunk...)
+		if err := mthd.UnmarshalBinary(chunks[0]); err != nil {
+			return nil, err
+		} else {
 			smf.MThd = &mthd
-			break
 		}
 	}
 
 	// .. extract tracks
-	for ix < len(chunks) {
-		chunk := chunks[ix]
-		ix++
+	if len(chunks) > 1 {
+		for _, chunk := range chunks[1:] {
+			if string(chunk[0:4]) == "MTrk" {
+				mtrk := midi.MTrk{
+					TrackNumber: lib.TrackNumber(len(smf.Tracks)),
+					Context:     context.NewContext(),
+				}
 
-		if string(chunk[0:4]) == "MTrk" {
-			mtrk := midi.MTrk{
-				TrackNumber: lib.TrackNumber(len(smf.Tracks)),
-				Context:     context.NewContext(),
+				if err := mtrk.UnmarshalBinary(chunk); err != nil {
+					return nil, err
+				}
+
+				smf.Tracks = append(smf.Tracks, &mtrk)
 			}
-
-			if err := mtrk.UnmarshalBinary(chunk); err != nil {
-				return nil, err
-			}
-
-			smf.Tracks = append(smf.Tracks, &mtrk)
 		}
 	}
 
