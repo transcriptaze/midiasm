@@ -227,3 +227,5 @@
 24. https://github.com/codemechanic/midi-sysex-grammar
 25. [WUFFS](https://github.com/google/wuffs)
 26. [Apex](https://apexlang.io)
+27. [PRQL](https://prql-lang.org)
+    
